@@ -1,0 +1,12 @@
+*.raw
+*.log
+*.vcd
+*.vvp
+__pycache__/
+.DS_Store
+
+# synthesis / P&R scratch
+flow/build/
+flow/reports/scratch/
+# local klt install, created by the setup script
+.venv/
