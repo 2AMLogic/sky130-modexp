@@ -66,17 +66,10 @@ repo therefore optimizes from a good core rather than recreating a bad one —
 the honest version of the exercise, and the one that produces a block worth
 taping out.
 
-## Target specification (DRAFT — engineering to ratify, see issue #1)
+## Target specification
 
-| Parameter | Target | Stretch |
-|---|---|---|
-| Operation | `base^exp mod m`, square-and-multiply | Montgomery variant for comparison |
-| `WIDTH` | 16 primary; 4/6/8 verified | 32 |
-| Correctness | bit-exact vs `pow(b, e, m)`, randomized | formal equivalence check |
-| Cell count @ `WIDTH=16` | ≤ 682 (the measured baseline) | meaningful reduction with correctness held |
-| Clock | 100 MHz closed in OpenROAD on sky130 | 500 MHz |
-| Signoff | DRC + LVS clean on the OpenROAD-produced GDS | — |
-| Area | to be set once the first P&R run lands | — |
+The ratified spec, with a decision record for each previously-open
+question, lives in [`spec/modexp.md`](spec/modexp.md).
 
 Maturity ladder: RTL + bit-exact verification → synthesis baseline →
 place-and-route with timing closure → DRC/LVS-clean GDS → shuttle seat →
