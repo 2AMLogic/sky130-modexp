@@ -1,0 +1,20 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "../rtl/modexp.v"
+  ],
+  "hdl_toplevel": "modexp",
+  "testbench": {
+    "module": "test_modexp",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1
+  }
+}

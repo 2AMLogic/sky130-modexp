@@ -2,8 +2,10 @@
 
 **Status: measured, 2026-08-04.** This is the number every later optimization
 claim is measured against. It was produced in `2AMLogic/klayout-tools`
-(PR #488) before this repo existed; the RTL and testbench migrate here under
-issue #2, and this document is the record that travels with them.
+(PR #488) before this repo existed; the RTL and testbench migrated here under
+issue #2 (`rtl/modexp.v`, `verification/test_modexp.py`,
+`verification/request-modexp.json`), and this document is the record that
+travels with them.
 
 ## The measurement
 
