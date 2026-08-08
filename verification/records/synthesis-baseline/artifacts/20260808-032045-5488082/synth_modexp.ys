@@ -1,0 +1,8 @@
+read_verilog /private/tmp/modexp-synth-scratch/modexp.v
+hierarchy -check -top modexp
+synth -top modexp
+dfflibmap -liberty /Users/rwalters/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /Users/rwalters/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+clean
+tee -q -o /private/tmp/modexp-synth-scratch/.klt/synthesize/modexp_stats.json stat -liberty /Users/rwalters/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib -json -top modexp
+write_verilog -noattr /private/tmp/modexp-synth-scratch/.klt/synthesize/modexp_synth.v

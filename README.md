@@ -75,16 +75,34 @@ Maturity ladder: RTL + bit-exact verification → synthesis baseline →
 place-and-route with timing closure → DRC/LVS-clean GDS → shuttle seat →
 measured silicon. **Current position: synthesis baseline.**
 
+## Reproducing it
+
+```bash
+./scripts/setup-env.sh   # .venv + pinned klt + pinned sky130A, and a report
+                         # of any missing iverilog/yosys/openroad
+npm run test             # WIDTH = 4/6/8/16 bit-exact cross-check under Icarus
+npm run lint             # evidence-record linter (+ its own self-test)
+```
+
+Pinned tool and PDK versions are in [`docs/environment.md`](docs/environment.md).
+CI runs the tool-light legs above on every PR; the PDK-heavy legs (`klt
+synthesize`, and later place-and-route and DRC/LVS) are run locally against
+that pinned environment and committed as append-only records under
+`verification/records/`. That split is stated explicitly in
+[`verification/README.md`](verification/README.md), which is the
+authoritative description of the evidence-record format.
+
 ## Repo layout
 
 ```
 spec/          ratified spec + decision records
 rtl/           Verilog sources
-verification/  cocotb testbenches + Icarus cross-checks
+verification/  cocotb testbenches, Icarus cross-checks, append-only records
 flow/          synthesis + place-and-route recipes (Yosys, OpenROAD)
 layout/        GDS + DRC/LVS reports (klayout-tools driven)
 docs/          baseline record, environment setup
 measurements/  silicon characterization (empty until tape-out)
+scripts/       environment provisioning
 ```
 
 ## License

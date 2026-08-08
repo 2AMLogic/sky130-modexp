@@ -1,0 +1,96 @@
+# CI for sky130-modexp.
+#
+# Scope is deliberate and documented, not accidental: this workflow runs the
+# **tool-light** legs only -- the multi-WIDTH Icarus cross-check and the
+# evidence-record linter. Neither needs a PDK.
+#
+# The PDK-heavy legs (`klt synthesize`, `klt place-and-route`, `klt drc`)
+# are NOT run here: they need a fetched sky130A PDK and, for P&R, `openroad`.
+# Those are run locally against the pinned environment from
+# `scripts/setup-env.sh` and committed as append-only records under
+# `verification/records/`. The split is stated in
+# `verification/README.md` -> "What CI runs vs. what stays local" and in
+# `docs/environment.md`. Do not silently drop a leg: if you move one of the
+# heavy legs into CI, update both documents in the same change.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  records:
+    name: evidence records (lint + append-only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: the append-only check diffs against the merge-base
+          # with origin/main, which a shallow clone cannot resolve.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Ensure origin/main is available for the append-only base ref
+        run: git fetch --no-tags --quiet origin +refs/heads/main:refs/remotes/origin/main
+
+      - name: Syntax-check the verification scripts and setup script
+        run: |
+          python3 -m compileall -q verification/cross_check.py \
+                                   verification/cross_check_tb.py \
+                                   verification/check_records.py \
+                                   verification/test_check_records.py \
+                                   verification/test_modexp.py
+          bash -n scripts/setup-env.sh
+
+      - name: Record linter + its self-test (npm run lint)
+        run: npm run lint
+
+      - name: Record linter, strict append-only against origin/main
+        run: python3 verification/check_records.py --require-append-only --base-ref origin/main
+
+  cross-check:
+    name: multi-WIDTH cross-check (cocotb + Icarus)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends iverilog
+          iverilog -V | head -1
+
+      - name: Install cocotb (pinned -- see docs/environment.md)
+        run: python3 -m pip install --disable-pip-version-check "cocotb==2.0.1"
+
+      - name: Cross-check WIDTH = 4, 6, 8, 16 (npm run test)
+        run: npm run test
+
+      - name: Re-run and assert byte-identical vectors (seed is pinned)
+        run: |
+          set -euo pipefail
+          python3 verification/cross_check.py --widths 4 6 --cases 40 \
+            --transcript-dir /tmp/determinism-a > /dev/null
+          python3 verification/cross_check.py --widths 4 6 --cases 40 \
+            --transcript-dir /tmp/determinism-b > /dev/null
+          for w in 4 6; do
+            cmp "/tmp/determinism-a/width-$w.jsonl" "/tmp/determinism-b/width-$w.jsonl"
+            echo "WIDTH=$w: transcripts byte-identical across runs"
+          done
