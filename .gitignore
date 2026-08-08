@@ -10,6 +10,15 @@ flow/build/
 flow/reports/scratch/
 # local klt install, created by the setup script
 .venv/
+
+# klt / cocotb / Icarus scratch (verification/cross_check.py and ad-hoc
+# `klt functional-verification` / `klt synthesize` runs) -- never committed;
+# deliberate evidence lands under verification/records/ via --mint-record.
+.klt/
+**/.klt/
+sim_build*/
+results.xml
+results_icarus.xml
 # >>> loom-managed (do not edit) >>>
 # Loom runtime state (don't commit these)
 .loom-in-use

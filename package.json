@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "worktree:return": "./.loom/scripts/worktree-return.sh",
-    "check:ci": "echo 'No CI checks configured. Customize this script for your project.' && exit 0",
-    "check:all": "echo 'No checks configured. Customize this script for your project.' && exit 0",
-    "test": "echo 'No tests configured. Customize this script for your project.' && exit 0",
-    "lint": "echo 'No linter configured. Customize this script for your project.' && exit 0"
+    "lint": "python3 verification/check_records.py && python3 verification/test_check_records.py",
+    "test": "python3 verification/cross_check.py",
+    "check:ci": "npm run lint && npm run test",
+    "check:all": "npm run lint && npm run test && klt functional-verification verification/request-modexp.json --format json"
   }
 }

@@ -46,7 +46,31 @@ done
 
 # bit-exact functional verification
 klt functional-verification verification/request-modexp.json --format json
+
+# the WIDTH = 4/6/8/16 cross-check the correctness claim above rests on
+python3 verification/cross_check.py
 ```
+
+`scripts/setup-env.sh` provisions the pinned `klt` revision and `sky130A`
+version these commands assume; `docs/environment.md` names them.
+
+## The records behind these numbers
+
+Both claims on this page are backed by append-only evidence records, each
+carrying the klt provenance block (tool version, resolved PDK, deck and
+input content hashes) and the git revision it was produced against:
+
+- `verification/records/synthesis-baseline/records/` — the `WIDTH=16`
+  synthesis measurement, with the raw `klt synthesize` JSON envelope and a
+  mapped-netlist snapshot as artifacts.
+- `verification/records/width-cross-check/records/` — the `WIDTH` =
+  4/6/8/16 bit-exact cross-check, with the per-`WIDTH` vector transcripts as
+  artifacts.
+
+`verification/README.md` is the authoritative description of that record
+format; `verification/check_records.py` enforces it, and fails on a record
+whose cited sources have changed since it was minted. The prose on this page
+is a summary of those records, not a substitute for them.
 
 ## Why the external comparison is not a comparison
 
