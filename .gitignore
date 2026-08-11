@@ -38,7 +38,6 @@ results_icarus.xml
 .loom/interventions/
 .loom/worktrees/
 .loom/worktrees-local/
-.claude/worktrees/
 .loom/state.json
 .loom/mcp-command.json
 .loom/activity.db
@@ -68,7 +67,6 @@ results_icarus.xml
 .loom/*.sock
 .loom/*.tmp
 .loom/*.bak
-.loom/.install.lock
 .loom/logs/
 # <<< loom-managed <<<
 
