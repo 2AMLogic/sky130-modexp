@@ -15,9 +15,12 @@ append-only rule).
 
 This creates a local `.venv`, installs `klayout-tools` (`klt`) into it at
 the pinned revision below, fetches the pinned `sky130A` PDK version via
-`volare`, and reports which of `iverilog` / `yosys` / `openroad` are missing
-from `$PATH` — with an actionable install pointer for each, never a
-traceback. It is safe to re-run; it reuses an existing `.venv` and an
+`volare`, checks `iverilog` / `yosys` / `openroad`, and reports what's still
+missing with an actionable install pointer, never a traceback. For
+`openroad` specifically: if it's not already on `$PATH` and `docker` is
+available, it wires up `.venv/bin/openroad` as a symlink to the pinned
+Docker route automatically (see "OpenROAD" below) rather than reporting it
+missing. It is safe to re-run; it reuses an existing `.venv` and an
 already-fetched PDK version.
 
 Activate the venv for interactive use with:
@@ -42,7 +45,7 @@ the host — it does not vendor them. Those are:
 |---|---|---|
 | Icarus Verilog (`iverilog`) | `klt functional-verification`, `verification/cross_check.py` | 13.0 (stable) (`iverilog -V`) |
 | Yosys (`yosys`) | `klt synthesize` | 0.68+post (`yosys -V`) |
-| OpenROAD (`openroad`) | `klt place-and-route` | **not installed** — see "OpenROAD" below |
+| OpenROAD (`openroad`) | `klt place-and-route` | `26Q3-1260-g06a5a02279` (`openroad -version`), via the pinned `openroad/orfs` Docker image — see "OpenROAD" below |
 
 Package-manager installs for the first two:
 
@@ -54,37 +57,92 @@ brew install icarus-verilog yosys
 apt-get install iverilog yosys
 ```
 
-## OpenROAD (currently missing)
+## OpenROAD
 
-`openroad` is **not on `$PATH`** on the environment this document was
-written from, and there is no Homebrew formula (`brew search openroad`
-returns nothing) or common-distro package for it as of this writing. This
-is what blocks the place-and-route rung of the maturity ladder (issue #5's
-originating problem statement, item 4) — it is a provisioning gap, not a
-design decision.
+`openroad` has **no Homebrew formula** (`brew search openroad` returns
+nothing) and no common-distro package as of this writing, so it is
+provisioned differently from the two tools above: via a **pinned Docker
+image**, not a host package. This was a real provisioning gap (issue #13) —
+before choosing a route, `2AMLogic/klayout-tools`'s own
+[`docs/design/openroad-invocation-survey.md`](https://github.com/2AMLogic/klayout-tools/blob/main/docs/design/openroad-invocation-survey.md)
+(its issue #397) was read first, since it already investigated this exact
+question from the same class of host (macOS/arm64, Docker Desktop). It
+confirmed the `openroad/orfs` image runs real x86_64 OpenROAD/Yosys/KLayout
+binaries under Docker Desktop's `linux/amd64` emulation, and flagged that
+routing/CTS can crash mid-run under that emulation (an emulation gap, not an
+OpenROAD defect — see that survey's "Environment limitation" section). This
+repo reuses that route rather than re-deriving it; a from-source
+`OpenROAD-flow-scripts` build was rejected as the default path since it is a
+multi-hour, multi-dependency build with no reproducibility advantage over a
+digest-pinned image.
 
-Options to get `openroad` on `$PATH`, roughly in order of effort:
+### Pinned version
 
-1. **Precompiled binaries / Docker image** — see
-   [`The-OpenROAD-Project/OpenROAD` § Install](https://github.com/The-OpenROAD-Project/OpenROAD#install)
-   for current release artifacts, or pull the flow-scripts image
-   (`docker pull openroad/orfs`) and run OpenROAD inside the container.
-2. **Build from source via OpenROAD-flow-scripts** —
-   [`The-OpenROAD-Project/OpenROAD-flow-scripts`](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts),
-   `./build_openroad.sh --local` (a from-source build with its own toolchain
-   dependencies — see that repo's own docs for platform prerequisites).
+| What | Pinned to |
+|---|---|
+| Image | `openroad/orfs:26Q3-296-gda37dce1c` |
+| Image digest | `sha256:ebc8142da6d65d1a1e9a528aa2cedcde356243465dd859af8d3ade51075f8cb2` |
+| `openroad -version` (inside the image) | `26Q3-1260-g06a5a02279` |
+| `yosys -V` (bundled, unused here — this repo's own `klt synthesize` uses the host `yosys` above) | `0.67` (`sha1 2d1509d1b`) |
+| `klayout -v` (bundled, unused here — `klt drc`'s in-process `klayout` pip package is the tool this repo actually drives) | `0.30.7` |
 
-Once `openroad` resolves on `$PATH`, `scripts/setup-env.sh`'s toolchain
-check will report it found and no longer list it under "MISSING TOOLS"; no
-other change to this repo's tooling is required to unblock
-`klt place-and-route`.
+`scripts/openroad-docker.sh` pins both the image tag and its digest (image
+tags on Docker Hub can move; the digest cannot), so a re-run months from now
+resolves the exact same binary. Re-pin both together if this is ever
+updated, and record the new `openroad -version` string alongside them — P&R
+numbers from issues #7/#8/#9 are only comparable across runs against the
+same pinned version.
+
+### How it's wired up
+
+`scripts/setup-env.sh` prefers a native `openroad` already on `$PATH`; if
+none is found and `docker` is available, it symlinks
+`.venv/bin/openroad -> scripts/openroad-docker.sh`, so after
+`source .venv/bin/activate`, `openroad` resolves exactly like `iverilog` and
+`yosys` do — `klt place-and-route` (or any other caller that shells out to
+`openroad` by name) does not need to know it is backed by a container. The
+first invocation pulls the ~1.6 GB image; `scripts/setup-env.sh` itself does
+not pull it eagerly, only wires up the symlink (no network required for
+that step).
+
+`scripts/openroad-docker.sh` can also be run directly (`./scripts/openroad-docker.sh -no_init -exit script.tcl`),
+bind-mounts the current directory into the container at `/workspace` (so
+relative paths in a Tcl script resolve the same as against a native
+install), and forwards a small allowlist of ORFS-relevant env vars
+(`PLATFORM_DIR`, `PDK_ROOT`) if set on the host.
+
+### Smoke test
+
+`scripts/openroad-smoke-test.sh` proves the toolchain actually executes,
+not merely that it answers `-version`: it drives OpenROAD's Tcl engine
+through a real LEF read, `link_design`, `initialize_floorplan`, and
+`write_def` sequence against a trivial hand-written one-cell netlist
+(`scripts/openroad-smoke/smoke_top.v`) and the sky130hd platform LEF the
+image ships. This is toolchain verification only — it is not a P&R
+measurement of `rtl/modexp.v` (that is issue #7's job) and writes nothing
+under `verification/` or `layout/`. Run it with:
+
+```bash
+./scripts/openroad-smoke-test.sh
+```
+
+### Alternative: build from source
+
+For a host where Docker isn't viable, `OpenROAD-flow-scripts` also supports
+a from-source build —
+[`The-OpenROAD-Project/OpenROAD-flow-scripts`](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts),
+`./build_openroad.sh --local` — with its own toolchain prerequisites (see
+that repo's docs). This repo does not script or pin that route: it is a
+multi-hour build with its own maintenance burden, and the Docker route above
+already gives a pinned, reproducible `openroad -version`. Revisit if a build
+host without Docker ever needs to run this flow.
 
 ## Why local, not CI, for the PDK-heavy legs
 
 CI (`.github/workflows/ci.yml`) does not fetch `sky130A` or provision
-`openroad` — provisioning a real PDK (and, eventually, `openroad`) in a
-hosted CI runner on every PR is a real, recurring cost this repo has chosen
-not to pay per-PR. Instead:
+`openroad` — provisioning a real PDK (or a Docker-backed `openroad`, now
+pinned per the "OpenROAD" section above) in a hosted CI runner on every PR
+is a real, recurring cost this repo has chosen not to pay per-PR. Instead:
 
 - CI runs the tool-light legs only: the multi-`WIDTH` cross-check
   (Icarus/cocotb, no PDK) and the evidence-record linter. CI installs

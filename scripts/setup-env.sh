@@ -165,17 +165,37 @@ fi
 echo
 echo "== toolchain check (iverilog / yosys / openroad) =="
 missing=()
-for tool in iverilog yosys openroad; do
+for tool in iverilog yosys; do
   if command -v "${tool}" >/dev/null 2>&1; then
     case "${tool}" in
       iverilog) echo "  iverilog: $(iverilog -V 2>&1 | head -1)" ;;
       yosys)    echo "  yosys:    $(yosys -V 2>&1 | head -1)" ;;
-      openroad) echo "  openroad: $(openroad -version 2>&1 | head -1)" ;;
     esac
   else
     missing+=("${tool}")
   fi
 done
+
+# openroad: prefer a native install already on $PATH. Otherwise, openroad has
+# no Homebrew formula or common-distro package (see docs/environment.md), so
+# fall back to the pinned openroad/orfs Docker image via
+# scripts/openroad-docker.sh, symlinked into .venv/bin so activating the venv
+# makes `openroad` resolve the same way iverilog/yosys do. This only installs
+# the symlink (no network needed); the image itself is pulled lazily on first
+# `openroad` invocation.
+if command -v openroad >/dev/null 2>&1; then
+  echo "  openroad: $(openroad -version 2>&1 | head -1) (native, on \$PATH)"
+elif command -v docker >/dev/null 2>&1; then
+  ln -sf "../../scripts/openroad-docker.sh" "${VENV_DIR}/bin/openroad"
+  chmod +x "${VENV_DIR}/bin/openroad"
+  echo "  openroad: not native, but docker is available -- symlinked"
+  echo "    ${VENV_DIR}/bin/openroad -> scripts/openroad-docker.sh (pinned"
+  echo "    openroad/orfs image; see docs/environment.md). After"
+  echo "    'source ${VENV_DIR}/bin/activate', 'openroad -version' resolves"
+  echo "    through Docker (first call pulls the image)."
+else
+  missing+=("openroad")
+fi
 
 if [ "${#missing[@]}" -gt 0 ]; then
   echo
@@ -193,13 +213,12 @@ if [ "${#missing[@]}" -gt 0 ]; then
         ;;
       openroad)
         echo "  - openroad: no package-manager formula on macOS or common Linux"
-        echo "    distros as of this writing. Options:"
-        echo "      * precompiled binaries / docker image:"
-        echo "        https://github.com/The-OpenROAD-Project/OpenROAD#install"
-        echo "        (e.g. 'docker pull openroad/orfs' for the flow-scripts image)"
-        echo "      * build from source via OpenROAD-flow-scripts:"
-        echo "        https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
-        echo "        ('./build_openroad.sh --local')"
+        echo "    distros as of this writing, and no 'docker' found on \$PATH"
+        echo "    either, so scripts/openroad-docker.sh's fallback route"
+        echo "    couldn't be wired up automatically. Install Docker (or"
+        echo "    Docker Desktop), then re-run this script -- or see"
+        echo "    docs/environment.md's 'OpenROAD' section for the pinned"
+        echo "    image, its digest, and a from-source alternative."
         echo "    Required for 'klt place-and-route' -- see docs/environment.md."
         ;;
     esac
@@ -211,7 +230,8 @@ if [ "${#missing[@]}" -gt 0 ]; then
   echo "needs openroad -- see verification/README.md's CI-split section for"
   echo "which legs run where."
 else
-  echo "all of iverilog/yosys/openroad found on \$PATH."
+  echo "all of iverilog/yosys/openroad resolve (natively or, for openroad,"
+  echo "  via the pinned Docker route)."
 fi
 
 echo
