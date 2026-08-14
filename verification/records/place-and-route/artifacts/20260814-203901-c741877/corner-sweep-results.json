@@ -1,0 +1,1640 @@
+[
+  {
+    "corner": "ff_100C_1v65",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.055,
+      "wirelength_um": 17834,
+      "worst_slack_ns": 4.44379,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 179.979,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.769,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 5.36381,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.5844,
+          "worst_slack_ns": 4.89309,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13460.9,
+          "fmax_mhz": 195.813,
+          "estimated_power_mw": 0.4617,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.055,
+          "worst_slack_ns": 4.81436,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14204.7,
+          "fmax_mhz": 192.84,
+          "estimated_power_mw": 0.7365,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.055,
+          "worst_slack_ns": 4.44379,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17834,
+          "fmax_mhz": 179.979,
+          "estimated_power_mw": 0.769,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_100C_1v65/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_100C_1v65/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_100C_1v65",
+          "content_hash": "sha256:913e67fc551be7e4e97fc031f3e72e5ef3251438ceeb44753f73b68df58f5650"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ff_100C_1v95",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.0227,
+      "wirelength_um": 17843,
+      "worst_slack_ns": 5.71873,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 233.575,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 1.0898,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 6.42924,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.5521,
+          "worst_slack_ns": 6.05664,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13341.4,
+          "fmax_mhz": 253.591,
+          "estimated_power_mw": 0.6469,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0227,
+          "worst_slack_ns": 6.00274,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14085.1,
+          "fmax_mhz": 250.171,
+          "estimated_power_mw": 1.058,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0227,
+          "worst_slack_ns": 5.71873,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17843,
+          "fmax_mhz": 233.575,
+          "estimated_power_mw": 1.0898,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_100C_1v95/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_100C_1v95/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_100C_1v95",
+          "content_hash": "sha256:15c9ccefec536ff35d694314af5812e7c03b4e5a356ec8ea28f2e40bbeec04e7"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ff_n40C_1v56",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.2485,
+      "wirelength_um": 17888,
+      "worst_slack_ns": 3.63126,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 157.017,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.659,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 3.86128,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.8037,
+          "worst_slack_ns": 4.15408,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13529.4,
+          "fmax_mhz": 171.059,
+          "estimated_power_mw": 0.4006,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.2485,
+          "worst_slack_ns": 4.06566,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14299.1,
+          "fmax_mhz": 168.511,
+          "estimated_power_mw": 0.6283,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.2485,
+          "worst_slack_ns": 3.63126,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17888,
+          "fmax_mhz": 157.017,
+          "estimated_power_mw": 0.659,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v56/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v56/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_n40C_1v56",
+          "content_hash": "sha256:d64f38f3e67f8adab818531901385dbd29c6a4805e6166f7166bcc3e9370ef88"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ff_n40C_1v65",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.0937,
+      "wirelength_um": 17872,
+      "worst_slack_ns": 4.18472,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 171.961,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.7394,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 4.72905,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.6231,
+          "worst_slack_ns": 4.63416,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13470.5,
+          "fmax_mhz": 186.364,
+          "estimated_power_mw": 0.4467,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0937,
+          "worst_slack_ns": 4.53959,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14211.6,
+          "fmax_mhz": 183.136,
+          "estimated_power_mw": 0.7064,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0937,
+          "worst_slack_ns": 4.18472,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17872,
+          "fmax_mhz": 171.961,
+          "estimated_power_mw": 0.7394,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v65/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v65/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_n40C_1v65",
+          "content_hash": "sha256:dd777cb159bf2fc853773d74a3c3e8269b73869d25aae49d0f80f117df9631ee"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ff_n40C_1v76",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.1904,
+      "wirelength_um": 18003,
+      "worst_slack_ns": 4.59586,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 185.043,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.8465,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 5.48628,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.7198,
+          "worst_slack_ns": 5.03801,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13435.4,
+          "fmax_mhz": 201.532,
+          "estimated_power_mw": 0.5095,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.1904,
+          "worst_slack_ns": 4.95699,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14215,
+          "fmax_mhz": 198.294,
+          "estimated_power_mw": 0.8071,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.1904,
+          "worst_slack_ns": 4.59586,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 18003,
+          "fmax_mhz": 185.043,
+          "estimated_power_mw": 0.8465,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v76/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v76/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_n40C_1v76",
+          "content_hash": "sha256:0f5b7ceef23114c3834870f86c2f90ea24d597622fcd5abd2916b1fb604e8a26"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ff_n40C_1v95",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.0227,
+      "wirelength_um": 17843,
+      "worst_slack_ns": 5.63421,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 229.054,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 1.044,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 6.33255,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.5521,
+          "worst_slack_ns": 5.96251,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13341.4,
+          "fmax_mhz": 247.679,
+          "estimated_power_mw": 0.6237,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0227,
+          "worst_slack_ns": 5.92019,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14085.1,
+          "fmax_mhz": 245.109,
+          "estimated_power_mw": 1.0024,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0227,
+          "worst_slack_ns": 5.63421,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17843,
+          "fmax_mhz": 229.054,
+          "estimated_power_mw": 1.044,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v95/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v95/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_n40C_1v95",
+          "content_hash": "sha256:fb61d91c55a7f85b1989e8149d040b13ba5e7f5478f5bf0c3c16c5da30720139"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ff_n40C_1v95_ccsnoise",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.0227,
+      "wirelength_um": 17843,
+      "worst_slack_ns": 5.63421,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 229.054,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 1.044,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 6.33255,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.5521,
+          "worst_slack_ns": 5.96251,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13341.4,
+          "fmax_mhz": 247.679,
+          "estimated_power_mw": 0.6237,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0227,
+          "worst_slack_ns": 5.92019,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14085.1,
+          "fmax_mhz": 245.109,
+          "estimated_power_mw": 1.0024,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0227,
+          "worst_slack_ns": 5.63421,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17843,
+          "fmax_mhz": 229.054,
+          "estimated_power_mw": 1.044,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v95_ccsnoise/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ff_n40C_1v95_ccsnoise/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ff_n40C_1v95_ccsnoise",
+          "content_hash": "sha256:425315ca7a49debcb1c715daf6e5e5a27bb78587cac6f3b358b1fe114c787132"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_100C_1v40",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 39.0286,
+      "wirelength_um": 19972,
+      "worst_slack_ns": -4.15353,
+      "total_negative_slack_ns": -64.7242,
+      "fmax_mhz": 70.6537,
+      "setup_violation_count": 16,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.5297,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -7.85373,
+          "total_negative_slack_ns": -118.968
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.5709,
+          "worst_slack_ns": -3.70235,
+          "total_negative_slack_ns": -56.9354,
+          "wirelength_um": 15288,
+          "fmax_mhz": 72.9802,
+          "estimated_power_mw": 0.3144,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 39.0286,
+          "worst_slack_ns": -3.81283,
+          "total_negative_slack_ns": -58.6764,
+          "wirelength_um": 16055.6,
+          "fmax_mhz": 72.3965,
+          "estimated_power_mw": 0.4338,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 39.0286,
+          "worst_slack_ns": -4.15353,
+          "total_negative_slack_ns": -64.7242,
+          "wirelength_um": 19972,
+          "fmax_mhz": 70.6537,
+          "estimated_power_mw": 0.5297,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_100C_1v40/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_100C_1v40/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_100C_1v40",
+          "content_hash": "sha256:88c8ce95b6a7f333bd9e618fc765c3005fbeccfca2727226bd821c0d16fcaac8"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_100C_1v60",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 38.0676,
+      "wirelength_um": 19033,
+      "worst_slack_ns": -0.61218,
+      "total_negative_slack_ns": -8.54899,
+      "fmax_mhz": 94.2313,
+      "setup_violation_count": 16,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.7081,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -2.09029,
+          "total_negative_slack_ns": -29.5245
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 36.7389,
+          "worst_slack_ns": 0.01854,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14471.8,
+          "fmax_mhz": 100.186,
+          "estimated_power_mw": 0.4389,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.0676,
+          "worst_slack_ns": -0.10178,
+          "total_negative_slack_ns": -0.78329,
+          "wirelength_um": 15257.5,
+          "fmax_mhz": 98.9925,
+          "estimated_power_mw": 0.6518,
+          "setup_violation_count": 14,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.0676,
+          "worst_slack_ns": -0.61218,
+          "total_negative_slack_ns": -8.54899,
+          "wirelength_um": 19033,
+          "fmax_mhz": 94.2313,
+          "estimated_power_mw": 0.7081,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_100C_1v60/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_100C_1v60/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_100C_1v60",
+          "content_hash": "sha256:9b24f0db3967ac67b4cae1f74bb480fd47922d18d0ed577e3c121739b412c361"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v28",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 42.6858,
+      "wirelength_um": 21494,
+      "worst_slack_ns": -31.697,
+      "total_negative_slack_ns": -566.638,
+      "fmax_mhz": 23.9825,
+      "setup_violation_count": 98,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.2969,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -39.691,
+          "total_negative_slack_ns": -1104.63
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 41.2861,
+          "worst_slack_ns": -28.7648,
+          "total_negative_slack_ns": -506.551,
+          "wirelength_um": 17325.6,
+          "fmax_mhz": 25.7966,
+          "estimated_power_mw": 0.1413,
+          "setup_violation_count": 84,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 42.6858,
+          "worst_slack_ns": -29.2796,
+          "total_negative_slack_ns": -522.246,
+          "wirelength_um": 18275.1,
+          "fmax_mhz": 25.4585,
+          "estimated_power_mw": 0.2629,
+          "setup_violation_count": 89,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 42.6858,
+          "worst_slack_ns": -31.697,
+          "total_negative_slack_ns": -566.638,
+          "wirelength_um": 21494,
+          "fmax_mhz": 23.9825,
+          "estimated_power_mw": 0.2969,
+          "setup_violation_count": 98,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v28/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v28/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v28",
+          "content_hash": "sha256:afd8201328f73996b7c80bf13909674ba7b483ec413dea3fca74831cec712578"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v35",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 39.0415,
+      "wirelength_um": 20116,
+      "worst_slack_ns": -17.4314,
+      "total_negative_slack_ns": -303.294,
+      "fmax_mhz": 36.4546,
+      "setup_violation_count": 77,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.4092,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -23.9132,
+          "total_negative_slack_ns": -495.004
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.4162,
+          "worst_slack_ns": -16.0203,
+          "total_negative_slack_ns": -253.974,
+          "wirelength_um": 15549.3,
+          "fmax_mhz": 38.4315,
+          "estimated_power_mw": 0.2008,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 39.0415,
+          "worst_slack_ns": -16.221,
+          "total_negative_slack_ns": -260.97,
+          "wirelength_um": 16322.9,
+          "fmax_mhz": 38.1374,
+          "estimated_power_mw": 0.3439,
+          "setup_violation_count": 48,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 39.0415,
+          "worst_slack_ns": -17.4314,
+          "total_negative_slack_ns": -303.294,
+          "wirelength_um": 20116,
+          "fmax_mhz": 36.4546,
+          "estimated_power_mw": 0.4092,
+          "setup_violation_count": 77,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v35/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v35/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v35",
+          "content_hash": "sha256:8fd5aefd2053feef0a9bd3a5a972680dd77ddb8dda744836611656f37f969855"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v40",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 38.9448,
+      "wirelength_um": 20334,
+      "worst_slack_ns": -12.3045,
+      "total_negative_slack_ns": -194.363,
+      "fmax_mhz": 44.8341,
+      "setup_violation_count": 19,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.454,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -17.3268,
+          "total_negative_slack_ns": -323.871
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.5516,
+          "worst_slack_ns": -10.9364,
+          "total_negative_slack_ns": -172.649,
+          "wirelength_um": 15765.6,
+          "fmax_mhz": 47.7637,
+          "estimated_power_mw": 0.2589,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.9448,
+          "worst_slack_ns": -11.3139,
+          "total_negative_slack_ns": -177.31,
+          "wirelength_um": 16552.8,
+          "fmax_mhz": 46.9178,
+          "estimated_power_mw": 0.364,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.9448,
+          "worst_slack_ns": -12.3045,
+          "total_negative_slack_ns": -194.363,
+          "wirelength_um": 20334,
+          "fmax_mhz": 44.8341,
+          "estimated_power_mw": 0.454,
+          "setup_violation_count": 19,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v40/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v40/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v40",
+          "content_hash": "sha256:2c6c61b165c313a6eb18d805431f981cebf9cf138cec39a67d01ea99f63a4717"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v44",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 38.7835,
+      "wirelength_um": 19688,
+      "worst_slack_ns": -9.13439,
+      "total_negative_slack_ns": -142.507,
+      "fmax_mhz": 52.2619,
+      "setup_violation_count": 16,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.5188,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -13.541,
+          "total_negative_slack_ns": -228.225
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.3259,
+          "worst_slack_ns": -7.97672,
+          "total_negative_slack_ns": -124.124,
+          "wirelength_um": 15366.8,
+          "fmax_mhz": 55.6275,
+          "estimated_power_mw": 0.3074,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.7835,
+          "worst_slack_ns": -8.1743,
+          "total_negative_slack_ns": -127.555,
+          "wirelength_um": 16150.3,
+          "fmax_mhz": 55.0228,
+          "estimated_power_mw": 0.4329,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.7835,
+          "worst_slack_ns": -9.13439,
+          "total_negative_slack_ns": -142.507,
+          "wirelength_um": 19688,
+          "fmax_mhz": 52.2619,
+          "estimated_power_mw": 0.5188,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v44/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v44/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v44",
+          "content_hash": "sha256:88814187f8226bb6e7ad394a1afef161eb1c4006ed1f095cc31ab0da7dae1f0f"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v60",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 38.9254,
+      "wirelength_um": 19039,
+      "worst_slack_ns": -2.03868,
+      "total_negative_slack_ns": -30.3564,
+      "fmax_mhz": 83.0656,
+      "setup_violation_count": 16,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.6767,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -4.62385,
+          "total_negative_slack_ns": -67.0338
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.5838,
+          "worst_slack_ns": -1.5698,
+          "total_negative_slack_ns": -23.0947,
+          "wirelength_um": 14898.1,
+          "fmax_mhz": 86.432,
+          "estimated_power_mw": 0.4208,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.9254,
+          "worst_slack_ns": -1.68566,
+          "total_negative_slack_ns": -24.8454,
+          "wirelength_um": 15664.9,
+          "fmax_mhz": 85.575,
+          "estimated_power_mw": 0.6321,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.9254,
+          "worst_slack_ns": -2.03868,
+          "total_negative_slack_ns": -30.3564,
+          "wirelength_um": 19039,
+          "fmax_mhz": 83.0656,
+          "estimated_power_mw": 0.6767,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v60/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v60/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v60",
+          "content_hash": "sha256:23cba893b985a950a7951e3f29ae66ae6a639aaef75c1478e2306fb68d4a7ee5"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v60_ccsnoise",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 38.9254,
+      "wirelength_um": 19039,
+      "worst_slack_ns": -2.03868,
+      "total_negative_slack_ns": -30.3564,
+      "fmax_mhz": 83.0656,
+      "setup_violation_count": 16,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.6767,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -4.62385,
+          "total_negative_slack_ns": -67.0338
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.5838,
+          "worst_slack_ns": -1.5698,
+          "total_negative_slack_ns": -23.0947,
+          "wirelength_um": 14898.1,
+          "fmax_mhz": 86.432,
+          "estimated_power_mw": 0.4208,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.9254,
+          "worst_slack_ns": -1.68566,
+          "total_negative_slack_ns": -24.8454,
+          "wirelength_um": 15664.9,
+          "fmax_mhz": 85.575,
+          "estimated_power_mw": 0.6321,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 38.9254,
+          "worst_slack_ns": -2.03868,
+          "total_negative_slack_ns": -30.3564,
+          "wirelength_um": 19039,
+          "fmax_mhz": 83.0656,
+          "estimated_power_mw": 0.6767,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v60_ccsnoise/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v60_ccsnoise/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v60_ccsnoise",
+          "content_hash": "sha256:699555a07af7b05393dd7cc2b3f5cfdbe4ddebc4efbf2b1a06ac68950c78c90f"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "ss_n40C_1v76",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.5645,
+      "wirelength_um": 18016,
+      "worst_slack_ns": -0.64136,
+      "total_negative_slack_ns": -8.21788,
+      "fmax_mhz": 93.973,
+      "setup_violation_count": 16,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.8843,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": -0.45008,
+          "total_negative_slack_ns": -2.49195
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.9198,
+          "worst_slack_ns": 0.04895,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13573.4,
+          "fmax_mhz": 100.492,
+          "estimated_power_mw": 0.511,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.5645,
+          "worst_slack_ns": -0.07079,
+          "total_negative_slack_ns": -0.28032,
+          "wirelength_um": 14373.8,
+          "fmax_mhz": 99.2971,
+          "estimated_power_mw": 0.8468,
+          "setup_violation_count": 5,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.5645,
+          "worst_slack_ns": -0.64136,
+          "total_negative_slack_ns": -8.21788,
+          "wirelength_um": 18016,
+          "fmax_mhz": 93.973,
+          "estimated_power_mw": 0.8843,
+          "setup_violation_count": 16,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v76/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/ss_n40C_1v76/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__ss_n40C_1v76",
+          "content_hash": "sha256:f4f16d4f7040623afb60d0480a035e4128c5c1212361ae3bd13c3a52d9692a84"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "tt_025C_1v80",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.0808,
+      "wirelength_um": 17805,
+      "worst_slack_ns": 3.31827,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 149.662,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.8758,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 3.88653,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.7392,
+          "worst_slack_ns": 3.74196,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13494.9,
+          "fmax_mhz": 159.794,
+          "estimated_power_mw": 0.5375,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0808,
+          "worst_slack_ns": 3.67136,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14232,
+          "fmax_mhz": 158.012,
+          "estimated_power_mw": 0.834,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.0808,
+          "worst_slack_ns": 3.31827,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17805,
+          "fmax_mhz": 149.662,
+          "estimated_power_mw": 0.8758,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/tt_025C_1v80/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/tt_025C_1v80/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__tt_025C_1v80",
+          "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  },
+  {
+    "corner": "tt_100C_1v80",
+    "run_status": "ok",
+    "response": {
+      "schema_version": 1,
+      "engine": "openroad",
+      "engine_version": "26Q3-1260-g06a5a02279",
+      "hdl_toplevel": "modexp",
+      "status": "ok",
+      "stage_reached": "route",
+      "seed": 42,
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.1453,
+      "wirelength_um": 17998,
+      "worst_slack_ns": 3.49012,
+      "total_negative_slack_ns": 0,
+      "fmax_mhz": 153.613,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "estimated_power_mw": 0.9283,
+      "stages": [
+        {
+          "name": "floorplan",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.4747,
+          "worst_slack_ns": 4.07524,
+          "total_negative_slack_ns": 0
+        },
+        {
+          "name": "place",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 35.636,
+          "worst_slack_ns": 3.92161,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 13515.7,
+          "fmax_mhz": 164.517,
+          "estimated_power_mw": 0.546,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "cts",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.1453,
+          "worst_slack_ns": 3.85215,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 14327.9,
+          "fmax_mhz": 162.658,
+          "estimated_power_mw": 0.8886,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        },
+        {
+          "name": "route",
+          "die_area_um2": 21969.2,
+          "core_area_um2": 19398.6,
+          "utilization_pct": 37.1453,
+          "worst_slack_ns": 3.49012,
+          "total_negative_slack_ns": 0,
+          "wirelength_um": 17998,
+          "fmax_mhz": 153.613,
+          "estimated_power_mw": 0.9283,
+          "setup_violation_count": 0,
+          "hold_violation_count": 0
+        }
+      ],
+      "macros": [],
+      "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/tt_100C_1v80/.klt/place-and-route/modexp.def",
+      "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-7/flow/corners/tt_100C_1v80/.klt/place-and-route/modexp.gds",
+      "provenance": {
+        "klt_version": "0.2.0",
+        "klayout_version": "0.30.10",
+        "pdk": {
+          "name": "sky130A",
+          "source": "search root: ~/.volare",
+          "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        },
+        "deck": {
+          "name": "sky130_fd_sc_hd__tt_100C_1v80",
+          "content_hash": "sha256:7c6b9fc62d7e83b8317cdca883d79107d8f2ff1061b04519fda7d3088560015b"
+        },
+        "input": {
+          "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+        }
+      }
+    }
+  }
+]

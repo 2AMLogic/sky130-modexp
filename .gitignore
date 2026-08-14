@@ -8,6 +8,11 @@ __pycache__/
 # synthesis / P&R scratch
 flow/build/
 flow/reports/scratch/
+# flow/run-corner-sweep.sh's per-corner scratch requests/outputs and its
+# aggregated summary -- regenerated on demand; the evidence that matters is
+# frozen under verification/records/place-and-route/artifacts/ instead.
+flow/corners/
+flow/corner-sweep-results.json
 # local klt install, created by the setup script
 .venv/
 
