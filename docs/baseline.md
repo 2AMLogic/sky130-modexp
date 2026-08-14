@@ -120,3 +120,120 @@ So the program is:
 The load-bearing argument was never the external number. It is that a
 mixed-signal design system requires a digital flow underneath it, which makes
 this block a prerequisite rather than a detour.
+
+## Place-and-route baseline (constrained, 100 MHz) — appended, issue #7
+
+**Status: measured, 2026-08-14.** This section is an *addition* to this
+document, not a correction — the 682-cell figure above is the **unconstrained
+synthesis** cell count and remains exactly as measured. This section is the
+first **place-and-route** measurement (`klt place-and-route`, OpenROAD:
+floorplan → place → cts → route, DEF→GDS merge), constrained to the 100 MHz
+Phase 2 clock target `spec/modexp.md` Decision 2 names, at the nominal corner
+(`tt_025C_1v80`) Decision 4 of
+[`spec/decision-records/0001-input-domain-interface-and-corner-matrix.md`](../spec/decision-records/0001-input-domain-interface-and-corner-matrix.md)
+holds that target to. It answers Decision 2's and Decision 4's revisit
+triggers with the first *measured* Fmax and area this design has ever had —
+neither existed before this run (`klt synthesize`'s own contract keeps
+`timing` `null` by design, deferring every timing number to this step).
+
+### The measurement
+
+| Quantity | Unconstrained synthesis (existing, above) | Constrained P&R, 100 MHz, `tt_025C_1v80` (this section) |
+| --- | --- | --- |
+| sky130 cell count (`WIDTH=16`) | **682** | **718** (683 after floorplan's tie-cell insertion, 686 after placement's `repair_design`/`repair_timing`, 718 after clock-tree synthesis) |
+| Clock constraint | none (`constraints.clock_period_ns: null`) | 100 MHz (`clock_period_ns: 10.0`) |
+| Die area | not measured (synthesis has no floorplan) | 21969.2 µm² |
+| Core area | not measured | 19398.6 µm² |
+| Utilization | not measured | 37.08% |
+| Achieved Fmax at `tt_025C_1v80` | not measured | **149.66 MHz** (worst setup slack **+3.318 ns** at the 10 ns/100 MHz constraint — closes with margin, not just barely) |
+| Setup / hold violations at `tt_025C_1v80` | not measured | 0 / 0 |
+| Estimated power at `tt_025C_1v80` | not measured | 0.876 mW |
+| Routed wirelength | not measured | 17805 µm |
+
+**100 MHz closes at the nominal corner, with margin** — the achieved Fmax
+(149.66 MHz) is the measured number Decision 2's revisit trigger names;
+future work is held to it, not to the 100 MHz target it supersedes. Decision
+4's area revisit trigger is answered by the die/core area figures above.
+
+**The cell-count increase (682 → 718) is not a Phase 2 regression.** It is
+what the *same* correct RTL costs once actually placed, clocked, and routed:
+one tie cell (a real klayout-tools gap — see `flow/README.md`'s "Known
+upstream gaps"), a handful of buffers OpenROAD's `repair_design`/
+`repair_timing` insert during placement, and a clock tree CTS builds to
+distribute `clk` — none of these existed as a concept at the unconstrained-
+synthesis stage, which never floorplans, places, or builds a clock tree.
+
+### Full corner-matrix sweep
+
+Decision 4 of the same decision record ratifies all eighteen installed
+`sky130_fd_sc_hd` liberty corners as this block's corner matrix, with the 100
+MHz Phase 2 target held at the nominal corner specifically (full 18-corner
+closure is named there as a later T1 sign-off requirement, not a per-commit
+Phase 2 gate) — this run still sweeps every one of them, independently
+(`flow/run-corner-sweep.sh`; see `flow/README.md`'s "Known upstream gaps" for
+why each corner is a full independent P&R run rather than a single
+physical build re-timed per corner), rather than reporting `tt_025C_1v80`
+alone:
+
+| Corner | WNS (ns) | TNS (ns) | Fmax (MHz) | Setup viol. | Hold viol. | Utilization | Power (mW) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `ff_100C_1v65` | 4.444 | 0.000 | 179.98 | 0 | 0 | 37.05% | 0.7690 |
+| `ff_100C_1v95` | 5.719 | 0.000 | 233.57 | 0 | 0 | 37.02% | 1.0898 |
+| `ff_n40C_1v56` | 3.631 | 0.000 | 157.02 | 0 | 0 | 37.25% | 0.6590 |
+| `ff_n40C_1v65` | 4.185 | 0.000 | 171.96 | 0 | 0 | 37.09% | 0.7394 |
+| `ff_n40C_1v76` | 4.596 | 0.000 | 185.04 | 0 | 0 | 37.19% | 0.8465 |
+| `ff_n40C_1v95` | 5.634 | 0.000 | 229.05 | 0 | 0 | 37.02% | 1.0440 |
+| `ff_n40C_1v95_ccsnoise` | 5.634 | 0.000 | 229.05 | 0 | 0 | 37.02% | 1.0440 |
+| `ss_100C_1v40` | **-4.154** | -64.724 | 70.65 | 16 | 0 | 39.03% | 0.5297 |
+| `ss_100C_1v60` | **-0.612** | -8.549 | 94.23 | 16 | 0 | 38.07% | 0.7081 |
+| `ss_n40C_1v28` | **-31.697** | -566.638 | 23.98 | 98 | 0 | 42.69% | 0.2969 |
+| `ss_n40C_1v35` | **-17.431** | -303.294 | 36.45 | 77 | 0 | 39.04% | 0.4092 |
+| `ss_n40C_1v40` | **-12.305** | -194.363 | 44.83 | 19 | 0 | 38.94% | 0.4540 |
+| `ss_n40C_1v44` | **-9.134** | -142.507 | 52.26 | 16 | 0 | 38.78% | 0.5188 |
+| `ss_n40C_1v60` | **-2.039** | -30.356 | 83.07 | 16 | 0 | 38.93% | 0.6767 |
+| `ss_n40C_1v60_ccsnoise` | **-2.039** | -30.356 | 83.07 | 16 | 0 | 38.93% | 0.6767 |
+| `ss_n40C_1v76` | **-0.641** | -8.218 | 93.97 | 16 | 0 | 37.56% | 0.8843 |
+| `tt_025C_1v80` | 3.318 | 0.000 | 149.66 | 0 | 0 | 37.08% | 0.8758 |
+| `tt_100C_1v80` | 3.490 | 0.000 | 153.61 | 0 | 0 | 37.15% | 0.9283 |
+
+Bold negative WNS marks a corner that does **not** close at 100 MHz.
+
+**Finding: 100 MHz closes at every `tt`/`ff` corner, and at none of the nine
+`ss` (slow-process) corners.** All seven `ff` corners and both `tt` corners
+close with 3.3–5.7 ns of positive margin (Fmax 149.7–233.6 MHz). Every `ss`
+corner fails, from a 0.6 ns shortfall at the mildest (`ss_n40C_1v76`,
+93.97 MHz achievable) to a 31.7 ns shortfall at the worst (`ss_n40C_1v28`,
+the binding corner: only **23.98 MHz** achievable, 98 endpoints violating).
+This is not a per-commit Phase 2 gate failure — Decision 4 explicitly holds
+the 100 MHz Phase 2 target to the nominal corner alone, which closes — but
+it is a real, measured T1 sign-off gap this record exists to surface rather
+than to paper over. The critical path at the binding corner
+(`ss_n40C_1v28`) is a synchronous flop-to-flop path through an 18-bit
+ripple-carry adder (`maj3`/`xnor2` full-adder chain) immediately followed by
+a long chain of `a21oi`/`o21ai`/`o211a`-class gates implementing a compare-
+and-subtract mux tree — bit-exact with `rtl/modexp.v`'s `mm_sum`
+(`mm_p2 + mm_add`, an 18-bit add for `WIDTH=16`) feeding `mm_red`'s two
+serially-dependent `(mm_sum >= mm_m2) ? ... : (mm_sum >= mm_m1) ? ... : ...`
+compare-and-subtract stages (`rtl/modexp.v` lines 68–75), all combinational
+within one `S_MM_RUN` cycle — **exactly the path issue #7 predicted before
+this run**. The raw `report_checks` path is frozen as an artifact
+(`ss_n40C_1v28-critical-path.txt`). Per this issue's own constraint, this
+shortfall is recorded here rather than acted on: the clock constraint in
+`flow/par-modexp.json` is not relaxed, and `spec/modexp.md` is not edited.
+See issue #16 for the decision record this finding
+requires.
+
+The full per-corner `klt place-and-route` JSON envelopes are frozen as
+artifacts under
+`verification/records/place-and-route/artifacts/20260814-203901-c741877/`.
+
+### What this run does not claim
+
+Per `klt place-and-route`'s documented scope, the produced GDS
+(`layout/modexp.gds`) has **no tapcell insertion, no power-grid (PDN)
+generation, no metal fill, no filler-cell insertion, and no
+`DONT_USE_CELLS` exclusion** — core-only floorplanning, no IO ring. It is
+not a signoff-ready macro; DRC/LVS-clean signoff is later work (issue #8 and
+beyond). The full record, including provenance and the reproduction recipe,
+is at
+[`verification/records/place-and-route/`](../verification/records/place-and-route/).

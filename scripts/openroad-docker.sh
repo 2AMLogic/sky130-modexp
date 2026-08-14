@@ -22,11 +22,26 @@
 #   ./scripts/openroad-docker.sh -version
 #   ./scripts/openroad-docker.sh -no_init -exit script.tcl
 #
-# The current working directory is bind-mounted into the container at
-# /workspace (also the container's working directory), so relative paths in
-# a Tcl script (read_lef, write_def, etc.) resolve the same way they would
-# against a natively-installed `openroad`. Set OPENROAD_DOCKER_MOUNT to
-# bind-mount a different host directory instead.
+# The current working directory is bind-mounted into the container at the
+# *same absolute path* it has on the host (not at a fixed /workspace) --
+# both the mount source and target are ${MOUNT_DIR}, and the container's
+# working directory is set to that same path. This matters beyond relative
+# paths: `klt place-and-route` (klayout-tools) generates its per-stage Tcl
+# scripts with **absolute host paths** baked in throughout -- the netlist,
+# LEF/liberty deck, and every `-metrics`/`write_db`/`write_def` output path
+# are all `os.path.abspath()`-resolved before being written into the script
+# or passed as an `openroad` CLI argument. An earlier revision of this
+# script bind-mounted the host directory at a container-internal
+# `/workspace` instead, which works for the relative-path-only smoke test
+# (`scripts/openroad-smoke-test.sh`) but silently fails any real
+# `klt place-and-route` run: every absolute host path a stage script
+# references (e.g. `/Users/you/.volare/sky130A/...` for the liberty/LEF
+# deck, which lives *outside* the repo entirely) resolves to nothing inside
+# a container whose filesystem was never given that path. Mounting
+# source==target for both the repo tree and the resolved PDK root (below)
+# is what makes those absolute paths resolve identically on both sides of
+# the container boundary. Set OPENROAD_DOCKER_MOUNT to bind-mount a
+# different host directory instead of $(pwd).
 #
 # -- pinned version -- keep in sync with docs/environment.md -----------------
 # `openroad -version` inside this image reports 26Q3-1260-g06a5a02279.
@@ -51,6 +66,28 @@ fi
 
 MOUNT_DIR="${OPENROAD_DOCKER_MOUNT:-$(pwd)}"
 
+# Resolve the PDK root the same way klayout-tools' `find_pdk()` does
+# (docs/environment.md / klayout_tools/pdk.py resolution order: $PDK_ROOT
+# env var, then ~/.ciel, then ~/.volare) so it can be bind-mounted too --
+# `klt place-and-route`/`klt synthesize` resolve liberty/LEF paths under
+# there, and those absolute host paths need to exist inside the container
+# at the identical path (see comment block above). Best-effort: if none of
+# these exist, no extra mount is added and a downstream `openroad` "cannot
+# read file" error will point at the same gap this comment describes.
+PDK_MOUNT_DIR=""
+if [ -n "${PDK_ROOT:-}" ] && [ -d "${PDK_ROOT}" ]; then
+  PDK_MOUNT_DIR="${PDK_ROOT}"
+elif [ -d "${HOME}/.ciel" ]; then
+  PDK_MOUNT_DIR="${HOME}/.ciel"
+elif [ -d "${HOME}/.volare" ]; then
+  PDK_MOUNT_DIR="${HOME}/.volare"
+fi
+
+VOLUME_ARGS=(-v "${MOUNT_DIR}:${MOUNT_DIR}")
+if [ -n "${PDK_MOUNT_DIR}" ] && [ "${PDK_MOUNT_DIR}" != "${MOUNT_DIR}" ]; then
+  VOLUME_ARGS+=(-v "${PDK_MOUNT_DIR}:${PDK_MOUNT_DIR}")
+fi
+
 # Forward a small allowlist of ORFS/OpenROAD-relevant env vars from the host
 # shell into the container, if set there -- e.g. PLATFORM_DIR (this repo's
 # own scripts/openroad-smoke-test.sh sets it to point at the image's bundled
@@ -59,8 +96,8 @@ MOUNT_DIR="${OPENROAD_DOCKER_MOUNT:-$(pwd)}"
 ENV_ARGS=(-e PLATFORM_DIR -e PDK_ROOT)
 
 exec docker run --rm --platform linux/amd64 \
-  -v "${MOUNT_DIR}:/workspace" \
-  -w /workspace \
+  "${VOLUME_ARGS[@]}" \
+  -w "${MOUNT_DIR}" \
   "${ENV_ARGS[@]}" \
   "${OPENROAD_DOCKER_IMAGE}@${OPENROAD_DOCKER_DIGEST}" \
   bash -lc 'source /OpenROAD-flow-scripts/env.sh >/dev/null 2>&1 && exec openroad "$@"' bash "$@"
