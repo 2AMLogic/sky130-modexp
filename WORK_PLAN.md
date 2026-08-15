@@ -22,20 +22,19 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#23**: Remove duplicated reset/run_modexp DUT helpers across verification test files
-- **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set
+_None._
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#27**: refactor: extract shared DUT reset/run_modexp helpers into verification/_dut.py
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -47,7 +46,6 @@ PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 Issues carrying `loom:curated`.
 
-- **#25**: bug: cross_check.py never re-execs into .venv, so npm run test fails on a provisioned local checkout *(curated)*
 - **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -65,11 +63,11 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Urgent | 0 |
-| Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 1 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 0 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 2 |
+| Curated | 1 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
