@@ -34,6 +34,11 @@ need a concrete schema to be checkable rather than aspirational:
   `klt functional-verification` (see `request-modexp.json`). Migrated from
   `2AMLogic/klayout-tools` (PR #488) and relicensed Apache-2.0 by the
   copyright holder; see issue #2.
+- `_dut.py` — shared `reset(dut)` / `run_modexp(dut, base, exp, mod, ...)`
+  DUT-driving coroutines (reset sequencing, start/done handshake, timeout
+  loop), imported as a sibling module by `test_modexp.py`, `cross_check_tb.py`,
+  and `repro_out_of_domain_mismatch.py` so the drive logic lives in one place
+  instead of three byte-identical copies.
 - `request-modexp.json` — `klt functional-verification` request driving
   `test_modexp.py` against `modexp.v` (default `WIDTH=16`) via Icarus.
 - `cross_check.py` / `cross_check_tb.py` — the deterministic multi-`WIDTH`
