@@ -44,14 +44,14 @@ Exit codes: 0 pass, 1 a check failed.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+from _repo_utils import REPO_ROOT, run_git, sha256_of
+
 RECORDS_ROOT = REPO_ROOT / "verification" / "records"
 
 RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
@@ -85,20 +85,8 @@ class LintError(Exception):
     pass
 
 
-def _run_git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=REPO_ROOT,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or f"git {' '.join(args)} failed")
-    return result.stdout
-
-
 def _tracked_record_files() -> list[Path]:
-    out = _run_git("ls-files", "--", "verification/records/**/records/*.md")
+    out = run_git("ls-files", "--", "verification/records/**/records/*.md")
     return sorted(REPO_ROOT / line for line in out.splitlines() if line.strip())
 
 
@@ -148,10 +136,6 @@ def _extract_prose_fields(text: str) -> dict:
         fields[name] = value
         i = j if j > i + 1 else i + 1
     return fields
-
-
-def _sha256_of(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def lint_record(path: Path, all_record_ids_by_experiment: dict) -> list[str]:
@@ -240,7 +224,7 @@ def check_hash_freshness(path: Path, superseded_ids: set) -> list[str]:
                 f"{path}: input `{rel_path}` no longer exists in the working tree"
             )
             continue
-        current_hash = _sha256_of(src)
+        current_hash = sha256_of(src)
         if current_hash != recorded_hash:
             errors.append(
                 f"{path}: provenance hash for `{rel_path}` is stale -- "
@@ -252,20 +236,22 @@ def check_hash_freshness(path: Path, superseded_ids: set) -> list[str]:
 
 def check_append_only(base_ref: str, require: bool) -> list[str]:
     try:
-        merge_base = _run_git("merge-base", base_ref, "HEAD").strip()
-    except RuntimeError as exc:
-        msg = f"append-only check: could not resolve base ref `{base_ref}` ({exc})"
+        merge_base = run_git("merge-base", base_ref, "HEAD")
+    except subprocess.CalledProcessError as exc:
+        detail = (exc.stderr or str(exc)).strip()
+        msg = f"append-only check: could not resolve base ref `{base_ref}` ({detail})"
         if require:
             return [msg]
         print(f"SKIP: {msg}")
         return []
 
     try:
-        diff = _run_git(
+        diff = run_git(
             "diff", "--name-status", merge_base, "HEAD", "--", "verification/records/"
         )
-    except RuntimeError as exc:
-        msg = f"append-only check: `git diff` failed ({exc})"
+    except subprocess.CalledProcessError as exc:
+        detail = (exc.stderr or str(exc)).strip()
+        msg = f"append-only check: `git diff` failed ({detail})"
         if require:
             return [msg]
         print(f"SKIP: {msg}")

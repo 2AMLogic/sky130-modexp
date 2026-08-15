@@ -42,7 +42,6 @@ from __future__ import annotations
 
 import argparse
 import datetime
-import hashlib
 import json
 import os
 import shutil
@@ -51,8 +50,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+from _repo_utils import REPO_ROOT, run_git, sha256_of
+
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent
 RTL_SOURCE = REPO_ROOT / "rtl" / "modexp.v"
 TESTBENCH_SOURCE = SCRIPT_DIR / "cross_check_tb.py"
 VENV_PYTHON = REPO_ROOT / ".venv" / "bin" / "python3"
@@ -130,19 +130,9 @@ def _require_cocotb() -> None:
         raise SystemExit(1) from None
 
 
-def _sha256(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _git(*args: str) -> str:
-    return subprocess.run(
-        ["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=True
-    ).stdout.strip()
-
-
 def _git_revision() -> str:
     try:
-        return _git("rev-parse", "HEAD")
+        return run_git("rev-parse", "HEAD")
     except subprocess.CalledProcessError:
         return "unknown"
 
@@ -246,10 +236,10 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
     records_dir.mkdir(parents=True, exist_ok=True)
 
     input_hashes = [
-        {"path": "rtl/modexp.v", "content_hash": _sha256(RTL_SOURCE)},
+        {"path": "rtl/modexp.v", "content_hash": sha256_of(RTL_SOURCE)},
         {
             "path": "verification/cross_check_tb.py",
-            "content_hash": _sha256(TESTBENCH_SOURCE),
+            "content_hash": sha256_of(TESTBENCH_SOURCE),
         },
     ]
 
