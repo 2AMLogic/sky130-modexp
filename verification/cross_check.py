@@ -50,12 +50,11 @@ import sys
 import tempfile
 from pathlib import Path
 
-from _repo_utils import REPO_ROOT, run_git, sha256_of
+from _repo_utils import REPO_ROOT, reexec_into_venv_if_needed, run_git, sha256_of
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 RTL_SOURCE = REPO_ROOT / "rtl" / "modexp.v"
 TESTBENCH_SOURCE = SCRIPT_DIR / "cross_check_tb.py"
-VENV_PYTHON = REPO_ROOT / ".venv" / "bin" / "python3"
 
 DEFAULT_WIDTHS = (4, 6, 8, 16)
 DEFAULT_CASES = 500
@@ -65,51 +64,6 @@ DEFAULT_CASES = 500
 PINNED_BASE_SEED = 20260807
 
 sys.path.insert(0, str(SCRIPT_DIR))
-
-
-def _reexec_into_venv_if_needed() -> None:
-    """Re-exec under `.venv/bin/python3` when the current interpreter cannot
-    import cocotb but the provisioned venv can.
-
-    `scripts/setup-env.sh` installs cocotb/klt into `<repo>/.venv`, and the
-    host's default `python3` is frequently a newer interpreter than cocotb
-    supports. Without this, `npm run test` -- which invokes a bare `python3`
-    -- fails on a correctly-provisioned checkout with an ImportError that
-    tells the reader nothing useful. Re-exec is skipped when cocotb already
-    imports, when no venv exists, or when we are already the venv's python
-    (so this can never loop).
-    """
-    try:
-        import cocotb_tools.runner  # noqa: F401
-
-        return
-    except ImportError:
-        pass
-
-    if not VENV_PYTHON.exists():
-        return
-    # Compare the interpreter *directory*, not the resolved binary: a venv's
-    # `bin/python3` is a symlink chain that ends at the same system
-    # interpreter `sys.executable` resolves to from *outside* the venv too
-    # (`.venv/bin/python3` -> `python3.12` -> `/usr/bin/python3.12`), so
-    # comparing *resolved* paths (on either or both sides) falsely reports
-    # "already in the venv" and skips the re-exec even when running under
-    # the ambient interpreter. Compare the unresolved parent directories
-    # instead -- when actually invoked as `.venv/bin/python3`,
-    # `sys.executable` is that literal (unresolved) path.
-    if Path(sys.executable).parent == VENV_PYTHON.parent:
-        return
-    if os.environ.get("CROSS_CHECK_NO_REEXEC") == "1":
-        return
-
-    os.environ["CROSS_CHECK_NO_REEXEC"] = "1"
-    print(
-        f"note: cocotb is not importable under {sys.executable}; "
-        f"re-executing under {VENV_PYTHON}",
-        file=sys.stderr,
-        flush=True,
-    )
-    os.execv(str(VENV_PYTHON), [str(VENV_PYTHON), str(Path(__file__).resolve()), *sys.argv[1:]])
 
 
 def _require_cocotb() -> None:
@@ -443,5 +397,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    _reexec_into_venv_if_needed()
+    reexec_into_venv_if_needed(Path(__file__), "CROSS_CHECK_NO_REEXEC")
     raise SystemExit(main())
