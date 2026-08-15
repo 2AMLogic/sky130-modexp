@@ -217,9 +217,7 @@ def lint_record(path: Path, all_record_ids_by_experiment: dict) -> list[str]:
     return errors
 
 
-def check_hash_freshness(
-    path: Path, superseded_ids: set, base_dir_for_relpaths: Path
-) -> list[str]:
+def check_hash_freshness(path: Path, superseded_ids: set) -> list[str]:
     errors = []
     text = path.read_text(encoding="utf-8")
     try:
@@ -345,7 +343,7 @@ def main() -> int:
 
     for path in record_files:
         errors = lint_record(path, all_ids_by_experiment)
-        errors += check_hash_freshness(path, superseded_ids, path.parent.parent)
+        errors += check_hash_freshness(path, superseded_ids)
         if errors:
             print(f"FAIL: {path.relative_to(REPO_ROOT)}")
             for e in errors:
