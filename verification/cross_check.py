@@ -88,7 +88,16 @@ def _reexec_into_venv_if_needed() -> None:
 
     if not VENV_PYTHON.exists():
         return
-    if Path(sys.executable).resolve() == VENV_PYTHON.resolve():
+    # Compare the interpreter *directory*, not the resolved binary: a venv's
+    # `bin/python3` is a symlink chain that ends at the same system
+    # interpreter `sys.executable` resolves to from *outside* the venv too
+    # (`.venv/bin/python3` -> `python3.12` -> `/usr/bin/python3.12`), so
+    # comparing *resolved* paths (on either or both sides) falsely reports
+    # "already in the venv" and skips the re-exec even when running under
+    # the ambient interpreter. Compare the unresolved parent directories
+    # instead -- when actually invoked as `.venv/bin/python3`,
+    # `sys.executable` is that literal (unresolved) path.
+    if Path(sys.executable).parent == VENV_PYTHON.parent:
         return
     if os.environ.get("CROSS_CHECK_NO_REEXEC") == "1":
         return
