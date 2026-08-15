@@ -43,3 +43,14 @@ ring. This is evidence toward `spec/modexp.md` Decision 2 (clock target)
 and Decision 4 (area target)'s revisit triggers, **not** a signoff-ready
 macro — DRC/LVS-clean signoff on this GDS is a later issue's job (see
 `spec/decision-records/0001-...`'s T1 evidence mapping, items 3/4).
+
+## Signoff status (#8)
+
+DRC and LVS have been run against this GDS — see `docs/signoff-claim.md`
+for the single authoritative claim. Verdict: `spec/modexp.md`'s Signoff row
+is **not met**, stated plainly. Every DRC violation (`layout/drc/`) and
+every LVS mismatch (`layout/lvs/`) is individually classified with
+supporting evidence; none is a real defect in this design, and both trace
+back to the missing flow stages already documented above (no filler cells,
+no PDN) plus one `klt` check-engine limitation and one missing `klt`
+capability, both filed upstream (linked from `docs/signoff-claim.md`).
