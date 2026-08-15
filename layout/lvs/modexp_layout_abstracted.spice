@@ -1,0 +1,2875 @@
+* extracted by klt extract --deck sky130
+
+* cell modexp
+* pin base_in[0]
+* pin base_in[10]
+* pin base_in[11]
+* pin base_in[12]
+* pin base_in[13]
+* pin base_in[14]
+* pin base_in[15]
+* pin base_in[1]
+* pin base_in[2]
+* pin base_in[3]
+* pin base_in[4]
+* pin base_in[5]
+* pin base_in[6]
+* pin base_in[7]
+* pin base_in[8]
+* pin base_in[9]
+* pin clk
+* pin done
+* pin exp_in[0]
+* pin exp_in[10]
+* pin exp_in[11]
+* pin exp_in[12]
+* pin exp_in[13]
+* pin exp_in[14]
+* pin exp_in[15]
+* pin exp_in[1]
+* pin exp_in[2]
+* pin exp_in[3]
+* pin exp_in[4]
+* pin exp_in[5]
+* pin exp_in[6]
+* pin exp_in[7]
+* pin exp_in[8]
+* pin exp_in[9]
+* pin mod_in[0]
+* pin mod_in[10]
+* pin mod_in[11]
+* pin mod_in[12]
+* pin mod_in[13]
+* pin mod_in[14]
+* pin mod_in[15]
+* pin mod_in[1]
+* pin mod_in[2]
+* pin mod_in[3]
+* pin mod_in[4]
+* pin mod_in[5]
+* pin mod_in[6]
+* pin mod_in[7]
+* pin mod_in[8]
+* pin mod_in[9]
+* pin result[0]
+* pin result[10]
+* pin result[11]
+* pin result[12]
+* pin result[13]
+* pin result[14]
+* pin result[15]
+* pin result[1]
+* pin result[2]
+* pin result[3]
+* pin result[4]
+* pin result[5]
+* pin result[6]
+* pin result[7]
+* pin result[8]
+* pin result[9]
+* pin rst_n
+* pin start
+.SUBCKT modexp base_in[0] base_in[10] base_in[11] base_in[12] base_in[13]
++ base_in[14] base_in[15] base_in[1] base_in[2] base_in[3] base_in[4]
++ base_in[5] base_in[6] base_in[7] base_in[8] base_in[9] clk done exp_in[0]
++ exp_in[10] exp_in[11] exp_in[12] exp_in[13] exp_in[14] exp_in[15] exp_in[1]
++ exp_in[2] exp_in[3] exp_in[4] exp_in[5] exp_in[6] exp_in[7] exp_in[8]
++ exp_in[9] mod_in[0] mod_in[10] mod_in[11] mod_in[12] mod_in[13] mod_in[14]
++ mod_in[15] mod_in[1] mod_in[2] mod_in[3] mod_in[4] mod_in[5] mod_in[6]
++ mod_in[7] mod_in[8] mod_in[9] result[0] result[10] result[11] result[12]
++ result[13] result[14] result[15] result[1] result[2] result[3] result[4]
++ result[5] result[6] result[7] result[8] result[9] rst_n start
+* cell instance sky130_fd_sc_hd__a211o_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a211o_1_0 \$1921 \$2230 \$2232 \$2152 \$2296 \$2367 \$2367
++ \$2320 sky130_fd_sc_hd__a211o_1
+* cell instance sky130_fd_sc_hd__a211o_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a211o_1_1 \$2739 \$2776 \$2781 \$2832 \$2865 \$2833 \$2833
++ \$2863 sky130_fd_sc_hd__a211o_1
+* cell instance sky130_fd_sc_hd__a211oi_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a211oi_1_0 \$1115 \$2064 \$2114 \$890 \$2125 \$2055 \$2055
++ \$2031 sky130_fd_sc_hd__a211oi_1
+* cell instance sky130_fd_sc_hd__a211oi_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a211oi_1_1 \$1115 \$2504 \$2505 \$890 \$2570 \$2645 \$2645
++ \$2590 sky130_fd_sc_hd__a211oi_1
+* cell instance sky130_fd_sc_hd__a211oi_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a211oi_1_2 \$2018 \$2118 \$1873 \$2024 \$2130 \$2041 \$2041
++ \$1602 sky130_fd_sc_hd__a211oi_1
+* cell instance sky130_fd_sc_hd__a211oi_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a211oi_1_3 \$2453 \$2482 \$2698 \$2612 \$2582 \$2654 \$2654
++ \$2613 sky130_fd_sc_hd__a211oi_1
+* cell instance sky130_fd_sc_hd__a211oi_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a211oi_1_4 \$1115 \$2417 \$2420 \$890 \$2454 \$2380 \$2380
++ \$2421 sky130_fd_sc_hd__a211oi_1
+* cell instance sky130_fd_sc_hd__a21boi_0_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a21boi_0_0 \$666 \$440 \$684 \$803 \$700 \$700 \$683
++ sky130_fd_sc_hd__a21boi_0
+* cell instance sky130_fd_sc_hd__a21boi_0_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a21boi_0_1 \$1459 \$1460 \$1157 \$1809 \$1726 \$1726 \$1628
++ sky130_fd_sc_hd__a21boi_0
+* cell instance sky130_fd_sc_hd__a21o_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_0 \$849 \$1440 \$823 \$1461 \$1372 \$1372 \$1460
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21o_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_1 \$1921 \$2230 \$2152 \$2432 \$2367 \$2367 \$2433
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21o_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_2 \$849 \$1451 \$2229 \$2303 \$2374 \$2374 \$2368
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21o_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_3 \$2855 \$2863 \$2840 \$2869 \$2839 \$2839 \$2823
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21o_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_4 \$1030 \$849 \$1199 \$1321 \$1383 \$1383 \$1358
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21o_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_5 \$849 \$1198 \$1526 \$1643 \$1557 \$1557 \$1527
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21o_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__a21o_1_6 \$849 \$780 \$668 \$980 \$875 \$875 \$874
++ sky130_fd_sc_hd__a21o_1
+* cell instance sky130_fd_sc_hd__a21oi_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_0 \$217 \$215 \$216 \$225 \$138 \$138 \$198
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_1 \$1476 \$1530 \$1571 \$1809 \$1725 \$1725 \$1564
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_2 \$666 \$716 \$820 \$803 \$891 \$891 \$821
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_3 \$849 \$1131 \$1631 \$1809 \$1893 \$1893 \$1896
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_4 \$824 \$604 \$822 \$805 \$865 \$865 \$881
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_5 \$849 \$1619 \$2115 \$2127 \$2210 \$2210 \$2189
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_6 \$921 \$613 \$1001 \$970 \$1053 \$1053 \$996
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_7 \$2368 \$2320 \$2437 \$2436 \$2358 \$2358 \$2392
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_8 \$849 \$1213 \$2177 \$2303 \$2196 \$2196 \$2243
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_9 \$849 \$1452 \$2394 \$2441 \$2375 \$2375 \$2397
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_10 \$2739 \$2776 \$2781 \$2799 \$2833 \$2833 \$2834
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_11 \$2741 \$2671 \$2742 \$2800 \$2763 \$2763 \$2694
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_12 \$849 \$1718 \$2116 \$2305 \$2212 \$2212 \$2254
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_13 \$2822 \$2823 \$2805 \$2870 \$2842 \$2842 \$2754
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_14 \$2719 \$2682 \$2639 \$2718 \$2652 \$2652 \$2683
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_15 \$849 \$1694 \$2117 \$1975 \$2041 \$2041 \$2039
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_16 \$849 \$1401 \$1806 \$1975 \$1892 \$1892 \$1601
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_17 \$2018 \$2118 \$2024 \$1975 \$2041 \$2041 \$2025
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_18 \$1366 \$1386 \$1365 \$1471 \$1558 \$1558 \$1302
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_19 \$2453 \$2428 \$2353 \$2455 \$2500 \$2500 \$1963
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a21oi_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__a21oi_1_20 \$1037 \$1048 \$1036 \$1148 \$1234 \$1234 \$680
++ sky130_fd_sc_hd__a21oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_0 \$1128 \$1121 \$1120 \$1309 \$1298 result[1]
++ \$1308 \$1208 \$1208 \$1307 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_1 \$1128 \$1309 \$1120 \$1523 \$1298 result[2]
++ \$1462 \$1561 \$1561 \$1538 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_2 \$1128 \$1523 \$1120 \$1524 \$1298 result[3]
++ \$1474 \$1543 \$1543 \$1541 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_3 \$1128 \$1663 \$1120 \$1850 \$1298 result[5]
++ \$1813 \$1906 \$1906 \$1849 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_4 \$1128 \$1524 \$1120 \$1663 \$1298 result[4]
++ \$1633 \$1728 \$1728 \$1662 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_5 \$1128 \$1850 \$1120 \$1899 \$1298 result[6]
++ \$1973 \$1907 \$1907 \$1935 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_6 \$1128 \$1899 \$1120 \$2051 \$1298 result[7]
++ \$2122 \$2057 \$2057 \$1969 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_7 \$1128 \$2051 \$1120 \$2123 \$1298 result[8]
++ \$2129 \$2057 \$2057 \$2091 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_8 \$1128 \$2123 \$1120 \$2035 \$1298 result[9]
++ \$2124 \$2058 \$2058 \$2094 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_9 \$1044 \$1128 \$953 \$1120 \$1298 result[14] \$977
++ \$1069 \$1069 \$1019 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_10 \$1128 \$1223 \$1298 result[13] \$1120 \$1044
++ \$1145 \$1218 \$1218 \$1182 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_11 \$1128 \$1525 \$1120 \$1223 \$1298 result[12]
++ \$1464 \$1546 \$1546 \$1466 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_12 \$1128 \$1692 \$1120 \$1525 \$1298 result[11]
++ \$1639 \$1715 \$1715 \$1678 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_13 \$1128 \$953 \$1120 \$849 \$1298 result[15] \$807
++ \$893 \$893 \$848 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a222oi_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__a222oi_1_14 \$1128 \$2035 \$1120 \$1692 \$1298 result[10]
++ \$1814 \$1908 \$1908 \$1864 sky130_fd_sc_hd__a222oi_1
+* cell instance sky130_fd_sc_hd__a22o_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_0 \$219 \$220 \$218 exp_in[0] \$227 \$140 \$140 \$228
++ sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_1 result[1] \$788 \$640 \$1631 \$1629 \$1536 \$1536
++ \$1632 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_2 result[2] \$788 \$640 \$2115 \$1972 \$1906 \$1906
++ \$1883 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_3 result[5] \$788 \$640 \$2394 \$1972 \$2048 \$2048
++ \$1927 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_4 result[3] \$788 \$640 \$2229 \$2128 \$2211 \$2211
++ \$2121 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_5 result[4] \$788 \$640 \$2177 \$2128 \$2196 \$2196
++ \$2079 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_6 result[6] \$788 \$640 \$2116 \$2122 \$2057 \$2057
++ \$2088 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_7 result[7] \$788 \$640 \$2178 \$2129 \$2212 \$2212
++ \$1942 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_8 result[8] \$788 \$640 \$2291 \$2307 \$2213 \$2213
++ \$2200 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_9 result[9] \$788 \$640 \$2179 \$2124 \$2213 \$2213
++ \$2100 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_10 result[11] \$788 \$640 \$1806 \$1816 \$1721 \$1721
++ \$1815 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_11 result[13] \$788 \$640 \$1199 \$1148 \$1224 \$1224
++ \$1226 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_12 result[12] \$788 \$640 \$1526 \$1469 \$1554 \$1554
++ \$1447 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_13 result[15] \$788 \$640 \$586 \$614 \$532 \$532
++ \$401 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_14 result[10] \$788 \$640 \$2117 \$2124 \$2059 \$2059
++ \$2038 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a22o_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__a22o_1_15 result[14] \$788 \$640 \$668 \$614 \$686 \$686
++ \$578 sky130_fd_sc_hd__a22o_1
+* cell instance sky130_fd_sc_hd__a311o_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a311o_1_0 \$2437 \$2368 \$2320 \$2325 \$2424 \$2439 \$2360
++ \$2360 \$2438 sky130_fd_sc_hd__a311o_1
+* cell instance sky130_fd_sc_hd__a311oi_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a311oi_1_0 \$2626 \$1115 \$2691 \$2678 \$890 \$2716 \$2636
++ \$2636 \$2637 sky130_fd_sc_hd__a311oi_1
+* cell instance sky130_fd_sc_hd__a311oi_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a311oi_1_1 \$2719 \$2680 \$2626 \$2639 \$2449 \$2579 \$2652
++ \$2652 \$2347 sky130_fd_sc_hd__a311oi_1
+* cell instance sky130_fd_sc_hd__a31o_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a31o_1_0 \$2425 \$2399 \$2438 \$2329 \$2443 \$2376 \$2376
++ \$2400 sky130_fd_sc_hd__a31o_1
+* cell instance sky130_fd_sc_hd__a31oi_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_0 \$969 \$1305 \$826 \$1327 \$1461 \$1406 \$1406
++ \$1424 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_1 \$969 \$931 \$1002 \$1003 \$971 \$1067 \$1067
++ \$1055 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_2 \$969 \$1310 \$1179 \$1259 \$1311 \$1375 \$1375
++ \$1211 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_3 \$2437 \$2368 \$2320 \$2325 \$2439 \$2497 \$2497
++ \$2464 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_4 \$969 \$1299 \$1132 \$1300 \$1312 \$1210 \$1210
++ \$1313 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_5 \$969 \$1593 \$1216 \$1636 \$1814 \$1715 \$1715
++ \$1703 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_6 \$969 \$1465 \$1217 \$1445 \$1464 \$1408 \$1408
++ \$1427 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_7 \$969 \$1340 \$1219 \$1342 \$1312 \$1408 \$1408
++ \$1341 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_8 \$969 \$1594 \$1042 \$1690 \$1637 \$1715 \$1715
++ \$1676 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_9 \$969 \$1379 \$845 \$1380 \$1321 \$1378 \$1378
++ \$1343 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_10 \$969 \$1134 \$760 \$1125 \$1146 \$1059 \$1059
++ \$1105 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_11 \$969 \$1551 \$843 \$1620 \$1640 \$1552 \$1552
++ \$1596 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_12 \$969 \$1350 \$1183 \$1446 \$1467 \$1383 \$1383
++ \$1384 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_13 \$969 \$667 \$770 \$854 \$807 \$872 \$872 \$799
++ sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_14 \$969 \$1028 \$954 \$1045 \$978 \$1059 \$1059
++ \$1029 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_15 \$969 \$1598 \$771 \$1693 \$1641 \$1708 \$1708
++ \$1685 sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a31oi_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__a31oi_1_16 \$681 \$878 \$785 \$857 \$983 \$889 \$889 \$879
++ sky130_fd_sc_hd__a31oi_1
+* cell instance sky130_fd_sc_hd__a32o_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_0 \$1128 \$1303 \$1824 \$1324 \$1520 \$1971 \$1893
++ \$1893 \$1733 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_1 \$1128 \$2220 \$2388 \$1324 \$2229 \$2296 \$2373
++ \$2373 \$2297 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_2 \$1128 \$2670 \$2595 \$1324 \$2394 \$2572 \$2645
++ \$2645 \$2564 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_3 \$1128 \$2602 \$2675 \$1324 \$2116 \$2576 \$2647
++ \$2647 \$2558 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_4 \$1128 \$2605 \$2604 \$1324 \$2178 \$2587 \$2648
++ \$2648 \$2528 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_5 \$1128 \$2544 \$2545 \$1324 \$2179 \$2579 \$2652
++ \$2652 \$2487 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_6 \$1128 \$2627 \$2687 \$1324 \$2117 \$2581 \$2653
++ \$2653 \$2566 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_7 \$1128 \$860 \$966 \$586 \$1120 \$984 \$889 \$889
++ \$589 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__a32o_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__a32o_1_8 \$1128 \$2175 \$2182 \$1324 \$1526 \$2133 \$2207
++ \$2207 \$2208 sky130_fd_sc_hd__a32o_1
+* cell instance sky130_fd_sc_hd__and2_0_0 r0 *1 0,0
+Xsky130_fd_sc_hd__and2_0_0 \$1157 \$1130 \$1456 \$1405 \$1405 \$1421
++ sky130_fd_sc_hd__and2_0
+* cell instance sky130_fd_sc_hd__and2_0_1 r0 *1 0,0
+Xsky130_fd_sc_hd__and2_0_1 \$684 \$518 \$616 \$692 \$692 \$640
++ sky130_fd_sc_hd__and2_0
+* cell instance sky130_fd_sc_hd__and2_0_2 r0 *1 0,0
+Xsky130_fd_sc_hd__and2_0_2 \$2855 \$2863 \$2869 \$2874 \$2874 \$2864
++ sky130_fd_sc_hd__and2_0
+* cell instance sky130_fd_sc_hd__and2_0_3 r0 *1 0,0
+Xsky130_fd_sc_hd__and2_0_3 \$2680 \$2626 \$2718 \$2652 \$2652 \$2682
++ sky130_fd_sc_hd__and2_0
+* cell instance sky130_fd_sc_hd__and2_0_4 r0 *1 0,0
+Xsky130_fd_sc_hd__and2_0_4 \$2408 \$2472 \$2718 \$2767 \$2767 \$2639
++ sky130_fd_sc_hd__and2_0
+* cell instance sky130_fd_sc_hd__and2_0_5 r0 *1 0,0
+Xsky130_fd_sc_hd__and2_0_5 \$212 \$782 \$614 \$686 \$686 \$678
++ sky130_fd_sc_hd__and2_0
+* cell instance sky130_fd_sc_hd__and3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_0 \$2115 \$849 \$1619 \$2127 \$2210 \$2210 \$2152
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_1 \$2229 \$849 \$1451 \$2303 \$2211 \$2211 \$2232
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_2 \$2437 \$2368 \$2320 \$2436 \$2496 \$2496 \$2463
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_3 \$2177 \$849 \$1213 \$2303 \$2360 \$2360 \$2325
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_4 \$2394 \$849 \$1452 \$2441 \$2497 \$2497 \$2424
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_5 \$2116 \$849 \$1718 \$2305 \$2376 \$2376 \$2329
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_6 \$2117 \$849 \$1694 \$2130 \$2041 \$2041 \$2024
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_7 \$1199 \$1030 \$849 \$1321 \$1224 \$1224 \$1294
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_8 \$1806 \$849 \$1401 \$1816 \$1892 \$1892 \$1873
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__and3_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__and3_1_9 \$855 \$876 \$782 \$809 \$888 \$888 \$857
++ sky130_fd_sc_hd__and3_1
+* cell instance sky130_fd_sc_hd__buf_4_0 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_0 \$1039 \$1304 \$1203 \$1203 \$786
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_1 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_1 \$1039 \$970 \$1065 \$1065 \$113
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_2 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_2 \$1039 \$1809 \$1893 \$1893 \$1522
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_3 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_3 \$1039 \$2126 \$2044 \$2044 \$1959
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_4 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_4 \$604 \$797 \$692 \$692 \$788 sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_5 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_5 \$1039 \$1140 \$1208 \$1208 \$922
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_6 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_6 \$1039 \$971 \$892 \$892 \$118 sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_7 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_7 \$1039 \$2128 \$2211 \$2211 \$1962
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_8 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_8 \$1039 \$1972 \$2048 \$2048 \$1376
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_9 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_9 clk \$1463 \$1407 \$1407 \$1039 sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_10 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_10 \$1039 \$1814 \$1887 \$1887 \$1500
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_11 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_11 \$1039 \$974 \$1068 \$1068 \$964
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_12 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_12 \$1039 \$806 \$869 \$869 \$122 sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_13 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_13 \$1039 \$2445 \$2377 \$2377 \$2034
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_14 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_14 \$1039 \$1970 \$2059 \$2059 \$1865
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_15 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_15 \$1039 \$1468 \$1553 \$1553 \$1516
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_16 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_16 \$1039 \$1148 \$1059 \$1059 \$851
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_17 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_17 \$1039 \$978 \$872 \$872 \$134 sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_6_0 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_6_0 \$1324 \$1304 \$1372 \$1372 \$1120
++ sky130_fd_sc_hd__buf_6
+* cell instance sky130_fd_sc_hd__bufinv_16_0 r0 *1 0,0
+Xsky130_fd_sc_hd__bufinv_16_0 \$1865 \$1970 \$1903 \$1903 \$1952
++ sky130_fd_sc_hd__bufinv_16
+* cell instance sky130_fd_sc_hd__clkinv_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_0 \$252 \$225 \$334 \$334 \$216
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_1 \$116 \$225 \$334 \$334 \$217
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_2 \$536 \$616 \$682 \$682 \$628
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_3 \$629 \$616 \$700 \$700 \$502
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_4 \$786 \$968 \$891 \$891 \$912
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_5 result[0] \$797 \$865 \$865 \$824
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_6 \$1538 \$1633 \$1561 \$1561 \$1634
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_7 \$1307 \$1462 \$1392 \$1392 \$1374
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_8 \$1541 \$1633 \$1728 \$1728 \$1586
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_9 \$1662 \$1633 \$1728 \$1728 \$1661
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_10 \$1849 \$1973 \$1906 \$1906 \$1968
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_11 \$1935 \$1973 \$2048 \$2048 \$1886
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_12 \$2397 \$2442 \$2375 \$2375 \$2399
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_13 \$1969 \$1974 \$1907 \$1907 \$1938
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_14 \$2091 \$1974 \$2057 \$2057 \$1889
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_15 \$2261 \$2588 \$2497 \$2497 \$2426
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_16 \$1182 \$1145 \$1218 \$1218 \$1220
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_17 \$2094 \$1974 \$1887 \$1887 \$1949
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_18 \$1019 \$1145 \$1069 \$1069 \$946
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_19 \$2370 \$2446 \$2497 \$2497 \$2292
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_20 \$2790 \$2804 \$2841 \$2841 \$2822
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_21 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_21 \$1678 \$1639 \$1715 \$1715 \$1677
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_22 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_22 \$1466 \$1464 \$1398 \$1398 \$1381
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_23 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_23 \$2679 \$2717 \$2651 \$2651 \$2680
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_24 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_24 \$848 \$978 \$1059 \$1059 \$1020
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_25 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_25 \$1864 \$2124 \$2058 \$2058 \$2097
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_26 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_26 \$921 \$807 \$886 \$886 \$666
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_1_27 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_1_27 \$2168 \$2309 \$2204 \$2204 \$2275
++ sky130_fd_sc_hd__clkinv_1
+* cell instance sky130_fd_sc_hd__clkinv_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_2_0 \$113 \$1138 \$1065 \$1065 \$1074
++ sky130_fd_sc_hd__clkinv_2
+* cell instance sky130_fd_sc_hd__clkinv_2_1 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_2_1 \$1962 \$1972 \$1906 \$1906 \$1934
++ sky130_fd_sc_hd__clkinv_2
+* cell instance sky130_fd_sc_hd__clkinv_2_2 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_2_2 \$122 \$428 \$521 \$521 \$469
++ sky130_fd_sc_hd__clkinv_2
+* cell instance sky130_fd_sc_hd__clkinv_4_0 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_4_0 \$1522 \$1965 \$2055 \$2055 \$1980
++ sky130_fd_sc_hd__clkinv_4
+* cell instance sky130_fd_sc_hd__clkinv_4_1 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinv_4_1 \$1376 \$1813 \$1906 \$1906 \$1848
++ sky130_fd_sc_hd__clkinv_4
+* cell instance sky130_fd_sc_hd__clkinvlp_4_0 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinvlp_4_0 \$118 \$616 \$692 \$692 \$647
++ sky130_fd_sc_hd__clkinvlp_4
+* cell instance sky130_fd_sc_hd__clkinvlp_4_1 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinvlp_4_1 \$2034 \$1974 \$2057 \$2057 \$2005
++ sky130_fd_sc_hd__clkinvlp_4
+* cell instance sky130_fd_sc_hd__clkinvlp_4_2 r0 *1 0,0
+Xsky130_fd_sc_hd__clkinvlp_4_2 \$851 \$807 \$872 \$872 \$853
++ sky130_fd_sc_hd__clkinvlp_4
+* cell instance sky130_fd_sc_hd__conb_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__conb_1_0 \$2877 \$2878 \$2879 \$2876 \$2876
++ sky130_fd_sc_hd__conb_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_0 \$113 \$127 \$252 rst_n \$38 \$138 \$138
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_1 \$113 \$341 \$347 rst_n \$422 \$334 \$334
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_2 \$786 \$689 \$513 rst_n \$801 \$699 \$699
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_3 \$786 \$896 \$903 rst_n \$967 \$891 \$891
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_4 \$786 \$1201 \$1202 rst_n \$1318 \$1231 \$1231
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_5 \$1522 \$1437 \$1419 rst_n \$1455 \$1404 \$1404
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_6 \$1522 \$1564 \$1476 rst_n \$1622 \$1529 \$1529
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_7 \$1522 \$1733 \$1520 rst_n \$1809 \$1725 \$1725
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_8 \$786 \$863 \$596 rst_n \$801 \$891 \$891
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_9 \$1959 \$2184 \$2141 rst_n \$2125 \$2183 \$2183
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_10 \$1522 \$1810 \$1803 rst_n \$1809 \$1893 \$1893
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_11 \$113 \$164 \$116 rst_n \$422 \$334 \$334
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_12 \$786 \$714 \$969 rst_n \$968 \$891 \$891
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_13 \$786 \$1051 \$684 rst_n \$968 \$1065 \$1065
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_14 \$1522 \$1531 \$1128 rst_n \$1456 \$1532 \$1532
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_15 \$786 \$1129 \$1157 rst_n \$1138 \$1203 \$1203
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_16 \$113 \$117 \$142 rst_n \$39 \$140 \$140
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_17 \$786 \$514 \$440 rst_n \$616 \$515 \$515
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_18 \$113 \$502 \$357 rst_n \$424 \$515 \$515
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_19 \$113 \$683 \$320 rst_n \$616 \$700 \$700
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_20 \$786 \$821 \$921 rst_n \$970 \$891 \$891
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_21 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_21 \$113 \$228 \$219 rst_n \$227 \$335 \$335
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_22 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_22 \$786 \$997 \$999 rst_n \$1138 \$1205 \$1205
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_23 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_23 \$786 \$1075 \$823 rst_n \$1304 \$1205 \$1205
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_24 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_24 \$1522 \$1630 \$1631 rst_n \$1629 \$1536 \$1536
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_25 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_25 \$1959 \$1982 \$2115 rst_n \$2126 \$2187 \$2187
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_26 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_26 \$1959 \$2297 \$2229 rst_n \$2296 \$2187 \$2187
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_27 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_27 \$1959 \$2592 \$2177 rst_n \$2701 \$2645 \$2645
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_28 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_28 \$113 \$357 done rst_n \$424 \$335 \$335
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_29 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_29 \$113 \$128 \$71 rst_n \$40 \$144 \$144
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_30 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_30 \$922 \$881 result[0] rst_n \$970 \$865 \$865
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_31 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_31 \$1522 \$1424 \$1440 rst_n \$1461 \$1536 \$1536
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_32 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_32 \$1959 \$2033 \$2021 rst_n \$1972 \$2045 \$2045
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_33 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_33 \$1959 \$1632 result[1] rst_n \$1809 \$1728 \$1728
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_34 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_34 \$922 \$1077 \$1121 rst_n \$1140 \$1208 \$1208
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_35 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_35 \$1962 \$1883 result[2] rst_n \$1809 \$1906 \$1906
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_36 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_36 \$118 \$232 \$221 rst_n \$231 \$336 \$336
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_37 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_37 \$118 \$642 \$644 rst_n \$797 \$692 \$692
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_38 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_38 \$1962 \$2564 \$2394 rst_n \$2572 \$2496 \$2496
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_39 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_39 \$1376 \$1634 \$1523 rst_n \$1633 \$1728 \$1728
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_40 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_40 \$1376 \$1374 \$1309 rst_n \$1308 \$1392 \$1392
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_41 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_41 \$1962 \$1927 result[5] rst_n \$1972 \$1906 \$1906
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_42 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_42 \$118 \$367 \$373 rst_n \$426 \$336 \$336
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_43 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_43 \$922 \$1055 \$1131 rst_n \$1140 \$1067 \$1067
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_44 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_44 \$1962 \$2235 \$2242 rst_n \$2303 \$2211 \$2211
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_45 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_45 \$1962 \$2121 result[3] rst_n \$2128 \$2048 \$2048
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_46 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_46 \$922 \$728 \$789 rst_n \$797 \$892 \$892
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_47 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_47 \$118 \$119 \$148 rst_n \$41 \$146 \$146
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_48 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_48 \$1376 \$1586 \$1524 rst_n \$1633 \$1543 \$1543
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_49 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_49 \$922 \$1211 \$1213 rst_n \$1140 \$1210 \$1210
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_50 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_50 \$1376 \$1661 \$1663 rst_n \$1813 \$1728 \$1728
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_51 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_51 \$118 \$376 \$382 rst_n \$426 \$336 \$336
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_52 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_52 \$922 \$933 \$935 rst_n \$973 \$1067 \$1067
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_53 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_53 \$1962 \$1968 \$1850 rst_n \$1973 \$2048 \$2048
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_54 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_54 \$118 \$237 \$202 rst_n \$231 \$336 \$336
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_55 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_55 \$1376 \$1313 \$1451 rst_n \$1463 \$1543 \$1543
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_56 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_56 \$118 \$731 \$790 rst_n \$806 \$883 \$883
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_57 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_57 \$1962 \$2079 result[4] rst_n \$2128 \$2048 \$2048
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_58 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_58 \$1376 \$1087 \$1089 rst_n \$1312 \$1407 \$1407
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_59 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_59 \$1376 \$1703 \$1619 rst_n \$1635 \$1715 \$1715
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_60 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_60 \$1962 \$2247 \$2327 rst_n \$2304 \$2212 \$2212
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_61 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_61 \$118 \$506 \$507 rst_n \$426 \$521 \$521
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_62 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_62 \$1962 \$1886 \$1899 rst_n \$1814 \$1907 \$1907
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_63 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_63 \$1962 \$2558 \$2116 rst_n \$2576 \$2497 \$2497
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_64 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_64 \$1500 \$1441 \$1443 rst_n \$1814 \$1715 \$1715
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_65 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_65 \$122 \$150 \$208 rst_n \$231 \$336 \$336
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_66 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_66 \$122 \$791 \$742 rst_n \$806 \$702 \$702
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_67 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_67 \$964 \$937 \$939 rst_n \$974 \$1068 \$1068
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_68 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_68 \$964 \$1091 \$1123 rst_n \$1312 \$1232 \$1232
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_69 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_69 \$2034 \$2088 result[6] rst_n \$2122 \$2212 \$2212
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_70 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_70 \$122 \$523 \$418 rst_n \$619 \$702 \$702
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_71 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_71 \$1500 \$1427 \$1718 rst_n \$1635 \$1715 \$1715
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_72 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_72 \$2034 \$1938 \$2051 rst_n \$1974 \$2057 \$2057
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_73 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_73 \$1500 \$1341 \$1452 rst_n \$1464 \$1546 \$1546
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_74 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_74 \$2034 \$2528 \$2178 rst_n \$2587 \$2497 \$2497
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_75 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_75 \$122 \$123 \$91 rst_n \$43 \$158 \$158
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_76 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_76 \$122 \$658 \$660 rst_n \$806 \$702 \$702
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_77 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_77 \$122 \$558 \$965 rst_n \$619 \$521 \$521
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_78 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_78 \$2034 \$2256 \$2258 rst_n \$2306 \$2377 \$2377
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_79 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_79 \$964 \$1096 \$1103 rst_n \$1144 \$1068 \$1068
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_80 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_80 \$1500 \$1676 \$1691 rst_n \$1814 \$1715 \$1715
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_81 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_81 \$2034 \$1942 result[7] rst_n \$1974 \$1887 \$1887
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_82 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_82 \$1500 \$1889 \$2123 rst_n \$1814 \$1887 \$1887
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_83 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_83 \$122 \$385 \$458 rst_n \$428 \$521 \$521
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_84 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_84 \$1500 \$1343 \$1453 rst_n \$1464 \$1546 \$1546
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_85 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_85 \$122 \$246 \$223 rst_n \$244 \$337 \$337
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_86 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_86 \$964 \$1220 \$1044 rst_n \$1321 \$1218 \$1218
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_87 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_87 \$122 \$792 \$759 rst_n \$807 \$703 \$703
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_88 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_88 \$2034 \$2559 \$2291 rst_n \$2577 \$2497 \$2497
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_89 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_89 \$964 \$946 \$953 rst_n \$977 \$893 \$893
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_90 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_90 \$122 \$389 \$512 rst_n \$428 \$337 \$337
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_91 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_91 \$1516 \$1677 \$1525 rst_n \$1814 \$1715 \$1715
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_92 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_92 \$2034 \$1949 \$2035 rst_n \$1974 \$2058 \$2058
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_93 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_93 \$2034 \$2200 result[8] rst_n \$2124 \$2213 \$2213
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_94 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_94 \$1516 \$1381 \$1223 rst_n \$1321 \$1398 \$1398
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_95 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_95 \$1865 \$2363 \$2408 rst_n \$2308 \$2378 \$2378
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_96 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_96 \$134 \$96 \$97 rst_n \$44 \$160 \$160
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_97 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_97 \$851 \$793 \$769 rst_n \$807 \$703 \$703
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_98 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_98 \$1865 \$2097 \$1692 rst_n \$2308 \$2213 \$2213
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_99 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_99 \$134 \$567 \$613 rst_n \$620 \$532 \$532
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_100 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_100 \$851 \$1105 \$1198 rst_n \$1321 \$1224 \$1224
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_101 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_101 \$1865 \$2487 \$2179 rst_n \$2448 \$2498 \$2498
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_102 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_102 \$851 \$1020 \$849 rst_n \$978 \$1059 \$1059
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_103 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_103 \$1516 \$1596 \$1621 rst_n \$1640 \$1721 \$1721
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_104 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_104 \$1865 \$2100 result[9] rst_n \$2124 \$2059
++ \$2059 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_105 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_105 \$134 \$179 \$210 rst_n \$249 \$338 \$338
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_106 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_106 \$851 \$1384 \$1401 rst_n \$1321 \$1383 \$1383
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_107 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_107 \$134 \$395 \$397 rst_n \$432 \$532 \$532
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_108 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_108 \$1865 \$1815 result[11] rst_n \$1816 \$1903
++ \$1903 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_109 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_109 \$1865 \$2038 result[10] rst_n \$1970 \$2059
++ \$2059 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_110 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_110 \$851 \$1226 result[13] rst_n \$1321 \$1224
++ \$1224 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_111 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_111 \$1865 \$2566 \$2117 rst_n \$2581 \$2499 \$2499
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_112 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_112 \$1516 \$1447 result[12] rst_n \$1469 \$1383
++ \$1383 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_113 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_113 \$851 \$799 \$780 rst_n \$807 \$686 \$686
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_114 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_114 \$851 \$1029 \$1030 rst_n \$1148 \$1059 \$1059
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_115 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_115 \$1516 \$1685 \$1694 rst_n \$1816 \$1708 \$1708
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_116 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_116 \$134 \$136 \$155 rst_n \$45 \$153 \$153
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_117 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_117 \$134 \$401 result[15] rst_n \$432 \$338 \$338
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_118 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_118 \$134 \$578 result[14] rst_n \$614 \$533 \$533
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_119 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_119 \$851 \$1033 \$668 rst_n \$1148 \$1224 \$1224
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_120 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_120 \$134 \$184 \$211 rst_n \$250 \$338 \$338
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_121 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_121 \$134 \$488 \$490 rst_n \$614 \$686 \$686
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_122 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_122 \$1865 \$2554 \$1806 rst_n \$2582 \$2654 \$2654
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_123 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_123 \$134 \$407 \$409 rst_n \$434 \$527 \$527
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_124 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_124 \$134 \$110 \$115 rst_n \$250 \$338 \$338
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_125 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_125 \$134 \$187 \$212 rst_n \$250 \$162 \$162
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_126 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_126 \$134 \$589 \$586 rst_n \$622 \$527 \$527
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_127 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_127 \$1516 \$1612 \$1199 rst_n \$1645 \$1558 \$1558
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_128 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_128 \$1865 \$2208 \$1526 rst_n \$2312 \$2207 \$2207
++ sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfstp_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__dfstp_2_0 \$113 \$517 \$415 rst_n \$616 \$515 \$515
++ sky130_fd_sc_hd__dfstp_2
+* cell instance sky130_fd_sc_hd__inv_6_0 r0 *1 0,0
+Xsky130_fd_sc_hd__inv_6_0 \$1959 \$1965 \$1893 \$1893 \$1920
++ sky130_fd_sc_hd__inv_6
+* cell instance sky130_fd_sc_hd__inv_6_1 r0 *1 0,0
+Xsky130_fd_sc_hd__inv_6_1 \$922 \$1308 \$1208 \$1208 \$1258
++ sky130_fd_sc_hd__inv_6
+* cell instance sky130_fd_sc_hd__inv_6_2 r0 *1 0,0
+Xsky130_fd_sc_hd__inv_6_2 \$1500 \$1974 \$1887 \$1887 \$1939
++ sky130_fd_sc_hd__inv_6
+* cell instance sky130_fd_sc_hd__inv_6_3 r0 *1 0,0
+Xsky130_fd_sc_hd__inv_6_3 \$964 \$974 \$869 \$869 \$941 sky130_fd_sc_hd__inv_6
+* cell instance sky130_fd_sc_hd__inv_6_4 r0 *1 0,0
+Xsky130_fd_sc_hd__inv_6_4 \$1516 \$1640 \$1553 \$1553 \$1597
++ sky130_fd_sc_hd__inv_6
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_0 \$502 \$438 \$616 \$700 \$700 \$631
++ sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_1 \$2463 \$2392 \$2572 \$2646 \$2646
++ \$2597 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_2 \$2728 \$2501 \$2703 \$2771 \$2771
++ \$2733 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_3 \$2242 \$2693 \$2868 \$2837 \$2837
++ \$2855 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_4 \$2408 \$2472 \$2807 \$2845 \$2845
++ \$2719 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_5 \$2682 \$2861 \$2718 \$2767 \$2767
++ \$2749 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_6 \$2408 \$2481 \$2872 \$2843 \$2843
++ \$2757 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_7 \$155 \$2293 \$2452 \$2379 \$2379
++ \$2453 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_8 \$1808 \$1807 \$1817 \$1910 \$1910
++ \$1875 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_9 \$115 \$1454 \$1471 \$1402 \$1402
++ \$1366 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_inputiso1p_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_inputiso1p_1_10 \$115 \$1200 \$1148 \$1234 \$1234
++ \$1037 sky130_fd_sc_hd__lpflow_inputiso1p_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_0 \$1128 \$1244 \$1137 \$1065 \$1065
++ \$1051 sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_1 \$2113 \$1811 \$2125 \$2055 \$2055
++ \$2062 sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_2 \$969 \$1128 \$1140 \$1067 \$1067 \$1298
++ sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_3 \$2327 \$2632 \$2799 \$2762 \$2762
++ \$2781 sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_4 \$2739 \$2781 \$2799 \$2833 \$2833
++ \$2784 sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_5 \$2428 \$2613 \$2582 \$2654 \$2654
++ \$2615 sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__lpflow_isobufsrc_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__lpflow_isobufsrc_1_6 \$1048 \$1367 \$1322 \$1410 \$1410
++ \$1296 sky130_fd_sc_hd__lpflow_isobufsrc_1
+* cell instance sky130_fd_sc_hd__maj3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_0 \$1803 \$1521 \$1421 \$1809 \$1726 \$1726 \$1811
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_1 \$1803 \$1895 \$1628 \$1965 \$2055 \$2055 \$1979
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_2 \$2141 \$1878 \$1979 \$2125 \$2183 \$2183 \$2144
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_3 \$142 \$2563 \$2144 \$2699 \$2770 \$2770 \$2727
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_4 \$2021 \$2597 \$2727 \$2797 \$2758 \$2758 \$2776
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_5 \$2178 \$2426 \$2400 \$2445 \$2377 \$2377 \$2404
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_6 \$2291 \$2292 \$2404 \$2307 \$2213 \$2213 \$2266
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__maj3_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__maj3_1_7 \$2179 \$2275 \$2266 \$2124 \$2204 \$2204 \$2118
++ sky130_fd_sc_hd__maj3_1
+* cell instance sky130_fd_sc_hd__mux2_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_0 mod_in[2] \$2141 \$161 \$2301 \$2183 \$2183 \$2184
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_1 mod_in[1] \$1803 \$161 \$1809 \$1726 \$1726 \$1810
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_2 mod_in[0] \$1157 \$161 \$1138 \$1065 \$1065 \$1129
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_3 mod_in[3] \$142 \$161 \$227 \$140 \$140 \$117
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_4 mod_in[4] \$2021 \$161 \$2127 \$2045 \$2045 \$2033
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_5 base_in[1] \$644 \$161 \$616 \$692 \$692 \$642
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_6 mod_in[6] \$2242 \$161 \$2303 \$2358 \$2358 \$2235
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_7 base_in[2] \$789 \$161 \$797 \$701 \$701 \$728
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_8 base_in[4] \$935 \$161 \$973 \$883 \$883 \$933
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_9 base_in[5] \$790 \$161 \$806 \$702 \$702 \$731
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_10 mod_in[5] \$2327 \$161 \$2304 \$2375 \$2375 \$2247
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_11 base_in[3] \$1089 \$161 \$1143 \$1068 \$1068 \$1087
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_12 mod_in[8] \$1443 \$161 \$1463 \$1407 \$1407 \$1441
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_13 base_in[10] \$742 \$161 \$806 \$868 \$868 \$791
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_14 base_in[12] \$939 \$161 \$974 \$868 \$868 \$937
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_15 base_in[7] \$1123 \$161 \$1144 \$1068 \$1068 \$1091
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_16 mod_in[7] \$2258 \$161 \$2306 \$2212 \$2212 \$2256
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_17 base_in[9] \$660 \$161 \$619 \$702 \$702 \$658
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_18 base_in[6] \$1103 \$161 \$1144 \$1218 \$1218 \$1096
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_19 base_in[8] \$965 \$161 \$975 \$870 \$870 \$558
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_20 base_in[13] \$759 \$161 \$807 \$893 \$893 \$792
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_21 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_21 mod_in[9] \$2408 \$161 \$2448 \$2378 \$2378 \$2363
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_22 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_22 base_in[14] \$769 \$161 \$807 \$893 \$893 \$793
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_23 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_23 base_in[0] \$613 \$161 \$620 \$703 \$703 \$567
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_24 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_24 base_in[15] \$210 \$161 \$249 \$160 \$160 \$179
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_25 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_25 base_in[11] \$397 \$161 \$432 \$338 \$338 \$395
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_26 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_26 mod_in[10] \$155 \$161 \$249 \$153 \$153 \$136
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_27 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_27 mod_in[14] \$211 \$161 \$250 \$153 \$153 \$184
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_28 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_28 mod_in[11] \$490 \$161 \$436 \$533 \$533 \$488
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_29 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_29 mod_in[15] \$212 \$161 \$250 \$162 \$162 \$187
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_30 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_30 mod_in[13] \$115 \$161 \$46 \$162 \$162 \$110
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2_1_31 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2_1_31 mod_in[12] \$409 \$161 \$434 \$338 \$338 \$407
++ sky130_fd_sc_hd__mux2_1
+* cell instance sky130_fd_sc_hd__mux2i_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_0 \$1521 \$1650 \$1115 \$1624 \$1726 \$1726 \$1697
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_1 exp_in[1] \$219 \$320 \$227 \$335 \$335 \$204
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_2 exp_in[2] \$71 \$320 \$40 \$144 \$144 \$130
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_3 exp_in[3] \$221 \$320 \$231 \$336 \$336 \$206
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_4 exp_in[12] \$373 \$320 \$426 \$531 \$531 \$520
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_5 exp_in[4] \$148 \$320 \$231 \$146 \$146 \$200
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_6 exp_in[11] \$458 \$320 \$426 \$531 \$531 \$451
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_7 \$2632 \$2673 \$1115 \$2706 \$2631 \$2631 \$2624
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_8 exp_in[13] \$382 \$320 \$618 \$702 \$702 \$598
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_9 exp_in[5] \$202 \$320 \$231 \$149 \$149 \$120
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_10 exp_in[14] \$507 \$320 \$619 \$521 \$521 \$508
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_11 exp_in[6] \$208 \$320 \$231 \$158 \$158 \$203
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_12 exp_in[15] \$418 \$320 \$428 \$327 \$327 \$364
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_13 exp_in[7] \$91 \$320 \$43 \$158 \$158 \$133
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_14 exp_in[9] \$97 \$320 \$244 \$160 \$160 \$224
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_15 exp_in[10] \$512 \$320 \$428 \$532 \$532 \$419
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_16 exp_in[8] \$223 \$320 \$244 \$337 \$337 \$125
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_17 \$1200 \$1229 \$1115 \$1148 \$1233 \$1233 \$1127
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__mux2i_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__mux2i_1_18 \$1454 \$1804 \$1115 \$1819 \$1730 \$1730 \$1695
++ sky130_fd_sc_hd__mux2i_1
+* cell instance sky130_fd_sc_hd__nand2_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_0 \$214 \$213 \$225 \$138 \$138 \$127
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_1 \$1323 \$1519 \$1455 \$1529 \$1529 \$1437
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_2 \$985 \$1196 \$1136 \$1231 \$1231 \$1201
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_3 \$1118 \$987 \$1136 \$1064 \$1064 \$896
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_4 \$1128 \$1197 \$1318 \$1404 \$1404 \$1323
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_5 \$819 \$713 \$801 \$891 \$891 \$863
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_6 \$1390 \$1118 \$1455 \$1529 \$1529 \$1530
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_7 \$320 \$624 \$801 \$699 \$699 \$713
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_8 \$596 \$631 \$801 \$891 \$891 \$819
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_9 \$1128 \$1244 \$1319 \$1369 \$1369 \$1390
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_10 \$320 \$536 \$616 \$682 \$682 \$627
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_11 \$320 \$628 \$616 \$682 \$682 \$629
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_12 \$440 \$438 \$422 \$515 \$515 \$501
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_13 \$142 \$1878 \$2429 \$2483 \$2483 \$2316
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_14 \$1157 \$1115 \$1304 \$1203 \$1203 \$1247
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_15 \$1459 \$1460 \$1457 \$1535 \$1535 \$1521
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_16 \$1115 \$2386 \$2430 \$2373 \$2373 \$2387
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_17 \$890 \$2219 \$2296 \$2187 \$2187 \$2220
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_18 \$691 \$438 \$796 \$700 \$700 \$787
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_19 \$823 \$1324 \$1304 \$1372 \$1372 \$1076
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_20 \$1631 \$1324 \$1629 \$1700 \$1700 \$1699
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_21 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_21 \$684 \$518 \$616 \$700 \$700 \$691
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_22 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_22 \$849 \$999 \$1138 \$1040 \$1040 \$1130
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_23 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_23 \$2115 \$1324 \$2126 \$2056 \$2056 \$2032
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_24 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_24 \$2177 \$1324 \$2585 \$2645 \$2645 \$2593
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_25 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_25 \$849 \$1131 \$1809 \$1727 \$1727 \$1746
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_26 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_26 \$71 \$220 \$230 \$144 \$144 \$169
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_27 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_27 result[1] \$666 \$1306 \$1208 \$1208 \$1305
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_28 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_28 \$415 start \$425 \$336 \$336 \$161
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_29 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_29 \$1121 \$1120 \$1140 \$1066 \$1066 \$1078
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_30 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_30 \$890 \$2692 \$2701 \$2645 \$2645 \$2670
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_31 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_31 \$921 \$644 \$797 \$867 \$867 \$826
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_32 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_32 \$221 \$220 \$231 \$144 \$144 \$205
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_33 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_33 result[2] \$666 \$971 \$892 \$892 \$931
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_34 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_34 \$1115 \$2753 \$2702 \$2760 \$2760 \$2731
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_35 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_35 \$373 \$220 \$426 \$519 \$519 \$503
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_36 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_36 \$921 \$789 \$972 \$1067 \$1067 \$1002
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_37 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_37 result[5] \$666 \$1311 \$1210 \$1210 \$1310
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_38 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_38 \$148 \$220 \$231 \$146 \$146 \$207
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_39 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_39 \$382 \$220 \$607 \$531 \$531 \$597
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_40 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_40 result[4] \$666 \$1463 \$1407 \$1407 \$1299
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_41 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_41 \$921 \$935 \$1140 \$1067 \$1067 \$1132
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_42 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_42 \$921 \$790 \$1142 \$1214 \$1214 \$1179
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_43 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_43 \$202 \$220 \$231 \$156 \$156 \$201
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_44 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_44 \$698 \$2624 \$2574 \$2631 \$2631 \$2602
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_45 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_45 result[3] \$666 \$1635 \$1543 \$1543 \$1593
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_46 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_46 \$890 \$2785 \$2709 \$2647 \$2647 \$2675
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_47 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_47 \$921 \$1089 \$1143 \$1215 \$1215 \$1216
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_48 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_48 \$507 \$220 \$609 \$521 \$521 \$599
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_49 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_49 \$2399 \$2438 \$2443 \$2497 \$2497 \$2465
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_50 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_50 \$208 \$220 \$231 \$157 \$157 \$121
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_51 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_51 \$890 \$2813 \$2576 \$2634 \$2634 \$2604
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_52 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_52 result[7] \$666 \$1635 \$1546 \$1546 \$1465
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_53 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_53 \$921 \$1123 \$1144 \$1232 \$1232 \$1217
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_54 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_54 \$418 \$220 \$435 \$521 \$521 \$509
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_55 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_55 result[6] \$666 \$1464 \$1408 \$1408 \$1340
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_56 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_56 \$921 \$742 \$806 \$869 \$869 \$843
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_57 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_57 \$921 \$1103 \$1144 \$1218 \$1218 \$1219
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_58 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_58 \$91 \$220 \$243 \$158 \$158 \$176
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_59 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_59 result[8] \$666 \$1637 \$1546 \$1546 \$1594
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_60 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_60 \$921 \$660 \$806 \$870 \$870 \$845
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_61 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_61 \$921 \$965 \$975 \$1068 \$1068 \$1042
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_62 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_62 result[9] \$666 \$1464 \$1378 \$1378 \$1379
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_63 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_63 \$2745 \$2690 \$2714 \$2766 \$2766 \$2691
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_64 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_64 \$458 \$220 \$619 \$702 \$702 \$386
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_65 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_65 \$849 \$1691 \$2306 \$2377 \$2377 \$2261
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_66 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_66 \$2291 \$1324 \$2446 \$2497 \$2497 \$2469
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_67 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_67 \$223 \$220 \$244 \$159 \$159 \$209
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_68 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_68 \$849 \$1453 \$2307 \$2362 \$2362 \$2370
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_69 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_69 \$512 \$220 \$612 \$532 \$532 \$510
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_70 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_70 \$921 \$759 \$807 \$703 \$703 \$760
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_71 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_71 \$97 \$220 \$244 \$160 \$160 \$126
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_72 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_72 \$890 \$2560 \$2578 \$2498 \$2498 \$2544
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_73 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_73 result[13] \$666 \$1146 \$1224 \$1224 \$1134
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_74 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_74 \$921 \$939 \$1146 \$1224 \$1224 \$1183
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_75 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_75 result[10] \$666 \$1475 \$1552 \$1552 \$1551
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_76 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_76 \$2408 \$2472 \$2807 \$2767 \$2767 \$2792
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_77 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_77 result[12] \$666 \$1321 \$1383 \$1383 \$1350
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_78 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_78 \$2719 \$2792 \$2871 \$2845 \$2845 \$2861
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_79 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_79 \$2682 \$2861 \$2871 \$2875 \$2875 \$2808
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_80 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_80 \$769 \$921 \$978 \$872 \$872 \$954
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_81 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_81 \$921 \$210 \$807 \$686 \$686 \$770
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_82 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_82 \$666 result[15] \$621 \$686 \$686 \$667
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_83 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_83 \$849 \$1621 \$2124 \$2204 \$2204 \$2168
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_84 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_84 result[14] \$666 \$978 \$1059 \$1059 \$1028
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_85 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_85 \$921 \$397 \$807 \$686 \$686 \$771
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_86 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_86 \$1115 \$2696 \$2722 \$2653 \$2653 \$2686
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_87 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_87 result[11] \$666 \$1641 \$1554 \$1554 \$1598
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_88 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_88 \$890 \$2697 \$2722 \$2653 \$2653 \$2687
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_89 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_89 \$2408 \$2481 \$2809 \$2769 \$2769 \$2794
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_90 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_90 \$1528 \$1527 \$1470 \$1557 \$1557 \$1517
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_91 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_91 \$781 \$874 \$807 \$875 \$875 \$855
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_92 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_92 \$155 \$2293 \$2452 \$2488 \$2488 \$2482
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_93 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_93 \$668 \$1120 \$1148 \$1062 \$1062 \$1047
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_94 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_94 \$586 \$794 \$614 \$533 \$533 \$585
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_95 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_95 \$1806 \$1324 \$2582 \$2489 \$2489 \$2562
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_96 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_96 \$698 \$859 \$811 \$889 \$889 \$860
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_97 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_97 \$212 \$782 \$811 \$704 \$704 \$681
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_98 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_98 \$890 \$2354 \$2312 \$2381 \$2381 \$2182
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_99 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_99 \$890 \$1049 \$984 \$1063 \$1063 \$966
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2_1_100 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2_1_100 \$1199 \$1324 \$1645 \$1712 \$1712 \$1711
++ sky130_fd_sc_hd__nand2_1
+* cell instance sky130_fd_sc_hd__nand2b_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_0 \$1476 \$1520 \$1809 \$1893 \$1893 \$1824
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_1 \$1520 \$1476 \$1622 \$1725 \$1725 \$1303
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_2 \$969 \$1390 \$1623 \$1532 \$1532 \$1531
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_3 \$1128 \$969 \$1320 \$1203 \$1203 \$1118
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_4 \$2313 \$2316 \$2567 \$2628 \$2628 \$2385
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_5 \$357 \$518 \$424 \$515 \$515 \$517
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_6 start \$415 \$425 \$519 \$519 \$518
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_7 \$2327 \$2632 \$2706 \$2762 \$2762 \$2739
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_8 \$2242 \$2632 \$2709 \$2762 \$2762 \$2741
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_9 \$2754 \$2755 \$2717 \$2773 \$2773 \$2560
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_10 \$1302 \$1403 \$1471 \$1402 \$1402 \$1229
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_11 \$1963 \$2422 \$2455 \$2381 \$2381 \$2354
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand2b_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__nand2b_1_12 \$680 \$1038 \$1148 \$1063 \$1063 \$1049
++ sky130_fd_sc_hd__nand2b_1
+* cell instance sky130_fd_sc_hd__nand3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_0 \$217 \$216 \$215 \$225 \$334 \$334 \$214
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_1 \$1202 \$1118 \$1323 \$1318 \$1404 \$1404 \$1196
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_2 \$627 \$715 \$161 \$802 \$682 \$682 \$714
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_3 \$684 \$666 \$440 \$803 \$700 \$700 \$715
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_4 \$440 \$629 \$787 \$803 \$700 \$700 \$716
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_5 \$823 \$849 \$1440 \$1461 \$1372 \$1372 \$1459
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_6 \$1631 \$849 \$1131 \$2126 \$2045 \$2045 \$1922
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_7 \$2741 \$2671 \$2742 \$2710 \$2763 \$2763 \$2743
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_8 \$2822 \$2823 \$2805 \$2804 \$2842 \$2842 \$2755
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_9 \$1115 \$2749 \$2808 \$2807 \$2767 \$2767 \$2565
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_10 \$1526 \$849 \$1198 \$1643 \$1708 \$1708 \$1528
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_11 \$668 \$849 \$780 \$807 \$686 \$686 \$781
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_12 \$1366 \$1386 \$1365 \$1316 \$1402 \$1402 \$1403
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_13 \$2453 \$2428 \$2353 \$2455 \$2381 \$2381 \$2422
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3_1_14 \$1037 \$1048 \$1036 \$984 \$1063 \$1063 \$1038
++ sky130_fd_sc_hd__nand3_1
+* cell instance sky130_fd_sc_hd__nand3b_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3b_1_0 \$1202 \$1197 \$1128 \$1136 \$1231 \$1231 \$985
++ sky130_fd_sc_hd__nand3b_1
+* cell instance sky130_fd_sc_hd__nand3b_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3b_1_1 \$513 \$423 \$596 \$602 \$530 \$530 \$536
++ sky130_fd_sc_hd__nand3b_1
+* cell instance sky130_fd_sc_hd__nand3b_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3b_1_2 \$2694 \$1115 \$2743 \$2711 \$2764 \$2764 \$2689
++ sky130_fd_sc_hd__nand3b_1
+* cell instance sky130_fd_sc_hd__nand3b_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__nand3b_1_3 \$1807 \$1115 \$2181 \$2131 \$2206 \$2206 \$2173
++ sky130_fd_sc_hd__nand3b_1
+* cell instance sky130_fd_sc_hd__nor2_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_0 \$218 \$437 \$601 \$529 \$529 \$341
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_1 \$218 \$626 \$601 \$699 \$699 \$689
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_2 \$218 \$198 \$225 \$334 \$334 \$213
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_3 \$215 \$499 \$422 \$500 \$500 \$437
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_4 \$1128 \$1476 \$1622 \$1529 \$1529 \$1571
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_5 \$596 \$438 \$602 \$699 \$699 \$624
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_6 \$218 \$56 \$226 \$138 \$138 \$164
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_7 \$320 \$161 \$251 \$334 \$334 \$218
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_8 \$2141 \$1895 \$2294 \$2183 \$2183 \$2217
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_9 \$2217 \$2062 \$2429 \$2355 \$2355 \$2382
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_10 \$142 \$1878 \$2429 \$2483 \$2483 \$2313
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_11 \$684 \$631 \$803 \$891 \$891 \$820
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_12 \$1157 \$1521 \$1457 \$1535 \$1535 \$1534
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_13 \$1895 \$1115 \$2125 \$2183 \$2183 \$2114
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_14 \$2563 \$1115 \$2570 \$2494 \$2494 \$2505
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_15 \$998 \$996 \$970 \$1040 \$1040 \$997
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_16 \$999 \$969 \$970 \$1040 \$1040 \$998
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_17 \$823 \$691 \$804 \$865 \$865 \$822
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_18 \$2021 \$2563 \$2701 \$2758 \$2758 \$2728
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_19 \$1440 \$969 \$1306 \$1406 \$1406 \$1327
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_20 \$2152 \$2189 \$2296 \$2210 \$2210 \$2230
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_21 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_21 \$1131 \$969 \$1140 \$1208 \$1208 \$1003
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_22 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_22 \$1213 \$969 \$1311 \$1210 \$1210 \$1259
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_23 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_23 \$2325 \$2243 \$2303 \$2360 \$2360 \$2437
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_24 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_24 \$1451 \$969 \$1463 \$1407 \$1407 \$1300
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_25 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_25 \$2424 \$2397 \$2441 \$2375 \$2375 \$2440
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_26 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_26 \$1619 \$969 \$1635 \$1543 \$1543 \$1636
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_27 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_27 \$2329 \$2254 \$2443 \$2497 \$2497 \$2425
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_28 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_28 \$1718 \$969 \$1814 \$1715 \$1715 \$1445
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_29 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_29 \$1452 \$969 \$1464 \$1408 \$1408 \$1342
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_30 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_30 \$2258 \$2693 \$2713 \$2765 \$2765 \$2695
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_31 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_31 \$2695 \$2694 \$2714 \$2766 \$2766 \$2745
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_32 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_32 \$1691 \$969 \$1638 \$1715 \$1715 \$1690
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_33 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_33 \$1453 \$969 \$1464 \$1409 \$1409 \$1380
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_34 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_34 \$2258 \$2468 \$2803 \$2772 \$2772 \$2790
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_35 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_35 \$2468 \$1115 \$2716 \$2636 \$2636 \$2678
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_36 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_36 \$1443 \$2468 \$2717 \$2650 \$2650 \$2679
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_37 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_37 \$1443 \$2472 \$2804 \$2842 \$2842 \$2756
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_38 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_38 \$1198 \$969 \$1147 \$1224 \$1224 \$1125
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_39 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_39 \$1621 \$969 \$1640 \$1553 \$1553 \$1620
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_40 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_40 \$1401 \$969 \$1468 \$1383 \$1383 \$1446
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_41 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_41 \$2756 \$2754 \$2809 \$2768 \$2768 \$2793
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_42 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_42 \$780 \$969 \$807 \$873 \$873 \$854
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_43 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_43 \$1030 \$969 \$979 \$1059 \$1059 \$1045
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_44 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_44 \$1694 \$969 \$1642 \$1708 \$1708 \$1693
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_45 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_45 \$155 \$2481 \$2451 \$2372 \$2372 \$2416
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_46 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_46 \$2408 \$2481 \$2581 \$2642 \$2642 \$2612
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_47 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_47 \$2024 \$2039 \$1975 \$2041 \$2041 \$2018
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_48 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_48 \$2180 \$2427 \$2452 \$2379 \$2379 \$2417
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_49 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_49 \$1601 \$1602 \$1643 \$1709 \$1709 \$1686
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_50 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_50 \$1601 \$1873 \$1975 \$1909 \$1909 \$1954
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_51 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_51 \$586 \$794 \$809 \$686 \$686 \$782
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_52 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_52 \$2293 \$1115 \$2454 \$2489 \$2489 \$2420
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_53 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_53 \$490 \$2293 \$2311 \$2214 \$2214 \$2205
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_54 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_54 \$890 \$1127 \$1148 \$1062 \$1062 \$1046
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_55 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_55 \$211 \$1200 \$1316 \$1233 \$1233 \$1295
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_56 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_56 \$1295 \$1302 \$1316 \$1233 \$1233 \$878
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_57 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_57 \$409 \$1960 \$1976 \$1910 \$1910 \$1808
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_58 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_58 \$490 \$1960 \$1976 \$1911 \$1911 \$1957
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_59 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_59 \$890 \$1695 \$1645 \$1730 \$1730 \$1688
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_60 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_60 \$409 \$1454 \$1472 \$1410 \$1410 \$1389
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_61 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_61 \$212 \$782 \$811 \$704 \$704 \$688
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_1_62 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_1_62 \$1388 \$1879 \$1822 \$1905 \$1905 \$1877
++ sky130_fd_sc_hd__nor2_1
+* cell instance sky130_fd_sc_hd__nor2_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2_2_0 \$1128 \$969 \$1320 \$1391 \$1391 \$1324
++ sky130_fd_sc_hd__nor2_2
+* cell instance sky130_fd_sc_hd__nor2b_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2b_1_0 \$2232 \$2368 \$2435 \$2374 \$2374 \$2434
++ sky130_fd_sc_hd__nor2b_1
+* cell instance sky130_fd_sc_hd__nor2b_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2b_1_1 \$2573 \$2599 \$2798 \$2844 \$2844 \$2779
++ sky130_fd_sc_hd__nor2b_1
+* cell instance sky130_fd_sc_hd__nor2b_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nor2b_1_2 \$1294 \$1358 \$1470 \$1383 \$1383 \$1361
++ sky130_fd_sc_hd__nor2b_1
+* cell instance sky130_fd_sc_hd__nor3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_0 \$1476 \$1520 \$1419 \$1455 \$1404 \$1404 \$1197
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor3_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_1 \$347 \$116 \$252 \$422 \$334 \$334 \$423
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor3_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_2 \$1628 \$698 \$1534 \$1624 \$1535 \$1535 \$1627
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor3_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_3 \$2327 \$2463 \$2392 \$2572 \$2496 \$2496 \$2573
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor3_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_4 \$2416 \$2347 \$2276 \$2451 \$2499 \$2499 \$2427
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor3_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_5 \$1389 \$1388 \$1387 \$1322 \$1410 \$1410 \$1367
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor3_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__nor3_1_6 \$1957 \$1963 \$1805 \$1977 \$2060 \$2060 \$1879
++ sky130_fd_sc_hd__nor3_1
+* cell instance sky130_fd_sc_hd__nor4_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__nor4_1_0 \$596 \$513 \$347 \$438 \$422 \$530 \$530 \$215
++ sky130_fd_sc_hd__nor4_1
+* cell instance sky130_fd_sc_hd__o211a_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o211a_1_0 \$2756 \$2754 \$2794 \$2757 \$2723 \$2769 \$2769
++ \$2698 sky130_fd_sc_hd__o211a_1
+* cell instance sky130_fd_sc_hd__o211ai_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_0 \$1878 \$1115 \$2387 \$698 \$2430 \$2373 \$2373
++ \$2388 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o211ai_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_1 \$2597 \$1115 \$2731 \$698 \$2702 \$2760 \$2760
++ \$2595 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o211ai_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_2 \$2693 \$1115 \$2689 \$698 \$2711 \$2648 \$2648
++ \$2605 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o211ai_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_3 \$2472 \$1115 \$2565 \$698 \$2579 \$2498 \$2498
++ \$2545 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o211ai_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_4 \$2481 \$1115 \$2686 \$698 \$2722 \$2768 \$2768
++ \$2627 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o211ai_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_5 \$2612 \$2698 \$2482 \$2453 \$2724 \$2654 \$2654
++ \$2428 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o211ai_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__o211ai_1_6 \$1960 \$1115 \$2173 \$698 \$2132 \$2207 \$2207
++ \$2175 sky130_fd_sc_hd__o211ai_1
+* cell instance sky130_fd_sc_hd__o21a_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o21a_1_0 \$890 \$1247 \$1130 \$1457 \$1371 \$1371 \$1073
++ sky130_fd_sc_hd__o21a_1
+* cell instance sky130_fd_sc_hd__o21a_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o21a_1_1 \$2416 \$2347 \$2276 \$2310 \$2372 \$2372 \$2180
++ sky130_fd_sc_hd__o21a_1
+* cell instance sky130_fd_sc_hd__o21a_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__o21a_1_2 \$2205 \$2180 \$2043 \$2131 \$2214 \$2214 \$1807
++ sky130_fd_sc_hd__o21a_1
+* cell instance sky130_fd_sc_hd__o21a_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__o21a_1_3 \$1957 \$1963 \$1805 \$1977 \$1905 \$1905 \$1388
++ sky130_fd_sc_hd__o21a_1
+* cell instance sky130_fd_sc_hd__o21ai_0_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_0 \$438 \$364 \$501 \$422 \$515 \$515 \$514
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_1 \$890 \$1697 \$1128 \$1809 \$1726 \$1726 \$1698
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_2 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_2 \$1073 \$1119 \$1076 \$1138 \$1065 \$1065 \$1075
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_3 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_3 \$698 \$1918 \$1128 \$1965 \$1893 \$1893 \$1919
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_4 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_4 \$1627 \$1698 \$1699 \$1629 \$1726 \$1726 \$1630
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_5 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_5 \$2031 \$1919 \$2032 \$1965 \$2044 \$2044 \$1982
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_6 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_6 \$698 \$2657 \$1128 \$2699 \$2645 \$2645 \$2658
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_7 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_7 \$2590 \$2658 \$2593 \$2584 \$2645 \$2645 \$2592
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_8 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_8 \$220 \$204 \$169 \$227 \$144 \$144 \$128
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_9 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_9 \$1459 \$1896 \$1922 \$1972 \$1893 \$1893 \$1921
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_10 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_10 \$824 \$921 \$969 \$970 \$1053 \$1053 \$1001
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_11 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_11 \$824 \$1118 \$1078 \$1140 \$1053 \$1053 \$1077
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_12 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_12 \$220 \$130 \$205 \$231 \$144 \$144 \$232
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_13 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_13 \$220 \$451 \$503 \$426 \$519 \$519 \$367
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_14 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_14 \$220 \$206 \$207 \$231 \$146 \$146 \$119
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_15 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_15 \$2463 \$2392 \$2327 \$2572 \$2646 \$2646 \$2599
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_16 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_16 \$2573 \$2733 \$2599 \$2703 \$2771 \$2771 \$2735
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_17 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_17 \$220 \$520 \$597 \$617 \$531 \$531 \$376
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_18 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_18 \$220 \$200 \$201 \$231 \$146 \$146 \$237
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_19 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_19 \$220 \$598 \$599 \$618 \$521 \$521 \$506
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_20 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_20 \$220 \$120 \$121 \$42 \$149 \$149 \$150
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_21 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_21 \$220 \$508 \$509 \$426 \$521 \$521 \$523
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_22 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_22 \$220 \$203 \$176 \$231 \$327 \$327 \$123
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_23 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_23 \$220 \$419 \$386 \$428 \$337 \$337 \$385
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_24 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_24 \$220 \$133 \$209 \$244 \$158 \$158 \$246
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_25 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_25 \$698 \$2625 \$1128 \$2577 \$2636 \$2636 \$2608
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_26 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_26 \$2637 \$2608 \$2469 \$2577 \$2636 \$2636 \$2559
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_27 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_27 \$220 \$224 \$510 \$428 \$525 \$525 \$389
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_28 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_28 \$220 \$125 \$126 \$44 \$160 \$160 \$96
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_29 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_29 \$1294 \$1301 \$1358 \$1315 \$1224 \$1224 \$876
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_30 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_30 \$855 \$876 \$781 \$808 \$888 \$888 \$794
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_31 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_31 \$1046 \$1032 \$1047 \$981 \$1062 \$1062 \$1033
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_32 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_32 \$698 \$2615 \$1128 \$2582 \$2654 \$2654 \$2561
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_33 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_33 \$2421 \$2561 \$2562 \$2582 \$2489 \$2489 \$2554
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_34 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_34 \$211 \$795 \$585 \$809 \$686 \$686 \$783
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_35 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_35 \$878 \$785 \$879 \$809 \$889 \$889 \$859
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_36 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_36 \$698 \$1877 \$1128 \$1822 \$1905 \$1905 \$1710
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_37 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_37 \$698 \$1296 \$1128 \$1322 \$1234 \$1234 \$1032
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_38 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_38 \$1688 \$1710 \$1711 \$1645 \$1712 \$1712 \$1612
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_0_39 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_0_39 \$1389 \$1388 \$1387 \$1472 \$1410 \$1410 \$1048
++ sky130_fd_sc_hd__o21ai_0
+* cell instance sky130_fd_sc_hd__o21ai_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_1_0 \$684 \$415 \$518 \$616 \$515 \$515 \$604
++ sky130_fd_sc_hd__o21ai_1
+* cell instance sky130_fd_sc_hd__o21ai_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o21ai_2_0 \$320 \$415 \$518 \$616 \$692 \$692 \$438
++ sky130_fd_sc_hd__o21ai_2
+* cell instance sky130_fd_sc_hd__o21bai_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o21bai_1_0 \$2695 \$2694 \$2690 \$2714 \$2649 \$2649 \$2626
++ sky130_fd_sc_hd__o21bai_1
+* cell instance sky130_fd_sc_hd__o21bai_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o21bai_1_1 \$1808 \$1807 \$1603 \$1817 \$1729 \$1729 \$1386
++ sky130_fd_sc_hd__o21bai_1
+* cell instance sky130_fd_sc_hd__o22ai_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o22ai_2_0 \$878 \$785 \$857 \$678 \$1148 \$1063 \$1063 \$1115
++ sky130_fd_sc_hd__o22ai_2
+* cell instance sky130_fd_sc_hd__o311a_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o311a_1_0 \$2313 \$2217 \$2062 \$2316 \$2484 \$2567 \$2483
++ \$2483 \$2501 sky130_fd_sc_hd__o311a_1
+* cell instance sky130_fd_sc_hd__o311ai_0_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o311ai_0_0 \$1476 \$1520 \$1390 \$1118 \$1419 \$1455 \$1529
++ \$1529 \$1519 sky130_fd_sc_hd__o311ai_0
+* cell instance sky130_fd_sc_hd__o311ai_0_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o311ai_0_1 \$2573 \$2728 \$2501 \$2599 \$2515 \$2703 \$2646
++ \$2646 \$2671 sky130_fd_sc_hd__o311ai_0
+* cell instance sky130_fd_sc_hd__o31a_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o31a_1_0 \$596 \$513 \$438 \$347 \$602 \$530 \$530 \$499
++ sky130_fd_sc_hd__o31a_1
+* cell instance sky130_fd_sc_hd__o31a_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o31a_1_1 \$680 \$688 \$783 \$681 \$811 \$889 \$889 \$890
++ sky130_fd_sc_hd__o31a_1
+* cell instance sky130_fd_sc_hd__o31ai_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o31ai_1_0 \$2313 \$2217 \$2062 \$2316 \$2294 \$2355 \$2355
++ \$2315 sky130_fd_sc_hd__o31ai_1
+* cell instance sky130_fd_sc_hd__o31ai_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__o31ai_1_1 \$890 \$1130 \$1247 \$1128 \$1304 \$1371 \$1371
++ \$1119 sky130_fd_sc_hd__o31ai_1
+* cell instance sky130_fd_sc_hd__o31ai_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__o31ai_1_2 \$1517 \$1601 \$1602 \$1528 \$1643 \$1557 \$1557
++ \$1301 sky130_fd_sc_hd__o31ai_1
+* cell instance sky130_fd_sc_hd__o31ai_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__o31ai_2_0 \$680 \$688 \$783 \$681 \$622 \$704 \$704 \$698
++ sky130_fd_sc_hd__o31ai_2
+* cell instance sky130_fd_sc_hd__or3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__or3_1_0 \$2205 \$2180 \$2043 \$2311 \$2380 \$2380 \$2181
++ sky130_fd_sc_hd__or3_1
+* cell instance sky130_fd_sc_hd__or4_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__or4_1_0 \$1419 \$1202 \$903 \$1303 \$1318 \$1231 \$1231
++ \$1244 sky130_fd_sc_hd__or4_1
+* cell instance sky130_fd_sc_hd__probe_p_8_0 r0 *1 0,0
+Xsky130_fd_sc_hd__probe_p_8_0 \$438 \$616 \$519 \$519 \$220
++ sky130_fd_sc_hd__probe_p_8
+* cell instance sky130_fd_sc_hd__xnor2_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_0 \$513 \$624 \$602 \$699 \$699 \$626
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_1 \$116 \$215 \$38 \$138 \$138 \$56
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_2 \$1803 \$1521 \$1624 \$1532 \$1532 \$1626
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_3 \$1811 \$2113 \$2125 \$2055 \$2055 \$2064
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_4 \$1421 \$1626 \$1624 \$1726 \$1726 \$1650
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_5 \$2141 \$1878 \$1809 \$1893 \$1893 \$1833
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_6 \$1628 \$1916 \$1965 \$1893 \$1893 \$1918
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_7 \$1979 \$1833 \$2302 \$2183 \$2183 \$2219
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_8 \$2484 \$2315 \$2567 \$2483 \$2483 \$2504
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_9 \$142 \$2563 \$2795 \$2770 \$2770 \$2688
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_10 \$1921 \$2230 \$2296 \$2367 \$2367 \$1878
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_11 \$2433 \$2434 \$2586 \$2495 \$2495 \$2563
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_12 \$2515 \$2735 \$2705 \$2761 \$2761 \$2673
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_13 \$2464 \$2440 \$2574 \$2631 \$2631 \$2632
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_14 \$2178 \$2261 \$2306 \$2212 \$2212 \$2262
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_15 \$1443 \$2468 \$2801 \$2766 \$2766 \$2690
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_16 \$2262 \$2400 \$2445 \$2497 \$2497 \$2468
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_17 \$2258 \$2468 \$2801 \$2839 \$2839 \$2840
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_18 \$2291 \$2370 \$2446 \$2362 \$2362 \$2406
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_19 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_19 \$2406 \$2404 \$2446 \$2497 \$2497 \$2472
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_20 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_20 \$1443 \$2472 \$2804 \$2773 \$2773 \$2805
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_21 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_21 \$2449 \$2683 \$2720 \$2652 \$2652 \$2696
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_22 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_22 \$2018 \$2118 \$2310 \$2379 \$2379 \$2293
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_23 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_23 \$1301 \$1361 \$1315 \$1383 \$1383 \$1200
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_24 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_24 \$855 \$876 \$981 \$888 \$888 \$795
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_25 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_25 \$211 \$1200 \$1316 \$1402 \$1402 \$1365
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_26 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_26 \$212 \$795 \$809 \$686 \$686 \$785
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_27 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_27 \$211 \$795 \$983 \$1063 \$1063 \$1036
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor2_1_28 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor2_1_28 \$490 \$1960 \$2312 \$2381 \$2381 \$2353
++ sky130_fd_sc_hd__xnor2_1
+* cell instance sky130_fd_sc_hd__xnor3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_0 \$1631 \$1746 \$1459 \$1809 \$1893 \$1893 \$1895
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xnor3_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_1 \$2021 \$2433 \$2434 \$2432 \$2495 \$2495 \$2484
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xnor3_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_2 \$2242 \$2425 \$2465 \$2866 \$2837 \$2837 \$2832
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xnor3_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_3 \$2258 \$2425 \$2465 \$2800 \$2837 \$2837 \$2742
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xnor3_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_4 \$155 \$2344 \$2266 \$2448 \$2378 \$2378 \$2449
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xnor3_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_5 \$490 \$2018 \$2118 \$2310 \$2214 \$2214 \$2276
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xnor3_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__xnor3_1_6 \$115 \$1517 \$1686 \$1645 \$1558 \$1558 \$1603
++ sky130_fd_sc_hd__xnor3_1
+* cell instance sky130_fd_sc_hd__xor2_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_0 \$903 \$985 \$967 \$1064 \$1064 \$987
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_1 \$2141 \$1895 \$2125 \$2183 \$2183 \$2113
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_2 \$1803 \$1895 \$1965 \$1893 \$1893 \$1916
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_3 \$2382 \$2385 \$2429 \$2355 \$2355 \$2386
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_4 \$2144 \$2688 \$2699 \$2645 \$2645 \$2657
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_5 \$2021 \$2597 \$2701 \$2645 \$2645 \$2669
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_6 \$2669 \$2727 \$2701 \$2758 \$2758 \$2692
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_7 \$2733 \$2779 \$2798 \$2771 \$2771 \$2753
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_8 \$2776 \$2784 \$2799 \$2762 \$2762 \$2785
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_9 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_9 \$2832 \$2834 \$2800 \$2837 \$2837 \$2813
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_10 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_10 \$2425 \$2465 \$2800 \$2764 \$2764 \$2693
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_11 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_11 \$2864 \$2840 \$2869 \$2839 \$2839 \$2625
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_12 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_12 \$2179 \$2168 \$2309 \$2378 \$2378 \$2344
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_13 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_13 \$2344 \$2266 \$2448 \$2499 \$2499 \$2481
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_14 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_14 \$1517 \$1686 \$1645 \$1729 \$1729 \$1454
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_15 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_15 \$1875 \$1603 \$1976 \$1910 \$1910 \$1804
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_16 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_16 \$2025 \$1954 \$2131 \$2054 \$2054 \$1960
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_17 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_17 \$115 \$1200 \$1472 \$1558 \$1558 \$1387
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor2_1_18 r0 *1 0,0
+Xsky130_fd_sc_hd__xor2_1_18 \$409 \$1454 \$1822 \$1712 \$1712 \$1805
++ sky130_fd_sc_hd__xor2_1
+* cell instance sky130_fd_sc_hd__xor3_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__xor3_1_0 \$2242 \$2464 \$2440 \$2574 \$2497 \$2497 \$2515
++ sky130_fd_sc_hd__xor3_1
+* cell instance sky130_fd_sc_hd__xor3_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__xor3_1_1 \$2408 \$2481 \$2793 \$2809 \$2843 \$2843 \$2697
++ sky130_fd_sc_hd__xor3_1
+* cell instance sky130_fd_sc_hd__xor3_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__xor3_1_2 \$409 \$2025 \$1954 \$1976 \$2054 \$2054 \$2043
++ sky130_fd_sc_hd__xor3_1
+.ENDS modexp
+
+* cell sky130_fd_sc_hd__xor3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__xor3_1 A B C VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__xor3_1
+
+* cell sky130_fd_sc_hd__xor2_1
+* pin A
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__xor2_1 A B VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__xor2_1
+
+* cell sky130_fd_sc_hd__xnor3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__xnor3_1 A B C VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__xnor3_1
+
+* cell sky130_fd_sc_hd__xnor2_1
+* pin A
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__xnor2_1 A B VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__xnor2_1
+
+* cell sky130_fd_sc_hd__probe_p_8
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__probe_p_8 A VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__probe_p_8
+
+* cell sky130_fd_sc_hd__or4_1
+* pin A
+* pin B
+* pin C
+* pin D
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__or4_1 A B C D VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__or4_1
+
+* cell sky130_fd_sc_hd__or3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__or3_1 A B C VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__or3_1
+
+* cell sky130_fd_sc_hd__o31ai_2
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o31ai_2 A1 A2 A3 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o31ai_2
+
+* cell sky130_fd_sc_hd__o31ai_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o31ai_1 A1 A2 A3 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o31ai_1
+
+* cell sky130_fd_sc_hd__o31a_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__o31a_1 A1 A2 A3 B1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__o31a_1
+
+* cell sky130_fd_sc_hd__o311ai_0
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o311ai_0 A1 A2 A3 B1 C1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o311ai_0
+
+* cell sky130_fd_sc_hd__o311a_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__o311a_1 A1 A2 A3 B1 C1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__o311a_1
+
+* cell sky130_fd_sc_hd__o22ai_2
+* pin A1
+* pin A2
+* pin B1
+* pin B2
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o22ai_2 A1 A2 B1 B2 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o22ai_2
+
+* cell sky130_fd_sc_hd__o21bai_1
+* pin A1
+* pin A2
+* pin B1_N
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o21bai_1 A1 A2 B1_N VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o21bai_1
+
+* cell sky130_fd_sc_hd__o21ai_2
+* pin A1
+* pin A2
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o21ai_2 A1 A2 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o21ai_2
+
+* cell sky130_fd_sc_hd__o21ai_1
+* pin A1
+* pin A2
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o21ai_1 A1 A2 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o21ai_1
+
+* cell sky130_fd_sc_hd__o21ai_0
+* pin A1
+* pin A2
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o21ai_0 A1 A2 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o21ai_0
+
+* cell sky130_fd_sc_hd__o21a_1
+* pin A1
+* pin A2
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__o21a_1 A1 A2 B1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__o21a_1
+
+* cell sky130_fd_sc_hd__o211ai_1
+* pin A1
+* pin A2
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__o211ai_1 A1 A2 B1 C1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__o211ai_1
+
+* cell sky130_fd_sc_hd__o211a_1
+* pin A1
+* pin A2
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__o211a_1 A1 A2 B1 C1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__o211a_1
+
+* cell sky130_fd_sc_hd__nor4_1
+* pin A
+* pin B
+* pin C
+* pin D
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nor4_1 A B C D VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nor4_1
+
+* cell sky130_fd_sc_hd__nor3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nor3_1 A B C VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nor3_1
+
+* cell sky130_fd_sc_hd__nor2b_1
+* pin A
+* pin B_N
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nor2b_1 A B_N VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nor2b_1
+
+* cell sky130_fd_sc_hd__nor2_2
+* pin A
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nor2_2 A B VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nor2_2
+
+* cell sky130_fd_sc_hd__nor2_1
+* pin A
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nor2_1 A B VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nor2_1
+
+* cell sky130_fd_sc_hd__nand3b_1
+* pin A_N
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nand3b_1 A_N B C VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nand3b_1
+
+* cell sky130_fd_sc_hd__nand3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nand3_1 A B C VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nand3_1
+
+* cell sky130_fd_sc_hd__nand2b_1
+* pin A_N
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nand2b_1 A_N B VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nand2b_1
+
+* cell sky130_fd_sc_hd__nand2_1
+* pin A
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__nand2_1 A B VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__nand2_1
+
+* cell sky130_fd_sc_hd__mux2i_1
+* pin A0
+* pin A1
+* pin S
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__mux2i_1 A0 A1 S VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__mux2i_1
+
+* cell sky130_fd_sc_hd__mux2_1
+* pin A0
+* pin A1
+* pin S
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__mux2_1 A0 A1 S VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__mux2_1
+
+* cell sky130_fd_sc_hd__maj3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__maj3_1 A B C VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__maj3_1
+
+* cell sky130_fd_sc_hd__lpflow_isobufsrc_1
+* pin A
+* pin SLEEP
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__lpflow_isobufsrc_1 A SLEEP VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__lpflow_isobufsrc_1
+
+* cell sky130_fd_sc_hd__lpflow_inputiso1p_1
+* pin A
+* pin SLEEP
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__lpflow_inputiso1p_1 A SLEEP VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__lpflow_inputiso1p_1
+
+* cell sky130_fd_sc_hd__inv_6
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__inv_6 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__inv_6
+
+* cell sky130_fd_sc_hd__dfstp_2
+* pin CLK
+* pin D
+* pin Q
+* pin SET_B
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__dfstp_2 CLK D Q SET_B VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__dfstp_2
+
+* cell sky130_fd_sc_hd__dfrtp_1
+* pin CLK
+* pin D
+* pin Q
+* pin RESET_B
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__dfrtp_1 CLK D Q RESET_B VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__dfrtp_1
+
+* cell sky130_fd_sc_hd__conb_1
+* pin HI
+* pin LO
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__conb_1 HI LO VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__conb_1
+
+* cell sky130_fd_sc_hd__clkinvlp_4
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__clkinvlp_4 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__clkinvlp_4
+
+* cell sky130_fd_sc_hd__clkinv_4
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__clkinv_4 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__clkinv_4
+
+* cell sky130_fd_sc_hd__clkinv_2
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__clkinv_2 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__clkinv_2
+
+* cell sky130_fd_sc_hd__clkinv_1
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__clkinv_1 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__clkinv_1
+
+* cell sky130_fd_sc_hd__bufinv_16
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__bufinv_16 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__bufinv_16
+
+* cell sky130_fd_sc_hd__buf_6
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__buf_6 A VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__buf_6
+
+* cell sky130_fd_sc_hd__buf_4
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__buf_4 A VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__buf_4
+
+* cell sky130_fd_sc_hd__and3_1
+* pin A
+* pin B
+* pin C
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__and3_1 A B C VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__and3_1
+
+* cell sky130_fd_sc_hd__and2_0
+* pin A
+* pin B
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__and2_0 A B VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__and2_0
+
+* cell sky130_fd_sc_hd__a32o_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin B2
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__a32o_1 A1 A2 A3 B1 B2 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__a32o_1
+
+* cell sky130_fd_sc_hd__a31oi_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__a31oi_1 A1 A2 A3 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__a31oi_1
+
+* cell sky130_fd_sc_hd__a31o_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__a31o_1 A1 A2 A3 B1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__a31o_1
+
+* cell sky130_fd_sc_hd__a311oi_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__a311oi_1 A1 A2 A3 B1 C1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__a311oi_1
+
+* cell sky130_fd_sc_hd__a311o_1
+* pin A1
+* pin A2
+* pin A3
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__a311o_1 A1 A2 A3 B1 C1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__a311o_1
+
+* cell sky130_fd_sc_hd__a22o_1
+* pin A1
+* pin A2
+* pin B1
+* pin B2
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__a22o_1 A1 A2 B1 B2 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__a22o_1
+
+* cell sky130_fd_sc_hd__a222oi_1
+* pin A1
+* pin A2
+* pin B1
+* pin B2
+* pin C1
+* pin C2
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__a222oi_1 A1 A2 B1 B2 C1 C2 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__a222oi_1
+
+* cell sky130_fd_sc_hd__a21oi_1
+* pin A1
+* pin A2
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__a21oi_1 A1 A2 B1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__a21oi_1
+
+* cell sky130_fd_sc_hd__a21o_1
+* pin A1
+* pin A2
+* pin B1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__a21o_1 A1 A2 B1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__a21o_1
+
+* cell sky130_fd_sc_hd__a21boi_0
+* pin A1
+* pin A2
+* pin B1_N
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__a21boi_0 A1 A2 B1_N VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__a21boi_0
+
+* cell sky130_fd_sc_hd__a211oi_1
+* pin A1
+* pin A2
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__a211oi_1 A1 A2 B1 C1 VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__a211oi_1
+
+* cell sky130_fd_sc_hd__a211o_1
+* pin A1
+* pin A2
+* pin B1
+* pin C1
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__a211o_1 A1 A2 B1 C1 VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__a211o_1
