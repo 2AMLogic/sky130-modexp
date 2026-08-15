@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #20** (closed): Remove unused base_dir_for_relpaths parameter from check_hash_freshness
+- **PR #22**: refactor: drop unused base_dir_for_relpaths param from check_hash_freshness
 - **Issue #8** (closed): DRC and LVS the routed GDS, with the deck's coverage gaps stated as part of the verdict
 - **PR #19**: docs+layout: DRC and LVS the routed GDS, with deck coverage gaps in the verdict
 - **Issue #16** (closed): Decision record: 100 MHz closes at tt/ff corners but fails at every ss corner (issue #7's full 18-corner P&R sweep)
