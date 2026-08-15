@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #29** (closed): Remove duplicated git/sha256 helpers in verification/check_records.py and cross_check.py
+- **PR #32**: refactor: extract shared git/sha256 helpers into verification/_repo_utils.py
 - **Issue #25** (closed): bug: cross_check.py never re-execs into .venv, so npm run test fails on a provisioned local checkout
 - **PR #30**: fix: compare interpreter directory, not resolved path, in venv re-exec guard
 - **Issue #23** (closed): Remove duplicated reset/run_modexp DUT helpers across verification test files
