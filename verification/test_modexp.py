@@ -2,10 +2,10 @@
 the RSA-style modular-exponentiation accelerator against Python's own
 `pow(base, exp, mod)`.
 
-Unlike `test_gcd.py` (which ships a deliberately-failing case to reproduce a
-`TESTS=3 PASS=2 FAIL=1` transcript), every test here is expected to PASS: this
-is the trustworthy correctness net Phase 1 of Epic marketing#56 calls for
-before any gate-count optimization begins.
+Every test here is expected to PASS: this is the trustworthy correctness net
+Epic #12 (see `WORK_PLAN.md`) calls for before any gate-count optimization
+begins. (For a cell-count comparison rather than a correctness comparison,
+see `docs/baseline.md`'s `gcd.v`-vs-`modexp.v` sky130 synthesis measurement.)
 
 The testbench is **width-adaptive**: it reads the DUT's operand width from
 `len(dut.result)` and constrains every random stimulus to that width, so the
@@ -14,7 +14,7 @@ without edits. (The `klt functional-verification` request does not yet plumb a
 Verilog parameter override, so the checked-in request elaborates the default
 `WIDTH=16`; the same design's bit-exactness at WIDTH=4/6/8/16 is additionally
 pinned by the deterministic Icarus cross-check recorded in
-`docs/design/rsa-modexp-baseline.md`.)
+`docs/baseline.md`.)
 
 This file is *input* to `klt functional-verification` (the testbench module
 named by `request.testbench.module`), not a pytest module -- pytest never
