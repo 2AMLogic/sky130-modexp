@@ -5,6 +5,12 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #43** (closed): Dedup _reexec_into_venv_if_needed between cross_check.py and gate_level_cross_check.py
+- **Issue #39** (closed): Dedup _reexec_into_venv_if_needed between cross_check.py and gate_level_cross_check.py
+- **PR #42**: refactor(verification): dedup venv re-exec handshake into _repo_utils
+- **Issue #35** (closed): Build/runtime failure on main: gate-level-sim evidence record has stale provenance hashes
+- **PR #40**: fix(verification): mint fresh gate-level-sim record, fix _dut.py symlink gap
+- **Issue #38** (closed): Build failure on main: stale provenance hash in gate-level-sim evidence record (PR #26)
 - **Issue #9** (closed): Re-run the bit-exact suite against the post-route gate-level netlist across the corner set
 - **PR #26**: Simulate the routed layout's own gate-level netlist against the unmodified bit-exact suite
 - **Issue #29** (closed): Remove duplicated git/sha256 helpers in verification/check_records.py and cross_check.py
