@@ -5,6 +5,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #25** (closed): bug: cross_check.py never re-execs into .venv, so npm run test fails on a provisioned local checkout
+- **PR #30**: fix: compare interpreter directory, not resolved path, in venv re-exec guard
+- **Issue #23** (closed): Remove duplicated reset/run_modexp DUT helpers across verification test files
+- **PR #27**: refactor: extract shared DUT reset/run_modexp helpers into verification/_dut.py
 - **Issue #20** (closed): Remove unused base_dir_for_relpaths parameter from check_hash_freshness
 - **PR #22**: refactor: drop unused base_dir_for_relpaths param from check_hash_freshness
 - **Issue #8** (closed): DRC and LVS the routed GDS, with the deck's coverage gaps stated as part of the verdict
