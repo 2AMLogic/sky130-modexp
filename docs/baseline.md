@@ -66,6 +66,9 @@ input content hashes) and the git revision it was produced against:
 - `verification/records/width-cross-check/records/` — the `WIDTH` =
   4/6/8/16 bit-exact cross-check, with the per-`WIDTH` vector transcripts as
   artifacts.
+- `verification/records/gate-level-sim/records/` — the same suite re-run
+  against a gate-level netlist of the **routed layout** rather than the RTL
+  (issue #9); see "Post-route gate-level simulation" below.
 
 `verification/README.md` is the authoritative description of that record
 format; `verification/check_records.py` enforces it, and fails on a record
@@ -237,3 +240,75 @@ not a signoff-ready macro; DRC/LVS-clean signoff is later work (issue #8 and
 beyond). The full record, including provenance and the reproduction recipe,
 is at
 [`verification/records/place-and-route/`](../verification/records/place-and-route/).
+
+## Post-route gate-level simulation — appended, issue #9
+
+**Status: Leg 1 achieved, Leg 2 blocked on upstream tooling.** Until this
+run, every correctness claim on this page rested on *behavioural* simulation
+of `rtl/modexp.v`. Synthesis mapping, tie-cell insertion, CTS, and OpenROAD's
+placement/timing optimizations were unverified by simulation.
+
+### What was simulated, and why it is not the P&R input netlist
+
+`klt place-and-route` exports no post-route gate-level netlist (its response
+contract is `def_path` + `gds_path`). The netlist simulated here is therefore
+**derived from the routed layout itself** —
+`layout/modexp.gds` → `klt extract --abstract-cells` (issue #8's
+`layout/lvs/modexp_layout_abstracted.spice`) →
+`verification/gate-level/spice_to_verilog.py` →
+`verification/gate-level/modexp_post_route.v`, **718 instances / 59 cell
+types / 68 pins / 1214 nets**, all cross-checked against
+`layout/lvs/modexp_layout_extract_report.json` before the run is allowed to
+proceed.
+
+That 718 matters: the netlist P&R was *given* has 683 instances (+1 tie
+cell). Simulating that one and calling the result "post-route" would omit all
+35 CTS/timing-fixup insertions and all 5 drive-strength resizes the routed
+GDS actually contains — an overclaim that would have *passed*.
+
+### The measurement
+
+| Leg | Driver | Result |
+| --- | --- | --- |
+| `test_modexp.py`, unmodified, via `klt functional-verification` | `verification/gate-level/run-gate-level-sim.sh` | `status: "pass"`, 2/2 tests, 0 failed |
+| 500-case randomized run, `cross_check_tb.py` unmodified, same pinned seed as the RTL cross-check | `verification/gate-level/gate_level_cross_check.py` | 500/500 match, 0 mismatches |
+
+The second leg's per-vector transcript is **byte-identical** to the RTL
+cross-check's committed `WIDTH=16` transcript
+(`verification/records/width-cross-check/artifacts/20260808-031948-5488082/width-16.jsonl`) —
+the routed netlist returned exactly the same 500 results, in the same order.
+The klt leg's simulated time also matches the RTL run's to the nanosecond
+(23750.0 ns / 180480.0 ns), i.e. the routed design is cycle-for-cycle
+identical to the RTL, not merely functionally equivalent.
+
+`test_modexp.py` was not edited, and was not copied: it is reached through a
+git symlink (`git ls-files -s verification/gate-level/test_modexp.py` → mode
+`120000`).
+
+### What this run does not claim
+
+- **No parasitics** (no `--parasitics` extraction, no SPEF), **no timing**,
+  **no corner**. It is zero-delay logic; the only delay in it is a 1 ns
+  `UNIT_DELAY` on flop outputs, a race-avoidance device rather than a
+  characterized delay. sky130A ships 18 liberty corners but one
+  corner-independent set of Verilog cell models, so this run has no corner
+  attribute at all. Timing evidence remains the OpenSTA corner sweep above.
+- **No power/ground network** — power pins are dropped; this GDS has no PDN.
+- **`WIDTH` = 16 only.** The netlist is an extraction of one fixed physical
+  layout of one elaboration; `WIDTH` is an RTL parameter that does not
+  survive synthesis. The case count is *not* reduced (500, matching the RTL
+  claim).
+- **Leg 2 (delay-annotated / SDF simulation at the corner set) was NOT
+  achieved**, and is not claimed. No artifact in this flow carries post-route
+  delays: `klt place-and-route` has no SDF export and `klt
+  functional-verification` has no SDF option
+  ([klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002),
+  open). Independently, Icarus 12.0 cannot simulate the SDF-annotatable
+  (non-`FUNCTIONAL`) cell models at all
+  ([klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004)).
+  Both blockers are evidenced in the record's artifacts.
+
+Full method, scope, and the friction filed upstream:
+[`verification/gate-level/README.md`](../verification/gate-level/README.md).
+The record is
+[`verification/records/gate-level-sim/`](../verification/records/gate-level-sim/).

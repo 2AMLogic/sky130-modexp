@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "worktree:return": "./.loom/scripts/worktree-return.sh",
-    "lint": "python3 verification/check_records.py && python3 verification/test_check_records.py",
+    "lint": "python3 verification/check_records.py && python3 verification/test_check_records.py && python3 verification/gate-level/test_spice_to_verilog.py",
     "test": "python3 verification/cross_check.py",
     "check:ci": "npm run lint && npm run test",
-    "check:all": "npm run lint && npm run test && klt functional-verification verification/request-modexp.json --format json"
+    "check:all": "npm run lint && npm run test && klt functional-verification verification/request-modexp.json --format json && ./verification/gate-level/run-gate-level-sim.sh"
   }
 }
