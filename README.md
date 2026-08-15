@@ -7,9 +7,10 @@ DRC/LVS-clean GDS by AI agents driving
 open-source digital flow — cocotb + Icarus for verification, Yosys for
 synthesis, OpenROAD for place-and-route.
 
-**Status: early.** The RTL and its bit-exact testbench exist and a synthesis
-baseline is measured; nothing has been placed, routed, taped out, or measured
-in silicon. See the maturity ladder below for where things currently stand.
+**Status: early.** The RTL and its bit-exact testbench exist, a synthesis
+baseline is measured, and the design has been placed and routed to a GDS
+with DRC and LVS run against it; nothing has taped out or been measured in
+silicon. See the maturity ladder below for where things currently stand.
 
 **Built agent-native.** Every line of RTL, every testbench, every decision
 record and line of documentation in this repo was produced by AI agents
@@ -73,7 +74,11 @@ question, lives in [`spec/modexp.md`](spec/modexp.md).
 
 Maturity ladder: RTL + bit-exact verification → synthesis baseline →
 place-and-route with timing closure → DRC/LVS-clean GDS → shuttle seat →
-measured silicon. **Current position: synthesis baseline.**
+measured silicon. **Current position: routed GDS with DRC/LVS run against
+it; slow-corner (`ss`) timing closure and a fully clean DRC/LVS verdict
+remain open** (see
+[`spec/decision-records/0002`](spec/decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md)
+and [`docs/signoff-claim.md`](docs/signoff-claim.md)).
 
 ## Reproducing it
 
