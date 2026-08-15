@@ -42,7 +42,6 @@ from __future__ import annotations
 import argparse
 import filecmp
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -52,7 +51,6 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent.parent
 VERIFICATION_DIR = REPO_ROOT / "verification"
-VENV_PYTHON = REPO_ROOT / ".venv" / "bin" / "python3"
 
 NETLIST = HERE / "modexp_post_route.v"
 DEFINES = HERE / "sky130_fd_sc_hd_sim_defines.v"
@@ -65,36 +63,7 @@ NETLIST_WIDTH = 16
 
 sys.path.insert(0, str(VERIFICATION_DIR))
 
-
-def _reexec_into_venv_if_needed() -> None:
-    """Same re-exec convenience `verification/cross_check.py` implements."""
-    try:
-        import cocotb_tools.runner  # noqa: F401
-
-        return
-    except ImportError:
-        pass
-    if not VENV_PYTHON.exists():
-        return
-    # Compare the *interpreter directory*, not the resolved binary: a venv's
-    # bin/python3 is a symlink chain ending at the same system interpreter
-    # `sys.executable` resolves to, so `.resolve()`-based equality would
-    # report "already in the venv" from outside it and skip the re-exec.
-    if Path(sys.executable).parent == VENV_PYTHON.parent:
-        return
-    if os.environ.get("GATE_LEVEL_NO_REEXEC") == "1":
-        return
-    os.environ["GATE_LEVEL_NO_REEXEC"] = "1"
-    print(
-        f"note: cocotb is not importable under {sys.executable}; "
-        f"re-executing under {VENV_PYTHON}",
-        file=sys.stderr,
-        flush=True,
-    )
-    os.execv(
-        str(VENV_PYTHON),
-        [str(VENV_PYTHON), str(Path(__file__).resolve()), *sys.argv[1:]],
-    )
+from _repo_utils import reexec_into_venv_if_needed  # noqa: E402
 
 
 def resolve_pdk_verilog() -> tuple[Path, Path, str]:
@@ -247,5 +216,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    _reexec_into_venv_if_needed()
+    reexec_into_venv_if_needed(Path(__file__), "GATE_LEVEL_NO_REEXEC")
     raise SystemExit(main())
