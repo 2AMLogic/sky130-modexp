@@ -10,7 +10,7 @@ hand-edit that region.
 
 Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
 
-_None._
+- **#41**: fix(guard): resolve double-quoted $VAR write targets in guard-destructive-generic.sh
 
 ## Urgent
 
@@ -22,35 +22,34 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set
+_None._
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#37**: Auditor guard-telemetry: worktree-write-confinement-unresolved-var recurs as a likely false positive
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#41**: fix(guard): resolve double-quoted $VAR write targets in guard-destructive-generic.sh
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#26**: Simulate the routed layout's own gate-level netlist against the unmodified bit-exact suite
+_None._
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set *(curated)*
+_None._
 
 ## Proposed (Architect / Hermit)
 
-- **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set *(architect)*
 - **#24**: Dedup DUT-driver helpers between test_modexp.py and cross_check_tb.py *(hermit)*
 
 ## Epics
@@ -61,13 +60,13 @@ Issues carrying `loom:curated`.
 
 | Tier | Count |
 |------|-------|
-| Operator merge-risk holds | 0 |
+| Operator merge-risk holds | 1 |
 | Urgent | 0 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 1 |
-| Architect / Hermit proposals | 2 |
+| Ready (`loom:issue`) | 0 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 1 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 0 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
