@@ -1,0 +1,23 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "sky130_fd_sc_hd_sim_defines.v",
+    "pdk-primitives.v",
+    "pdk-sky130_fd_sc_hd.v",
+    "modexp_post_route.v"
+  ],
+  "hdl_toplevel": "modexp",
+  "testbench": {
+    "module": "test_modexp",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1
+  }
+}

@@ -179,6 +179,40 @@ Two tool/flow gaps found while producing this evidence, filed generically
    accounting. Filed as
    [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996).
 
+## Post-route gate-level simulation (appended, issue #9)
+
+Issue #9 re-ran the committed bit-exact suite against a gate-level netlist of
+this same GDS, using the very extraction artifact this page's LVS section
+describes (`layout/lvs/modexp_layout_abstracted.spice`). That is a separate
+claim from the DRC/LVS verdict above and does not change it, but it is worth
+recording here because it uses the same layout and inherits the same scope
+caveats:
+
+- **What it establishes**: the 718-instance netlist implied by this routed
+  layout — including all 35 CTS/timing-fixup insertions and all 5 resizes
+  that the LVS section above attributes — is functionally bit-exact against
+  `pow(base, exp, mod)`, and returns byte-identical results to the RTL on the
+  same 500 pinned vectors. That is a positive, simulation-based answer to
+  part of what the LVS run could not itself confirm (the LVS comparator
+  stopped short of net-by-net correspondence, per "Reading this result" in
+  `layout/lvs/README.md`).
+- **What it does NOT model**, carried forward verbatim from this page's LVS
+  scope plus what is specific to simulation: **no parasitic extraction** (no
+  R/C, no SPEF — `klt extract` was run without `--parasitics`), **no
+  timing and no corner** (zero-delay logic; sky130A ships 18 liberty corners
+  but one corner-independent Verilog cell-model set), **no power/ground
+  network** (power pins dropped — this GDS has no PDN), and **cell-instance
+  granularity, not transistor level**.
+- **Not achieved**: delay-annotated (SDF) simulation at the ratified corner
+  set. `klt place-and-route` has no SDF export and `klt
+  functional-verification` has no SDF option — filed as
+  [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002),
+  with a simulator-version precondition filed as
+  [#1004](https://github.com/2AMLogic/klayout-tools/issues/1004).
+
+Full method and scope: `verification/gate-level/README.md`. Record:
+`verification/records/gate-level-sim/`.
+
 ## Evidence record
 
 `verification/records/drc-lvs/records/<record-id>.md` (append-only

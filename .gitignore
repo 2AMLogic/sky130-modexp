@@ -24,6 +24,12 @@ flow/corner-sweep-results.json
 sim_build*/
 results.xml
 results_icarus.xml
+# verification/gate-level/run-gate-level-sim.sh links the resolved sky130A
+# cell-model files into the request's own directory under fixed names, so
+# the committed request can name them with machine-independent relative
+# paths (klt.functional_verification.request/1 has no PDK block). The links
+# point outside the repo and are recreated on every run -- never committed.
+verification/gate-level/pdk-*.v
 # >>> loom-managed (do not edit) >>>
 # Loom runtime state (don't commit these)
 .loom-in-use

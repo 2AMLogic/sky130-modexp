@@ -74,11 +74,13 @@ question, lives in [`spec/modexp.md`](spec/modexp.md).
 
 Maturity ladder: RTL + bit-exact verification → synthesis baseline →
 place-and-route with timing closure → DRC/LVS-clean GDS → shuttle seat →
-measured silicon. **Current position: routed GDS with DRC/LVS run against
-it; slow-corner (`ss`) timing closure and a fully clean DRC/LVS verdict
-remain open** (see
-[`spec/decision-records/0002`](spec/decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md)
-and [`docs/signoff-claim.md`](docs/signoff-claim.md)).
+measured silicon. **Current position: routed GDS with DRC/LVS run against it
+and the bit-exact suite re-run at gate level against a netlist derived from
+that routed layout; slow-corner (`ss`) timing closure, a fully clean DRC/LVS
+verdict, and delay-annotated (SDF) gate-level simulation remain open** (see
+[`spec/decision-records/0002`](spec/decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md),
+[`docs/signoff-claim.md`](docs/signoff-claim.md), and
+[`verification/gate-level/README.md`](verification/gate-level/README.md)).
 
 ## Reproducing it
 
@@ -102,7 +104,8 @@ authoritative description of the evidence-record format.
 ```
 spec/          ratified spec + decision records
 rtl/           Verilog sources
-verification/  cocotb testbenches, Icarus cross-checks, append-only records
+verification/  cocotb testbenches, Icarus cross-checks, post-route
+               gate-level simulation, append-only records
 flow/          synthesis + place-and-route recipes (Yosys, OpenROAD)
 layout/        GDS + DRC/LVS reports (klayout-tools driven)
 docs/          baseline record, environment setup

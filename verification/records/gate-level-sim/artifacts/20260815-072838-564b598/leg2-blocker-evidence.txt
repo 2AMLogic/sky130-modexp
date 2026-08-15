@@ -1,0 +1,90 @@
+Leg 2 (delay-annotated / SDF gate-level simulation) -- blocker evidence
+Captured 2026-08-15T07:26:49Z on the environment described in the record.
+
+==============================================================
+A. No SDF (or post-route netlist) artifact exists to annotate.
+==============================================================
+
+$ klt place-and-route --help   (pinned klt 0.2.0, af5791b)
+Place and route a gate-level netlist (`klt synthesize`'s own `netlist_path`
+output) against a resolved sky130 standard-cell LEF/liberty deck via
+OpenROAD's native Tcl API, stage by stage (floorplan -> global/detailed
+placement -> clock-tree synthesis -> global/detailed routing) -- see
+docs/design/digital-flow-contracts-spike.md section 5 for the request/response
+contract and docs/cli/place-and-route.md for the CLI surface. Phase 4 of Epic
+#391. `target_stage` (default `route`) controls how far the run goes; a run
+that reaches (or exceeds) the requested stage is always a success, even short
+of a full route. `def_path` is populated once `write_def` has run; `gds_path`
+only once the DEF is also merged with the standard-cell GDS views via
+KLayout's `pya`, in-process -- never a `klayout` subprocess. Runs `openroad`
+as a subprocess (once per stage) -- requires an `openroad` binary on `$PATH`.
+Takes a request-document path (like `klt synthesize`/`klt lvs`/`klt sim`), not
+positional file args.
+
+$ grep -n '"def_path"\|"gds_path"\|sdf' <klt>/place_and_route.py | (response dict)
+226:    "def": ("def_path",),
+533:        "def_path": def_path,
+534:        "gds_path": gds_path,
+  -> the response contract carries def_path and gds_path only; no netlist,
+     no SDF. Upstream: 2AMLogic/klayout-tools#1002 (open).
+
+$ grep -n 'sdf' <klt>/functional_verification.py
+  (no match -- the request schema has no SDF option)
+
+==============================================================
+B. Icarus 12.0 on this host cannot simulate the SDF-annotatable
+   (non-FUNCTIONAL) sky130_fd_sc_hd timing models at all.
+==============================================================
+
+Icarus Verilog version 12.0 (stable) ()
+Unable to get version from "/usr/lib/x86_64-linux-gnu/ivl/ivlpp -V"
+Unable to get version from "/usr/lib/x86_64-linux-gnu/ivl/ivl -V -C"/tmp/ivrlh7e4cc474" -C"/usr/lib/x86_64-linux-gnu/ivl/vvp.conf""
+
+$ iverilog -g2012 -gspecify -ginterconnect ... (the recipe klayout-tools#962 accepted)
+Unknown/Unsupported Language generation interconnect
+
+Supported generations are:
+  exit status: (see above -- -ginterconnect is an Icarus 13 flag)
+
+$ iverilog -g2012 -gspecify ...            (timing models, no FUNCTIONAL)
+  compile exit=0  'delayed signal ... will not be driven' warnings: 620
+/home/ubuntu/.volare/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v:44983: warning: Timing checks are not supported and delayed signal "SET_B_delayed" will not be driven.
+$ vvp tb_sp.vvp    (directed vector 2**10 mod 1000, expect 24 = 16'b...11000)
+after reset: result=xxxxxxxxxxxxxxxx done=x
+after run:   result=xxxxxxxxxxxxxxxx done=x
+tb_timing.v:20: $finish called at 4075000 (1ps)
+
+CONTROL: the identical netlist and vector under the FUNCTIONAL models
+  compile exit=0  warnings: 0
+after reset: result=0000000000000000 done=0
+after run:   result=0000000000011000 done=0
+tb_timing.v:20: $finish called at 4075000 (1ps)
+
+==============================================================
+Conclusion: Leg 2 is blocked on (A) alone, which is independent of
+simulator version. (B) is an additional, host-specific blocker.
+==============================================================
+
+--- tb_timing.v (the directed-vector harness used above) ---
+`timescale 1ns/1ps
+module tb_timing;
+  reg clk = 0, rst_n = 0, start = 0;
+  reg [15:0] base_in = 0, exp_in = 0, mod_in = 0;
+  wire done;
+  wire [15:0] result;
+  modexp dut(.clk(clk), .rst_n(rst_n), .start(start),
+             .base_in(base_in), .exp_in(exp_in), .mod_in(mod_in),
+             .done(done), .result(result));
+  always #5 clk = ~clk;
+  initial begin
+    repeat (6) @(posedge clk);
+    rst_n = 1;
+    @(posedge clk);
+    $display("after reset: result=%b done=%b", result, done);
+    base_in = 2; exp_in = 10; mod_in = 1000; start = 1;
+    @(posedge clk); start = 0;
+    repeat (400) @(posedge clk);
+    $display("after run:   result=%b done=%b", result, done);
+    $finish;
+  end
+endmodule
