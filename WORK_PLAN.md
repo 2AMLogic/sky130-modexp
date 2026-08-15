@@ -28,31 +28,32 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#20**: Remove unused base_dir_for_relpaths parameter from check_hash_freshness
+- **#23**: Remove duplicated reset/run_modexp DUT helpers across verification test files
 - **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#27**: refactor: extract shared DUT reset/run_modexp helpers into verification/_dut.py
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#26**: Simulate the routed layout's own gate-level netlist against the unmodified bit-exact suite
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#20**: Remove unused base_dir_for_relpaths parameter from check_hash_freshness *(curated)*
+- **#25**: bug: cross_check.py never re-execs into .venv, so npm run test fails on a provisioned local checkout *(curated)*
 - **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#9**: Re-run the bit-exact suite against the post-route gate-level netlist across the corner set *(architect)*
+- **#24**: Dedup DUT-driver helpers between test_modexp.py and cross_check_tb.py *(hermit)*
 
 ## Epics
 
@@ -66,9 +67,9 @@ Issues carrying `loom:curated`.
 | Urgent | 0 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
+| PRs awaiting review | 1 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 2 |
-| Architect / Hermit proposals | 1 |
+| Architect / Hermit proposals | 2 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
