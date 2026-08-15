@@ -5,6 +5,9 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #48** (closed): T1/bronze checklist re-read against current evidence (2026-08-15)
+- **Issue #45** (closed): Fix stale cross-repo references in test_modexp.py's module docstring
+- **PR #47**: docs: fix stale cross-repo references in test_modexp.py docstring
 - **Issue #43** (closed): Dedup _reexec_into_venv_if_needed between cross_check.py and gate_level_cross_check.py
 - **Issue #39** (closed): Dedup _reexec_into_venv_if_needed between cross_check.py and gate_level_cross_check.py
 - **PR #42**: refactor(verification): dedup venv re-exec handshake into _repo_utils
