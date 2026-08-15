@@ -5,6 +5,7 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #50** (closed): Auditor guard-telemetry: stash-scope:create-redirect denied — confirm keep-flagged
 - **Issue #48** (closed): T1/bronze checklist re-read against current evidence (2026-08-15)
 - **Issue #45** (closed): Fix stale cross-repo references in test_modexp.py's module docstring
 - **PR #47**: docs: fix stale cross-repo references in test_modexp.py docstring
