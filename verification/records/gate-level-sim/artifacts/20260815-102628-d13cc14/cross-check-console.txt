@@ -1,0 +1,33 @@
+== post-route gate-level cross-check ==
+netlist:  verification/gate-level/modexp_post_route.v
+cells:    /Users/rwalters/.volare/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
+pdk:      open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b
+width:    16 (fixed -- the layout is one elaboration)
+cases:    500   seed: 20260807016
+
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.14.3 interpreter at /opt/homebrew/opt/python@3.14/bin/python3.14
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with supplied seed 20260807016
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /opt/homebrew/lib/python3.14/site-packages/cocotb
+     0.00ns WARNING  py.warnings                        /opt/homebrew/lib/python3.14/site-packages/pytest_asyncio/plugin.py:15: DeprecationWarning: 'asyncio.AbstractEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+                                                          from asyncio import AbstractEventLoop, AbstractEventLoopPolicy
+     0.00ns WARNING  py.warnings                        /opt/homebrew/lib/python3.14/site-packages/pytest_benchmark/plugin.py:255: PendingDeprecationWarning: FileType is deprecated. Simply open files after parsing arguments.
+                                                          type=argparse.FileType('wb'),
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running cross_check_tb.test_cross_check (1/1)
+                                                            Randomized bit-exact cross-check, parameterized entirely through env
+2264710.00ns INFO     cocotb.regression                  cross_check_tb.test_cross_check passed
+2264710.00ns INFO     cocotb.regression                  *****************************************************************************************
+                                                         ** TEST                             STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                         *****************************************************************************************
+                                                         ** cross_check_tb.test_cross_check   PASS     2264710.00          41.83      54139.48  **
+                                                         *****************************************************************************************
+                                                         ** TESTS=1 PASS=1 FAIL=0 SKIP=0               2264710.00          41.83      54137.53  **
+                                                         *****************************************************************************************
+
+500/500 match, 0 mismatches
+transcript is BYTE-IDENTICAL to the RTL transcript verification/records/width-cross-check/artifacts/20260815-073109-564b598/width-16.jsonl
+RESULT: PASS
+
+(transcript + build kept at /private/tmp/gate-level-leg1b)
