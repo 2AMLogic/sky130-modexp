@@ -28,7 +28,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-- **#45**: Fix stale cross-repo references in test_modexp.py's module docstring
+_None._
 
 ## PRs Awaiting Review
 
@@ -63,7 +63,7 @@ _None._
 | Operator merge-risk holds | 1 |
 | Urgent | 0 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
 | Curated | 0 |
