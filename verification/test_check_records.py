@@ -33,6 +33,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 LINTER = SCRIPT_DIR / "check_records.py"
+REPO_UTILS = SCRIPT_DIR / "_repo_utils.py"
 
 BASE_REF = "refs/heads/fixture-base"
 
@@ -129,6 +130,7 @@ def build_fixture_repo(tmp: Path) -> Path:
 
     (repo / "rtl" / "dut.v").write_text(DUMMY_RTL, encoding="utf-8")
     shutil.copyfile(LINTER, repo / "verification" / "check_records.py")
+    shutil.copyfile(REPO_UTILS, repo / "verification" / "_repo_utils.py")
 
     record = make_record(
         "20260101-000000-abc1234",
@@ -363,6 +365,9 @@ CASES = [
 def main() -> int:
     if not LINTER.exists():
         print(f"FATAL: {LINTER} not found", file=sys.stderr)
+        return 1
+    if not REPO_UTILS.exists():
+        print(f"FATAL: {REPO_UTILS} not found", file=sys.stderr)
         return 1
 
     print(f"== check_records.py self-test ({len(CASES)} cases) ==")
