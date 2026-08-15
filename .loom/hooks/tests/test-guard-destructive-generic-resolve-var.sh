@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-# Test suite for guard-destructive-generic.sh's resolve_var() whole-token
-# double-quote unwrap (issue #37).
+# Test suite for guard-destructive-generic.sh's quote-aware resolve_var()
+# (issue #37).
+#
+# WHAT IS UNDER TEST IS A BACKPORT, NOT A LOCAL INVENTION: the resolve_var()
+# / dequote_expandable() / resolve_var_core() trio in the vendored guard is
+# copied verbatim from the canonical Repo Skills guard
+# (rjwalters/repo -> hooks/repo/guard-destructive.sh), where this fix landed
+# as rjwalters/repo#297, closing rjwalters/repo#293. This suite is this
+# repo's local regression evidence for the behavior; the durable
+# implementation lives upstream and arrives here on the next Loom resync.
 #
 # Background: extract_write_targets()'s same-command $VAR/${VAR} resolution
 # (#4881) already substitutes a BARE `$WORKTREE_ABS/rest` write target from a
@@ -15,12 +23,20 @@
 # reported in issue #37 (4 denied commands, all double-quoting a
 # worktree-scoped variable).
 #
-# The fix unwraps exactly one layer of matching quotes when a token is quoted
-# END-TO-END (first char == last char == a quote, length >= 2) and only for
-# DOUBLE quotes -- single-quoted "$VAR" is genuinely literal, unexpanded text
-# at the real shell, so it must never be substituted. This suite asserts the
-# fix resolves the reported false positive while every unrelated
-# unresolvable/escaping shape stays denied exactly as before.
+# The fix routes a non-`$`-leading token through dequote_expandable(), a
+# conservative ELIGIBILITY TEST rather than a quote parser: it strips double
+# quotes only when doing so is provably identical to what bash produces, and
+# refuses outright (leaving today's verdict untouched) on a single quote, a
+# backslash, a backtick, or an odd number of double quotes. Single-quoted
+# `$VAR` is genuinely literal, unexpanded text at the real shell, so it is
+# never substituted. When nothing is proved, the ORIGINAL quote-preserved
+# token is returned, i.e. byte-identical to the pre-fix verdict.
+#
+# SCOPE (see also the "still deny" cases at the end of this file): of the 4
+# denied commands quoted as evidence in issue #37, this resolves the 2 whose
+# write target is a double-quoted reference to a same-command static literal.
+# The other 2 target `"$tmp/"` where `tmp=$(mktemp -d)` -- a command
+# substitution, never a proven literal -- and correctly still deny.
 #
 # Usage: ./.loom/hooks/tests/test-guard-destructive-generic-resolve-var.sh
 # Exit 0 = all pass, 1 = fail.
@@ -172,6 +188,21 @@ fi
 # issue #37 (a materially harder case) and must not regress into an allow.
 result=$(run_hook 'cd '"$WT"' && GITREV=$(git rev-parse HEAD) && RID="${GITREV}-x" && D=out && mkdir -p $D && cp /tmp/x $D/artifacts/$RID/f.txt' "$TMPROOT")
 assert_deny "(h) nested/chained unresolved var in a directory component -> still deny (out of scope)" "$result"
+
+# --- SCOPE (i)/(j): the OTHER 2 of the 4 commands quoted in issue #37 -----
+# Both write into `"$tmp/"` where `tmp=$(mktemp -d)`. A `$(...)` command
+# substitution is not a bare variable reference and its value is never
+# proven, so record_assign() stores nothing resolvable and the target stays
+# unresolved -- these still DENY, by design, both here and in the canonical
+# upstream guard. Asserted explicitly so a future telemetry pass recognizes
+# them as a known, intentional deny rather than re-filing them as a new
+# false positive, and so a later change cannot quietly start resolving
+# command-substitution-derived destinations.
+result=$(run_hook 'WORKTREE_ABS="'"$WT"'"; tmp=$(mktemp -d); cp "$WORKTREE_ABS/rtl/modexp.v" "$tmp/"' "$TMPROOT")
+assert_deny "(i) #37 evidence line 2: cp into \"\$tmp/\" from \$(mktemp -d) -> still deny (out of scope)" "$result"
+
+result=$(run_hook 'cd '"$WT"'; tmp=$(mktemp -d); cp rtl/modexp.v "$tmp/"' "$TMPROOT")
+assert_deny "(j) #37 evidence line 3: cd + cp into \"\$tmp/\" from \$(mktemp -d) -> still deny (out of scope)" "$result"
 
 echo "=== $PASS/$TOTAL passed ==="
 [[ "$FAIL" -eq 0 ]]

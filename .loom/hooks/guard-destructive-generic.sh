@@ -3627,50 +3627,102 @@ extract_write_targets() {
     # lands in the main checkout). Fail-closed by construction: this function
     # can only ever REPLACE a token with a value it actually proved, never
     # make one disappear.
-    function resolve_var(tok,   vname, rest, vv, inner, tlen, qc) {
-        # Whole-token DOUBLE-quote unwrap (issue #37): qsplit() copies quote
-        # characters verbatim, so the common, SAFER shell idiom of quoting a
-        # variable reference -- `"$WORKTREE_ABS/rtl/modexp.v"` -- arrives here
-        # STILL quoted, and the bare check below (which requires "$" to be
-        # the first character of the token itself) never even attempted to
-        # resolve it, even though varmap already proves exactly where it
-        # points. That
-        # left every double-quoted single-variable write target unresolved
-        # and denied (worktree-write-confinement-unresolved-var) purely
-        # because it was quoted, not because its destination was unknown.
-        #
-        # Only a token quoted END-TO-END is unwrapped: first char == last
-        # char == `"`, length >= 2. A token with an internal-only or partial
-        # quote (`prefix"$VAR"suffix`, `"$VAR"-suffix`) is deliberately left
-        # untouched -- `inner` stays the raw token, its first character is
-        # still not "$", and the existing "not a bare reference" fallback
-        # below declines it exactly as before (no new resolutions beyond the
-        # one narrow shape this closes).
-        #
-        # SINGLE quotes are NEVER unwrapped: a single-quoted $VAR/x span is
-        # genuinely literal text at the real shell (no expansion happens at
-        # all), so treating
-        # it the same as double quotes would substitute a value the real
-        # write never uses -- exactly the kind of guessed resolution the
-        # header comment above forbids. Leaving it alone here is already
-        # correct: mark_expandable_dollars() (the deny-side classifier)
-        # independently recognizes a single-quoted "$" as literal data, not
-        # an expansion, so this path is unaffected by this change either way.
-        inner = tok
-        tlen = length(tok)
-        if (tlen >= 2) {
-            qc = substr(tok, 1, 1)
-            if (qc == DQ && substr(tok, tlen, 1) == DQ) {
-                inner = substr(tok, 2, tlen - 2)
-            }
+    # BACKPORT, NOT A LOCAL INVENTION (this repo issue #37).
+    #
+    # This file is a VENDORED copy whose header forbids hand-editing generic
+    # pattern behavior locally, because Loom re-vendors it from the canonical
+    # Repo Skills guard (rjwalters/repo -> hooks/repo/guard-destructive.sh) at
+    # release time. The three functions below are therefore copied VERBATIM
+    # from that canonical guard, where this exact fix already landed as
+    # rjwalters/repo#297 (closing rjwalters/repo#293, upstream commit
+    # 661b69dc, 2026-08-15) -- the same upstream tracker issue this repo
+    # already routed its earlier report to when issue #15 was closed "not
+    # planned" in favor of filing upstream.
+    #
+    # So the durability concern that normally applies to editing a vendored
+    # file is inverted here: the next Loom resync does NOT reintroduce the
+    # bug by clobbering a local patch -- it replaces this block with the
+    # identical canonical implementation it was copied from. This edit only
+    # closes the window between the upstream fix landing and Loom cutting a
+    # release that re-vendors it. Keep it byte-identical to canonical; if it
+    # ever needs to change, change it upstream first.
+    #
+    # QUOTED WRITE TARGETS (repo#293): qsplit() copies quote characters
+    # VERBATIM, so the overwhelmingly common builder spelling of this exact
+    # pattern -- `WORKTREE_ABS="<wt>"; cp x "$WORKTREE_ABS/rtl/y"` -- arrived
+    # here as `"$WORKTREE_ABS/rtl/y"`, failed the `substr(tok,1,1) != "$"`
+    # test on its opening double quote, and was emitted UNRESOLVED. It then
+    # hit the #4921 unresolved-`$` classifier downstream and hard-denied with
+    # the `worktree-write-confinement-unresolved-var` tag -- even though the
+    # variable held a static, worktree-confined literal assigned in the SAME
+    # command that the resolver was already fully capable of proving (the
+    # unquoted spelling of the identical command has always resolved and
+    # allowed). resolve_var() is now the quote-aware entry point and
+    # resolve_var_core() is the unchanged resolution itself.
+    function resolve_var(tok,   cand, res) {
+        if (substr(tok, 1, 1) == "$") return resolve_var_core(tok)
+        cand = dequote_expandable(tok)
+        if (cand == "" || substr(cand, 1, 1) != "$") return tok
+        res = resolve_var_core(cand)
+        # Nothing proved => return the ORIGINAL, quote-preserved token, i.e.
+        # byte-identical to the pre-repo#293 verdict for every shape this
+        # cannot resolve.
+        if (res == cand) return tok
+        return res
+    }
+    # dequote_expandable() -- conservative ELIGIBILITY TEST, deliberately NOT a
+    # quote parser (repo#293).
+    #
+    # The mark_expandable_dollars() header warns that a second, hand-copied copy
+    # of "what the shell would do to these quotes" is exactly how the two
+    # consumers drift apart, and that a drift in THAT grammar is a guard
+    # bypass. This function does not re-implement that grammar. It answers one
+    # much weaker, decidable question: "is this token so trivially quoted that
+    # deleting every double quote is PROVABLY identical to what bash produces?"
+    #
+    # It refuses (returns "") the moment anything subtle is present:
+    #   - a single quote  -> `$` inside it is literal data, never an expansion
+    #   - a backslash     -> `\$` is a literal `$`, `\"` shifts the quoting
+    #   - a backtick      -> legacy command substitution in a later component
+    #   - unbalanced `"`  -> bash would not even accept the word
+    # With NONE of those present, every `$` in the token is expanded by bash
+    # whether it sits inside or outside the double-quoted spans, and the
+    # quote characters contribute nothing to the resulting word -- so
+    # `"$V/x"`, `"$V"/x` and `$V"/x"` all denote the same path, and deleting
+    # the quotes is exact rather than approximate.
+    #
+    # Returns "" for "not eligible / nothing to strip", which callers must
+    # treat as "keep the verdict this guard already produces". A resolved
+    # value is NEVER trusted on
+    # its own: it is substituted into the token and then judged by the SAME
+    # confinement tests every literal target goes through, so proving a
+    # variable holds `<main-checkout>/evil.sh` still DENIES (with the ordinary
+    # `worktree-write-confinement` tag). This can only ever make an
+    # unresolvable target resolvable -- it never relaxes a containment test.
+    function dequote_expandable(tok,   n, i, c, out, dq) {
+        if (index(tok, SQ) > 0) return ""
+        if (index(tok, "\\") > 0) return ""
+        if (index(tok, BQ) > 0) return ""
+        n = length(tok)
+        dq = 0
+        out = ""
+        for (i = 1; i <= n; i++) {
+            c = substr(tok, i, 1)
+            if (c == DQ) { dq++; continue }
+            out = out c
         }
-        if (substr(inner, 1, 1) != "$") return tok
-        if (match(inner, /^\$\{[A-Za-z_][A-Za-z0-9_]*\}/)) {
-            vname = substr(inner, RSTART + 2, RLENGTH - 3)
-            rest = substr(inner, RSTART + RLENGTH)
-        } else if (match(inner, /^\$[A-Za-z_][A-Za-z0-9_]*/)) {
-            vname = substr(inner, RSTART + 1, RLENGTH - 1)
-            rest = substr(inner, RSTART + RLENGTH)
+        if (dq == 0) return ""
+        if (dq % 2 != 0) return ""
+        return out
+    }
+    function resolve_var_core(tok,   vname, rest, vv) {
+        if (substr(tok, 1, 1) != "$") return tok
+        if (match(tok, /^\$\{[A-Za-z_][A-Za-z0-9_]*\}/)) {
+            vname = substr(tok, RSTART + 2, RLENGTH - 3)
+            rest = substr(tok, RSTART + RLENGTH)
+        } else if (match(tok, /^\$[A-Za-z_][A-Za-z0-9_]*/)) {
+            vname = substr(tok, RSTART + 1, RLENGTH - 1)
+            rest = substr(tok, RSTART + RLENGTH)
         } else {
             # `$(...)`, `${VAR:-x}`, `$1`, … — not a bare variable reference.
             return tok
@@ -3681,10 +3733,6 @@ extract_write_targets() {
         # assignment this single-pass resolver does not follow) stays
         # unresolved rather than being guessed.
         if (vv == "" || substr(vv, 1, 1) == "$") return tok
-        # The quote (if any) only existed to protect the "$..." reference
-        # from word-splitting at the real shell; once resolved to a concrete
-        # value there is nothing left to protect, so the result is returned
-        # UNQUOTED, same as the always-unquoted bare-$VAR return below.
         return vv rest
     }
     # Record a single `NAME=value` word into varmap (value optionally wrapped
@@ -3732,6 +3780,10 @@ extract_write_targets() {
         SEP = sprintf("%c", 31)
         DQ = sprintf("%c", 34)
         SQ = sprintf("%c", 39)
+        # Backtick — legacy command substitution. dequote_expandable()
+        # (repo#293) refuses any token containing one rather than proving a
+        # prefix around it.
+        BQ = sprintf("%c", 96)
         # Poison value for a name assigned two different values in one command
         # (see record_assign). The leading "$" is load-bearing: it routes into
         # the existing unresolved-chain refusal inside resolve_var().
