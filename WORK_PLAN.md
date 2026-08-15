@@ -22,25 +22,25 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#37**: Auditor guard-telemetry: worktree-write-confinement-unresolved-var recurs as a likely false positive
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#37**: Auditor guard-telemetry: worktree-write-confinement-unresolved-var recurs as a likely false positive
+- **#45**: Fix stale cross-repo references in test_modexp.py's module docstring
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#41**: fix(guard): resolve double-quoted $VAR write targets in guard-destructive-generic.sh
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#41**: fix(guard): resolve double-quoted $VAR write targets in guard-destructive-generic.sh
 
 ## Proposed
 
@@ -62,10 +62,10 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 1 |
 | Urgent | 0 |
-| Ready (`loom:issue`) | 0 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 0 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 0 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 1 |
