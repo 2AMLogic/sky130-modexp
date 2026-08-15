@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-15
 
+- **Issue #9** (closed): Re-run the bit-exact suite against the post-route gate-level netlist across the corner set
+- **PR #26**: Simulate the routed layout's own gate-level netlist against the unmodified bit-exact suite
 - **Issue #29** (closed): Remove duplicated git/sha256 helpers in verification/check_records.py and cross_check.py
 - **PR #32**: refactor: extract shared git/sha256 helpers into verification/_repo_utils.py
 - **Issue #25** (closed): bug: cross_check.py never re-execs into .venv, so npm run test fails on a provisioned local checkout
