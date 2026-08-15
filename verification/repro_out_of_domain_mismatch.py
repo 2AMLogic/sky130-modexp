@@ -34,7 +34,6 @@ from pathlib import Path
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, RisingEdge
 from cocotb_tools.runner import get_runner
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -43,35 +42,9 @@ WIDTH = 8
 NUM_CASES = 400
 SEED = 7
 
-
-async def _reset(dut):
-    dut.rst_n.value = 0
-    dut.start.value = 0
-    dut.base_in.value = 0
-    dut.exp_in.value = 0
-    dut.mod_in.value = 0
-    await ClockCycles(dut.clk, 3)
-    dut.rst_n.value = 1
-    await RisingEdge(dut.clk)
-
-
-async def _run_modexp(dut, base, exp, mod, timeout_cycles=20000):
-    await RisingEdge(dut.clk)
-    dut.base_in.value = base
-    dut.exp_in.value = exp
-    dut.mod_in.value = mod
-    dut.start.value = 1
-    await RisingEdge(dut.clk)
-    dut.start.value = 0
-
-    for _ in range(timeout_cycles):
-        await RisingEdge(dut.clk)
-        if dut.done.value == 1:
-            return int(dut.result.value)
-    raise RuntimeError(
-        f"modexp({base}, {exp}, {mod}) did not assert done within "
-        f"{timeout_cycles} cycles"
-    )
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _dut import reset as _reset  # noqa: E402
+from _dut import run_modexp as _run_modexp  # noqa: E402
 
 
 @cocotb.test()
@@ -122,5 +95,4 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     main()

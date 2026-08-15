@@ -22,52 +22,20 @@ collects it, since it takes a cocotb-injected `dut` argument and only runs
 inside a simulator process.
 """
 
+import os
 import random
+import sys
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, RisingEdge
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _dut import reset, run_modexp  # noqa: E402
 
 
 def _width(dut):
     """Operand width of this elaboration, read from the result port."""
     return len(dut.result)
-
-
-async def reset(dut):
-    dut.rst_n.value = 0
-    dut.start.value = 0
-    dut.base_in.value = 0
-    dut.exp_in.value = 0
-    dut.mod_in.value = 0
-    await ClockCycles(dut.clk, 3)
-    dut.rst_n.value = 1
-    await RisingEdge(dut.clk)
-
-
-async def run_modexp(dut, base, exp, mod, timeout_cycles=20000):
-    """Drive one start/done handshake; return the core's result.
-
-    The cycle budget is generous: the core is O(WIDTH^2) -- WIDTH exponent
-    steps, each up to two WIDTH-bit interleaved modular multiplies -- so a
-    16-bit operand needs a few hundred cycles worst case.
-    """
-    await RisingEdge(dut.clk)
-    dut.base_in.value = base
-    dut.exp_in.value = exp
-    dut.mod_in.value = mod
-    dut.start.value = 1
-    await RisingEdge(dut.clk)
-    dut.start.value = 0
-
-    for _ in range(timeout_cycles):
-        await RisingEdge(dut.clk)
-        if dut.done.value == 1:
-            return int(dut.result.value)
-    raise RuntimeError(
-        f"modexp({base}, {exp}, {mod}) did not assert done within "
-        f"{timeout_cycles} cycles"
-    )
 
 
 @cocotb.test()
