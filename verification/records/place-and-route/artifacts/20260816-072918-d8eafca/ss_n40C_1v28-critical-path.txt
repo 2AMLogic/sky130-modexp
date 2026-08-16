@@ -1,0 +1,53 @@
+===CRIT_PATH_BEGIN===
+Startpoint: _1205_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _1172_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+  Delay    Time   Description
+---------------------------------------------------------
+   0.00    0.00   clock clk (rise edge)
+   0.00    0.00   clock network delay (ideal)
+   0.00    0.00 ^ _1205_/CLK (sky130_fd_sc_hd__dfrtp_2)
+   2.59    2.59 v _1205_/Q (sky130_fd_sc_hd__dfrtp_2)
+   0.87    3.47 v split40/X (sky130_fd_sc_hd__buf_6)
+   1.18    4.65 v _0636_/X (sky130_fd_sc_hd__and3_1)
+   2.34    6.99 v _0647_/X (sky130_fd_sc_hd__a211o_1)
+   2.90    9.89 v _0650_/X (sky130_fd_sc_hd__a311o_1)
+   1.62   11.52 v _0652_/X (sky130_fd_sc_hd__a31o_1)
+   2.96   14.48 v _0653_/X (sky130_fd_sc_hd__maj3_2)
+   3.04   17.52 v _0654_/X (sky130_fd_sc_hd__maj3_2)
+   3.21   20.73 v _0655_/X (sky130_fd_sc_hd__maj3_2)
+   2.36   23.09 ^ _0673_/Y (sky130_fd_sc_hd__xnor2_1)
+   1.31   24.40 v _0716_/Y (sky130_fd_sc_hd__nand2_1)
+   0.84   25.25 ^ _0717_/Y (sky130_fd_sc_hd__o211ai_1)
+   1.10   26.35 v _0719_/Y (sky130_fd_sc_hd__a21oi_1)
+   1.52   27.87 v _0721_/X (sky130_fd_sc_hd__o21a_1)
+   1.76   29.63 ^ _0723_/Y (sky130_fd_sc_hd__o21ai_0)
+   1.13   30.76 v _0726_/Y (sky130_fd_sc_hd__a21oi_1)
+   2.04   32.79 ^ _0731_/Y (sky130_fd_sc_hd__o31ai_1)
+   1.40   34.20 ^ rebuffer18/X (sky130_fd_sc_hd__buf_4)
+   0.51   34.70 ^ wire4/X (sky130_fd_sc_hd__buf_6)
+   0.54   35.24 ^ load_slew3/X (sky130_fd_sc_hd__buf_2)
+   0.63   35.87 ^ wire2/X (sky130_fd_sc_hd__buf_2)
+   0.68   36.55 ^ load_slew1/X (sky130_fd_sc_hd__buf_2)
+   0.39   36.95 v _0873_/Y (sky130_fd_sc_hd__o211ai_1)
+   1.92   38.86 v _0874_/X (sky130_fd_sc_hd__a32o_1)
+   0.00   38.86 v _1172_/D (sky130_fd_sc_hd__dfrtp_1)
+          38.86   data arrival time
+
+  10.00   10.00   clock clk (rise edge)
+   0.00   10.00   clock network delay (ideal)
+   0.00   10.00   clock reconvergence pessimism
+          10.00 ^ _1172_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -1.70    8.30   library setup time
+           8.30   data required time
+---------------------------------------------------------
+           8.30   data required time
+         -38.86   data arrival time
+---------------------------------------------------------
+         -30.56   slack (VIOLATED)
+
+
+===WORST_SLACK===
+===CRIT_PATH_END===

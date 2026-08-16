@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "engine": "openroad",
+  "engine_version": "26Q3-1260-g06a5a02279",
+  "hdl_toplevel": "modexp",
+  "status": "ok",
+  "stage_reached": "route",
+  "seed": 42,
+  "die_area_um2": 13422.4,
+  "core_area_um2": 12111.6,
+  "utilization_pct": 59.2252,
+  "wirelength_um": 18401,
+  "worst_slack_ns": 3.33408,
+  "total_negative_slack_ns": 0,
+  "fmax_mhz": 150.017,
+  "setup_violation_count": 0,
+  "hold_violation_count": 0,
+  "estimated_power_mw": 0.863,
+  "stages": [
+    {
+      "name": "floorplan",
+      "die_area_um2": 13422.4,
+      "core_area_um2": 12111.6,
+      "utilization_pct": 56.8182,
+      "worst_slack_ns": 3.88653,
+      "total_negative_slack_ns": 0
+    },
+    {
+      "name": "place",
+      "die_area_um2": 13422.4,
+      "core_area_um2": 12111.6,
+      "utilization_pct": 57.1488,
+      "worst_slack_ns": 3.72615,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 13970.2,
+      "fmax_mhz": 159.392,
+      "estimated_power_mw": 0.5375,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0
+    },
+    {
+      "name": "cts",
+      "die_area_um2": 13422.4,
+      "core_area_um2": 12111.6,
+      "utilization_pct": 59.2252,
+      "worst_slack_ns": 3.67644,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 14752,
+      "fmax_mhz": 158.139,
+      "estimated_power_mw": 0.8281,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0
+    },
+    {
+      "name": "route",
+      "die_area_um2": 13422.4,
+      "core_area_um2": 12111.6,
+      "utilization_pct": 59.2252,
+      "worst_slack_ns": 3.33408,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 18401,
+      "fmax_mhz": 150.017,
+      "estimated_power_mw": 0.863,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0
+    }
+  ],
+  "macros": [],
+  "def_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-56/flow/corners/tt_025C_1v80/.klt/place-and-route/modexp.def",
+  "gds_path": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-56/flow/corners/tt_025C_1v80/.klt/place-and-route/modexp.gds",
+  "provenance": {
+    "klt_version": "0.2.0",
+    "klayout_version": "0.30.10",
+    "pdk": {
+      "name": "sky130A",
+      "source": "search root: ~/.volare",
+      "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135"
+    },
+    "input": {
+      "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+    }
+  }
+}

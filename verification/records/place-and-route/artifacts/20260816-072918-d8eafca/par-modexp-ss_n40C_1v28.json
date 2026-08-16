@@ -1,0 +1,27 @@
+{
+  "schema": "klt.place-and-route.request/1",
+  "engine": "openroad",
+  "netlist": "../../.klt/synthesize/modexp_synth_tied.v",
+  "hdl_toplevel": "modexp",
+  "pdk": {
+    "cell_library": "sky130_fd_sc_hd",
+    "corner": "ss_n40C_1v28"
+  },
+  "floorplan": {
+    "method": "utilization",
+    "utilization_pct": 55,
+    "aspect_ratio": 1,
+    "core_margin_um": 2,
+    "site": "unithd"
+  },
+  "io": {
+    "layer_h": "met3",
+    "layer_v": "met2"
+  },
+  "constraints": {
+    "clock_port": "clk",
+    "clock_period_ns": 10.0
+  },
+  "seed": 42,
+  "target_stage": "route"
+}
