@@ -1,0 +1,7 @@
+{
+    "schema_version": 1,
+    "error": {
+        "command": "functional-verification",
+        "message": "SDF back-annotation of '/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-55/flow/issue55-sdf/.klt/place-and-route/modexp_route.sdf' did not fully apply: 203 diagnostic(s) in the icarus transcript -- SDF ERROR: /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-55/flow/issue55-sdf/.klt/place-and-route/modexp_route.sdf:18: Could not find intermodpath! | SDF ERROR: /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-55/flow/issue55-sdf/.klt/place-and-route/modexp_route.sdf:19: Could not find intermodpath! | SDF ERROR: /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-55/flow/issue55-sdf/.klt/place-and-route/modexp_route.sdf:20: Could not find intermodpath! | SDF ERROR: /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-55/flow/issue55-sdf/.klt/place-and-route/modexp_route.sdf:21: Could not find intermodpath! | SDF ERROR: /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-55/flow/issue55-sdf/.klt/place-and-route/modexp_route.sdf:22: Could not find intermodpath! (+198 more). The simulator exits 0 after skipping an annotation it cannot apply, so this run's verdict would have been a zero-delay one reported as if it were annotated."
+    }
+}

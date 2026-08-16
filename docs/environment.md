@@ -33,10 +33,28 @@ source .venv/bin/activate
 
 | Component | Pinned to | Resolved via |
 |---|---|---|
-| `klayout-tools` (`klt`) | git revision [`af5791b557fc7c669c3981335a294256ccf37e6f`](https://github.com/2AMLogic/klayout-tools/commit/af5791b557fc7c669c3981335a294256ccf37e6f) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@af5791b557fc7c669c3981335a294256ccf37e6f"` (what `scripts/setup-env.sh` runs) |
+| `klayout-tools` (`klt`) | git revision [`a482d3934bd644b763cf925f6344ac05f54a1623`](https://github.com/2AMLogic/klayout-tools/commit/a482d3934bd644b763cf925f6344ac05f54a1623) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@a482d3934bd644b763cf925f6344ac05f54a1623"` (what `scripts/setup-env.sh` runs) |
 | `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
+
+**Pin rationale (issue #55, 2026-08-16)**: the previous pin
+(`af5791b557fc7c669c3981335a294256ccf37e6f`, 2026-08-04) predated three merged
+upstream fixes this repo's DRC/LVS/post-layout evidence depends on —
+[klayout-tools#998](https://github.com/2AMLogic/klayout-tools/pull/998)
+("fix(drc): merge checked regions before running check primitives", merged
+2026-08-15T03:54:20Z), [klayout-tools#997](https://github.com/2AMLogic/klayout-tools/pull/997)
+("feat(place-and-route): export as-built netlist via `write_verilog` at route
+stage", merged 2026-08-15T03:25:31Z), and
+[klayout-tools#1007](https://github.com/2AMLogic/klayout-tools/pull/1007)
+("feat(sta): write post-route SDF and back-annotate it in gate-level re-sim",
+merged 2026-08-15T09:26:00Z). The current pin,
+`a482d3934bd644b763cf925f6344ac05f54a1623` (2026-08-16T14:25:34Z), was
+re-verified live against `2AMLogic/klayout-tools` at implementation time to
+be a descendant of all three fix commits
+(`gh api repos/2AMLogic/klayout-tools/compare/<fix-sha>...a482d393...` →
+`"status": "ahead"` for each) — not merely trusted from the issue body's
+earlier snapshot, since `klayout-tools` `main` moves several commits a day.
 
 `klt` in turn resolves `iverilog`/`yosys`/`openroad` and the PDK itself from
 the host — it does not vendor them. Those are:

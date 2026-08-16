@@ -60,17 +60,28 @@ def parse_lef_pins(lef_path, cell_type):
 
 
 def parse_verilog(v_path):
-    """Return (top_module_name, [(cell_type, inst_name, {pin: net}), ...])."""
+    """Return (top_module_name, [(cell_type, inst_name, {pin: net}), ...]).
+
+    Whitespace/line-wrapping-agnostic on purpose: `klt synthesize`'s Yosys
+    output wraps each `.PORT(NET)` on its own line with a standalone closing
+    `  );`, while OpenROAD's own `write_verilog` (the as-built netlist export,
+    klayout-tools#997) puts the first port on the instantiation line itself
+    and closes with `);` glued to the last port -- two different but both
+    syntactically valid Verilog instantiation stylings of the same construct.
+    Matching on `\\s` (which spans newlines) rather than a fixed line
+    template handles both without caring which tool wrote the file.
+    """
     with open(v_path) as f:
         text = f.read()
 
     m = re.search(r"\bmodule\s+(\w+)\s*\(", text)
     top_name = m.group(1) if m else None
 
-    # Match "  <celltype> <instname> (\n  .PORT(NET),\n  ... );"
+    # Match "<celltype> <instname> (.PORT(NET), .PORT(NET) ... );" with
+    # arbitrary whitespace/newlines between tokens.
     inst_re = re.compile(
-        r"^  (sky130_fd_sc_hd__\w+) (\S+) \(\n((?:    \.\w+\([^()]*\),?\n)+)  \);",
-        re.MULTILINE,
+        r"\b(sky130_fd_sc_hd__\w+)\s+(\S+)\s*\("
+        r"\s*((?:\.\w+\([^()]*\)\s*,?\s*)+)\)\s*;",
     )
     port_re = re.compile(r"\.(\w+)\(([^()]*)\)")
 

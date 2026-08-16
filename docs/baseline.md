@@ -305,12 +305,13 @@ beyond). The full record, including provenance and the reproduction recipe,
 is at
 [`verification/records/place-and-route/`](../verification/records/place-and-route/).
 
-## Post-route gate-level simulation — appended, issue #9
+## Post-route gate-level simulation — appended, issue #9; Leg 2 updated, issue #55
 
-**Status: Leg 1 achieved, Leg 2 blocked on upstream tooling.** Until this
-run, every correctness claim on this page rested on *behavioural* simulation
-of `rtl/modexp.v`. Synthesis mapping, tie-cell insertion, CTS, and OpenROAD's
-placement/timing optimizations were unverified by simulation.
+**Status: Leg 1 achieved (PASS). Leg 2 attempted, 2026-08-16 — FAIL, no
+longer blocked.** Until this run, every correctness claim on this page
+rested on *behavioural* simulation of `rtl/modexp.v`. Synthesis mapping,
+tie-cell insertion, CTS, and OpenROAD's placement/timing optimizations were
+unverified by simulation.
 
 ### What was simulated, and why it is not the P&R input netlist
 
@@ -362,17 +363,22 @@ git symlink (`git ls-files -s verification/gate-level/test_modexp.py` → mode
   layout of one elaboration; `WIDTH` is an RTL parameter that does not
   survive synthesis. The case count is *not* reduced (500, matching the RTL
   claim).
-- **Leg 2 (delay-annotated / SDF simulation at the corner set) was NOT
-  achieved**, and is not claimed. No artifact in this flow carries post-route
-  delays: `klt place-and-route` has no SDF export and `klt
-  functional-verification` has no SDF option
-  ([klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002),
-  open). Independently, Icarus 12.0 cannot simulate the SDF-annotatable
-  (non-`FUNCTIONAL`) cell models at all
-  ([klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004)).
-  Both blockers are evidenced in the record's artifacts.
+- **Leg 2 (delay-annotated SDF simulation), updated 2026-08-16 (issue #55):
+  ATTEMPTED — FAIL.** Issue #55 bumped this repo's `klt` pin past
+  [klayout-tools#1007](https://github.com/2AMLogic/klayout-tools/pull/1007)
+  (the fix for `#1002`'s missing SDF export/option) and ran Leg 2 end to end
+  for the first time, against a fresh post-route build's own `write_verilog`
+  netlist + `write_sdf` output (not `layout/modexp.gds` — a pin bump does
+  not reproduce P&R byte-for-byte, a separate finding recorded alongside
+  this one). Result: `klt`'s own SDF diagnostic gate reports the run
+  **FAILED** — 200 of ~753 `INTERCONNECT` entries (all top-level-port-
+  attached, all zero-delay regardless) could not be resolved by Icarus
+  13.0's `$sdf_annotate`, and the regression itself returns a uniform,
+  constant-zero result on every case. New finding filed generically as
+  [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056).
+  Not a "blocked, no artifact" state any more — a concrete, evidenced fail.
 
 Full method, scope, and the friction filed upstream:
 [`verification/gate-level/README.md`](../verification/gate-level/README.md).
-The record is
+Records are at
 [`verification/records/gate-level-sim/`](../verification/records/gate-level-sim/).

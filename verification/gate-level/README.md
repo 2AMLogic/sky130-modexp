@@ -9,10 +9,12 @@ Until this directory existed, every correctness claim in `docs/baseline.md`,
 simulation of the RTL. Synthesis mapping, tie-cell insertion, CTS, and
 OpenROAD's placement/timing optimizations were all unverified by simulation.
 
-**Achieved here: Leg 1 (zero-delay gate-level equivalence). Leg 2
-(delay-annotated / SDF simulation at the corner set) is BLOCKED on upstream
-tooling** — see "Leg 2: blocked, with evidence" below. Nothing on this page
-claims otherwise.
+**Achieved here: Leg 1 (zero-delay gate-level equivalence) — PASS. Leg 2
+(delay-annotated / SDF simulation) — ATTEMPTED, FAIL** (no longer blocked on
+upstream tooling; the upstream capability now exists and was exercised, and
+the fresh result is a genuine failure with root-caused evidence, not a
+silent zero-delay pass) — see "Leg 2: ATTEMPTED — FAIL" below. Nothing on
+this page claims otherwise.
 
 ## The netlist problem, and why the netlist here is derived, not exported
 
@@ -171,48 +173,110 @@ Covering another `WIDTH` at gate level would require synthesizing, routing,
 and DRC/LVS-ing a second macro — a different issue's work, not a narrowing of
 this one. The case count is **not** reduced (500, matching the RTL claim).
 
-## Leg 2: blocked, with evidence
+## Leg 2: ATTEMPTED — FAIL, no longer blocked (updated 2026-08-16, issue #55)
 
-Delay-annotated (SDF) simulation at the ratified corner set — including the
-binding slow corner `ss_n40C_1v28` and a fast corner — **was not achieved**.
-Two independent, verified blockers:
+Delay-annotated (SDF) simulation — **not achieved as of the original 2026-08-15
+run of this experiment**, for two independent, verified blockers documented
+below for history. Issue #55 bumped this repo's `klt` pin past the upstream
+fixes for both, then exercised Leg 2 end to end for the first time. **The
+capability now exists and runs; the fresh result is a FAIL, not a pass, with
+concrete new evidence** — replacing "blocked" with an honest, evidenced
+result is exactly what changed.
 
-1. **No artifact carrying post-route delays exists.** `klt place-and-route`
-   has no `write_sdf`-equivalent output (response contract: `def_path`,
-   `gds_path`), and `klt functional-verification`'s request schema has no SDF
-   option (`_resolve_options` returns `coverage`, `timescale`, `random_seed`
-   and nothing else). Both verified directly against the installed package;
-   transcript in this experiment's artifacts. This blocker is independent of
-   simulator version and cannot be worked around inside this repo without
-   driving OpenROAD outside `klt` — which would also produce delays for a
-   *re-routed* design, not for the committed, DRC/LVS-checked
-   `layout/modexp.gds`.
-2. **The simulator on this host cannot run the annotatable models anyway.**
-   Icarus 12.0 rejects `-ginterconnect` outright (`Unknown/Unsupported
-   Language generation interconnect`), and, as described under "Cell models"
-   above, cannot drive the timing models' `$setuphold`/`$recrem` delayed
-   signals with or without `-gspecify`.
+### What changed, and the fresh result
+
+1. `klayout-tools#1002` (no SDF export, no SDF option) closed upstream,
+   fixed by [klayout-tools#1007](https://github.com/2AMLogic/klayout-tools/pull/1007)
+   ("feat(sta): write post-route SDF and back-annotate it in gate-level
+   re-sim", merged 2026-08-15). `klt place-and-route`'s response now carries
+   `verilog_path` (`write_verilog`) and `spef_sta.sdf_path` (`write_sdf`)
+   when `post_route_spef`/`post_route_sdf` are requested; `klt
+   functional-verification` now accepts `options.sdf: {"file": ..., "corner":
+   "min"|"typ"|"max"}`.
+2. This host's Icarus is 13.0 (stable) — `-ginterconnect` exists and
+   `klayout-tools#1004`'s version blocker does not apply.
+3. **The netlist and SDF for this attempt come from a fresh, self-consistent
+   `klt place-and-route` re-run** (same frozen synthesis netlist / floorplan
+   / seed as the layout below, but the bumped `klt`) — **not** from
+   `layout/modexp.gds`/`modexp_post_route.v` (Leg 1's netlist above), because
+   re-running P&R with the bumped `klt` does not reproduce
+   `layout/modexp.gds` byte-for-byte (a separate, load-bearing finding — see
+   `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`).
+   `verilog_path` and `spef_sta.sdf_path` are outputs of the **same** OpenSTA
+   session, so their instance/pin naming is guaranteed mutually consistent.
+4. **Result: `klt`'s own SDF-diagnostic gate reports the run FAILED.** Of
+   ~753 `INTERCONNECT` entries in the SDF, **200 could not be resolved**
+   (`SDF ERROR: ... Could not find intermodpath!`) — every one an entry where
+   one endpoint is a **top-level module port**, never a purely internal
+   instance-pin-to-instance-pin entry (all of those resolve). Every one of
+   the 200 failing entries carries `(0.000:0.000:0.000)` in the SDF itself
+   (zero delay either way), but `klt`'s gate is deliberately conservative:
+   any unresolved entry fails the run, regardless of whether it would have
+   mattered for timing, so a partial annotation is never silently reported
+   as a full one. Independently reproduced with a hand-driven
+   `iverilog -gspecify -ginterconnect ...`/`vvp` invocation against the same
+   sources — same failure class both times.
+5. **The regression's own values corroborate a real problem, not merely a
+   conservative gate**: both the directed and randomized tests report a
+   uniform, constant-zero result on every case (not an occasional
+   single-bit mismatch consistent with a marginal timing violation) —
+   consistent with a broken control-path signal (`done` is among the 200
+   failing interconnects). Root-causing this precisely, beyond the
+   diagnostic-gate failure (sufficient on its own to fail the run), is not
+   attempted here.
+6. **New finding filed generically**, per `CLAUDE.md`'s friction protocol:
+   [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056)
+   — Icarus `$sdf_annotate` cannot resolve a top-level-port-attached
+   `INTERCONNECT` entry even under `-ginterconnect`.
+
+Full evidence: `verification/records/gate-level-sim/records/20260816-174310-5e656e5.md`.
+
+### The original (2026-08-15) blockers, for history
+
+1. **No artifact carrying post-route delays existed.** `klt place-and-route`
+   had no `write_sdf`-equivalent output (response contract: `def_path`,
+   `gds_path` only), and `klt functional-verification`'s request schema had
+   no SDF option. Both verified directly against the then-installed package;
+   transcript in this experiment's artifacts. **Fixed by `#1007` above.**
+2. **The simulator on this host could not run the annotatable models
+   anyway.** Icarus 12.0 rejected `-ginterconnect` outright, and could not
+   drive the timing models' `$setuphold`/`$recrem` delayed signals with or
+   without `-gspecify`. **Not applicable here** — this host's Icarus is
+   13.0.
 
 Note also that the sky130A PDK ships **18 liberty corners but exactly one,
 corner-independent set of Verilog cell models**. Corner-dependence enters a
-simulation only through SDF. So a zero-delay functional run has no corner
-attribute at all — Leg 1 is not "the nominal corner", it is *corner-free*, and
-saying otherwise would be the overclaim this record is careful to avoid.
+simulation only through SDF. So Leg 1's zero-delay functional run has no
+corner attribute at all — it is not "the nominal corner", it is
+*corner-free*, and saying otherwise would be the overclaim this record is
+careful to avoid. Leg 2's fresh attempt above used the nominal
+(`tt_025C_1v80`) corner's SPEF/SDF session only — extending to the binding
+slow corner (`ss_n40C_1v28`) and a fast corner is a natural follow-up, not
+attempted here (each would require its own independent P&R re-route, per
+`flow/run-corner-sweep.sh`'s own documented cost, on top of the
+per-corner functional-mismatch investigation item 6 above already
+identifies as open).
 
 ## Known upstream gaps (friction protocol, `CLAUDE.md`)
 
 | Gap | Upstream |
 |---|---|
-| `klt place-and-route` exports no as-built (post-CTS/post-resize) netlist | [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996) — filed by #8, **fixed** by [#997](https://github.com/2AMLogic/klayout-tools/pull/997) (merged 2026-08-15), *later than this repo's `klt` pin* |
-| `klt place-and-route` has no SDF export; `klt functional-verification` has no SDF option | [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (open) — **this is Leg 2's blocker** |
+| `klt place-and-route` exports no as-built (post-CTS/post-resize) netlist | [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996) — filed by #8, **fixed** by [#997](https://github.com/2AMLogic/klayout-tools/pull/997) (merged 2026-08-15) — this repo's `klt` pin bumped past it by issue #55 |
+| `klt place-and-route` has no SDF export; `klt functional-verification` has no SDF option | [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) — **fixed** by [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007) (merged 2026-08-15) — this repo's `klt` pin bumped past it by issue #55; Leg 2's fresh attempt fails for a *different* reason, see above |
 | `klt functional-verification` has no compile-time defines / build-args field, so an `ifdef`-gated Verilog cell library cannot be selected through the request | [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001) (open) — worked around by `sky130_fd_sc_hd_sim_defines.v` |
-| The accepted SDF re-sim recipe is conditional on Icarus >= 13; 12.0 has no `-ginterconnect` and cannot simulate `ifdef`-gated timing models at all | [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (filed by this issue) |
+| The accepted SDF re-sim recipe is conditional on Icarus >= 13; 12.0 has no `-ginterconnect` and cannot simulate `ifdef`-gated timing models at all | [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (filed by this issue) — not a blocker on this repo's host (Icarus 13.0) |
 | `klt functional-verification` requires the testbench module to sit next to the request, so one unmodified testbench cannot serve several requests | [klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (filed by this issue) — worked around by the symlink above |
+| Icarus `$sdf_annotate` cannot resolve a top-level-port-attached `INTERCONNECT` entry even under `-ginterconnect` | [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056) (filed by issue #55) — **this is Leg 2's fresh blocker**, found only once #1002/#1007 made the attempt possible |
 
-Even once this repo's `klt` pin moves past #997, the as-built netlist export
-would describe a **re-run** of P&R, not the committed `layout/modexp.gds`.
-The extraction-derived path here stays the one with provenance tied to the
-GDS that was actually DRC'd and LVS'd, and should be kept as a cross-check.
+A `klt` pin bump is **not** a P&R-reproducibility guarantee: re-running P&R
+with the bumped `klt`, even against the identical frozen netlist/floorplan/
+seed, does not reproduce `layout/modexp.gds` byte-for-byte (see
+`verification/records/drc-lvs/records/20260816-174310-5e656e5.md`). So the
+as-built netlist export (`#997`) and Leg 2's fresh SDF attempt (`#1007`)
+above both describe a **fresh re-run** of P&R, not the committed
+`layout/modexp.gds`. The extraction-derived Leg 1 path here stays the one
+with provenance tied to the GDS that was actually DRC'd and LVS'd, and
+should be kept as a cross-check.
 
 ## What this does and does not model
 
