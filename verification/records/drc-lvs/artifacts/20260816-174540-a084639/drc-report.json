@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "file": "layout/modexp.gds",
+  "deck": "sky130",
+  "dbu_um": 0.001,
+  "status": "violations",
+  "violation_count": 10,
+  "rule_counts": {
+    "diff.enclosing.licon.1": 10
+  },
+  "violations": [
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 45195,
+        "bottom": 72304,
+        "right": 45220,
+        "top": 72536
+      },
+      "polygon": [
+        [
+          45195,
+          72304
+        ],
+        [
+          45195,
+          72536
+        ],
+        [
+          45220,
+          72335
+        ],
+        [
+          45220,
+          72505
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 49335,
+        "bottom": 74344,
+        "right": 49360,
+        "top": 74576
+      },
+      "polygon": [
+        [
+          49335,
+          74344
+        ],
+        [
+          49335,
+          74576
+        ],
+        [
+          49360,
+          74375
+        ],
+        [
+          49360,
+          74545
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 55775,
+        "bottom": 83184,
+        "right": 55800,
+        "top": 83416
+      },
+      "polygon": [
+        [
+          55775,
+          83184
+        ],
+        [
+          55775,
+          83416
+        ],
+        [
+          55800,
+          83215
+        ],
+        [
+          55800,
+          83385
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 59915,
+        "bottom": 77744,
+        "right": 59940,
+        "top": 77976
+      },
+      "polygon": [
+        [
+          59915,
+          77744
+        ],
+        [
+          59915,
+          77976
+        ],
+        [
+          59940,
+          77775
+        ],
+        [
+          59940,
+          77945
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 67735,
+        "bottom": 83184,
+        "right": 67760,
+        "top": 83416
+      },
+      "polygon": [
+        [
+          67735,
+          83184
+        ],
+        [
+          67735,
+          83416
+        ],
+        [
+          67760,
+          83215
+        ],
+        [
+          67760,
+          83385
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 78315,
+        "bottom": 77744,
+        "right": 78340,
+        "top": 77976
+      },
+      "polygon": [
+        [
+          78315,
+          77744
+        ],
+        [
+          78315,
+          77976
+        ],
+        [
+          78340,
+          77775
+        ],
+        [
+          78340,
+          77945
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 120635,
+        "bottom": 68904,
+        "right": 120660,
+        "top": 69136
+      },
+      "polygon": [
+        [
+          120635,
+          68904
+        ],
+        [
+          120635,
+          69136
+        ],
+        [
+          120660,
+          68935
+        ],
+        [
+          120660,
+          69105
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 121095,
+        "bottom": 41704,
+        "right": 121120,
+        "top": 41936
+      },
+      "polygon": [
+        [
+          121095,
+          41704
+        ],
+        [
+          121095,
+          41936
+        ],
+        [
+          121120,
+          41735
+        ],
+        [
+          121120,
+          41905
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 122015,
+        "bottom": 61424,
+        "right": 122040,
+        "top": 61656
+      },
+      "polygon": [
+        [
+          122015,
+          61424
+        ],
+        [
+          122015,
+          61656
+        ],
+        [
+          122040,
+          61455
+        ],
+        [
+          122040,
+          61625
+        ]
+      ]
+    },
+    {
+      "rule": "diff.enclosing.licon.1",
+      "description": "minimum diff enclosure of licon1",
+      "check": "enclosing",
+      "layer": "diff.drawing",
+      "cell": "modexp",
+      "source_cell": "sky130_fd_sc_hd__and3_1",
+      "source_path": [
+        "sky130_fd_sc_hd__and3_1"
+      ],
+      "bbox": {
+        "left": 127995,
+        "bottom": 28784,
+        "right": 128020,
+        "top": 29016
+      },
+      "polygon": [
+        [
+          127995,
+          28784
+        ],
+        [
+          127995,
+          29016
+        ],
+        [
+          128020,
+          28815
+        ],
+        [
+          128020,
+          28985
+        ]
+      ]
+    }
+  ],
+  "coverage": {
+    "deck_layers": [
+      "65/20",
+      "66/20",
+      "66/44",
+      "67/20",
+      "67/44",
+      "68/20"
+    ],
+    "layers_checked": [
+      "65/20",
+      "66/20",
+      "66/44",
+      "67/20",
+      "67/44",
+      "68/20"
+    ],
+    "layers_in_stream_without_rules": [
+      "64/5",
+      "64/16",
+      "64/20",
+      "64/59",
+      "66/15",
+      "67/5",
+      "67/16",
+      "68/5",
+      "68/16",
+      "68/44",
+      "69/5",
+      "69/16",
+      "69/20",
+      "69/44",
+      "70/20",
+      "70/44",
+      "71/20",
+      "71/44",
+      "72/5",
+      "72/15",
+      "72/16",
+      "72/20",
+      "78/44",
+      "81/4",
+      "83/44",
+      "93/44",
+      "94/20",
+      "95/20",
+      "122/16",
+      "235/4",
+      "236/0"
+    ],
+    "rules_skipped": []
+  },
+  "provenance": {
+    "klt_version": "0.2.0",
+    "klayout_version": "0.30.10",
+    "pdk": null,
+    "deck": {
+      "name": "sky130",
+      "content_hash": "sha256:cc62ce576bd65c127270fda943443493529f6e0a9f7ff85c7e9595938698e73e"
+    },
+    "input": {
+      "content_hash": "sha256:229ed6a5f92938699acc969f757d84b9348731bacbe12a485473161e917c8d10"
+    }
+  }
+}
