@@ -45,9 +45,20 @@ The committed copies of the routed DEF/GDS (with their provenance) live in
 (`tt_025C_1v80`) that Decision 2 of
 `spec/decision-records/0001-input-domain-interface-and-corner-matrix.md`
 holds the 100 MHz Phase 2 target to. `flow/run-corner-sweep.sh` runs the
-*same* floorplan/IO/clock/seed request at every corner in that record's
-Decision 4 corner matrix (all eighteen installed `sky130_fd_sc_hd` liberty
-corners), or at whichever corner names you pass it:
+*same* IO/clock/seed request at every corner in that record's Decision 4
+corner matrix (all eighteen installed `sky130_fd_sc_hd` liberty corners), or
+at whichever corner names you pass it. **Floorplan note (issue #56):** the
+script's `floorplan` block is no longer byte-identical to
+`flow/par-modexp.json`'s — as of issue #56 it carries a revised, mapping-
+only floorplan (utilization 55%, `core_margin_um` 2) explored per
+`spec/decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md`
+Decision 3's named first step, while `flow/par-modexp.json` itself is left
+byte-identical to the floorplan that produced the still-current
+`layout/modexp.def`/`layout/modexp.gds` (whose DRC/LVS evidence cites that
+file's content hash — changing it would invalidate provenance for evidence
+this issue does not own). See
+`verification/records/place-and-route/` for the fresh sweep this revised
+floorplan produced, and how much of the slow-corner gap it closes:
 
 ```bash
 ./flow/run-corner-sweep.sh                     # all 18 ratified corners
