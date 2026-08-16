@@ -1,0 +1,1863 @@
+{
+  "schema_version": 1,
+  "engine": "klayout",
+  "layout": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-60/layout/lvs/modexp_layout_abstracted.spice",
+  "reference": "/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-60/layout/lvs/modexp_reference.spice",
+  "top": "MODEXP",
+  "status": "mismatch",
+  "mismatch_count": 15,
+  "category_counts": {
+    "topology": 15
+  },
+  "counts": {
+    "nets": {
+      "layout": 1214,
+      "reference": 739,
+      "matched": 333
+    },
+    "devices": {
+      "layout": 0,
+      "reference": 0,
+      "matched": 0
+    },
+    "pins": {
+      "layout": 68,
+      "reference": 68,
+      "matched": 333
+    }
+  },
+  "device_classes": null,
+  "environment": {
+    "engine": "klayout",
+    "engine_version": "0.30.10",
+    "layout_sha256": "04748e40b81d7e623dde2ed380be0d61cc097e57b0ff21bcd312f3f0a0691e0b",
+    "reference_sha256": "84e054fbfc8d4cd7180cc8b4fff3d17f826617838e2ebb18d61b0fc6c54f6624",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.2.0",
+    "klayout_version": "0.30.10",
+    "pdk": null,
+    "deck": null,
+    "input": null
+  },
+  "mismatches": [
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "both",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "reference",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null
+    }
+  ],
+  "net_correspondence": [
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A0",
+      "reference": "A0",
+      "pin": true
+    },
+    {
+      "layout": "A0",
+      "reference": "A0",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A1",
+      "reference": "A1",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A2",
+      "reference": "A2",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A3",
+      "reference": "A3",
+      "pin": true
+    },
+    {
+      "layout": "A_N",
+      "reference": "A_N",
+      "pin": true
+    },
+    {
+      "layout": "A_N",
+      "reference": "A_N",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B",
+      "reference": "B",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1",
+      "reference": "B1",
+      "pin": true
+    },
+    {
+      "layout": "B1_N",
+      "reference": "B1_N",
+      "pin": true
+    },
+    {
+      "layout": "B1_N",
+      "reference": "B1_N",
+      "pin": true
+    },
+    {
+      "layout": "B2",
+      "reference": "B2",
+      "pin": true
+    },
+    {
+      "layout": "B2",
+      "reference": "B2",
+      "pin": true
+    },
+    {
+      "layout": "B2",
+      "reference": "B2",
+      "pin": true
+    },
+    {
+      "layout": "B_N",
+      "reference": "B_N",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C",
+      "reference": "C",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C1",
+      "reference": "C1",
+      "pin": true
+    },
+    {
+      "layout": "C2",
+      "reference": "C2",
+      "pin": true
+    },
+    {
+      "layout": "CLK",
+      "reference": "CLK",
+      "pin": true
+    },
+    {
+      "layout": "CLK",
+      "reference": "CLK",
+      "pin": true
+    },
+    {
+      "layout": "D",
+      "reference": "D",
+      "pin": true
+    },
+    {
+      "layout": "D",
+      "reference": "D",
+      "pin": true
+    },
+    {
+      "layout": "D",
+      "reference": "D",
+      "pin": true
+    },
+    {
+      "layout": "D",
+      "reference": "D",
+      "pin": true
+    },
+    {
+      "layout": "HI",
+      "reference": "HI",
+      "pin": true
+    },
+    {
+      "layout": "LO",
+      "reference": "LO",
+      "pin": true
+    },
+    {
+      "layout": "Q",
+      "reference": "Q",
+      "pin": true
+    },
+    {
+      "layout": "Q",
+      "reference": "Q",
+      "pin": true
+    },
+    {
+      "layout": "RESET_B",
+      "reference": "RESET_B",
+      "pin": true
+    },
+    {
+      "layout": "S",
+      "reference": "S",
+      "pin": true
+    },
+    {
+      "layout": "S",
+      "reference": "S",
+      "pin": true
+    },
+    {
+      "layout": "SET_B",
+      "reference": "SET_B",
+      "pin": true
+    },
+    {
+      "layout": "SLEEP",
+      "reference": "SLEEP",
+      "pin": true
+    },
+    {
+      "layout": "SLEEP",
+      "reference": "SLEEP",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "VGND",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": "VPB",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": "VPWR",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": "Y",
+      "pin": true
+    }
+  ]
+}
