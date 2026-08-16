@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-16
 
+- **Issue #56** (closed): Re-run place-and-route with revised floorplan/cell-mapping to narrow the slow-corner timing gap (no RTL change)
+- **PR #61**: feat(flow): mapping-only floorplan re-run to narrow slow-corner timing gap
 - **Issue #58** (closed): Auditor guard-telemetry: rm-scope-outside-repo denied $HOME/.loom token-cache rm — confirm keep-flagged
 - **Issue #54** (closed): Decompose the T1 re-read's failing items (#48) into dispatchable issues
 - **PR #57**: docs: record #54's decomposition of #48's FAIL items into #55 and #56
