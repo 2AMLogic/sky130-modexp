@@ -65,6 +65,16 @@ import sys
 from collections import OrderedDict, defaultdict
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from spice_lef_parsing import (  # noqa: E402
+    logical_lines,
+    parse_lef_macros,
+    parse_subckt_headers,
+    unescape,
+)
+
 POWER_PINS = ("VPWR", "VGND", "VPB", "VNB")
 
 DEFAULT_TOP_CELL = "modexp"
@@ -73,34 +83,6 @@ DEFAULT_TOP_CELL = "modexp"
 # --------------------------------------------------------------------------
 # SPICE parsing
 # --------------------------------------------------------------------------
-def logical_lines(text: str):
-    """Yield SPICE logical lines, joining `+` continuations and dropping
-    `*` comment lines and blank lines."""
-    pending: list[str] | None = None
-    for raw in text.splitlines():
-        line = raw.rstrip()
-        if not line.strip():
-            continue
-        if line.lstrip().startswith("*"):
-            continue
-        if line.startswith("+"):
-            if pending is None:
-                raise ValueError(f"continuation line with nothing to continue: {raw!r}")
-            pending.append(line[1:].strip())
-            continue
-        if pending is not None:
-            yield " ".join(pending)
-        pending = [line.strip()]
-    if pending is not None:
-        yield " ".join(pending)
-
-
-def unescape(name: str) -> str:
-    """`klt extract` writes SPICE-escaped names (`\\$1921`); recover the
-    underlying net/instance name."""
-    return name.replace("\\", "")
-
-
 def parse_spice(path: Path, top_cell: str = DEFAULT_TOP_CELL):
     """Return (top_pins, instances, subckt_pins).
 
@@ -109,23 +91,18 @@ def parse_spice(path: Path, top_cell: str = DEFAULT_TOP_CELL):
                       order, from the top block's `X` cards.
     * `subckt_pins`-- {cell_type: [pin, ...]} for every non-top `.SUBCKT`.
     """
-    top_pins: list[str] = []
     instances: list[tuple[str, str, "OrderedDict[str, str]"]] = []
-    subckt_pins: "OrderedDict[str, list[str]]" = OrderedDict()
 
-    # Pass 1: every `.SUBCKT` header, so per-cell pin order is known before
-    # the `X` cards that use it are bound (the top block comes first in
-    # klt extract's output, the cell declarations after it).
+    # Pass 1: every `.SUBCKT` header (shared parser), so per-cell pin order
+    # is known before the `X` cards that use it are bound (the top block
+    # comes first in klt extract's output, the cell declarations after it),
+    # then split into the top block's pins vs. every other cell's.
     text = path.read_text()
-    for line in logical_lines(text):
-        if not line.startswith(".SUBCKT "):
-            continue
-        tokens = line[len(".SUBCKT "):].split()
-        name, pins = tokens[0], [unescape(t) for t in tokens[1:]]
-        if name == top_cell:
-            top_pins = pins
-        else:
-            subckt_pins[name] = pins
+    all_headers = parse_subckt_headers(text)
+    top_pins = all_headers.get(top_cell, [])
+    subckt_pins: "OrderedDict[str, list[str]]" = OrderedDict(
+        (name, pins) for name, pins in all_headers.items() if name != top_cell
+    )
 
     if not top_pins:
         raise ValueError(f"{path}: no `.SUBCKT {top_cell}` block found")
@@ -159,37 +136,6 @@ def parse_spice(path: Path, top_cell: str = DEFAULT_TOP_CELL):
         instances.append((inst_name, cell_type, OrderedDict(zip(pins, nets))))
 
     return top_pins, instances, subckt_pins
-
-
-# --------------------------------------------------------------------------
-# LEF parsing (pin directions)
-# --------------------------------------------------------------------------
-def parse_lef_pin_directions(lef_path: Path, cell_types) -> dict:
-    """Return {cell_type: {pin: 'INPUT'|'OUTPUT'|'INOUT'}} for `cell_types`."""
-    text = lef_path.read_text()
-    wanted = set(cell_types)
-    out: dict[str, dict[str, str]] = {}
-    macro_re = re.compile(
-        r"^MACRO (\S+)$\n(.*?)^END \1$", re.MULTILINE | re.DOTALL
-    )
-    pin_re = re.compile(
-        r"^\s*PIN (\S+)$\n(.*?)^\s*END \1$", re.MULTILINE | re.DOTALL
-    )
-    for macro in macro_re.finditer(text):
-        name = macro.group(1)
-        if name not in wanted:
-            continue
-        dirs: dict[str, str] = {}
-        for pin in pin_re.finditer(macro.group(2)):
-            m = re.search(r"^\s*DIRECTION (\w+)", pin.group(2), re.MULTILINE)
-            dirs[pin.group(1)] = m.group(1).upper() if m else "INPUT"
-        out[name] = dirs
-    missing = wanted - set(out)
-    if missing:
-        raise ValueError(
-            f"{lef_path}: no MACRO for cell type(s): {', '.join(sorted(missing))}"
-        )
-    return out
 
 
 # --------------------------------------------------------------------------
@@ -464,7 +410,12 @@ def main(argv=None) -> int:
         print(f"FATAL: {exc}", file=sys.stderr)
         return 1
     used_types = OrderedDict((c, None) for _i, c, _p in instances)
-    pin_dirs = parse_lef_pin_directions(args.lef, used_types)
+    pin_dirs = parse_lef_macros(args.lef, used_types)
+    missing_macros = set(used_types) - set(pin_dirs)
+    if missing_macros:
+        raise ValueError(
+            f"{args.lef}: no MACRO for cell type(s): {', '.join(sorted(missing_macros))}"
+        )
 
     # The extraction's per-cell-type pin set must agree with the LEF's, or the
     # named-port instantiations below would bind the wrong pins.

@@ -17,46 +17,21 @@ Usage:
 import re
 import sys
 from collections import OrderedDict
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+from spice_lef_parsing import parse_lef_macros, parse_subckt_headers  # noqa: E402
 
 POWER_PINS = {"VPWR", "VGND", "VPB", "VNB"}
 
 
-def parse_subckt_pins(spice_path):
-    """Return {cell_type: [pin, ...]} from a klt-extract-written SPICE file,
-    handling '+' line continuations."""
-    pins = {}
-    with open(spice_path) as f:
-        lines = f.readlines()
-    i = 0
-    while i < len(lines):
-        line = lines[i].rstrip("\n")
-        if line.startswith(".SUBCKT "):
-            parts = [line[len(".SUBCKT "):].strip()]
-            j = i + 1
-            while j < len(lines) and lines[j].startswith("+"):
-                parts.append(lines[j][1:].strip())
-                j += 1
-            tokens = " ".join(parts).split()
-            name = tokens[0]
-            pins[name] = tokens[1:]
-            i = j
-        else:
-            i += 1
-    return pins
-
-
 def parse_lef_pins(lef_path, cell_type):
-    """Return the PIN-declaration-order pin list for one MACRO in a LEF file."""
-    with open(lef_path) as f:
-        text = f.read()
-    m = re.search(
-        rf"^MACRO {re.escape(cell_type)}$\n(.*?)^END {re.escape(cell_type)}$",
-        text,
-        re.MULTILINE | re.DOTALL,
-    )
-    if not m:
-        return None
-    return re.findall(r"^\s*PIN (\S+)$", m.group(1), re.MULTILINE)
+    """Return the PIN-declaration-order pin list for one MACRO in a LEF file,
+    or None if the LEF has no MACRO for it."""
+    macro = parse_lef_macros(lef_path, [cell_type]).get(cell_type)
+    return None if macro is None else list(macro.keys())
 
 
 def parse_verilog(v_path):
@@ -90,7 +65,7 @@ def main():
         sys.exit(1)
     v_path, layout_spice_path, lef_path, out_path = sys.argv[1:5]
 
-    layout_pins = parse_subckt_pins(layout_spice_path)
+    layout_pins = parse_subckt_headers(Path(layout_spice_path))
     top_pins_layout = layout_pins.pop("modexp")  # reuse layout's own top pin order/names
 
     top_name, instances = parse_verilog(v_path)
