@@ -1,0 +1,24 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "sky130_fd_sc_hd_sdf_defines.v",
+    "pdk-primitives.v",
+    "pdk-sky130_fd_sc_hd.v",
+    "modexp_post_route_sdf.v"
+  ],
+  "hdl_toplevel": "modexp",
+  "testbench": {
+    "module": "test_modexp",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": ["1ns", "1ps"],
+    "random_seed": 1,
+    "sdf": {
+      "file": "../.klt/place-and-route/modexp_route.sdf",
+      "corner": "min"
+    }
+  }
+}

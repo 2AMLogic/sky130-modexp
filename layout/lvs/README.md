@@ -1,9 +1,45 @@
 # layout/lvs
 
-LVS evidence for the routed GDS (`layout/modexp.gds`, from #7) against a
-golden reference built from `klt synthesize`'s gate-level netlist — see
+LVS evidence for the routed GDS (`layout/modexp.gds`, from #7) — see
 `docs/signoff-claim.md` for the overall claim and the comparison level this
 establishes.
+
+## Update (issue #55, 2026-08-16): a true as-built reference now exists, run
+## against a fresh build — read this before the historical section below
+
+Everything below this note, through "Reading this result," describes the
+**original** (2026-08-15) comparison against a pre-CTS reference built from
+`klt synthesize`'s output — kept verbatim as history, per
+`verification/README.md`'s append-only convention. It is now superseded for
+freshness by `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`,
+which:
+
+- Bumped `docs/environment.md`'s `klt` pin past
+  [klayout-tools#997](https://github.com/2AMLogic/klayout-tools/pull/997)
+  ("feat(place-and-route): export as-built netlist via `write_verilog`"),
+  closing the exact gap this page's "Reading this result" section named as
+  the blocker to a truer reference.
+- Discovered, and evidences, a load-bearing fact: **re-running `klt
+  place-and-route` with the bumped `klt`, even against the identical frozen
+  netlist/floorplan/seed, does not reproduce `layout/modexp.gds` byte-for-byte**
+  (722 vs 718 instances, Fmax 158.8 vs 149.7 MHz — see that record for the
+  full comparison table). So the as-built reference below is compared
+  against a **fresh, self-consistent build's own extraction** — not against
+  `layout/modexp.gds` itself, which is deliberately left unchanged.
+- With the as-built reference, `klt lvs` gets **past** the circuit-type-level
+  block this page's original result describes (every cell type now has a
+  same-named counterpart on both sides) and attempts real net/instance
+  correspondence for the first time — still `status: "mismatch"` (1324
+  mismatches: 888 topology, 434 net.split, 2 net.merged), now attributed to
+  `klt extract`'s net-name correlation (`--def-net-names` improves but does
+  not close it) and to the `sky130` extraction deck's own documented
+  layer-coverage limits (dead metal / ignored layers), not to CTS/resize.
+- `build_reference_netlist.py`'s Verilog parser was generalized to also
+  parse OpenROAD's own `write_verilog` instantiation styling (verified
+  byte-identical behavior on the old styling first).
+
+Full detail: `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`.
+`docs/signoff-claim.md`'s LVS section is the current authoritative summary.
 
 ## The reference-netlist question, answered
 
