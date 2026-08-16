@@ -16,28 +16,26 @@ Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementat
 
 Issues flagged as highest priority (`loom:urgent`).
 
-- **#60**: Dedup SPICE .SUBCKT/LEF MACRO parsing between build_reference_netlist.py and spice_to_verilog.py
-- **#55**: Bump klayout-tools pin and re-run DRC, LVS, and post-layout SDF (Leg 2) — upstream fixes already merged
+_None._
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#60**: Dedup SPICE .SUBCKT/LEF MACRO parsing between build_reference_netlist.py and spice_to_verilog.py
-- **#55**: Bump klayout-tools pin and re-run DRC, LVS, and post-layout SDF (Leg 2) — upstream fixes already merged
 - **#37**: Auditor guard-telemetry: worktree-write-confinement-unresolved-var recurs as a likely false positive
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#60**: Dedup SPICE .SUBCKT/LEF MACRO parsing between build_reference_netlist.py and spice_to_verilog.py
+- **#55**: Bump klayout-tools pin and re-run DRC, LVS, and post-layout SDF (Leg 2) — upstream fixes already merged
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#63**: refactor: dedup SPICE .SUBCKT/LEF MACRO parsing
 
 ## Approved (Awaiting Merge)
 
@@ -65,10 +63,10 @@ Issues carrying `loom:curated`.
 | Tier | Count |
 |------|-------|
 | Operator merge-risk holds | 1 |
-| Urgent | 2 |
-| Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
+| Urgent | 0 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 2 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 1 |
 | Curated | 2 |
 | Architect / Hermit proposals | 1 |
