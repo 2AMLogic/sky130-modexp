@@ -277,6 +277,21 @@ be trusted at `HEAD` and a fresh record is required. Superseded records are
 exempt from this re-check: they are frozen history describing what was true
 at the commit they cite, not a live claim about the current tree.
 
+**Semantic-merge races and the "twin record" pattern.** Two PRs that edit
+the *same* source file in non-overlapping regions can merge cleanly (no
+textual conflict) while each PR's own evidence record — minted against its
+single-PR branch tip — pins a `content_hash` that matches neither the
+merged file nor the other PR's record. This can leave **two independent
+live records** simultaneously stale on the same shared-file hash (#69 is
+the worked example). Because a record's `supersedes` field names exactly
+one prior record, one new record cannot supersede both stale records by
+itself. The fix is a **pair of twin records**, minted together against the
+same (already-merged) working tree, each naming one of the two stale
+records in its own `supersedes` field and cross-linking to the other via
+"Links" — not a schema change to make `supersedes` a list. See
+`verification/records/drc-lvs/records/20260817-002327-4dd3bfa.md` and its
+twin `20260817-002415-4dd3bfa.md` for the worked example.
+
 ## What CI runs vs. what stays local (explicit split)
 
 CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
