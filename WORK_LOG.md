@@ -5,6 +5,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-08-16
 
+- **Issue #60** (closed): Dedup SPICE .SUBCKT/LEF MACRO parsing between build_reference_netlist.py and spice_to_verilog.py
+- **PR #63**: refactor: dedup SPICE .SUBCKT/LEF MACRO parsing
+- **Issue #55** (closed): Bump klayout-tools pin and re-run DRC, LVS, and post-layout SDF (Leg 2) — upstream fixes already merged
+- **PR #65**: feat(verification): bump klayout-tools pin, re-verify DRC clean, re-attempt LVS/SDF with fresh evidence
 - **Issue #56** (closed): Re-run place-and-route with revised floorplan/cell-mapping to narrow the slow-corner timing gap (no RTL change)
 - **PR #61**: feat(flow): mapping-only floorplan re-run to narrow slow-corner timing gap
 - **Issue #58** (closed): Auditor guard-telemetry: rm-scope-outside-repo denied $HOME/.loom token-cache rm — confirm keep-flagged
