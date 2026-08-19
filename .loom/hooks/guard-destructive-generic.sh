@@ -1419,6 +1419,54 @@ resolve_default_branch() {
 # strip_literal_text(): backslash-escaped quotes and an unterminated quote fall
 # back to the old separator-active behaviour, never widening a deny into an allow.
 #
+# UNQUOTED BACKSLASH-NEWLINE LINE CONTINUATION (#71): every caller downstream
+# of qsplit() ultimately does `n = split($0, segs, "\n")` and treats each
+# resulting piece as ONE simple command (extract_write_targets(),
+# extract_rm_targets(), lifecycle_or_cloud_reason(), parse_force_ops(), ...).
+# Before this fix, qsplit() copied an embedded `\n` through unchanged for any
+# reason OTHER than the ;/&/| separators above -- including the newline half
+# of a real shell line-continuation (`cmd arg1 \` + newline + `arg2`), which
+# is not a statement boundary at all: the real shell deletes the backslash
+# and the newline and joins the two physical lines into one logical command.
+# Leaving it unjoined split a single multi-line invocation into N bogus
+# "commands", one per physical line -- for a `cp`/`mv` whose ARGUMENTS spill
+# across a `\`-continued line, this stranded the real destination argument in
+# its own line-only segment (never reaching the cp/mv branch's "last
+# argument" check at all) while the trailing "\" on an EARLIER line became a
+# phantom extra argument on outermost `cp <source> \` segment, which the
+# cp/mv branch then misread as the write target -- resolving relative to
+# curcwd and denying a legitimate multi-source `cp`/`mv` reading from outside
+# the worktree into an in-worktree destination (the false positive reported
+# in #71). The same stranding can also cause a false NEGATIVE for
+# extract_rm_targets()/lifecycle_or_cloud_reason(): a continuation-split `rm
+# -rf \` line has no target on its own line, and the target-bearing
+# continuation line no longer starts with `rm`, so the real target is never
+# scanned at all.
+#
+# The fix: qsplit() now elides a `\` immediately followed by `\n` -- but ONLY
+# when reached OUTSIDE any quoted span, i.e. only in the per-character
+# default path below, never inside the DQ/SQ branch above (which already
+# copies an inert quoted span, backslash-newline and all, VERBATIM as one
+# `substr()` before this check ever sees its bytes -- a continuation-looking
+# sequence that is actually literal DATA inside a quoted string is therefore
+# never touched). This exactly mirrors real shell semantics: the backslash
+# and the newline are simply deleted, with nothing inserted in their place
+# (a leading space on the continuation line, if any, is untouched and is
+# what naturally keeps the joined tokens separated). Only ever REDUCES
+# spurious mid-invocation segment boundaries -- it can never manufacture a
+# NEW deny (a joined command is scanned exactly as if the operator had typed
+# it on one line), so this stays on the safe side of "never widen a deny".
+#
+# KNOWN LIMITATION: qsplit() has no general backslash-escape tracking outside
+# quotes (a bare `\` was, and remains, passed through as a literal character
+# in every other position). A doubled `\\` immediately followed by a real
+# newline (an escaped literal backslash, THEN an ordinary unescaped line
+# end -- not a continuation) is misread as a continuation and joined too.
+# This shape is vanishingly rare in real commands and, per the "never widen
+# a deny" contract above, over-joining can only ever suppress a spurious
+# segment split -- never create a new false ALLOW of an otherwise-flagged
+# write.
+#
 # Shared as a single awk source string so the three parsers cannot drift.
 # =============================================================================
 _QSPLIT_AWK='
@@ -1454,6 +1502,16 @@ function qsplit(s,   out, n, i, c, j, qc, ci, inner, SQ, DQ) {
             # opening quote and keep walking char-by-char so a `|` inside splits).
             out = out c
             i++
+            continue
+        }
+        if (c == "\\" && i < n && substr(s, i + 1, 1) == "\n") {
+            # Unquoted line continuation (#71): the real shell deletes BOTH
+            # the backslash and the newline and joins the two physical lines
+            # into one logical command -- so this emits nothing at all
+            # (never a "\n", unlike the separators below, which really do
+            # end a statement). See the header comment above for the false
+            # positive/negative this fixes and why over-joining stays safe.
+            i += 2
             continue
         }
         if (c == ";") { out = out "\n"; i++; continue }
