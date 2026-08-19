@@ -68,6 +68,11 @@ jobs:
   cross-check:
     name: multi-WIDTH cross-check (cocotb + Icarus)
     runs-on: ubuntu-latest
+    # Normal runs complete in well under 2 minutes (see recent workflow
+    # history); 30 minutes gives generous headroom while still failing fast
+    # if a step hangs (e.g. an apt-get fetch), instead of consuming the
+    # GitHub Actions default of 360 minutes (#73).
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
