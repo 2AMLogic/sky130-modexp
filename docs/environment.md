@@ -33,7 +33,7 @@ source .venv/bin/activate
 
 | Component | Pinned to | Resolved via |
 |---|---|---|
-| `klayout-tools` (`klt`) | git revision [`a482d3934bd644b763cf925f6344ac05f54a1623`](https://github.com/2AMLogic/klayout-tools/commit/a482d3934bd644b763cf925f6344ac05f54a1623) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@a482d3934bd644b763cf925f6344ac05f54a1623"` (what `scripts/setup-env.sh` runs) |
+| `klayout-tools` (`klt`) | git revision [`f77036bff1eaf97b992e121acd702a98519142fb`](https://github.com/2AMLogic/klayout-tools/commit/f77036bff1eaf97b992e121acd702a98519142fb) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@f77036bff1eaf97b992e121acd702a98519142fb"` (what `scripts/setup-env.sh` runs) |
 | `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
@@ -55,6 +55,21 @@ be a descendant of all three fix commits
 (`gh api repos/2AMLogic/klayout-tools/compare/<fix-sha>...a482d393...` →
 `"status": "ahead"` for each) — not merely trusted from the issue body's
 earlier snapshot, since `klayout-tools` `main` moves several commits a day.
+
+**Pin rationale (issue #78, 2026-09-09)**: the previous pin
+(`a482d3934bd644b763cf925f6344ac05f54a1623`, 2026-08-16) predated
+[klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)
+("fix(functional-verification): resolve top-level-port SDF `INTERCONNECT`
+entries via a generated pass-through wrapper", merged
+2026-08-17T00:05:03Z at `ee10a5415f14d2a6a2f516355b276673e1700170`) — the fix
+for [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056),
+which had caused Leg 2 (delay-annotated SDF gate-level simulation) to FAIL
+(`verification/records/gate-level-sim/records/20260816-174310-5e656e5.md`).
+The new pin, `f77036bff1eaf97b992e121acd702a98519142fb` (2026-09-09T21:50:44Z,
+`klayout-tools main`'s tip at implementation time), was re-verified live to
+be a descendant of `ee10a54`
+(`gh api repos/2AMLogic/klayout-tools/compare/ee10a54...f77036b` →
+`{"status": "ahead", "ahead_by": 424}`) — i.e. it contains #1069's fix.
 
 `klt` in turn resolves `iverilog`/`yosys`/`openroad` and the PDK itself from
 the host — it does not vendor them. Those are:

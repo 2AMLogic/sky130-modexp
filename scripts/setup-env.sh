@@ -32,7 +32,7 @@ cd "${REPO_ROOT}" || exit 1
 
 # --- pinned versions -- keep in sync with docs/environment.md -------------
 KLT_REPO="https://github.com/2AMLogic/klayout-tools"
-KLT_REV="a482d3934bd644b763cf925f6344ac05f54a1623"
+KLT_REV="f77036bff1eaf97b992e121acd702a98519142fb"
 VOLARE_PDK_FAMILY="sky130"
 VOLARE_SKY130_VERSION="c6d73a35f524070e85faff4a6a9eef49553ebc2b"
 # ----------------------------------------------------------------------------
