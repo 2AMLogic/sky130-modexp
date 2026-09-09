@@ -133,6 +133,19 @@ the links will not exist yet otherwise. This mirrors the precedent
 `flow/par-modexp.json` already sets (its `netlist` path is a scratch artifact
 an earlier step produces).
 
+**Leg 2 (SDF) is not run by that script, or by any script here** — it needs a
+fresh `klt place-and-route` re-run (`post_route_spef`/`post_route_sdf`, and
+`openroad`) rather than the committed layout, and at this repo's pinned `klt`
+it exits non-zero at `klt`'s own SDF-diagnostic gate (that failure is the
+recorded result; see "Leg 2: RE-ATTEMPTED — still FAIL" below). Its literal,
+copy-pasteable cold-start sequence — `./scripts/setup-env.sh` → the P&R
+request carrying `post_route_spef`/`post_route_sdf` → the `klt
+functional-verification` request carrying `options.sdf` — is the
+**"Reproducing this run (cold start)"** section of
+`verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`, and
+is summarized in `run-gate-level-sim.sh`'s own header comment
+(`./verification/gate-level/run-gate-level-sim.sh --help`).
+
 ## What was run, and what it showed
 
 ### Leg 1a — `klt functional-verification`, unmodified `test_modexp.py`
