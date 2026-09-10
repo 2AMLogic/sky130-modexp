@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "error": {
+    "command": "functional-verification",
+    "message": "SDF back-annotation of '/private/tmp/issue78-run/modexp_route.sdf' did not fully apply: 49 diagnostic(s) in the icarus transcript -- SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:59: Could not find intermodpath! | SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:63: Could not find intermodpath! | SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:66: Could not find intermodpath! | SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1356: Could not find intermodpath! | SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1358: Could not find intermodpath! (+44 more). The simulator exits 0 after skipping an annotation it cannot apply, so this run's verdict would have been a zero-delay one reported as if it were annotated."
+  }
+}

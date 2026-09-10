@@ -1,0 +1,358 @@
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/opt/homebrew/Cellar/python@3.13/3.13.15/Frameworks/Python.framework/Versions/3.13/Python'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:234  in gpi_load_users                  Running entry func 'initialize' from loaded library '/Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-78/.venv/lib/python3.13/site-packages/cocotb/simulator.cpython-313-darwin.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:115  in initialize                      Using Python 3.13.14 interpreter at /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-78/.venv/bin/python3.13
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Seeding Python random module with 1
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /Users/rwalters/GitHub/sky130-modexp/.loom/worktrees/issue-78/.venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running test_modexp.test_modexp_known_vectors (1/2)
+                                                            Directed vectors, including the exponent/base edge cases.
+VPI error: Could not insert intermodpath!
+	port1 = mod_in, port1_has_index = 1, port1_bit_index = 1
+	port2 = DIODE, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = mod_in, port1_has_index = 1, port1_bit_index = 4
+	port2 = DIODE, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = mod_in, port1_has_index = 1, port1_bit_index = 6
+	port2 = DIODE, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = B2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = B, port2_has_index = 0, port2_bit_index = 0
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:59: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:63: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:66: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1356: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1358: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1359: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1360: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1362: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1363: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1364: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1366: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1367: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1368: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1370: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1371: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1372: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1374: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1375: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1376: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1378: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1379: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1380: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1382: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1383: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1384: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1386: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1387: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1388: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1390: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1391: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1392: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1394: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1395: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1396: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1398: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1399: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1400: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1402: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1403: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1404: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1406: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1407: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1408: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1410: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1411: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1412: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = A1, port2_has_index = 0, port2_bit_index = 0
+VPI error: Could not insert intermodpath!
+	port1 = Q, port1_has_index = 0, port1_bit_index = 0
+	port2 = C2, port2_has_index = 0, port2_bit_index = 0
+414: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1415: Could not find intermodpath!
+SDF ERROR: /private/tmp/issue78-run/modexp_route.sdf:1416: Could not find intermodpath!
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8032: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8053: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8074: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8095: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8116: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8137: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8158: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8179: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8200: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8221: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8242: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8263: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8284: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8305: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8326: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8347: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8368: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8389: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8410: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8431: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8452: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8473: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8494: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8515: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8536: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8557: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8578: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8599: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8620: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8641: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8662: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8683: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8704: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8725: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8746: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8767: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8788: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8809: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8830: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8851: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8872: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8893: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8914: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8935: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8956: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8977: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:8998: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9019: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9040: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9061: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9082: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9103: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9124: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9145: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9166: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9187: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9208: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9229: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9250: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9271: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9292: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9313: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9334: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9355: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9376: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9397: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9418: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9439: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9460: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9481: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9502: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9523: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9544: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9565: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9586: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9607: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9628: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9649: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9670: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9691: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9712: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9733: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9754: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9775: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9796: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9817: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9838: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9859: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9880: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9901: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9922: T  6140.00ns WARNING  cocotb.regression                  test_modexp.test_modexp_known_vectors failed
+                                                        Traceback (most recent call last):
+                                                          File "/private/tmp/issue78-run/test_modexp.py", line 60, in test_modexp_known_vectors
+                                                            assert got == want, f"modexp({base},{exp},{mod}): got {got}, want {want}"
+                                                        AssertionError: modexp(2,10,1000): got 0, want 24
+                                                        assert 0 == 24
+  6140.00ns INFO     cocotb.regression                  running test_modexp.test_modexp_random (2/2)
+                                                            Randomized cross-check against Python `pow`, fixed seed for reproducibility.
+ 12290.00ns WARNING  cocotb.regression                  test_modexp.test_modexp_random failed
+                                                        Traceback (most recent call last):
+                                                          File "/private/tmp/issue78-run/test_modexp.py", line 82, in test_modexp_random
+                                                            assert got == want, f"modexp({base},{exp},{mod}): got {got}, want {want}"
+                                                        AssertionError: modexp(25247,55125,55342): got 0, want 38205
+                                                        assert 0 == 38205
+ 12290.00ns INFO     cocotb.regression                  ***********************************************************************************************
+                                                        ** TEST                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ***********************************************************************************************
+                                                        ** test_modexp.test_modexp_known_vectors   FAIL        6140.00           1.96       3134.95  **
+                                                        ** test_modexp.test_modexp_random          FAIL        6150.00           0.65       9431.05  **
+                                                        ***********************************************************************************************
+                                                        ** TESTS=2 PASS=0 FAIL=2 SKIP=0                       12290.00           2.63       4666.04  **
+                                                        ***********************************************************************************************
+IMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9943: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9964: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:9985: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10006: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10027: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10048: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10069: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10090: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10111: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10132: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10153: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10174: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10195: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10216: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10237: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10258: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10279: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10300: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10321: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10342: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10363: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10384: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10405: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10426: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10447: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10468: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10489: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10510: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10531: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10552: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10573: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10594: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10615: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10636: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10657: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10678: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10699: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10720: TIMINGCHECK not supported.
+SDF WARNING: /private/tmp/issue78-run/modexp_route.sdf:10741: TIMINGCHECK not supported.

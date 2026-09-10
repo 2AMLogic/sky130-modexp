@@ -21,6 +21,48 @@
 #   ./verification/gate-level/run-gate-level-sim.sh [--no-regen] [--format json|text]
 #
 # Exit code is `klt functional-verification`'s own.
+#
+# ---------------------------------------------------------------------------
+# Leg 2 (delay-annotated / SDF) -- NOT run by this script, invocation below
+# ---------------------------------------------------------------------------
+#
+# This script runs Leg 1 only (zero-delay, extraction-based). Leg 2 is not a
+# mode of it, for reasons that are properties of the run rather than of this
+# wrapper:
+#
+#   * Leg 2 does not simulate this repo's committed layout at all. Leg 1's
+#     netlist is derived from `layout/modexp.gds`; Leg 2 needs a netlist and
+#     an SDF from the *same* OpenSTA session, which only a fresh `klt
+#     place-and-route` re-run (`post_route_spef`/`post_route_sdf`) produces
+#     -- and that re-run is not byte-reproducible against the committed GDS
+#     (README.md, "Known upstream gaps").
+#   * That re-run needs `openroad` (minutes of container time); Leg 1 needs
+#     only `iverilog`.
+#   * At this repo's pinned `klt` it FAILS, at `klt`'s own SDF-diagnostic
+#     gate -- an expected non-zero exit, not a regression to be repaired.
+#
+# The full, literal, copy-pasteable cold-start sequence that produced the
+# current Leg 2 evidence -- `./scripts/setup-env.sh` -> the P&R request
+# carrying `post_route_spef`/`post_route_sdf` -> the `klt
+# functional-verification` request carrying `options.sdf`, plus the scratch
+# directory assembly those two calls need -- is the "Reproducing this run
+# (cold start)" section of:
+#
+#   verification/records/gate-level-sim/records/20260909-230216-92e00f2.md
+#
+# Its two `klt` calls, for orientation (they are NOT runnable on their own --
+# follow the record for the scratch-directory setup around them):
+#
+#   PDK=sky130A klt place-and-route "$PAR_DIR/par-modexp-sdf.json" --format json
+#   klt functional-verification "$SIM/request-modexp-gate-level-sdf.json" --format json
+#
+# The frozen inputs both calls consume (the SDF-leg request document and its
+# `FUNCTIONAL`-undefined defines file, the Leg 1 counterparts of which live
+# next to this script) are artifacts of that same record:
+#
+#   verification/records/gate-level-sim/artifacts/20260909-230216-92e00f2/
+#     request-modexp-gate-level-sdf.json
+#     sky130_fd_sc_hd_sdf_defines.v
 
 set -uo pipefail
 
@@ -33,7 +75,7 @@ for arg in "$@"; do
   case "${arg}" in
     --no-regen) REGEN=0 ;;
     --format=*) FORMAT="${arg#--format=}" ;;
-    -h|--help) sed -n '2,26p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help) sed -n '2,65p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "unknown option: ${arg}" >&2; exit 1 ;;
   esac
 done

@@ -305,10 +305,11 @@ beyond). The full record, including provenance and the reproduction recipe,
 is at
 [`verification/records/place-and-route/`](../verification/records/place-and-route/).
 
-## Post-route gate-level simulation — appended, issue #9; Leg 2 updated, issue #55
+## Post-route gate-level simulation — appended, issue #9; Leg 2 updated, issues #55, #78
 
-**Status: Leg 1 achieved (PASS). Leg 2 attempted, 2026-08-16 — FAIL, no
-longer blocked.** Until this run, every correctness claim on this page
+**Status: Leg 1 achieved (PASS). Leg 2 re-attempted, 2026-09-09 (issue
+#78) — still FAIL, but the failure class narrowed materially.** Until this
+run, every correctness claim on this page
 rested on *behavioural* simulation of `rtl/modexp.v`. Synthesis mapping,
 tie-cell insertion, CTS, and OpenROAD's placement/timing optimizations were
 unverified by simulation.
@@ -363,20 +364,28 @@ git symlink (`git ls-files -s verification/gate-level/test_modexp.py` → mode
   layout of one elaboration; `WIDTH` is an RTL parameter that does not
   survive synthesis. The case count is *not* reduced (500, matching the RTL
   claim).
-- **Leg 2 (delay-annotated SDF simulation), updated 2026-08-16 (issue #55):
-  ATTEMPTED — FAIL.** Issue #55 bumped this repo's `klt` pin past
+- **Leg 2 (delay-annotated SDF simulation), updated 2026-09-09 (issue
+  #78): RE-ATTEMPTED — still FAIL, narrower failure class.** Issue #55
+  first bumped this repo's `klt` pin past
   [klayout-tools#1007](https://github.com/2AMLogic/klayout-tools/pull/1007)
-  (the fix for `#1002`'s missing SDF export/option) and ran Leg 2 end to end
-  for the first time, against a fresh post-route build's own `write_verilog`
-  netlist + `write_sdf` output (not `layout/modexp.gds` — a pin bump does
-  not reproduce P&R byte-for-byte, a separate finding recorded alongside
-  this one). Result: `klt`'s own SDF diagnostic gate reports the run
-  **FAILED** — 200 of ~753 `INTERCONNECT` entries (all top-level-port-
-  attached, all zero-delay regardless) could not be resolved by Icarus
-  13.0's `$sdf_annotate`, and the regression itself returns a uniform,
-  constant-zero result on every case. New finding filed generically as
+  and ran Leg 2 end to end for the first time: 200 of ~753 `INTERCONNECT`
+  entries (all top-level-port-attached) could not be resolved by Icarus
+  13.0's `$sdf_annotate`, filed generically as
   [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056).
-  Not a "blocked, no artifact" state any more — a concrete, evidenced fail.
+  Issue #78 bumped the pin again, past
+  [klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)
+  (`#1056`'s fix — a generated pass-through wrapper), and re-ran Leg 2
+  against a fresh post-route build's own `write_verilog` netlist +
+  `write_sdf` output (not `layout/modexp.gds` — a pin bump does not
+  reproduce P&R byte-for-byte). Result: the fix works for its stated scope
+  (top-level ports, including `done`, now resolve), but `klt`'s own SDF
+  diagnostic gate still reports the run **FAILED** — a new, narrower
+  residual class of 49 unresolved `INTERCONNECT` entries (down from 200),
+  and the regression itself still returns a uniform, constant-zero result
+  on every case even though `done` itself now resolves. Not a "blocked, no
+  artifact" state — a concrete, evidenced fail, now with a much smaller
+  surface. Full detail:
+  `verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`.
 
 Full method, scope, and the friction filed upstream:
 [`verification/gate-level/README.md`](../verification/gate-level/README.md).

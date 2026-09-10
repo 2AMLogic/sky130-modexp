@@ -1,0 +1,7843 @@
+{
+  "schema_version": 1,
+  "file": "layout/modexp.gds",
+  "deck": "sky130",
+  "dbu_um": 0.001,
+  "status": "violations",
+  "violation_count": 234,
+  "rule_counts": {
+    "nwell.space.1": 194,
+    "nwell.width.1": 40
+  },
+  "violations": [
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 8010,
+        "bottom": 8350,
+        "right": 9010,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          8010,
+          8350
+        ],
+        [
+          8010,
+          9575
+        ],
+        [
+          9010,
+          9575
+        ],
+        [
+          9010,
+          8350
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 8010,
+        "bottom": 17625,
+        "right": 8090,
+        "top": 20455
+      },
+      "polygon": [
+        [
+          8090,
+          17625
+        ],
+        [
+          8010,
+          18850
+        ],
+        [
+          8010,
+          20455
+        ],
+        [
+          8090,
+          19230
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 10770,
+        "bottom": 12185,
+        "right": 10850,
+        "top": 13410
+      },
+      "polygon": [
+        [
+          10770,
+          12185
+        ],
+        [
+          10770,
+          13410
+        ],
+        [
+          10850,
+          13410
+        ],
+        [
+          10850,
+          12185
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 13530,
+        "bottom": 13790,
+        "right": 13610,
+        "top": 15015
+      },
+      "polygon": [
+        [
+          13530,
+          13790
+        ],
+        [
+          13530,
+          15015
+        ],
+        [
+          13610,
+          15015
+        ],
+        [
+          13610,
+          13790
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 13530,
+        "bottom": 24670,
+        "right": 14530,
+        "top": 25895
+      },
+      "polygon": [
+        [
+          13530,
+          24670
+        ],
+        [
+          13530,
+          25895
+        ],
+        [
+          14530,
+          25895
+        ],
+        [
+          14530,
+          24670
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 14910,
+        "bottom": 34021,
+        "right": 15450,
+        "top": 36699
+      },
+      "polygon": [
+        [
+          14910,
+          34021
+        ],
+        [
+          14910,
+          35550
+        ],
+        [
+          15450,
+          36699
+        ],
+        [
+          15450,
+          35170
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 20890,
+        "bottom": 51870,
+        "right": 21890,
+        "top": 53095
+      },
+      "polygon": [
+        [
+          20890,
+          51870
+        ],
+        [
+          20890,
+          53095
+        ],
+        [
+          21890,
+          53095
+        ],
+        [
+          21890,
+          51870
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 22270,
+        "bottom": 73630,
+        "right": 22810,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          22270,
+          73630
+        ],
+        [
+          22270,
+          74855
+        ],
+        [
+          22810,
+          74855
+        ],
+        [
+          22810,
+          73630
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 22730,
+        "bottom": 23065,
+        "right": 22810,
+        "top": 24670
+      },
+      "polygon": [
+        [
+          22730,
+          23065
+        ],
+        [
+          22730,
+          24670
+        ],
+        [
+          22810,
+          24670
+        ],
+        [
+          22810,
+          23065
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 25490,
+        "bottom": 17625,
+        "right": 26030,
+        "top": 18850
+      },
+      "polygon": [
+        [
+          25490,
+          17625
+        ],
+        [
+          25490,
+          18850
+        ],
+        [
+          26030,
+          18850
+        ],
+        [
+          26030,
+          17625
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 25950,
+        "bottom": 33945,
+        "right": 26950,
+        "top": 35170
+      },
+      "polygon": [
+        [
+          25950,
+          33945
+        ],
+        [
+          25950,
+          35170
+        ],
+        [
+          26950,
+          35170
+        ],
+        [
+          26950,
+          33945
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 26870,
+        "bottom": 23065,
+        "right": 26950,
+        "top": 24290
+      },
+      "polygon": [
+        [
+          26870,
+          23065
+        ],
+        [
+          26870,
+          24290
+        ],
+        [
+          26950,
+          24290
+        ],
+        [
+          26950,
+          23065
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 26870,
+        "bottom": 30110,
+        "right": 27410,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          26870,
+          30110
+        ],
+        [
+          26870,
+          31335
+        ],
+        [
+          27410,
+          31335
+        ],
+        [
+          27410,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 26870,
+        "bottom": 68190,
+        "right": 27870,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          26870,
+          68190
+        ],
+        [
+          26870,
+          69415
+        ],
+        [
+          27870,
+          69415
+        ],
+        [
+          27870,
+          68190
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 27330,
+        "bottom": 44901,
+        "right": 27870,
+        "top": 47199
+      },
+      "polygon": [
+        [
+          27870,
+          44901
+        ],
+        [
+          27330,
+          46050
+        ],
+        [
+          27330,
+          47199
+        ],
+        [
+          27870,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 27330,
+        "bottom": 46050,
+        "right": 27410,
+        "top": 47655
+      },
+      "polygon": [
+        [
+          27330,
+          46050
+        ],
+        [
+          27330,
+          47655
+        ],
+        [
+          27410,
+          47655
+        ],
+        [
+          27410,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 27330,
+        "bottom": 50265,
+        "right": 27410,
+        "top": 51870
+      },
+      "polygon": [
+        [
+          27330,
+          50265
+        ],
+        [
+          27330,
+          51870
+        ],
+        [
+          27410,
+          51870
+        ],
+        [
+          27410,
+          50265
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 28710,
+        "bottom": 8350,
+        "right": 29250,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          28710,
+          8350
+        ],
+        [
+          28710,
+          9575
+        ],
+        [
+          29250,
+          9575
+        ],
+        [
+          29250,
+          8350
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 28710,
+        "bottom": 72025,
+        "right": 28790,
+        "top": 73250
+      },
+      "polygon": [
+        [
+          28710,
+          72025
+        ],
+        [
+          28710,
+          73250
+        ],
+        [
+          28790,
+          73250
+        ],
+        [
+          28790,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 29170,
+        "bottom": 39385,
+        "right": 29710,
+        "top": 40990
+      },
+      "polygon": [
+        [
+          29170,
+          39385
+        ],
+        [
+          29170,
+          40610
+        ],
+        [
+          29710,
+          40990
+        ],
+        [
+          29710,
+          39385
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 29170,
+        "bottom": 50265,
+        "right": 29710,
+        "top": 51490
+      },
+      "polygon": [
+        [
+          29170,
+          50265
+        ],
+        [
+          29170,
+          51490
+        ],
+        [
+          29710,
+          51490
+        ],
+        [
+          29710,
+          50265
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 29630,
+        "bottom": 39385,
+        "right": 29710,
+        "top": 42215
+      },
+      "polygon": [
+        [
+          29710,
+          39385
+        ],
+        [
+          29630,
+          40610
+        ],
+        [
+          29630,
+          42215
+        ],
+        [
+          29710,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 29630,
+        "bottom": 40610,
+        "right": 30630,
+        "top": 42215
+      },
+      "polygon": [
+        [
+          29630,
+          40610
+        ],
+        [
+          29630,
+          42215
+        ],
+        [
+          30630,
+          42215
+        ],
+        [
+          30630,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 30090,
+        "bottom": 61145,
+        "right": 31090,
+        "top": 62370
+      },
+      "polygon": [
+        [
+          30090,
+          61145
+        ],
+        [
+          30090,
+          62370
+        ],
+        [
+          31090,
+          62370
+        ],
+        [
+          31090,
+          61145
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 30090,
+        "bottom": 73250,
+        "right": 30630,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          30630,
+          73250
+        ],
+        [
+          30090,
+          73630
+        ],
+        [
+          30090,
+          74855
+        ],
+        [
+          30630,
+          74855
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 30550,
+        "bottom": 72025,
+        "right": 30630,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          30550,
+          72025
+        ],
+        [
+          30550,
+          73630
+        ],
+        [
+          30630,
+          74855
+        ],
+        [
+          30630,
+          73250
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 30550,
+        "bottom": 72025,
+        "right": 31550,
+        "top": 73630
+      },
+      "polygon": [
+        [
+          30550,
+          72025
+        ],
+        [
+          30550,
+          73630
+        ],
+        [
+          31550,
+          73250
+        ],
+        [
+          31550,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 31010,
+        "bottom": 51490,
+        "right": 31550,
+        "top": 53095
+      },
+      "polygon": [
+        [
+          31550,
+          51490
+        ],
+        [
+          31010,
+          51870
+        ],
+        [
+          31010,
+          53095
+        ],
+        [
+          31550,
+          53095
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 31010,
+        "bottom": 55705,
+        "right": 31090,
+        "top": 56930
+      },
+      "polygon": [
+        [
+          31010,
+          55705
+        ],
+        [
+          31010,
+          56930
+        ],
+        [
+          31090,
+          56930
+        ],
+        [
+          31090,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 31010,
+        "bottom": 66585,
+        "right": 31090,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          31010,
+          66585
+        ],
+        [
+          31010,
+          69415
+        ],
+        [
+          31090,
+          68190
+        ],
+        [
+          31090,
+          66585
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 31010,
+        "bottom": 67407,
+        "right": 32010,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          31010,
+          67407
+        ],
+        [
+          31010,
+          69415
+        ],
+        [
+          32010,
+          69415
+        ],
+        [
+          32010,
+          68190
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 31470,
+        "bottom": 50265,
+        "right": 31550,
+        "top": 53095
+      },
+      "polygon": [
+        [
+          31470,
+          50265
+        ],
+        [
+          31470,
+          51870
+        ],
+        [
+          31550,
+          53095
+        ],
+        [
+          31550,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 31930,
+        "bottom": 62750,
+        "right": 32010,
+        "top": 63975
+      },
+      "polygon": [
+        [
+          31930,
+          62750
+        ],
+        [
+          31930,
+          63975
+        ],
+        [
+          32010,
+          63975
+        ],
+        [
+          32010,
+          62750
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 33310,
+        "bottom": 88345,
+        "right": 33390,
+        "top": 89570
+      },
+      "polygon": [
+        [
+          33310,
+          88345
+        ],
+        [
+          33310,
+          89570
+        ],
+        [
+          33390,
+          89570
+        ],
+        [
+          33390,
+          88345
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 33310,
+        "bottom": 88801,
+        "right": 33850,
+        "top": 90719
+      },
+      "polygon": [
+        [
+          33310,
+          88801
+        ],
+        [
+          33310,
+          89570
+        ],
+        [
+          33850,
+          90719
+        ],
+        [
+          33850,
+          89950
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 33770,
+        "bottom": 89950,
+        "right": 33850,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          33770,
+          89950
+        ],
+        [
+          33770,
+          91175
+        ],
+        [
+          33850,
+          91175
+        ],
+        [
+          33850,
+          89950
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 36990,
+        "bottom": 28505,
+        "right": 37070,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          37070,
+          28505
+        ],
+        [
+          36990,
+          29730
+        ],
+        [
+          36990,
+          31335
+        ],
+        [
+          37070,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 36990,
+        "bottom": 29730,
+        "right": 37530,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          36990,
+          29730
+        ],
+        [
+          36990,
+          31335
+        ],
+        [
+          37530,
+          31335
+        ],
+        [
+          37530,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 36990,
+        "bottom": 56147,
+        "right": 37990,
+        "top": 58093
+      },
+      "polygon": [
+        [
+          36990,
+          56147
+        ],
+        [
+          36990,
+          57310
+        ],
+        [
+          37990,
+          58093
+        ],
+        [
+          37990,
+          56930
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 38370,
+        "bottom": 66585,
+        "right": 38450,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          38450,
+          66585
+        ],
+        [
+          38370,
+          67810
+        ],
+        [
+          38370,
+          69415
+        ],
+        [
+          38450,
+          68190
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 38370,
+        "bottom": 67810,
+        "right": 39370,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          38370,
+          67810
+        ],
+        [
+          38370,
+          69415
+        ],
+        [
+          39370,
+          69415
+        ],
+        [
+          39370,
+          68190
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 38830,
+        "bottom": 28505,
+        "right": 39830,
+        "top": 29730
+      },
+      "polygon": [
+        [
+          38830,
+          28505
+        ],
+        [
+          38830,
+          29730
+        ],
+        [
+          39830,
+          29730
+        ],
+        [
+          39830,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 39750,
+        "bottom": 56930,
+        "right": 39830,
+        "top": 58535
+      },
+      "polygon": [
+        [
+          39750,
+          56930
+        ],
+        [
+          39750,
+          58535
+        ],
+        [
+          39830,
+          58535
+        ],
+        [
+          39830,
+          56930
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 40210,
+        "bottom": 39827,
+        "right": 41210,
+        "top": 41773
+      },
+      "polygon": [
+        [
+          41210,
+          39827
+        ],
+        [
+          40210,
+          40610
+        ],
+        [
+          40210,
+          41773
+        ],
+        [
+          41210,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 41130,
+        "bottom": 72025,
+        "right": 42130,
+        "top": 73630
+      },
+      "polygon": [
+        [
+          41130,
+          72025
+        ],
+        [
+          41130,
+          73250
+        ],
+        [
+          42130,
+          73630
+        ],
+        [
+          42130,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 41590,
+        "bottom": 72101,
+        "right": 42130,
+        "top": 74779
+      },
+      "polygon": [
+        [
+          42130,
+          72101
+        ],
+        [
+          41590,
+          73250
+        ],
+        [
+          41590,
+          74779
+        ],
+        [
+          42130,
+          73630
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 44350,
+        "bottom": 23065,
+        "right": 44890,
+        "top": 24290
+      },
+      "polygon": [
+        [
+          44350,
+          23065
+        ],
+        [
+          44350,
+          24290
+        ],
+        [
+          44890,
+          24290
+        ],
+        [
+          44890,
+          23065
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 44350,
+        "bottom": 83347,
+        "right": 45350,
+        "top": 85293
+      },
+      "polygon": [
+        [
+          44350,
+          83347
+        ],
+        [
+          44350,
+          84510
+        ],
+        [
+          45350,
+          85293
+        ],
+        [
+          45350,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 45270,
+        "bottom": 17625,
+        "right": 45350,
+        "top": 20455
+      },
+      "polygon": [
+        [
+          45350,
+          17625
+        ],
+        [
+          45270,
+          18850
+        ],
+        [
+          45270,
+          20455
+        ],
+        [
+          45350,
+          19230
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 45270,
+        "bottom": 34021,
+        "right": 45810,
+        "top": 36699
+      },
+      "polygon": [
+        [
+          45270,
+          34021
+        ],
+        [
+          45270,
+          35550
+        ],
+        [
+          45810,
+          36699
+        ],
+        [
+          45810,
+          35170
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 47110,
+        "bottom": 62750,
+        "right": 47190,
+        "top": 63975
+      },
+      "polygon": [
+        [
+          47110,
+          62750
+        ],
+        [
+          47110,
+          63975
+        ],
+        [
+          47190,
+          63975
+        ],
+        [
+          47190,
+          62750
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 47110,
+        "bottom": 77465,
+        "right": 47190,
+        "top": 80295
+      },
+      "polygon": [
+        [
+          47110,
+          77465
+        ],
+        [
+          47110,
+          79070
+        ],
+        [
+          47190,
+          80295
+        ],
+        [
+          47190,
+          78690
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 47570,
+        "bottom": 13790,
+        "right": 48110,
+        "top": 15015
+      },
+      "polygon": [
+        [
+          47570,
+          13790
+        ],
+        [
+          47570,
+          15015
+        ],
+        [
+          48110,
+          15015
+        ],
+        [
+          48110,
+          13790
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 47570,
+        "bottom": 50265,
+        "right": 48570,
+        "top": 51870
+      },
+      "polygon": [
+        [
+          47570,
+          50265
+        ],
+        [
+          47570,
+          51870
+        ],
+        [
+          48570,
+          51490
+        ],
+        [
+          48570,
+          50265
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 47570,
+        "bottom": 50341,
+        "right": 48110,
+        "top": 53019
+      },
+      "polygon": [
+        [
+          47570,
+          50341
+        ],
+        [
+          47570,
+          51870
+        ],
+        [
+          48110,
+          53019
+        ],
+        [
+          48110,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 47570,
+        "bottom": 93785,
+        "right": 48110,
+        "top": 96539
+      },
+      "polygon": [
+        [
+          47570,
+          93785
+        ],
+        [
+          47570,
+          96539
+        ],
+        [
+          48110,
+          95390
+        ],
+        [
+          48110,
+          93785
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 48030,
+        "bottom": 66585,
+        "right": 49030,
+        "top": 68973
+      },
+      "polygon": [
+        [
+          48030,
+          66585
+        ],
+        [
+          48030,
+          68973
+        ],
+        [
+          49030,
+          68190
+        ],
+        [
+          49030,
+          66585
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 48490,
+        "bottom": 23065,
+        "right": 49030,
+        "top": 24290
+      },
+      "polygon": [
+        [
+          48490,
+          23065
+        ],
+        [
+          48490,
+          24290
+        ],
+        [
+          49030,
+          24290
+        ],
+        [
+          49030,
+          23065
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 48950,
+        "bottom": 8350,
+        "right": 49490,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          48950,
+          8350
+        ],
+        [
+          48950,
+          9575
+        ],
+        [
+          49490,
+          9575
+        ],
+        [
+          49490,
+          8350
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 50790,
+        "bottom": 28505,
+        "right": 50870,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          50790,
+          28505
+        ],
+        [
+          50790,
+          30110
+        ],
+        [
+          50870,
+          31335
+        ],
+        [
+          50870,
+          29730
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 50790,
+        "bottom": 73630,
+        "right": 50870,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          50790,
+          73630
+        ],
+        [
+          50790,
+          74855
+        ],
+        [
+          50870,
+          74855
+        ],
+        [
+          50870,
+          73630
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 51710,
+        "bottom": 77465,
+        "right": 52710,
+        "top": 79070
+      },
+      "polygon": [
+        [
+          51710,
+          77465
+        ],
+        [
+          51710,
+          79070
+        ],
+        [
+          52710,
+          79070
+        ],
+        [
+          52710,
+          77465
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 52630,
+        "bottom": 30110,
+        "right": 52710,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          52630,
+          30110
+        ],
+        [
+          52630,
+          31335
+        ],
+        [
+          52710,
+          31335
+        ],
+        [
+          52710,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 54930,
+        "bottom": 39385,
+        "right": 55470,
+        "top": 42139
+      },
+      "polygon": [
+        [
+          54930,
+          39385
+        ],
+        [
+          54930,
+          42139
+        ],
+        [
+          55470,
+          40990
+        ],
+        [
+          55470,
+          39385
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 54930,
+        "bottom": 84510,
+        "right": 55930,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          54930,
+          84510
+        ],
+        [
+          54930,
+          85735
+        ],
+        [
+          55930,
+          85735
+        ],
+        [
+          55930,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 55850,
+        "bottom": 17625,
+        "right": 56850,
+        "top": 19230
+      },
+      "polygon": [
+        [
+          55850,
+          17625
+        ],
+        [
+          55850,
+          19230
+        ],
+        [
+          56850,
+          19230
+        ],
+        [
+          56850,
+          17625
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 56310,
+        "bottom": 23507,
+        "right": 57310,
+        "top": 25453
+      },
+      "polygon": [
+        [
+          56310,
+          23507
+        ],
+        [
+          56310,
+          24670
+        ],
+        [
+          57310,
+          25453
+        ],
+        [
+          57310,
+          24290
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 56770,
+        "bottom": 44825,
+        "right": 57770,
+        "top": 46430
+      },
+      "polygon": [
+        [
+          56770,
+          44825
+        ],
+        [
+          56770,
+          46430
+        ],
+        [
+          57770,
+          46430
+        ],
+        [
+          57770,
+          44825
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 57230,
+        "bottom": 55705,
+        "right": 58230,
+        "top": 56930
+      },
+      "polygon": [
+        [
+          57230,
+          55705
+        ],
+        [
+          57230,
+          56930
+        ],
+        [
+          58230,
+          56930
+        ],
+        [
+          58230,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 57690,
+        "bottom": 77907,
+        "right": 58690,
+        "top": 79853
+      },
+      "polygon": [
+        [
+          58690,
+          77907
+        ],
+        [
+          57690,
+          78690
+        ],
+        [
+          57690,
+          79853
+        ],
+        [
+          58690,
+          79070
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 58150,
+        "bottom": 33945,
+        "right": 58690,
+        "top": 35170
+      },
+      "polygon": [
+        [
+          58150,
+          33945
+        ],
+        [
+          58150,
+          35170
+        ],
+        [
+          58690,
+          35170
+        ],
+        [
+          58690,
+          33945
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 58150,
+        "bottom": 84130,
+        "right": 59150,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          58150,
+          84130
+        ],
+        [
+          58150,
+          85735
+        ],
+        [
+          59150,
+          85735
+        ],
+        [
+          59150,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 58610,
+        "bottom": 93785,
+        "right": 59150,
+        "top": 95390
+      },
+      "polygon": [
+        [
+          58610,
+          93785
+        ],
+        [
+          58610,
+          95010
+        ],
+        [
+          59150,
+          95390
+        ],
+        [
+          59150,
+          93785
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 59070,
+        "bottom": 40990,
+        "right": 60070,
+        "top": 42215
+      },
+      "polygon": [
+        [
+          59070,
+          40990
+        ],
+        [
+          59070,
+          42215
+        ],
+        [
+          60070,
+          42215
+        ],
+        [
+          60070,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 59070,
+        "bottom": 93785,
+        "right": 59150,
+        "top": 96615
+      },
+      "polygon": [
+        [
+          59150,
+          93785
+        ],
+        [
+          59070,
+          95010
+        ],
+        [
+          59070,
+          96615
+        ],
+        [
+          59150,
+          95390
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 59530,
+        "bottom": 72025,
+        "right": 60530,
+        "top": 74033
+      },
+      "polygon": [
+        [
+          59530,
+          72025
+        ],
+        [
+          59530,
+          73250
+        ],
+        [
+          60530,
+          74033
+        ],
+        [
+          60530,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 59990,
+        "bottom": 35550,
+        "right": 60070,
+        "top": 36775
+      },
+      "polygon": [
+        [
+          59990,
+          35550
+        ],
+        [
+          59990,
+          36775
+        ],
+        [
+          60070,
+          36775
+        ],
+        [
+          60070,
+          35550
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 59990,
+        "bottom": 55705,
+        "right": 60530,
+        "top": 56930
+      },
+      "polygon": [
+        [
+          59990,
+          55705
+        ],
+        [
+          59990,
+          56930
+        ],
+        [
+          60530,
+          56930
+        ],
+        [
+          60530,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 59990,
+        "bottom": 66585,
+        "right": 60530,
+        "top": 67810
+      },
+      "polygon": [
+        [
+          59990,
+          66585
+        ],
+        [
+          59990,
+          67810
+        ],
+        [
+          60530,
+          67810
+        ],
+        [
+          60530,
+          66585
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 60450,
+        "bottom": 72025,
+        "right": 60530,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          60530,
+          72025
+        ],
+        [
+          60450,
+          73250
+        ],
+        [
+          60450,
+          74855
+        ],
+        [
+          60530,
+          74855
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 61830,
+        "bottom": 28505,
+        "right": 62830,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          61830,
+          28505
+        ],
+        [
+          61830,
+          30110
+        ],
+        [
+          62830,
+          30110
+        ],
+        [
+          62830,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 64590,
+        "bottom": 55705,
+        "right": 65590,
+        "top": 57310
+      },
+      "polygon": [
+        [
+          64590,
+          55705
+        ],
+        [
+          64590,
+          56930
+        ],
+        [
+          65590,
+          57310
+        ],
+        [
+          65590,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 65050,
+        "bottom": 39385,
+        "right": 66050,
+        "top": 40990
+      },
+      "polygon": [
+        [
+          65050,
+          39385
+        ],
+        [
+          65050,
+          40610
+        ],
+        [
+          66050,
+          40990
+        ],
+        [
+          66050,
+          39385
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 65050,
+        "bottom": 46430,
+        "right": 65590,
+        "top": 47655
+      },
+      "polygon": [
+        [
+          65050,
+          46430
+        ],
+        [
+          65050,
+          47655
+        ],
+        [
+          65590,
+          47655
+        ],
+        [
+          65590,
+          46430
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 65050,
+        "bottom": 55781,
+        "right": 65590,
+        "top": 58459
+      },
+      "polygon": [
+        [
+          65590,
+          55781
+        ],
+        [
+          65050,
+          56930
+        ],
+        [
+          65050,
+          58459
+        ],
+        [
+          65590,
+          57310
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 65510,
+        "bottom": 7970,
+        "right": 66510,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          65510,
+          7970
+        ],
+        [
+          65510,
+          9575
+        ],
+        [
+          66510,
+          9575
+        ],
+        [
+          66510,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 65970,
+        "bottom": 39385,
+        "right": 66050,
+        "top": 42215
+      },
+      "polygon": [
+        [
+          66050,
+          39385
+        ],
+        [
+          65970,
+          40610
+        ],
+        [
+          65970,
+          42215
+        ],
+        [
+          66050,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 66430,
+        "bottom": 88345,
+        "right": 66970,
+        "top": 89570
+      },
+      "polygon": [
+        [
+          66430,
+          88345
+        ],
+        [
+          66430,
+          89570
+        ],
+        [
+          66970,
+          89570
+        ],
+        [
+          66970,
+          88345
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 67350,
+        "bottom": 46430,
+        "right": 68350,
+        "top": 47655
+      },
+      "polygon": [
+        [
+          67350,
+          46430
+        ],
+        [
+          67350,
+          47655
+        ],
+        [
+          68350,
+          47655
+        ],
+        [
+          68350,
+          46430
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 68270,
+        "bottom": 84510,
+        "right": 68810,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          68270,
+          84510
+        ],
+        [
+          68270,
+          85735
+        ],
+        [
+          68810,
+          85735
+        ],
+        [
+          68810,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 68730,
+        "bottom": 88345,
+        "right": 69270,
+        "top": 91099
+      },
+      "polygon": [
+        [
+          68730,
+          88345
+        ],
+        [
+          68730,
+          89950
+        ],
+        [
+          69270,
+          91099
+        ],
+        [
+          69270,
+          88345
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 69650,
+        "bottom": 100047,
+        "right": 70650,
+        "top": 101613
+      },
+      "polygon": [
+        [
+          70650,
+          100047
+        ],
+        [
+          69650,
+          100830
+        ],
+        [
+          69650,
+          101613
+        ],
+        [
+          70650,
+          100830
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 70110,
+        "bottom": 51870,
+        "right": 70190,
+        "top": 53095
+      },
+      "polygon": [
+        [
+          70110,
+          51870
+        ],
+        [
+          70110,
+          53095
+        ],
+        [
+          70190,
+          53095
+        ],
+        [
+          70190,
+          51870
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 70110,
+        "bottom": 99225,
+        "right": 70650,
+        "top": 100830
+      },
+      "polygon": [
+        [
+          70110,
+          99225
+        ],
+        [
+          70110,
+          100830
+        ],
+        [
+          70650,
+          100830
+        ],
+        [
+          70650,
+          99225
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 72410,
+        "bottom": 28505,
+        "right": 72950,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          72410,
+          28505
+        ],
+        [
+          72410,
+          30110
+        ],
+        [
+          72950,
+          30110
+        ],
+        [
+          72950,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 72410,
+        "bottom": 67810,
+        "right": 72950,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          72410,
+          67810
+        ],
+        [
+          72410,
+          69415
+        ],
+        [
+          72950,
+          69415
+        ],
+        [
+          72950,
+          67810
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 74250,
+        "bottom": 99225,
+        "right": 75250,
+        "top": 100450
+      },
+      "polygon": [
+        [
+          74250,
+          99225
+        ],
+        [
+          74250,
+          100450
+        ],
+        [
+          75250,
+          100450
+        ],
+        [
+          75250,
+          99225
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 74710,
+        "bottom": 7970,
+        "right": 75250,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          74710,
+          7970
+        ],
+        [
+          74710,
+          9575
+        ],
+        [
+          75250,
+          9575
+        ],
+        [
+          75250,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 76090,
+        "bottom": 93785,
+        "right": 76630,
+        "top": 96539
+      },
+      "polygon": [
+        [
+          76090,
+          93785
+        ],
+        [
+          76090,
+          96539
+        ],
+        [
+          76630,
+          95390
+        ],
+        [
+          76630,
+          93785
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 76550,
+        "bottom": 68190,
+        "right": 76630,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          76550,
+          68190
+        ],
+        [
+          76550,
+          69415
+        ],
+        [
+          76630,
+          69415
+        ],
+        [
+          76630,
+          68190
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 77010,
+        "bottom": 7970,
+        "right": 77550,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          77010,
+          7970
+        ],
+        [
+          77010,
+          9575
+        ],
+        [
+          77550,
+          9575
+        ],
+        [
+          77550,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 77930,
+        "bottom": 88787,
+        "right": 78930,
+        "top": 90733
+      },
+      "polygon": [
+        [
+          77930,
+          88787
+        ],
+        [
+          77930,
+          89950
+        ],
+        [
+          78930,
+          90733
+        ],
+        [
+          78930,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 78390,
+        "bottom": 84510,
+        "right": 78470,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          78390,
+          84510
+        ],
+        [
+          78390,
+          85735
+        ],
+        [
+          78470,
+          85735
+        ],
+        [
+          78470,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 79770,
+        "bottom": 12185,
+        "right": 80310,
+        "top": 13790
+      },
+      "polygon": [
+        [
+          79770,
+          12185
+        ],
+        [
+          79770,
+          13790
+        ],
+        [
+          80310,
+          13790
+        ],
+        [
+          80310,
+          12185
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 79770,
+        "bottom": 19230,
+        "right": 80770,
+        "top": 20455
+      },
+      "polygon": [
+        [
+          79770,
+          19230
+        ],
+        [
+          79770,
+          20455
+        ],
+        [
+          80770,
+          20455
+        ],
+        [
+          80770,
+          19230
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 79770,
+        "bottom": 77465,
+        "right": 80770,
+        "top": 79070
+      },
+      "polygon": [
+        [
+          79770,
+          77465
+        ],
+        [
+          79770,
+          79070
+        ],
+        [
+          80770,
+          79070
+        ],
+        [
+          80770,
+          77465
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 81150,
+        "bottom": 46430,
+        "right": 81690,
+        "top": 47655
+      },
+      "polygon": [
+        [
+          81150,
+          46430
+        ],
+        [
+          81150,
+          47655
+        ],
+        [
+          81690,
+          47655
+        ],
+        [
+          81690,
+          46430
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 81610,
+        "bottom": 100830,
+        "right": 81690,
+        "top": 102055
+      },
+      "polygon": [
+        [
+          81610,
+          100830
+        ],
+        [
+          81610,
+          102055
+        ],
+        [
+          81690,
+          102055
+        ],
+        [
+          81690,
+          100830
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 82990,
+        "bottom": 72025,
+        "right": 83070,
+        "top": 73250
+      },
+      "polygon": [
+        [
+          82990,
+          72025
+        ],
+        [
+          82990,
+          73250
+        ],
+        [
+          83070,
+          73250
+        ],
+        [
+          83070,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 83450,
+        "bottom": 61145,
+        "right": 83990,
+        "top": 62370
+      },
+      "polygon": [
+        [
+          83450,
+          61145
+        ],
+        [
+          83450,
+          62370
+        ],
+        [
+          83990,
+          62370
+        ],
+        [
+          83990,
+          61145
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 84370,
+        "bottom": 100450,
+        "right": 85370,
+        "top": 102055
+      },
+      "polygon": [
+        [
+          84370,
+          100450
+        ],
+        [
+          84370,
+          102055
+        ],
+        [
+          85370,
+          102055
+        ],
+        [
+          85370,
+          100450
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 85290,
+        "bottom": 93785,
+        "right": 86290,
+        "top": 96173
+      },
+      "polygon": [
+        [
+          85290,
+          93785
+        ],
+        [
+          85290,
+          95390
+        ],
+        [
+          86290,
+          96173
+        ],
+        [
+          86290,
+          93785
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 85750,
+        "bottom": 28505,
+        "right": 85830,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          85750,
+          28505
+        ],
+        [
+          85750,
+          31335
+        ],
+        [
+          85830,
+          31335
+        ],
+        [
+          85830,
+          29730
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 85750,
+        "bottom": 28505,
+        "right": 86750,
+        "top": 30513
+      },
+      "polygon": [
+        [
+          85750,
+          28505
+        ],
+        [
+          85750,
+          30513
+        ],
+        [
+          86750,
+          29730
+        ],
+        [
+          86750,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 88050,
+        "bottom": 23065,
+        "right": 88130,
+        "top": 24290
+      },
+      "polygon": [
+        [
+          88050,
+          23065
+        ],
+        [
+          88050,
+          24290
+        ],
+        [
+          88130,
+          24290
+        ],
+        [
+          88130,
+          23065
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 88050,
+        "bottom": 84510,
+        "right": 88130,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          88050,
+          84510
+        ],
+        [
+          88050,
+          85735
+        ],
+        [
+          88130,
+          85735
+        ],
+        [
+          88130,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 88510,
+        "bottom": 55705,
+        "right": 88590,
+        "top": 56930
+      },
+      "polygon": [
+        [
+          88510,
+          55705
+        ],
+        [
+          88510,
+          56930
+        ],
+        [
+          88590,
+          56930
+        ],
+        [
+          88590,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 88970,
+        "bottom": 88787,
+        "right": 89970,
+        "top": 90353
+      },
+      "polygon": [
+        [
+          89970,
+          88787
+        ],
+        [
+          88970,
+          89570
+        ],
+        [
+          88970,
+          90353
+        ],
+        [
+          89970,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 88970,
+        "bottom": 89570,
+        "right": 89510,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          88970,
+          89570
+        ],
+        [
+          88970,
+          91175
+        ],
+        [
+          89510,
+          91175
+        ],
+        [
+          89510,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 89890,
+        "bottom": 23065,
+        "right": 89970,
+        "top": 25895
+      },
+      "polygon": [
+        [
+          89890,
+          23065
+        ],
+        [
+          89890,
+          25895
+        ],
+        [
+          89970,
+          25895
+        ],
+        [
+          89970,
+          24290
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 89890,
+        "bottom": 84510,
+        "right": 90430,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          89890,
+          84510
+        ],
+        [
+          89890,
+          85735
+        ],
+        [
+          90430,
+          85735
+        ],
+        [
+          90430,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 90350,
+        "bottom": 28947,
+        "right": 91350,
+        "top": 30513
+      },
+      "polygon": [
+        [
+          91350,
+          28947
+        ],
+        [
+          90350,
+          29730
+        ],
+        [
+          90350,
+          30513
+        ],
+        [
+          91350,
+          29730
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 90350,
+        "bottom": 29730,
+        "right": 90890,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          90350,
+          29730
+        ],
+        [
+          90350,
+          31335
+        ],
+        [
+          90890,
+          31335
+        ],
+        [
+          90890,
+          29730
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 90350,
+        "bottom": 45267,
+        "right": 91350,
+        "top": 47213
+      },
+      "polygon": [
+        [
+          90350,
+          45267
+        ],
+        [
+          90350,
+          46430
+        ],
+        [
+          91350,
+          47213
+        ],
+        [
+          91350,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 93110,
+        "bottom": 6821,
+        "right": 93650,
+        "top": 9499
+      },
+      "polygon": [
+        [
+          93110,
+          6821
+        ],
+        [
+          93110,
+          8350
+        ],
+        [
+          93650,
+          9499
+        ],
+        [
+          93650,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 94030,
+        "bottom": 17625,
+        "right": 95030,
+        "top": 19230
+      },
+      "polygon": [
+        [
+          94030,
+          17625
+        ],
+        [
+          94030,
+          19230
+        ],
+        [
+          95030,
+          19230
+        ],
+        [
+          95030,
+          17625
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 94490,
+        "bottom": 39385,
+        "right": 94570,
+        "top": 40610
+      },
+      "polygon": [
+        [
+          94490,
+          39385
+        ],
+        [
+          94490,
+          40610
+        ],
+        [
+          94570,
+          40610
+        ],
+        [
+          94570,
+          39385
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 95410,
+        "bottom": 7970,
+        "right": 95490,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          95410,
+          7970
+        ],
+        [
+          95410,
+          9575
+        ],
+        [
+          95490,
+          9575
+        ],
+        [
+          95490,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 95870,
+        "bottom": 99225,
+        "right": 95950,
+        "top": 102055
+      },
+      "polygon": [
+        [
+          95870,
+          99225
+        ],
+        [
+          95870,
+          100830
+        ],
+        [
+          95950,
+          102055
+        ],
+        [
+          95950,
+          99225
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 97250,
+        "bottom": 17625,
+        "right": 97330,
+        "top": 20455
+      },
+      "polygon": [
+        [
+          97250,
+          17625
+        ],
+        [
+          97250,
+          19230
+        ],
+        [
+          97330,
+          20455
+        ],
+        [
+          97330,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 97250,
+        "bottom": 17625,
+        "right": 97790,
+        "top": 19230
+      },
+      "polygon": [
+        [
+          97250,
+          17625
+        ],
+        [
+          97250,
+          19230
+        ],
+        [
+          97790,
+          18850
+        ],
+        [
+          97790,
+          17625
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 97710,
+        "bottom": 89570,
+        "right": 98710,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          97710,
+          89570
+        ],
+        [
+          97710,
+          91175
+        ],
+        [
+          98710,
+          91175
+        ],
+        [
+          98710,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 98170,
+        "bottom": 12185,
+        "right": 98710,
+        "top": 13410
+      },
+      "polygon": [
+        [
+          98170,
+          12185
+        ],
+        [
+          98170,
+          13410
+        ],
+        [
+          98710,
+          13410
+        ],
+        [
+          98710,
+          12185
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 99550,
+        "bottom": 8350,
+        "right": 99630,
+        "top": 9575
+      },
+      "polygon": [
+        [
+          99550,
+          8350
+        ],
+        [
+          99550,
+          9575
+        ],
+        [
+          99630,
+          9575
+        ],
+        [
+          99630,
+          8350
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 100010,
+        "bottom": 84130,
+        "right": 100090,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          100010,
+          84130
+        ],
+        [
+          100010,
+          85735
+        ],
+        [
+          100090,
+          85735
+        ],
+        [
+          100090,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 100470,
+        "bottom": 89570,
+        "right": 101470,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          100470,
+          89570
+        ],
+        [
+          100470,
+          91175
+        ],
+        [
+          101470,
+          91175
+        ],
+        [
+          101470,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 101850,
+        "bottom": 55781,
+        "right": 102390,
+        "top": 58459
+      },
+      "polygon": [
+        [
+          102390,
+          55781
+        ],
+        [
+          101850,
+          56930
+        ],
+        [
+          101850,
+          58459
+        ],
+        [
+          102390,
+          57310
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 101850,
+        "bottom": 84510,
+        "right": 102850,
+        "top": 85735
+      },
+      "polygon": [
+        [
+          101850,
+          84510
+        ],
+        [
+          101850,
+          85735
+        ],
+        [
+          102850,
+          85735
+        ],
+        [
+          102850,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 102310,
+        "bottom": 66585,
+        "right": 102390,
+        "top": 69415
+      },
+      "polygon": [
+        [
+          102310,
+          66585
+        ],
+        [
+          102310,
+          69415
+        ],
+        [
+          102390,
+          69415
+        ],
+        [
+          102390,
+          67810
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 102770,
+        "bottom": 72025,
+        "right": 103310,
+        "top": 73250
+      },
+      "polygon": [
+        [
+          102770,
+          72025
+        ],
+        [
+          102770,
+          73250
+        ],
+        [
+          103310,
+          73250
+        ],
+        [
+          103310,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 104150,
+        "bottom": 44825,
+        "right": 104690,
+        "top": 47579
+      },
+      "polygon": [
+        [
+          104150,
+          44825
+        ],
+        [
+          104150,
+          46430
+        ],
+        [
+          104690,
+          47579
+        ],
+        [
+          104690,
+          44825
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 106450,
+        "bottom": 28505,
+        "right": 106990,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          106450,
+          28505
+        ],
+        [
+          106450,
+          30110
+        ],
+        [
+          106990,
+          30110
+        ],
+        [
+          106990,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 107830,
+        "bottom": 89950,
+        "right": 107910,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          107830,
+          89950
+        ],
+        [
+          107830,
+          91175
+        ],
+        [
+          107910,
+          91175
+        ],
+        [
+          107910,
+          89950
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 108750,
+        "bottom": 28505,
+        "right": 108830,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          108750,
+          28505
+        ],
+        [
+          108750,
+          30110
+        ],
+        [
+          108830,
+          30110
+        ],
+        [
+          108830,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 108750,
+        "bottom": 28961,
+        "right": 109290,
+        "top": 31259
+      },
+      "polygon": [
+        [
+          108750,
+          28961
+        ],
+        [
+          108750,
+          30110
+        ],
+        [
+          109290,
+          31259
+        ],
+        [
+          109290,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 110130,
+        "bottom": 23141,
+        "right": 110670,
+        "top": 25439
+      },
+      "polygon": [
+        [
+          110670,
+          23141
+        ],
+        [
+          110130,
+          24290
+        ],
+        [
+          110130,
+          25439
+        ],
+        [
+          110670,
+          24290
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 110130,
+        "bottom": 24290,
+        "right": 110210,
+        "top": 25895
+      },
+      "polygon": [
+        [
+          110130,
+          24290
+        ],
+        [
+          110130,
+          25895
+        ],
+        [
+          110210,
+          25895
+        ],
+        [
+          110210,
+          24290
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 110130,
+        "bottom": 72101,
+        "right": 110670,
+        "top": 74779
+      },
+      "polygon": [
+        [
+          110670,
+          72101
+        ],
+        [
+          110130,
+          73250
+        ],
+        [
+          110130,
+          74779
+        ],
+        [
+          110670,
+          73630
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111050,
+        "bottom": 30110,
+        "right": 111590,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          111050,
+          30110
+        ],
+        [
+          111050,
+          31335
+        ],
+        [
+          111590,
+          31335
+        ],
+        [
+          111590,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111050,
+        "bottom": 83347,
+        "right": 112050,
+        "top": 85293
+      },
+      "polygon": [
+        [
+          111050,
+          83347
+        ],
+        [
+          111050,
+          84510
+        ],
+        [
+          112050,
+          85293
+        ],
+        [
+          112050,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111510,
+        "bottom": 46430,
+        "right": 112510,
+        "top": 47655
+      },
+      "polygon": [
+        [
+          111510,
+          46430
+        ],
+        [
+          111510,
+          47655
+        ],
+        [
+          112510,
+          47655
+        ],
+        [
+          112510,
+          46430
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111510,
+        "bottom": 50707,
+        "right": 112510,
+        "top": 52273
+      },
+      "polygon": [
+        [
+          111510,
+          50707
+        ],
+        [
+          111510,
+          51490
+        ],
+        [
+          112510,
+          52273
+        ],
+        [
+          112510,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111510,
+        "bottom": 89570,
+        "right": 111590,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          111510,
+          89570
+        ],
+        [
+          111510,
+          91175
+        ],
+        [
+          111590,
+          91175
+        ],
+        [
+          111590,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111970,
+        "bottom": 50707,
+        "right": 112970,
+        "top": 52273
+      },
+      "polygon": [
+        [
+          112970,
+          50707
+        ],
+        [
+          111970,
+          51490
+        ],
+        [
+          111970,
+          52273
+        ],
+        [
+          112970,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111970,
+        "bottom": 51490,
+        "right": 112510,
+        "top": 53095
+      },
+      "polygon": [
+        [
+          111970,
+          51490
+        ],
+        [
+          111970,
+          53095
+        ],
+        [
+          112510,
+          53095
+        ],
+        [
+          112510,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 111970,
+        "bottom": 55705,
+        "right": 112970,
+        "top": 57310
+      },
+      "polygon": [
+        [
+          111970,
+          55705
+        ],
+        [
+          111970,
+          57310
+        ],
+        [
+          112970,
+          57310
+        ],
+        [
+          112970,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 112890,
+        "bottom": 35550,
+        "right": 113890,
+        "top": 36775
+      },
+      "polygon": [
+        [
+          112890,
+          35550
+        ],
+        [
+          112890,
+          36775
+        ],
+        [
+          113890,
+          36775
+        ],
+        [
+          113890,
+          35550
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 115650,
+        "bottom": 55705,
+        "right": 116650,
+        "top": 56930
+      },
+      "polygon": [
+        [
+          115650,
+          55705
+        ],
+        [
+          115650,
+          56930
+        ],
+        [
+          116650,
+          56930
+        ],
+        [
+          116650,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 116570,
+        "bottom": 17701,
+        "right": 117110,
+        "top": 19999
+      },
+      "polygon": [
+        [
+          116570,
+          17701
+        ],
+        [
+          116570,
+          18850
+        ],
+        [
+          117110,
+          19999
+        ],
+        [
+          117110,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 117030,
+        "bottom": 18850,
+        "right": 117110,
+        "top": 20455
+      },
+      "polygon": [
+        [
+          117030,
+          18850
+        ],
+        [
+          117030,
+          20455
+        ],
+        [
+          117110,
+          20455
+        ],
+        [
+          117110,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 117490,
+        "bottom": 77541,
+        "right": 118030,
+        "top": 80219
+      },
+      "polygon": [
+        [
+          118030,
+          77541
+        ],
+        [
+          117490,
+          78690
+        ],
+        [
+          117490,
+          80219
+        ],
+        [
+          118030,
+          79070
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 118870,
+        "bottom": 66585,
+        "right": 119410,
+        "top": 69339
+      },
+      "polygon": [
+        [
+          118870,
+          66585
+        ],
+        [
+          118870,
+          68190
+        ],
+        [
+          119410,
+          69339
+        ],
+        [
+          119410,
+          66585
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 121170,
+        "bottom": 77465,
+        "right": 121710,
+        "top": 79839
+      },
+      "polygon": [
+        [
+          121170,
+          77465
+        ],
+        [
+          121170,
+          78690
+        ],
+        [
+          121710,
+          79839
+        ],
+        [
+          121710,
+          77465
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 121630,
+        "bottom": 77465,
+        "right": 121710,
+        "top": 80295
+      },
+      "polygon": [
+        [
+          121710,
+          77465
+        ],
+        [
+          121630,
+          78690
+        ],
+        [
+          121630,
+          80295
+        ],
+        [
+          121710,
+          80295
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 122090,
+        "bottom": 46430,
+        "right": 122170,
+        "top": 47655
+      },
+      "polygon": [
+        [
+          122090,
+          46430
+        ],
+        [
+          122090,
+          47655
+        ],
+        [
+          122170,
+          47655
+        ],
+        [
+          122170,
+          46430
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 122550,
+        "bottom": 40990,
+        "right": 122630,
+        "top": 42215
+      },
+      "polygon": [
+        [
+          122550,
+          40990
+        ],
+        [
+          122550,
+          42215
+        ],
+        [
+          122630,
+          42215
+        ],
+        [
+          122630,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 122550,
+        "bottom": 44825,
+        "right": 123550,
+        "top": 46050
+      },
+      "polygon": [
+        [
+          122550,
+          44825
+        ],
+        [
+          122550,
+          46050
+        ],
+        [
+          123550,
+          46050
+        ],
+        [
+          123550,
+          44825
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 122550,
+        "bottom": 88345,
+        "right": 122630,
+        "top": 91175
+      },
+      "polygon": [
+        [
+          122550,
+          88345
+        ],
+        [
+          122550,
+          89950
+        ],
+        [
+          122630,
+          91175
+        ],
+        [
+          122630,
+          88345
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 123470,
+        "bottom": 29327,
+        "right": 124470,
+        "top": 30893
+      },
+      "polygon": [
+        [
+          124470,
+          29327
+        ],
+        [
+          123470,
+          30110
+        ],
+        [
+          123470,
+          30893
+        ],
+        [
+          124470,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 123470,
+        "bottom": 56527,
+        "right": 124470,
+        "top": 58093
+      },
+      "polygon": [
+        [
+          124470,
+          56527
+        ],
+        [
+          123470,
+          57310
+        ],
+        [
+          123470,
+          58093
+        ],
+        [
+          124470,
+          57310
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 123470,
+        "bottom": 61587,
+        "right": 124470,
+        "top": 63153
+      },
+      "polygon": [
+        [
+          123470,
+          61587
+        ],
+        [
+          123470,
+          62370
+        ],
+        [
+          124470,
+          63153
+        ],
+        [
+          124470,
+          62370
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 123930,
+        "bottom": 55705,
+        "right": 124470,
+        "top": 57310
+      },
+      "polygon": [
+        [
+          123930,
+          55705
+        ],
+        [
+          123930,
+          57310
+        ],
+        [
+          124470,
+          57310
+        ],
+        [
+          124470,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 123930,
+        "bottom": 62370,
+        "right": 124470,
+        "top": 63975
+      },
+      "polygon": [
+        [
+          123930,
+          62370
+        ],
+        [
+          123930,
+          63975
+        ],
+        [
+          124470,
+          63975
+        ],
+        [
+          124470,
+          62370
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 124390,
+        "bottom": 28505,
+        "right": 124470,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          124390,
+          28505
+        ],
+        [
+          124390,
+          30110
+        ],
+        [
+          124470,
+          30110
+        ],
+        [
+          124470,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 125310,
+        "bottom": 51490,
+        "right": 126310,
+        "top": 53095
+      },
+      "polygon": [
+        [
+          125310,
+          51490
+        ],
+        [
+          125310,
+          53095
+        ],
+        [
+          126310,
+          53095
+        ],
+        [
+          126310,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 125770,
+        "bottom": 78690,
+        "right": 126770,
+        "top": 80295
+      },
+      "polygon": [
+        [
+          125770,
+          78690
+        ],
+        [
+          125770,
+          80295
+        ],
+        [
+          126770,
+          80295
+        ],
+        [
+          126770,
+          78690
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 126690,
+        "bottom": 28505,
+        "right": 126770,
+        "top": 29730
+      },
+      "polygon": [
+        [
+          126690,
+          28505
+        ],
+        [
+          126690,
+          29730
+        ],
+        [
+          126770,
+          29730
+        ],
+        [
+          126770,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 127150,
+        "bottom": 44825,
+        "right": 127690,
+        "top": 46430
+      },
+      "polygon": [
+        [
+          127150,
+          44825
+        ],
+        [
+          127150,
+          46430
+        ],
+        [
+          127690,
+          46430
+        ],
+        [
+          127690,
+          44825
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 127150,
+        "bottom": 73630,
+        "right": 128150,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          127150,
+          73630
+        ],
+        [
+          127150,
+          74855
+        ],
+        [
+          128150,
+          74855
+        ],
+        [
+          128150,
+          73630
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 129450,
+        "bottom": 39385,
+        "right": 129530,
+        "top": 40990
+      },
+      "polygon": [
+        [
+          129450,
+          39385
+        ],
+        [
+          129450,
+          40990
+        ],
+        [
+          129530,
+          40990
+        ],
+        [
+          129530,
+          39385
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 129450,
+        "bottom": 40207,
+        "right": 130450,
+        "top": 41773
+      },
+      "polygon": [
+        [
+          129450,
+          40207
+        ],
+        [
+          129450,
+          40990
+        ],
+        [
+          130450,
+          41773
+        ],
+        [
+          130450,
+          40990
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 129910,
+        "bottom": 72025,
+        "right": 129990,
+        "top": 74855
+      },
+      "polygon": [
+        [
+          129910,
+          72025
+        ],
+        [
+          129910,
+          74855
+        ],
+        [
+          129990,
+          73630
+        ],
+        [
+          129990,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 130370,
+        "bottom": 34021,
+        "right": 130910,
+        "top": 36699
+      },
+      "polygon": [
+        [
+          130910,
+          34021
+        ],
+        [
+          130370,
+          35170
+        ],
+        [
+          130370,
+          36699
+        ],
+        [
+          130910,
+          35550
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 131290,
+        "bottom": 56930,
+        "right": 132290,
+        "top": 58535
+      },
+      "polygon": [
+        [
+          132290,
+          56930
+        ],
+        [
+          131290,
+          57310
+        ],
+        [
+          131290,
+          58535
+        ],
+        [
+          132290,
+          58535
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 132210,
+        "bottom": 12185,
+        "right": 132750,
+        "top": 13410
+      },
+      "polygon": [
+        [
+          132210,
+          12185
+        ],
+        [
+          132210,
+          13410
+        ],
+        [
+          132750,
+          13410
+        ],
+        [
+          132750,
+          12185
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 132210,
+        "bottom": 55705,
+        "right": 132290,
+        "top": 58535
+      },
+      "polygon": [
+        [
+          132210,
+          55705
+        ],
+        [
+          132210,
+          57310
+        ],
+        [
+          132290,
+          58535
+        ],
+        [
+          132290,
+          56930
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 133130,
+        "bottom": 72025,
+        "right": 133670,
+        "top": 73630
+      },
+      "polygon": [
+        [
+          133130,
+          72025
+        ],
+        [
+          133130,
+          73630
+        ],
+        [
+          133670,
+          73630
+        ],
+        [
+          133670,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 133590,
+        "bottom": 62370,
+        "right": 134130,
+        "top": 63975
+      },
+      "polygon": [
+        [
+          133590,
+          62370
+        ],
+        [
+          133590,
+          63975
+        ],
+        [
+          134130,
+          63975
+        ],
+        [
+          134130,
+          62370
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 135890,
+        "bottom": 28505,
+        "right": 135970,
+        "top": 29730
+      },
+      "polygon": [
+        [
+          135890,
+          28505
+        ],
+        [
+          135890,
+          29730
+        ],
+        [
+          135970,
+          29730
+        ],
+        [
+          135970,
+          28505
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 136350,
+        "bottom": 30110,
+        "right": 136890,
+        "top": 31335
+      },
+      "polygon": [
+        [
+          136350,
+          30110
+        ],
+        [
+          136350,
+          31335
+        ],
+        [
+          136890,
+          31335
+        ],
+        [
+          136890,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 136810,
+        "bottom": 72025,
+        "right": 136890,
+        "top": 73250
+      },
+      "polygon": [
+        [
+          136810,
+          72025
+        ],
+        [
+          136810,
+          73250
+        ],
+        [
+          136890,
+          73250
+        ],
+        [
+          136890,
+          72025
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 137270,
+        "bottom": 35550,
+        "right": 137810,
+        "top": 36775
+      },
+      "polygon": [
+        [
+          137270,
+          35550
+        ],
+        [
+          137270,
+          36775
+        ],
+        [
+          137810,
+          36775
+        ],
+        [
+          137810,
+          35550
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 137270,
+        "bottom": 55705,
+        "right": 137810,
+        "top": 58459
+      },
+      "polygon": [
+        [
+          137270,
+          55705
+        ],
+        [
+          137270,
+          57310
+        ],
+        [
+          137810,
+          58459
+        ],
+        [
+          137810,
+          55705
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.space.1",
+      "description": "minimum nwell spacing / isolation between distinct wells",
+      "check": "space",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 139570,
+        "bottom": 61145,
+        "right": 139650,
+        "top": 62370
+      },
+      "polygon": [
+        [
+          139570,
+          61145
+        ],
+        [
+          139570,
+          62370
+        ],
+        [
+          139650,
+          62370
+        ],
+        [
+          139650,
+          61145
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 13530,
+        "bottom": 13410,
+        "right": 14359,
+        "top": 13790
+      },
+      "polygon": [
+        [
+          13990,
+          13410
+        ],
+        [
+          13530,
+          13790
+        ],
+        [
+          13610,
+          13790
+        ],
+        [
+          14359,
+          13410
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 13610,
+        "bottom": 13041,
+        "right": 13990,
+        "top": 14159
+      },
+      "polygon": [
+        [
+          13990,
+          13041
+        ],
+        [
+          13610,
+          13790
+        ],
+        [
+          13610,
+          14159
+        ],
+        [
+          13990,
+          13410
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 28421,
+        "bottom": 51490,
+        "right": 29539,
+        "top": 51870
+      },
+      "polygon": [
+        [
+          29170,
+          51490
+        ],
+        [
+          28421,
+          51870
+        ],
+        [
+          28790,
+          51870
+        ],
+        [
+          29539,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 28790,
+        "bottom": 51121,
+        "right": 29170,
+        "top": 52239
+      },
+      "polygon": [
+        [
+          29170,
+          51121
+        ],
+        [
+          28790,
+          51870
+        ],
+        [
+          28790,
+          52239
+        ],
+        [
+          29170,
+          51490
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 28881,
+        "bottom": 7970,
+        "right": 29999,
+        "top": 8350
+      },
+      "polygon": [
+        [
+          29630,
+          7970
+        ],
+        [
+          28881,
+          8350
+        ],
+        [
+          29250,
+          8350
+        ],
+        [
+          29999,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 29250,
+        "bottom": 7601,
+        "right": 29630,
+        "top": 8719
+      },
+      "polygon": [
+        [
+          29630,
+          7601
+        ],
+        [
+          29250,
+          8350
+        ],
+        [
+          29250,
+          8719
+        ],
+        [
+          29630,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 33310,
+        "bottom": 89570,
+        "right": 33850,
+        "top": 89950
+      },
+      "polygon": [
+        [
+          33310,
+          89570
+        ],
+        [
+          33770,
+          89950
+        ],
+        [
+          33850,
+          89950
+        ],
+        [
+          33390,
+          89570
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 33390,
+        "bottom": 89201,
+        "right": 33770,
+        "top": 90319
+      },
+      "polygon": [
+        [
+          33390,
+          89201
+        ],
+        [
+          33390,
+          89570
+        ],
+        [
+          33770,
+          90319
+        ],
+        [
+          33770,
+          89950
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 51881,
+        "bottom": 18850,
+        "right": 52999,
+        "top": 19230
+      },
+      "polygon": [
+        [
+          51881,
+          18850
+        ],
+        [
+          52630,
+          19230
+        ],
+        [
+          52999,
+          19230
+        ],
+        [
+          52250,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 51881,
+        "bottom": 29730,
+        "right": 52710,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          51881,
+          29730
+        ],
+        [
+          52630,
+          30110
+        ],
+        [
+          52710,
+          30110
+        ],
+        [
+          52250,
+          29730
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 52250,
+        "bottom": 18481,
+        "right": 52630,
+        "top": 19599
+      },
+      "polygon": [
+        [
+          52250,
+          18481
+        ],
+        [
+          52250,
+          18850
+        ],
+        [
+          52630,
+          19599
+        ],
+        [
+          52630,
+          19230
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 52250,
+        "bottom": 29361,
+        "right": 52630,
+        "top": 30479
+      },
+      "polygon": [
+        [
+          52250,
+          29361
+        ],
+        [
+          52250,
+          29730
+        ],
+        [
+          52630,
+          30479
+        ],
+        [
+          52630,
+          30110
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 54181,
+        "bottom": 84130,
+        "right": 55299,
+        "top": 84510
+      },
+      "polygon": [
+        [
+          54181,
+          84130
+        ],
+        [
+          54930,
+          84510
+        ],
+        [
+          55299,
+          84510
+        ],
+        [
+          54550,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 54550,
+        "bottom": 83761,
+        "right": 54930,
+        "top": 84879
+      },
+      "polygon": [
+        [
+          54550,
+          83761
+        ],
+        [
+          54550,
+          84130
+        ],
+        [
+          54930,
+          84879
+        ],
+        [
+          54930,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 64301,
+        "bottom": 46050,
+        "right": 65419,
+        "top": 46430
+      },
+      "polygon": [
+        [
+          64301,
+          46050
+        ],
+        [
+          65050,
+          46430
+        ],
+        [
+          65419,
+          46430
+        ],
+        [
+          64670,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 64670,
+        "bottom": 45681,
+        "right": 65050,
+        "top": 46799
+      },
+      "polygon": [
+        [
+          64670,
+          45681
+        ],
+        [
+          64670,
+          46050
+        ],
+        [
+          65050,
+          46799
+        ],
+        [
+          65050,
+          46430
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 68441,
+        "bottom": 84130,
+        "right": 69559,
+        "top": 84510
+      },
+      "polygon": [
+        [
+          69190,
+          84130
+        ],
+        [
+          68441,
+          84510
+        ],
+        [
+          68810,
+          84510
+        ],
+        [
+          69559,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 68810,
+        "bottom": 83761,
+        "right": 69190,
+        "top": 84879
+      },
+      "polygon": [
+        [
+          69190,
+          83761
+        ],
+        [
+          68810,
+          84510
+        ],
+        [
+          68810,
+          84879
+        ],
+        [
+          69190,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 77641,
+        "bottom": 84130,
+        "right": 78470,
+        "top": 84510
+      },
+      "polygon": [
+        [
+          77641,
+          84130
+        ],
+        [
+          78390,
+          84510
+        ],
+        [
+          78470,
+          84510
+        ],
+        [
+          78010,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 78010,
+        "bottom": 83761,
+        "right": 78390,
+        "top": 84879
+      },
+      "polygon": [
+        [
+          78010,
+          83761
+        ],
+        [
+          78010,
+          84130
+        ],
+        [
+          78390,
+          84879
+        ],
+        [
+          78390,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 79021,
+        "bottom": 18850,
+        "right": 80139,
+        "top": 19230
+      },
+      "polygon": [
+        [
+          79021,
+          18850
+        ],
+        [
+          79770,
+          19230
+        ],
+        [
+          80139,
+          19230
+        ],
+        [
+          79390,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 79390,
+        "bottom": 18481,
+        "right": 79770,
+        "top": 19599
+      },
+      "polygon": [
+        [
+          79390,
+          18481
+        ],
+        [
+          79390,
+          18850
+        ],
+        [
+          79770,
+          19599
+        ],
+        [
+          79770,
+          19230
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 80401,
+        "bottom": 18850,
+        "right": 81519,
+        "top": 19230
+      },
+      "polygon": [
+        [
+          81150,
+          18850
+        ],
+        [
+          80401,
+          19230
+        ],
+        [
+          80770,
+          19230
+        ],
+        [
+          81519,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 80770,
+        "bottom": 18481,
+        "right": 81150,
+        "top": 19599
+      },
+      "polygon": [
+        [
+          81150,
+          18481
+        ],
+        [
+          80770,
+          19230
+        ],
+        [
+          80770,
+          19599
+        ],
+        [
+          81150,
+          18850
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 81321,
+        "bottom": 46050,
+        "right": 82439,
+        "top": 46430
+      },
+      "polygon": [
+        [
+          82070,
+          46050
+        ],
+        [
+          81321,
+          46430
+        ],
+        [
+          81690,
+          46430
+        ],
+        [
+          82439,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 81690,
+        "bottom": 45681,
+        "right": 82070,
+        "top": 46799
+      },
+      "polygon": [
+        [
+          82070,
+          45681
+        ],
+        [
+          81690,
+          46430
+        ],
+        [
+          81690,
+          46799
+        ],
+        [
+          82070,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 89141,
+        "bottom": 40610,
+        "right": 90259,
+        "top": 40990
+      },
+      "polygon": [
+        [
+          89890,
+          40610
+        ],
+        [
+          89141,
+          40990
+        ],
+        [
+          89510,
+          40990
+        ],
+        [
+          90259,
+          40610
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 89510,
+        "bottom": 40241,
+        "right": 89890,
+        "top": 41359
+      },
+      "polygon": [
+        [
+          89890,
+          40241
+        ],
+        [
+          89510,
+          40990
+        ],
+        [
+          89510,
+          41359
+        ],
+        [
+          89890,
+          40610
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 90061,
+        "bottom": 84130,
+        "right": 91179,
+        "top": 84510
+      },
+      "polygon": [
+        [
+          90810,
+          84130
+        ],
+        [
+          90061,
+          84510
+        ],
+        [
+          90430,
+          84510
+        ],
+        [
+          91179,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 90430,
+        "bottom": 83761,
+        "right": 90810,
+        "top": 84879
+      },
+      "polygon": [
+        [
+          90810,
+          83761
+        ],
+        [
+          90430,
+          84510
+        ],
+        [
+          90430,
+          84879
+        ],
+        [
+          90810,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 101101,
+        "bottom": 84130,
+        "right": 102219,
+        "top": 84510
+      },
+      "polygon": [
+        [
+          101101,
+          84130
+        ],
+        [
+          101850,
+          84510
+        ],
+        [
+          102219,
+          84510
+        ],
+        [
+          101470,
+          84130
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 101470,
+        "bottom": 83761,
+        "right": 101850,
+        "top": 84879
+      },
+      "polygon": [
+        [
+          101470,
+          83761
+        ],
+        [
+          101470,
+          84130
+        ],
+        [
+          101850,
+          84879
+        ],
+        [
+          101850,
+          84510
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 122090,
+        "bottom": 46050,
+        "right": 122919,
+        "top": 46430
+      },
+      "polygon": [
+        [
+          122550,
+          46050
+        ],
+        [
+          122090,
+          46430
+        ],
+        [
+          122170,
+          46430
+        ],
+        [
+          122919,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 122170,
+        "bottom": 45681,
+        "right": 122550,
+        "top": 46799
+      },
+      "polygon": [
+        [
+          122550,
+          45681
+        ],
+        [
+          122170,
+          46430
+        ],
+        [
+          122170,
+          46799
+        ],
+        [
+          122550,
+          46050
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 123641,
+        "bottom": 7970,
+        "right": 124759,
+        "top": 8350
+      },
+      "polygon": [
+        [
+          124390,
+          7970
+        ],
+        [
+          123641,
+          8350
+        ],
+        [
+          124010,
+          8350
+        ],
+        [
+          124759,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 124010,
+        "bottom": 7601,
+        "right": 124390,
+        "top": 8719
+      },
+      "polygon": [
+        [
+          124390,
+          7601
+        ],
+        [
+          124010,
+          8350
+        ],
+        [
+          124010,
+          8719
+        ],
+        [
+          124390,
+          7970
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 126401,
+        "bottom": 73250,
+        "right": 127519,
+        "top": 73630
+      },
+      "polygon": [
+        [
+          126401,
+          73250
+        ],
+        [
+          127150,
+          73630
+        ],
+        [
+          127519,
+          73630
+        ],
+        [
+          126770,
+          73250
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 126770,
+        "bottom": 72881,
+        "right": 127150,
+        "top": 73999
+      },
+      "polygon": [
+        [
+          126770,
+          72881
+        ],
+        [
+          126770,
+          73250
+        ],
+        [
+          127150,
+          73999
+        ],
+        [
+          127150,
+          73630
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 135890,
+        "bottom": 29730,
+        "right": 136719,
+        "top": 30110
+      },
+      "polygon": [
+        [
+          135890,
+          29730
+        ],
+        [
+          136350,
+          30110
+        ],
+        [
+          136719,
+          30110
+        ],
+        [
+          135970,
+          29730
+        ]
+      ]
+    },
+    {
+      "rule": "nwell.width.1",
+      "description": "minimum nwell width",
+      "check": "width",
+      "layer": "nwell.drawing",
+      "cell": "modexp",
+      "source_cell": null,
+      "source_path": null,
+      "bbox": {
+        "left": 135970,
+        "bottom": 29361,
+        "right": 136350,
+        "top": 30479
+      },
+      "polygon": [
+        [
+          135970,
+          29361
+        ],
+        [
+          135970,
+          29730
+        ],
+        [
+          136350,
+          30479
+        ],
+        [
+          136350,
+          30110
+        ]
+      ]
+    }
+  ],
+  "coverage": {
+    "deck_layers": [
+      "64/20",
+      "65/20",
+      "66/20",
+      "66/44",
+      "67/20",
+      "67/44",
+      "68/20",
+      "68/44",
+      "69/20",
+      "69/44",
+      "70/20",
+      "70/44",
+      "71/20",
+      "71/44",
+      "72/20",
+      "89/44",
+      "97/44"
+    ],
+    "layers_checked": [
+      "64/20",
+      "65/20",
+      "66/20",
+      "66/44",
+      "67/20",
+      "67/44",
+      "68/20",
+      "68/44",
+      "69/20",
+      "69/44",
+      "70/20",
+      "70/44",
+      "71/20",
+      "71/44",
+      "72/20"
+    ],
+    "layers_in_stream_without_rules": [
+      "64/5",
+      "64/16",
+      "64/59",
+      "66/15",
+      "67/5",
+      "67/16",
+      "68/5",
+      "68/16",
+      "69/5",
+      "69/16",
+      "72/5",
+      "72/15",
+      "72/16",
+      "78/44",
+      "81/4",
+      "83/44",
+      "93/44",
+      "94/20",
+      "95/20",
+      "122/16",
+      "235/4",
+      "236/0"
+    ],
+    "rules_skipped": [
+      "capm.enclosing.via3.1",
+      "capm.separation.via3.1",
+      "capm.space.1",
+      "capm.width.1",
+      "capm2.enclosing.via4.1",
+      "capm2.separation.via4.1",
+      "capm2.space.1",
+      "capm2.width.1",
+      "met3.enclosing.capm.1",
+      "met4.enclosing.capm2.1"
+    ],
+    "voltage_domain_warnings": [],
+    "deck_scope": [
+      "cap2m",
+      "capm",
+      "ct",
+      "difftap",
+      "li",
+      "licon",
+      "m1",
+      "m2",
+      "m3",
+      "m4",
+      "m5",
+      "nwell",
+      "poly",
+      "via",
+      "via2",
+      "via3",
+      "via4"
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.4.0",
+    "klayout_version": "0.30.12",
+    "pdk": null,
+    "deck": {
+      "name": "sky130",
+      "content_hash": "sha256:5afac7ab8561545859f5e2e74f4621c6ffc052756dc8fe344ea263398e96b240",
+      "released": true
+    },
+    "input": {
+      "content_hash": "sha256:229ed6a5f92938699acc969f757d84b9348731bacbe12a485473161e917c8d10"
+    }
+  }
+}

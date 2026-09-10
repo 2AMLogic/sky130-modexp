@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="cocotb tests"><testsuite name="test_modexp" errors="0" failures="2" skipped="0" tests="2" time="2.611" timestamp="2026-09-09T22:58:08.427489+00:00" hostname="robb-pro"><testcase classname="test_modexp" name="test_modexp_known_vectors" time="1.959"><failure message="modexp(2,10,1000): got 0, want 24&#10;assert 0 == 24" type="AssertionError">Traceback (most recent call last):
+  File "/private/tmp/issue78-run/test_modexp.py", line 60, in test_modexp_known_vectors
+    assert got == want, f"modexp({base},{exp},{mod}): got {got}, want {want}"
+AssertionError: modexp(2,10,1000): got 0, want 24
+assert 0 == 24
+</failure><properties><property name="cocotb" value="True" /><property name="random_seed" value="1" /><property name="file" value="/private/tmp/issue78-run/test_modexp.py" /><property name="line" value="41" /><property name="sim_time_unit" value="ns" /><property name="sim_time_start" value="0.0" /><property name="sim_time_stop" value="6140.0" /><property name="sim_time_duration" value="6140.0" /><property name="sim_time_ratio" value="3134.954959579883" /><property name="attachment" value="/private/tmp/issue78-run/.klt/functional-verification/test_icarus.log" /></properties><system-out>[[ATTACHMENT|/private/tmp/issue78-run/.klt/functional-verification/test_icarus.log]]
+</system-out><system-err>Test failed with COCOTB_RANDOM_SEED=1
+</system-err></testcase><testcase classname="test_modexp" name="test_modexp_random" time="0.652"><failure message="modexp(25247,55125,55342): got 0, want 38205&#10;assert 0 == 38205" type="AssertionError">Traceback (most recent call last):
+  File "/private/tmp/issue78-run/test_modexp.py", line 82, in test_modexp_random
+    assert got == want, f"modexp({base},{exp},{mod}): got {got}, want {want}"
+AssertionError: modexp(25247,55125,55342): got 0, want 38205
+assert 0 == 38205
+</failure><properties><property name="cocotb" value="True" /><property name="random_seed" value="1" /><property name="file" value="/private/tmp/issue78-run/test_modexp.py" /><property name="line" value="63" /><property name="sim_time_unit" value="ns" /><property name="sim_time_start" value="6140.001" /><property name="sim_time_stop" value="12290.001" /><property name="sim_time_duration" value="6150.0" /><property name="sim_time_ratio" value="9431.053781346953" /><property name="attachment" value="/private/tmp/issue78-run/.klt/functional-verification/test_icarus.log" /></properties><system-out>[[ATTACHMENT|/private/tmp/issue78-run/.klt/functional-verification/test_icarus.log]]
+</system-out><system-err>Test failed with COCOTB_RANDOM_SEED=1
+</system-err></testcase></testsuite></testsuites>

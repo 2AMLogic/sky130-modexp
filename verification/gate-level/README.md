@@ -10,11 +10,12 @@ simulation of the RTL. Synthesis mapping, tie-cell insertion, CTS, and
 OpenROAD's placement/timing optimizations were all unverified by simulation.
 
 **Achieved here: Leg 1 (zero-delay gate-level equivalence) — PASS. Leg 2
-(delay-annotated / SDF simulation) — ATTEMPTED, FAIL** (no longer blocked on
-upstream tooling; the upstream capability now exists and was exercised, and
-the fresh result is a genuine failure with root-caused evidence, not a
-silent zero-delay pass) — see "Leg 2: ATTEMPTED — FAIL" below. Nothing on
-this page claims otherwise.
+(delay-annotated / SDF simulation) — RE-ATTEMPTED, still FAIL** (no longer
+blocked on upstream tooling; the upstream capability now exists and was
+exercised twice, and the fresh result — issue #78, re-run after issue #55's
+first attempt — is a genuine failure with a materially narrower diagnostic
+surface than before, not a silent zero-delay pass) — see "Leg 2:
+RE-ATTEMPTED — still FAIL" below. Nothing on this page claims otherwise.
 
 ## The netlist problem, and why the netlist here is derived, not exported
 
@@ -132,6 +133,19 @@ the links will not exist yet otherwise. This mirrors the precedent
 `flow/par-modexp.json` already sets (its `netlist` path is a scratch artifact
 an earlier step produces).
 
+**Leg 2 (SDF) is not run by that script, or by any script here** — it needs a
+fresh `klt place-and-route` re-run (`post_route_spef`/`post_route_sdf`, and
+`openroad`) rather than the committed layout, and at this repo's pinned `klt`
+it exits non-zero at `klt`'s own SDF-diagnostic gate (that failure is the
+recorded result; see "Leg 2: RE-ATTEMPTED — still FAIL" below). Its literal,
+copy-pasteable cold-start sequence — `./scripts/setup-env.sh` → the P&R
+request carrying `post_route_spef`/`post_route_sdf` → the `klt
+functional-verification` request carrying `options.sdf` — is the
+**"Reproducing this run (cold start)"** section of
+`verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`, and
+is summarized in `run-gate-level-sim.sh`'s own header comment
+(`./verification/gate-level/run-gate-level-sim.sh --help`).
+
 ## What was run, and what it showed
 
 ### Leg 1a — `klt functional-verification`, unmodified `test_modexp.py`
@@ -173,63 +187,84 @@ Covering another `WIDTH` at gate level would require synthesizing, routing,
 and DRC/LVS-ing a second macro — a different issue's work, not a narrowing of
 this one. The case count is **not** reduced (500, matching the RTL claim).
 
-## Leg 2: ATTEMPTED — FAIL, no longer blocked (updated 2026-08-16, issue #55)
+## Leg 2: RE-ATTEMPTED — still FAIL, narrower failure class (updated 2026-09-09, issue #78)
 
 Delay-annotated (SDF) simulation — **not achieved as of the original 2026-08-15
 run of this experiment**, for two independent, verified blockers documented
 below for history. Issue #55 bumped this repo's `klt` pin past the upstream
-fixes for both, then exercised Leg 2 end to end for the first time. **The
-capability now exists and runs; the fresh result is a FAIL, not a pass, with
-concrete new evidence** — replacing "blocked" with an honest, evidenced
-result is exactly what changed.
+fixes for both, then exercised Leg 2 end to end for the first time (result:
+FAIL, 200 unresolved `INTERCONNECT` entries, filed generically as
+[klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056)).
+Issue #78 bumped the pin again, past the fix for `#1056`
+([klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)),
+and re-ran Leg 2. **The fix works for its stated scope, but the run still
+fails**, with a materially narrower residual — replacing a stale FAIL with a
+fresh, narrower, evidenced FAIL is exactly what changed.
 
-### What changed, and the fresh result
+### What changed, and the fresh result (issue #78)
 
-1. `klayout-tools#1002` (no SDF export, no SDF option) closed upstream,
-   fixed by [klayout-tools#1007](https://github.com/2AMLogic/klayout-tools/pull/1007)
-   ("feat(sta): write post-route SDF and back-annotate it in gate-level
-   re-sim", merged 2026-08-15). `klt place-and-route`'s response now carries
-   `verilog_path` (`write_verilog`) and `spef_sta.sdf_path` (`write_sdf`)
-   when `post_route_spef`/`post_route_sdf` are requested; `klt
-   functional-verification` now accepts `options.sdf: {"file": ..., "corner":
-   "min"|"typ"|"max"}`.
-2. This host's Icarus is 13.0 (stable) — `-ginterconnect` exists and
-   `klayout-tools#1004`'s version blocker does not apply.
-3. **The netlist and SDF for this attempt come from a fresh, self-consistent
+1. [klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)
+   ("fix(functional-verification): resolve top-level-port SDF `INTERCONNECT`
+   entries via a generated pass-through wrapper", merged 2026-08-17T00:05:03Z
+   at `ee10a54`) is the fix for `#1056` below. This repo's `klt` pin was
+   bumped to `f77036bff1eaf97b992e121acd702a98519142fb` (issue #78),
+   confirmed live to be a descendant of `ee10a54`
+   (`gh api repos/2AMLogic/klayout-tools/compare/ee10a54...f77036b` →
+   `{"status": "ahead", "ahead_by": 424}`).
+2. **The netlist and SDF for this attempt come from a fresh, self-consistent
    `klt place-and-route` re-run** (same frozen synthesis netlist / floorplan
    / seed as the layout below, but the bumped `klt`) — **not** from
    `layout/modexp.gds`/`modexp_post_route.v` (Leg 1's netlist above), because
    re-running P&R with the bumped `klt` does not reproduce
    `layout/modexp.gds` byte-for-byte (a separate, load-bearing finding — see
-   `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`).
-   `verilog_path` and `spef_sta.sdf_path` are outputs of the **same** OpenSTA
-   session, so their instance/pin naming is guaranteed mutually consistent.
-4. **Result: `klt`'s own SDF-diagnostic gate reports the run FAILED.** Of
-   ~753 `INTERCONNECT` entries in the SDF, **200 could not be resolved**
-   (`SDF ERROR: ... Could not find intermodpath!`) — every one an entry where
-   one endpoint is a **top-level module port**, never a purely internal
-   instance-pin-to-instance-pin entry (all of those resolve). Every one of
-   the 200 failing entries carries `(0.000:0.000:0.000)` in the SDF itself
-   (zero delay either way), but `klt`'s gate is deliberately conservative:
-   any unresolved entry fails the run, regardless of whether it would have
-   mattered for timing, so a partial annotation is never silently reported
-   as a full one. Independently reproduced with a hand-driven
-   `iverilog -gspecify -ginterconnect ...`/`vvp` invocation against the same
-   sources — same failure class both times.
-5. **The regression's own values corroborate a real problem, not merely a
-   conservative gate**: both the directed and randomized tests report a
-   uniform, constant-zero result on every case (not an occasional
-   single-bit mismatch consistent with a marginal timing violation) —
-   consistent with a broken control-path signal (`done` is among the 200
-   failing interconnects). Root-causing this precisely, beyond the
-   diagnostic-gate failure (sufficient on its own to fail the run), is not
-   attempted here.
+   `verification/records/drc-lvs/records/20260909-230959-92e00f2.md`).
+3. **`klt functional-verification` at this pin generates
+   `klt_sdf_dut_wrapper.v`** — a transparent pass-through module wrapping the
+   DUT (`#1069`'s fix), so `$sdf_annotate`'s elaboration scope sits one level
+   below the true top-level ports.
+4. **Result: `klt`'s own SDF-diagnostic gate still reports the run FAILED,
+   but with a much narrower residual.** Directly counted in this run's own
+   frozen SDF (1,927 total `INTERCONNECT` entries, 68 touching a top-level
+   port): **65 of the 68** top-level-port-touching entries now resolve,
+   including `done`'s own entry. Only **49** entries fail overall
+   (`SDF ERROR: ... Could not find intermodpath!`, down from 200) — 3 are
+   `mod_in[N]` → `ANTENNA_<N>.DIODE` filler-cell entries (a top-level-port
+   entry whose sibling, real-load entry on the same net resolves fine); 46
+   are purely internal instance-pin-to-instance-pin entries, all on one
+   contiguous block of flip-flop driver nets (`_1153_.Q` .. `_1168_.Q`),
+   where each driver's first-listed `INTERCONNECT` entry resolves but every
+   later-listed sibling entry on the same net does not. Every failing entry
+   still carries `(0.000:0.000:0.000)` (zero delay either way).
+5. **The regression's own values still corroborate a real problem**: both
+   the directed and randomized tests still report a uniform, constant-zero
+   result on every case — unchanged from the superseded attempt, even
+   though `done`'s own `INTERCONNECT` entry now resolves cleanly, which
+   rules out the previously-suspected "`done` unresolved" explanation.
+   Root-causing this precisely, beyond the diagnostic-gate failure
+   (sufficient on its own to fail the run), is not attempted here — per
+   this issue's scope.
 6. **New finding filed generically**, per `CLAUDE.md`'s friction protocol:
-   [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056)
-   — Icarus `$sdf_annotate` cannot resolve a top-level-port-attached
-   `INTERCONNECT` entry even under `-ginterconnect`.
+   [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619)
+   — when a single driver net fans out to both a top-level port and one or
+   more purely internal instance-pin loads, the port-touching entry now
+   resolves (`#1069`'s fix), but the sibling internal entries on that same
+   net do not.
 
-Full evidence: `verification/records/gate-level-sim/records/20260816-174310-5e656e5.md`.
+Full evidence: `verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`
+(supersedes `verification/records/gate-level-sim/records/20260816-174310-5e656e5.md`).
+
+### The 2026-08-16 attempt (issue #55), for history
+
+Delay-annotated (SDF) simulation was first exercised end to end by issue #55.
+Result: `klt`'s own SDF-diagnostic gate reported the run FAILED — 200
+`INTERCONNECT` entries could not be resolved (`SDF ERROR: ... Could not find
+intermodpath!`), every one an entry where one endpoint is a top-level module
+port, never a purely internal instance-pin-to-instance-pin entry. Every one
+of the 200 failing entries carried `(0.000:0.000:0.000)` in the SDF itself.
+Filed generically as
+[klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056),
+fixed by `#1069` above. Full evidence (superseded):
+`verification/records/gate-level-sim/records/20260816-174310-5e656e5.md`.
 
 ### The original (2026-08-15) blockers, for history
 
@@ -266,17 +301,19 @@ identifies as open).
 | `klt functional-verification` has no compile-time defines / build-args field, so an `ifdef`-gated Verilog cell library cannot be selected through the request | [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001) (open) — worked around by `sky130_fd_sc_hd_sim_defines.v` |
 | The accepted SDF re-sim recipe is conditional on Icarus >= 13; 12.0 has no `-ginterconnect` and cannot simulate `ifdef`-gated timing models at all | [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (filed by this issue) — not a blocker on this repo's host (Icarus 13.0) |
 | `klt functional-verification` requires the testbench module to sit next to the request, so one unmodified testbench cannot serve several requests | [klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (filed by this issue) — worked around by the symlink above |
-| Icarus `$sdf_annotate` cannot resolve a top-level-port-attached `INTERCONNECT` entry even under `-ginterconnect` | [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056) (filed by issue #55) — **this is Leg 2's fresh blocker**, found only once #1002/#1007 made the attempt possible |
+| Icarus `$sdf_annotate` cannot resolve a top-level-port-attached `INTERCONNECT` entry even under `-ginterconnect` | [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056) (filed by issue #55) — **fixed** by [#1069](https://github.com/2AMLogic/klayout-tools/pull/1069) (merged 2026-08-17) — this repo's `klt` pin bumped past it by issue #78; Leg 2's re-attempt fails for a *different*, narrower reason, see above |
+| Sibling `INTERCONNECT` entries on a port-touching net fail even after `#1069`'s wrapper fix (a driver net fanning out to both a top-level port and internal instance-pin loads: the port entry resolves, its internal siblings do not) | [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619) (open, filed by issue #78) — **this is Leg 2's fresh, narrower residual**, found only once `#1069` made the attempt reach this far |
 
 A `klt` pin bump is **not** a P&R-reproducibility guarantee: re-running P&R
 with the bumped `klt`, even against the identical frozen netlist/floorplan/
 seed, does not reproduce `layout/modexp.gds` byte-for-byte (see
-`verification/records/drc-lvs/records/20260816-174310-5e656e5.md`). So the
-as-built netlist export (`#997`) and Leg 2's fresh SDF attempt (`#1007`)
-above both describe a **fresh re-run** of P&R, not the committed
-`layout/modexp.gds`. The extraction-derived Leg 1 path here stays the one
-with provenance tied to the GDS that was actually DRC'd and LVS'd, and
-should be kept as a cross-check.
+`verification/records/drc-lvs/records/20260909-230959-92e00f2.md`, and
+`verification/records/drc-lvs/records/20260816-174310-5e656e5.md` before
+it). So the as-built netlist export (`#997`) and Leg 2's fresh SDF attempts
+(`#1007`, `#1069`) above both describe a **fresh re-run** of P&R, not the
+committed `layout/modexp.gds`. The extraction-derived Leg 1 path here stays
+the one with provenance tied to the GDS that was actually DRC'd and LVS'd,
+and should be kept as a cross-check.
 
 ## What this does and does not model
 

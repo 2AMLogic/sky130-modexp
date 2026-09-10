@@ -5,26 +5,58 @@ evidence establishes and does not establish**, per issue #8 (and re-verified
 by issue #55). It answers `spec/modexp.md`'s Signoff row — *"DRC + LVS clean
 on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 
-## Verdict (updated 2026-08-16, issue #55): **not met** — DRC is now clean;
-LVS is the sole remaining gap, evidenced more deeply than before
+## Verdict (updated 2026-09-09, issue #78): **not met** — DRC has newly
+surfaced, unresolved violations; LVS still mismatches
 
-**DRC is now clean** (below) — a genuine, unqualified improvement over the
-prior 10-violation result, fixed by an upstream `klt` change, not by any
-change to this design. **LVS still reports `status: "mismatch"`**, so
-`spec/modexp.md`'s Signoff row (*"DRC + LVS clean"*, both conjuncts required)
-remains **not met** overall — stated plainly, not "met with caveats." What
-follows is why neither the historical DRC violations nor the current LVS
-mismatches indicate a real defect in this design; every reported finding on
-both sides is classified with evidence, not asserted.
+**DRC was clean at the issue #55 pin, but issue #78's later pin bump
+(taken for an unrelated reason — gate-level-sim Leg 2's SDF fix) surfaced
+234 new violations (`nwell.space.1`: 194, `nwell.width.1`: 40) against the
+same, byte-identical `layout/modexp.gds`.** This is **not** a design
+regression: the DRC deck itself grew coverage between the two pins
+(`klayout-tools#1433`, merged 2026-08-26, added these two rules to the
+deck for the first time) — the design was never actually checked against
+these two rules before, so the prior "clean" verdict was clean *against
+the rules the deck ran at the time*, not evidence the design satisfies
+these two rules. See "DRC" below for the full account. **LVS still reports
+`status: "mismatch"`** (unchanged, not re-run by issue #78 — out of its
+scope). `spec/modexp.md`'s Signoff row (*"DRC + LVS clean"*, both conjuncts
+required) remains **not met** overall — stated plainly, not "met with
+caveats." What follows is why neither the historical DRC violations nor the
+current LVS mismatches indicate a defect *beyond* what is documented below;
+every reported finding on both sides is classified with evidence, not
+asserted.
 
-## DRC — **CLEAN** (was: 10 violations)
+## DRC — **NOT CLEAN: 234 violations** (was: clean, 0 violations, at the
+issue #55 pin; before that, 10 violations)
 
 `klt drc layout/modexp.gds --deck sky130 --format json` → **`status:
-"clean"`, `violation_count: 0`**, against the same, unmodified
-`layout/modexp.gds` (identical content hash to the prior run). Full report
-and provenance: `layout/drc/README.md` and `layout/drc/modexp-drc-report.json`.
+"violations"`, `violation_count: 234`** (`nwell.space.1`: 194,
+`nwell.width.1`: 40), against the same, unmodified `layout/modexp.gds`
+(identical content hash to every prior run: `layout/modexp.gds` has not
+changed since issue #7). Full report and provenance:
+`verification/records/drc-lvs/records/20260909-230959-92e00f2.md` (and its
+twin, `20260909-231045-92e00f2.md`).
 
-**What changed**: the prior 10 violations (all `diff.enclosing.licon.1`, all
+**What changed, issue #78 (2026-09-09)**: the DRC deck's own
+`content_hash` changed between this repo's two most recent `klt` pins
+(`sha256:2e78949d...` → `sha256:5afac7ab...`), because
+[klayout-tools#1433](https://github.com/2AMLogic/klayout-tools/pull/1433)
+("feat(decks): add sky130 nwell.width.1/nwell.space.1 DRC rules", merged
+2026-08-26) added these two rules to the deck's curated subset between the
+two pins. `layout/drc/README.md` already documented the deck as a "curated
+starter subset of 17 rules, not the full sky130 design rule manual" — these
+two rules were simply not among that subset before. This design's
+`nwell.space.1`/`nwell.width.1` compliance was **never actually checked**
+prior to this pin bump; there is no design or GDS change to explain, and no
+false-positive check-engine defect to file upstream (unlike the prior two
+findings below) — the new coverage is legitimate upstream feature growth,
+and it revealed a genuine, previously-invisible gap in this design's own
+signoff status. **These 234 violations are an open, unresolved finding as
+of this record** — closing them requires a layout change, which is outside
+issue #78's scope (no edit to `layout/modexp.gds`); tracked by
+[sky130-modexp#79](https://github.com/2AMLogic/sky130-modexp/issues/79).
+
+**History (issue #55)**: the prior 10 violations (all `diff.enclosing.licon.1`, all
 on `sky130_fd_sc_hd__and3_1` instances) were classified as **(iii) — a `klt
 drc` check-engine limitation firing on correct-by-construction geometry**:
 `klt drc`'s `"enclosing"` check built its `Region` from raw, unmerged
@@ -77,6 +109,17 @@ official rule `licon.5`) is transcribed at its real, unmodified threshold.
 The DRC claim above is bounded by this coverage: a `"clean"` verdict from
 this deck would still not mean "DRC-clean against the full sky130 design
 rule manual," and this run is not even that clean a verdict.
+
+**Update (issue #78, 2026-09-09)**: this enumeration describes the deck as
+it stood at issue #8's original pin. The deck has since grown — most
+recently, `klayout-tools#1433` added `nwell.width.1`/`nwell.space.1` (see
+"DRC" above, whose 234 violations are on exactly these two new rules) —
+so both the rule count and the coverage gaps enumerated above are now
+stale as a complete list; they remain accurate as a description of what
+they cover, not as an exhaustive current inventory. Re-enumerating the
+deck's full current rule set is not attempted here (out of this issue's
+scope); `klt deck info --format json` reports the installed build's own
+current coverage directly.
 
 ## LVS — still `status: "mismatch"`, now with a true as-built reference and a
 different, deeper-diagnosed cause (updated 2026-08-16, issue #55)
@@ -152,16 +195,18 @@ comparison above excludes power-net correspondence from its scope rather
 than reporting an unexplained mismatch, and it is a real, prior, already-
 recorded gap (`layout/README.md`, from #7) rather than a new finding.
 
-## Reading the spec's Signoff row (updated 2026-08-16, issue #55)
+## Reading the spec's Signoff row (updated 2026-09-09, issue #78)
 
 `spec/modexp.md`'s Signoff row — *"DRC + LVS clean on the OpenROAD-produced
-GDS"* — is **still not met** by `layout/modexp.gds`, stated plainly: LVS
-does not report a clean verdict. **DRC now does.** What this repo's evidence
-establishes, precisely bounded:
+GDS"* — is **still not met** by `layout/modexp.gds`, stated plainly: neither
+DRC nor LVS reports a clean verdict as of this update. What this repo's
+evidence establishes, precisely bounded:
 
-- **DRC is clean against `layout/modexp.gds`** as of the bumped `klt` pin —
-  the prior 10-violation result was a check-engine limitation, now fixed
-  upstream, not a real geometry defect; see "DRC" above.
+- **DRC is not clean against `layout/modexp.gds`** as of the current `klt`
+  pin — 234 violations (`nwell.space.1`/`nwell.width.1`), newly surfaced by
+  expanded deck coverage (`klayout-tools#1433`), not by any layout change.
+  This reopens what issue #55 had closed; see "DRC" above for the full
+  account and the follow-up issue tracking these as an open finding.
 - LVS gets, for the first time, past the circuit-type-level block a pre-CTS
   reference always produced, and every LVS mismatch remaining (net-name
   correlation, extraction-deck layer coverage) is individually classified
@@ -206,8 +251,10 @@ design-specific detail beyond PDK standard-cell names) at
    as [klayout-tools#995](https://github.com/2AMLogic/klayout-tools/issues/995)
    — **closed upstream, fixed by
    [klayout-tools#998](https://github.com/2AMLogic/klayout-tools/pull/998)**
-   (merged 2026-08-15); this repo's `klt` pin was bumped past it and DRC is
-   now clean (see "DRC" above).
+   (merged 2026-08-15); this repo's `klt` pin was bumped past it and this
+   specific false positive does not recur (see "DRC" above — a *separate*,
+   later pin bump, issue #78, surfaced new, genuine violations on two
+   newly-added rules, unrelated to this finding).
 2. **`klt place-and-route` had no post-CTS/post-optimization netlist
    export**, so a gate-level LVS golden reference built from `klt
    synthesize`'s own output necessarily diverged from the routed layout by
@@ -226,8 +273,17 @@ design-specific detail beyond PDK standard-cell names) at
    `-ginterconnect`**, while an otherwise-identical instance-pin-to-
    instance-pin entry resolves — found while attempting Leg 2's
    delay-annotated gate-level simulation (issue #55). Filed as
-   [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056).
-   See "Post-route gate-level simulation" below.
+   [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056)
+   — **closed upstream, fixed by
+   [klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)**
+   (merged 2026-08-17); this repo's `klt` pin was bumped past it (issue
+   #78) and the top-level-port entries now resolve essentially completely.
+   A new, narrower residual class (49 entries, a different pattern — a
+   driver net's top-level-port `INTERCONNECT` entry resolves but its
+   sibling internal-instance-pin entries on the same net do not) was found
+   once the fix made this attempt reach that far — see "Post-route
+   gate-level simulation" below for the account. Filed generically as
+   [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619).
 
 ## Post-route gate-level simulation (appended, issue #9)
 
@@ -253,21 +309,26 @@ caveats:
   but one corner-independent Verilog cell-model set), **no power/ground
   network** (power pins dropped — this GDS has no PDN), and **cell-instance
   granularity, not transistor level**.
-- **Leg 2 (delay-annotated SDF simulation), updated 2026-08-16, issue #55:
-  ATTEMPTED — FAIL, no longer blocked.** `klayout-tools#1002` (no SDF export,
-  no SDF option) is closed upstream, fixed by
-  [klayout-tools#1007](https://github.com/2AMLogic/klayout-tools/pull/1007)
-  (merged 2026-08-15); this repo's `klt` pin was bumped past it and Leg 2 was
-  exercised end to end (build, SDF load, regression run) against a fresh
-  post-route build's own `write_verilog` netlist and `write_sdf` output.
-  Result: `klt`'s own SDF diagnostic gate reports the run failed — 200 of
-  ~753 `INTERCONNECT` entries (every one top-level-port-attached, every one
-  carrying zero delay regardless) could not be resolved by Icarus 13.0's
-  `$sdf_annotate`, and the regression itself reports a uniform, constant-zero
-  result on every test case. New, generic finding filed as
-  [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056).
+- **Leg 2 (delay-annotated SDF simulation), updated 2026-09-09, issue #78:
+  RE-ATTEMPTED — still FAIL, narrower failure class.** Issue #55 first
+  exercised Leg 2 end to end after `klayout-tools#1007` (SDF export/option)
+  landed: `klt`'s SDF diagnostic gate reported 200 of ~753 `INTERCONNECT`
+  entries (every one top-level-port-attached) unresolved, filed generically
+  as [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056).
+  Issue #78 bumped the pin past
+  [klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)
+  (`#1056`'s fix — a generated pass-through wrapper for top-level-port
+  `INTERCONNECT` entries) and re-ran Leg 2 against a fresh post-route
+  build's own `write_verilog` netlist and `write_sdf` output. Result: the
+  fix resolves the great majority of the prior 200 (including `done`), but
+  `klt`'s own SDF diagnostic gate still reports the run failed — a new,
+  narrower residual class of 49 unresolved `INTERCONNECT` entries (3 tied to
+  antenna-diode filler cells, 46 tied to a specific block of flip-flop
+  driver nets), and the regression itself still reports a uniform,
+  constant-zero result on every test case even though `done` now resolves.
   Full evidence:
-  `verification/records/gate-level-sim/records/20260816-174310-5e656e5.md`.
+  `verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`
+  (supersedes `20260816-174310-5e656e5.md`).
 
 Full method and scope: `verification/gate-level/README.md`. Records:
 `verification/records/gate-level-sim/`.
