@@ -1,0 +1,3407 @@
+{
+  "method": "Each violation's bbox is intersected (5nm margin) against the klayout.db.Region formed by merging all layer (64,20) nwell.drawing shapes recursively flattened from layout/modexp.gds (matches klt drc's own _run_check(), which calls .merged() before dispatching to Region.space_check/width_check). nwell.space.1 violations touching exactly one merged polygon are a same-polygon concave notch (space_check, unlike the source rule's isolated semantics, flags these) -> check_engine_limitation. nwell.space.1 violations touching two or more distinct merged polygons are a genuine sub-1.27um gap between two separate nwell wells, traced (via layout/modexp.def cell-instance placement cross-reference) to non-abutting standard-cell instances -> accepted_documented_gap (layout/README.md's 'no filler-cell insertion' limitation). Every nwell.width.1 violation also touches exactly one merged, non-box polygon at a locally narrow waist formed by misaligned adjacent cells' nwell rectangles (confirmed: every one of the 718 raw per-instance nwell rectangles is >=1.76um wide/1.605um tall, so no individual library-cell nwell shape is itself sub-threshold) -> accepted_documented_gap.",
+  "counts": {
+    "space_check_engine": 73,
+    "space_documented_gap": 121,
+    "width_documented_gap": 40
+  },
+  "violations": [
+    {
+      "index": 0,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 8010,
+        "bottom": 8350,
+        "right": 9010,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        97
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 1,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 8010,
+        "bottom": 17625,
+        "right": 8090,
+        "top": 20455
+      },
+      "merged_polygon_ids": [
+        130,
+        136
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 2,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 10770,
+        "bottom": 12185,
+        "right": 10850,
+        "top": 13410
+      },
+      "merged_polygon_ids": [
+        105
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 3,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 13530,
+        "bottom": 13790,
+        "right": 13610,
+        "top": 15015
+      },
+      "merged_polygon_ids": [
+        105
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 4,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 13530,
+        "bottom": 24670,
+        "right": 14530,
+        "top": 25895
+      },
+      "merged_polygon_ids": [
+        142
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 5,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 14910,
+        "bottom": 34021,
+        "right": 15450,
+        "top": 36699
+      },
+      "merged_polygon_ids": [
+        91,
+        92
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 6,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 20890,
+        "bottom": 51870,
+        "right": 21890,
+        "top": 53095
+      },
+      "merged_polygon_ids": [
+        117
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 7,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 22270,
+        "bottom": 73630,
+        "right": 22810,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        12
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 8,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 22730,
+        "bottom": 23065,
+        "right": 22810,
+        "top": 24670
+      },
+      "merged_polygon_ids": [
+        143,
+        144
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 9,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 25490,
+        "bottom": 17625,
+        "right": 26030,
+        "top": 18850
+      },
+      "merged_polygon_ids": [
+        138
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 10,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 25950,
+        "bottom": 33945,
+        "right": 26950,
+        "top": 35170
+      },
+      "merged_polygon_ids": [
+        92
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 11,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 26870,
+        "bottom": 23065,
+        "right": 26950,
+        "top": 24290
+      },
+      "merged_polygon_ids": [
+        144
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 12,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 26870,
+        "bottom": 30110,
+        "right": 27410,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        149
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 13,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 26870,
+        "bottom": 68190,
+        "right": 27870,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        131
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 14,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 27330,
+        "bottom": 44901,
+        "right": 27870,
+        "top": 47199
+      },
+      "merged_polygon_ids": [
+        110,
+        111
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 15,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 27330,
+        "bottom": 46050,
+        "right": 27410,
+        "top": 47655
+      },
+      "merged_polygon_ids": [
+        110,
+        111
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 16,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 27330,
+        "bottom": 50265,
+        "right": 27410,
+        "top": 51870
+      },
+      "merged_polygon_ids": [
+        117,
+        118
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 17,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 28710,
+        "bottom": 8350,
+        "right": 29250,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        127
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 18,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 28710,
+        "bottom": 72025,
+        "right": 28790,
+        "top": 73250
+      },
+      "merged_polygon_ids": [
+        12
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 19,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 29170,
+        "bottom": 39385,
+        "right": 29710,
+        "top": 40990
+      },
+      "merged_polygon_ids": [
+        101,
+        102
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 20,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 29170,
+        "bottom": 50265,
+        "right": 29710,
+        "top": 51490
+      },
+      "merged_polygon_ids": [
+        118
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 21,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 29630,
+        "bottom": 39385,
+        "right": 29710,
+        "top": 42215
+      },
+      "merged_polygon_ids": [
+        101,
+        102
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 22,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 29630,
+        "bottom": 40610,
+        "right": 30630,
+        "top": 42215
+      },
+      "merged_polygon_ids": [
+        101,
+        102
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 23,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 30090,
+        "bottom": 61145,
+        "right": 31090,
+        "top": 62370
+      },
+      "merged_polygon_ids": [
+        128
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 24,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 30090,
+        "bottom": 73250,
+        "right": 30630,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        12,
+        13
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 25,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 30550,
+        "bottom": 72025,
+        "right": 30630,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        12,
+        13
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 26,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 30550,
+        "bottom": 72025,
+        "right": 31550,
+        "top": 73630
+      },
+      "merged_polygon_ids": [
+        12,
+        13
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 27,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 31010,
+        "bottom": 51490,
+        "right": 31550,
+        "top": 53095
+      },
+      "merged_polygon_ids": [
+        118,
+        119
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 28,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 31010,
+        "bottom": 55705,
+        "right": 31090,
+        "top": 56930
+      },
+      "merged_polygon_ids": [
+        124
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 29,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 31010,
+        "bottom": 66585,
+        "right": 31090,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        131,
+        132
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 30,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 31010,
+        "bottom": 67407,
+        "right": 32010,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        131,
+        132
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 31,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 31470,
+        "bottom": 50265,
+        "right": 31550,
+        "top": 53095
+      },
+      "merged_polygon_ids": [
+        118,
+        119
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 32,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 31930,
+        "bottom": 62750,
+        "right": 32010,
+        "top": 63975
+      },
+      "merged_polygon_ids": [
+        128
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 33,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 33310,
+        "bottom": 88345,
+        "right": 33390,
+        "top": 89570
+      },
+      "merged_polygon_ids": [
+        72
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 34,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 33310,
+        "bottom": 88801,
+        "right": 33850,
+        "top": 90719
+      },
+      "merged_polygon_ids": [
+        72
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 35,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 33770,
+        "bottom": 89950,
+        "right": 33850,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        72
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 36,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 36990,
+        "bottom": 28505,
+        "right": 37070,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        149,
+        150
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 37,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 36990,
+        "bottom": 29730,
+        "right": 37530,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        149,
+        150
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 38,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 36990,
+        "bottom": 56147,
+        "right": 37990,
+        "top": 58093
+      },
+      "merged_polygon_ids": [
+        122,
+        125
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 39,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 38370,
+        "bottom": 66585,
+        "right": 38450,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        133,
+        134
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 40,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 38370,
+        "bottom": 67810,
+        "right": 39370,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        133,
+        134
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 41,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 38830,
+        "bottom": 28505,
+        "right": 39830,
+        "top": 29730
+      },
+      "merged_polygon_ids": [
+        150
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 42,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 39750,
+        "bottom": 56930,
+        "right": 39830,
+        "top": 58535
+      },
+      "merged_polygon_ids": [
+        125,
+        126
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 43,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 40210,
+        "bottom": 39827,
+        "right": 41210,
+        "top": 41773
+      },
+      "merged_polygon_ids": [
+        102,
+        103
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 44,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 41130,
+        "bottom": 72025,
+        "right": 42130,
+        "top": 73630
+      },
+      "merged_polygon_ids": [
+        13,
+        14
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 45,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 41590,
+        "bottom": 72101,
+        "right": 42130,
+        "top": 74779
+      },
+      "merged_polygon_ids": [
+        13,
+        14
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 46,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 44350,
+        "bottom": 23065,
+        "right": 44890,
+        "top": 24290
+      },
+      "merged_polygon_ids": [
+        145
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 47,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 44350,
+        "bottom": 83347,
+        "right": 45350,
+        "top": 85293
+      },
+      "merged_polygon_ids": [
+        81,
+        82
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 48,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 45270,
+        "bottom": 17625,
+        "right": 45350,
+        "top": 20455
+      },
+      "merged_polygon_ids": [
+        138,
+        139
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 49,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 45270,
+        "bottom": 34021,
+        "right": 45810,
+        "top": 36699
+      },
+      "merged_polygon_ids": [
+        94,
+        95
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 50,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 47110,
+        "bottom": 62750,
+        "right": 47190,
+        "top": 63975
+      },
+      "merged_polygon_ids": [
+        129
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 51,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 47110,
+        "bottom": 77465,
+        "right": 47190,
+        "top": 80295
+      },
+      "merged_polygon_ids": [
+        76,
+        83
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 52,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 47570,
+        "bottom": 13790,
+        "right": 48110,
+        "top": 15015
+      },
+      "merged_polygon_ids": [
+        1
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 53,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 47570,
+        "bottom": 50265,
+        "right": 48570,
+        "top": 51870
+      },
+      "merged_polygon_ids": [
+        119,
+        120
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 54,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 47570,
+        "bottom": 50341,
+        "right": 48110,
+        "top": 53019
+      },
+      "merged_polygon_ids": [
+        119,
+        120
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 55,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 47570,
+        "bottom": 93785,
+        "right": 48110,
+        "top": 96539
+      },
+      "merged_polygon_ids": [
+        66,
+        86
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 56,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 48030,
+        "bottom": 66585,
+        "right": 49030,
+        "top": 68973
+      },
+      "merged_polygon_ids": [
+        134,
+        135
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 57,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 48490,
+        "bottom": 23065,
+        "right": 49030,
+        "top": 24290
+      },
+      "merged_polygon_ids": [
+        145
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 58,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 48950,
+        "bottom": 8350,
+        "right": 49490,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        141
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 59,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 50790,
+        "bottom": 28505,
+        "right": 50870,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        88,
+        148
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 60,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 50790,
+        "bottom": 73630,
+        "right": 50870,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        15
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 61,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 51710,
+        "bottom": 77465,
+        "right": 52710,
+        "top": 79070
+      },
+      "merged_polygon_ids": [
+        83,
+        84
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 62,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 52630,
+        "bottom": 30110,
+        "right": 52710,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        88
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 63,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 54930,
+        "bottom": 39385,
+        "right": 55470,
+        "top": 42139
+      },
+      "merged_polygon_ids": [
+        103,
+        104
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 64,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 54930,
+        "bottom": 84510,
+        "right": 55930,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        82
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 65,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 55850,
+        "bottom": 17625,
+        "right": 56850,
+        "top": 19230
+      },
+      "merged_polygon_ids": [
+        139,
+        140
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 66,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 56310,
+        "bottom": 23507,
+        "right": 57310,
+        "top": 25453
+      },
+      "merged_polygon_ids": [
+        145,
+        146
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 67,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 56770,
+        "bottom": 44825,
+        "right": 57770,
+        "top": 46430
+      },
+      "merged_polygon_ids": [
+        108,
+        114
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 68,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 57230,
+        "bottom": 55705,
+        "right": 58230,
+        "top": 56930
+      },
+      "merged_polygon_ids": [
+        126
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 69,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 57690,
+        "bottom": 77907,
+        "right": 58690,
+        "top": 79853
+      },
+      "merged_polygon_ids": [
+        84,
+        85
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 70,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 58150,
+        "bottom": 33945,
+        "right": 58690,
+        "top": 35170
+      },
+      "merged_polygon_ids": [
+        96
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 71,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 58150,
+        "bottom": 84130,
+        "right": 59150,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        22,
+        82
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 72,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 58610,
+        "bottom": 93785,
+        "right": 59150,
+        "top": 95390
+      },
+      "merged_polygon_ids": [
+        67,
+        87
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 73,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 59070,
+        "bottom": 40990,
+        "right": 60070,
+        "top": 42215
+      },
+      "merged_polygon_ids": [
+        104
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 74,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 59070,
+        "bottom": 93785,
+        "right": 59150,
+        "top": 96615
+      },
+      "merged_polygon_ids": [
+        67,
+        87
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 75,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 59530,
+        "bottom": 72025,
+        "right": 60530,
+        "top": 74033
+      },
+      "merged_polygon_ids": [
+        15,
+        16
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 76,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 59990,
+        "bottom": 35550,
+        "right": 60070,
+        "top": 36775
+      },
+      "merged_polygon_ids": [
+        96
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 77,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 59990,
+        "bottom": 55705,
+        "right": 60530,
+        "top": 56930
+      },
+      "merged_polygon_ids": [
+        126
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 78,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 59990,
+        "bottom": 66585,
+        "right": 60530,
+        "top": 67810
+      },
+      "merged_polygon_ids": [
+        135
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 79,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 60450,
+        "bottom": 72025,
+        "right": 60530,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        15,
+        16
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 80,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 61830,
+        "bottom": 28505,
+        "right": 62830,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        88,
+        89
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 81,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 64590,
+        "bottom": 55705,
+        "right": 65590,
+        "top": 57310
+      },
+      "merged_polygon_ids": [
+        8,
+        126
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 82,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 65050,
+        "bottom": 39385,
+        "right": 66050,
+        "top": 40990
+      },
+      "merged_polygon_ids": [
+        98,
+        104
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 83,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 65050,
+        "bottom": 46430,
+        "right": 65590,
+        "top": 47655
+      },
+      "merged_polygon_ids": [
+        7
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 84,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 65050,
+        "bottom": 55781,
+        "right": 65590,
+        "top": 58459
+      },
+      "merged_polygon_ids": [
+        8,
+        126
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 85,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 65510,
+        "bottom": 7970,
+        "right": 66510,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        90,
+        147
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 86,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 65970,
+        "bottom": 39385,
+        "right": 66050,
+        "top": 42215
+      },
+      "merged_polygon_ids": [
+        98,
+        104
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 87,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 66430,
+        "bottom": 88345,
+        "right": 66970,
+        "top": 89570
+      },
+      "merged_polygon_ids": [
+        74
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 88,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 67350,
+        "bottom": 46430,
+        "right": 68350,
+        "top": 47655
+      },
+      "merged_polygon_ids": [
+        7
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 89,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 68270,
+        "bottom": 84510,
+        "right": 68810,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 90,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 68730,
+        "bottom": 88345,
+        "right": 69270,
+        "top": 91099
+      },
+      "merged_polygon_ids": [
+        74,
+        75
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 91,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 69650,
+        "bottom": 100047,
+        "right": 70650,
+        "top": 101613
+      },
+      "merged_polygon_ids": [
+        24,
+        79
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 92,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 70110,
+        "bottom": 51870,
+        "right": 70190,
+        "top": 53095
+      },
+      "merged_polygon_ids": [
+        121
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 93,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 70110,
+        "bottom": 99225,
+        "right": 70650,
+        "top": 100830
+      },
+      "merged_polygon_ids": [
+        24,
+        79
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 94,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 72410,
+        "bottom": 28505,
+        "right": 72950,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        4,
+        89
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 95,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 72410,
+        "bottom": 67810,
+        "right": 72950,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        10,
+        135
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 96,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 74250,
+        "bottom": 99225,
+        "right": 75250,
+        "top": 100450
+      },
+      "merged_polygon_ids": [
+        24
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 97,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 74710,
+        "bottom": 7970,
+        "right": 75250,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        0,
+        185
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 98,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 76090,
+        "bottom": 93785,
+        "right": 76630,
+        "top": 96539
+      },
+      "merged_polygon_ids": [
+        23,
+        48
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 99,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 76550,
+        "bottom": 68190,
+        "right": 76630,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        10
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 100,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 77010,
+        "bottom": 7970,
+        "right": 77550,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        185,
+        196
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 101,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 77930,
+        "bottom": 88787,
+        "right": 78930,
+        "top": 90733
+      },
+      "merged_polygon_ids": [
+        36,
+        38
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 102,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 78390,
+        "bottom": 84510,
+        "right": 78470,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 103,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 79770,
+        "bottom": 12185,
+        "right": 80310,
+        "top": 13790
+      },
+      "merged_polygon_ids": [
+        1,
+        206
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 104,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 79770,
+        "bottom": 19230,
+        "right": 80770,
+        "top": 20455
+      },
+      "merged_polygon_ids": [
+        2
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 105,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 79770,
+        "bottom": 77465,
+        "right": 80770,
+        "top": 79070
+      },
+      "merged_polygon_ids": [
+        32,
+        47
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 106,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 81150,
+        "bottom": 46430,
+        "right": 81690,
+        "top": 47655
+      },
+      "merged_polygon_ids": [
+        151
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 107,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 81610,
+        "bottom": 100830,
+        "right": 81690,
+        "top": 102055
+      },
+      "merged_polygon_ids": [
+        24
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 108,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 82990,
+        "bottom": 72025,
+        "right": 83070,
+        "top": 73250
+      },
+      "merged_polygon_ids": [
+        17
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 109,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 83450,
+        "bottom": 61145,
+        "right": 83990,
+        "top": 62370
+      },
+      "merged_polygon_ids": [
+        186
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 110,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 84370,
+        "bottom": 100450,
+        "right": 85370,
+        "top": 102055
+      },
+      "merged_polygon_ids": [
+        24,
+        57
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 111,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 85290,
+        "bottom": 93785,
+        "right": 86290,
+        "top": 96173
+      },
+      "merged_polygon_ids": [
+        46,
+        49
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 112,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 85750,
+        "bottom": 28505,
+        "right": 85830,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        209,
+        210
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 113,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 85750,
+        "bottom": 28505,
+        "right": 86750,
+        "top": 30513
+      },
+      "merged_polygon_ids": [
+        209,
+        210
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 114,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 88050,
+        "bottom": 23065,
+        "right": 88130,
+        "top": 24290
+      },
+      "merged_polygon_ids": [
+        3
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 115,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 88050,
+        "bottom": 84510,
+        "right": 88130,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 116,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 88510,
+        "bottom": 55705,
+        "right": 88590,
+        "top": 56930
+      },
+      "merged_polygon_ids": [
+        8
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 117,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 88970,
+        "bottom": 88787,
+        "right": 89970,
+        "top": 90353
+      },
+      "merged_polygon_ids": [
+        39,
+        40
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 118,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 88970,
+        "bottom": 89570,
+        "right": 89510,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        39,
+        40
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 119,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 89890,
+        "bottom": 23065,
+        "right": 89970,
+        "top": 25895
+      },
+      "merged_polygon_ids": [
+        3,
+        176
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 120,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 89890,
+        "bottom": 84510,
+        "right": 90430,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 121,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 90350,
+        "bottom": 28947,
+        "right": 91350,
+        "top": 30513
+      },
+      "merged_polygon_ids": [
+        210,
+        211
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 122,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 90350,
+        "bottom": 29730,
+        "right": 90890,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        210,
+        211
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 123,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 90350,
+        "bottom": 45267,
+        "right": 91350,
+        "top": 47213
+      },
+      "merged_polygon_ids": [
+        152,
+        153
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 124,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 93110,
+        "bottom": 6821,
+        "right": 93650,
+        "top": 9499
+      },
+      "merged_polygon_ids": [
+        196,
+        197
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 125,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 94030,
+        "bottom": 17625,
+        "right": 95030,
+        "top": 19230
+      },
+      "merged_polygon_ids": [
+        2,
+        162
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 126,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 94490,
+        "bottom": 39385,
+        "right": 94570,
+        "top": 40610
+      },
+      "merged_polygon_ids": [
+        198
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 127,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 95410,
+        "bottom": 7970,
+        "right": 95490,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        161,
+        197
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 128,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 95870,
+        "bottom": 99225,
+        "right": 95950,
+        "top": 102055
+      },
+      "merged_polygon_ids": [
+        55,
+        58
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 129,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 97250,
+        "bottom": 17625,
+        "right": 97330,
+        "top": 20455
+      },
+      "merged_polygon_ids": [
+        162,
+        207
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 130,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 97250,
+        "bottom": 17625,
+        "right": 97790,
+        "top": 19230
+      },
+      "merged_polygon_ids": [
+        162,
+        207
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 131,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 97710,
+        "bottom": 89570,
+        "right": 98710,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        41,
+        42
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 132,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 98170,
+        "bottom": 12185,
+        "right": 98710,
+        "top": 13410
+      },
+      "merged_polygon_ids": [
+        159
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 133,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 99550,
+        "bottom": 8350,
+        "right": 99630,
+        "top": 9575
+      },
+      "merged_polygon_ids": [
+        161
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 134,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 100010,
+        "bottom": 84130,
+        "right": 100090,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        22,
+        33
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 135,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 100470,
+        "bottom": 89570,
+        "right": 101470,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        42,
+        43
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 136,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 101850,
+        "bottom": 55781,
+        "right": 102390,
+        "top": 58459
+      },
+      "merged_polygon_ids": [
+        8,
+        177
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 137,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 101850,
+        "bottom": 84510,
+        "right": 102850,
+        "top": 85735
+      },
+      "merged_polygon_ids": [
+        33
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 138,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 102310,
+        "bottom": 66585,
+        "right": 102390,
+        "top": 69415
+      },
+      "merged_polygon_ids": [
+        200,
+        201
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 139,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 102770,
+        "bottom": 72025,
+        "right": 103310,
+        "top": 73250
+      },
+      "merged_polygon_ids": [
+        18
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 140,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 104150,
+        "bottom": 44825,
+        "right": 104690,
+        "top": 47579
+      },
+      "merged_polygon_ids": [
+        154,
+        155
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 141,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 106450,
+        "bottom": 28505,
+        "right": 106990,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        194,
+        211
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 142,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 107830,
+        "bottom": 89950,
+        "right": 107910,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        43
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 143,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 108750,
+        "bottom": 28505,
+        "right": 108830,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        194,
+        212
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 144,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 108750,
+        "bottom": 28961,
+        "right": 109290,
+        "top": 31259
+      },
+      "merged_polygon_ids": [
+        194,
+        212
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 145,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 110130,
+        "bottom": 23141,
+        "right": 110670,
+        "top": 25439
+      },
+      "merged_polygon_ids": [
+        176,
+        183
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 146,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 110130,
+        "bottom": 24290,
+        "right": 110210,
+        "top": 25895
+      },
+      "merged_polygon_ids": [
+        176,
+        183
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 147,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 110130,
+        "bottom": 72101,
+        "right": 110670,
+        "top": 74779
+      },
+      "merged_polygon_ids": [
+        18,
+        19
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 148,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111050,
+        "bottom": 30110,
+        "right": 111590,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        212
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 149,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111050,
+        "bottom": 83347,
+        "right": 112050,
+        "top": 85293
+      },
+      "merged_polygon_ids": [
+        33,
+        34
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 150,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111510,
+        "bottom": 46430,
+        "right": 112510,
+        "top": 47655
+      },
+      "merged_polygon_ids": [
+        155
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 151,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111510,
+        "bottom": 50707,
+        "right": 112510,
+        "top": 52273
+      },
+      "merged_polygon_ids": [
+        166,
+        167
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 152,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111510,
+        "bottom": 89570,
+        "right": 111590,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        43,
+        44
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 153,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111970,
+        "bottom": 50707,
+        "right": 112970,
+        "top": 52273
+      },
+      "merged_polygon_ids": [
+        166,
+        167
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 154,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111970,
+        "bottom": 51490,
+        "right": 112510,
+        "top": 53095
+      },
+      "merged_polygon_ids": [
+        166,
+        167
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 155,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 111970,
+        "bottom": 55705,
+        "right": 112970,
+        "top": 57310
+      },
+      "merged_polygon_ids": [
+        177,
+        178
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 156,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 112890,
+        "bottom": 35550,
+        "right": 113890,
+        "top": 36775
+      },
+      "merged_polygon_ids": [
+        173
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 157,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 115650,
+        "bottom": 55705,
+        "right": 116650,
+        "top": 56930
+      },
+      "merged_polygon_ids": [
+        178
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 158,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 116570,
+        "bottom": 17701,
+        "right": 117110,
+        "top": 19999
+      },
+      "merged_polygon_ids": [
+        207,
+        208
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 159,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 117030,
+        "bottom": 18850,
+        "right": 117110,
+        "top": 20455
+      },
+      "merged_polygon_ids": [
+        207,
+        208
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 160,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 117490,
+        "bottom": 77541,
+        "right": 118030,
+        "top": 80219
+      },
+      "merged_polygon_ids": [
+        25,
+        26
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 161,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 118870,
+        "bottom": 66585,
+        "right": 119410,
+        "top": 69339
+      },
+      "merged_polygon_ids": [
+        201,
+        202
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 162,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 121170,
+        "bottom": 77465,
+        "right": 121710,
+        "top": 79839
+      },
+      "merged_polygon_ids": [
+        26,
+        27
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 163,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 121630,
+        "bottom": 77465,
+        "right": 121710,
+        "top": 80295
+      },
+      "merged_polygon_ids": [
+        26,
+        27
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 164,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 122090,
+        "bottom": 46430,
+        "right": 122170,
+        "top": 47655
+      },
+      "merged_polygon_ids": [
+        155
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 165,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 122550,
+        "bottom": 40990,
+        "right": 122630,
+        "top": 42215
+      },
+      "merged_polygon_ids": [
+        199
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 166,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 122550,
+        "bottom": 44825,
+        "right": 123550,
+        "top": 46050
+      },
+      "merged_polygon_ids": [
+        155
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 167,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 122550,
+        "bottom": 88345,
+        "right": 122630,
+        "top": 91175
+      },
+      "merged_polygon_ids": [
+        37,
+        45
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 168,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 123470,
+        "bottom": 29327,
+        "right": 124470,
+        "top": 30893
+      },
+      "merged_polygon_ids": [
+        213,
+        214
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 169,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 123470,
+        "bottom": 56527,
+        "right": 124470,
+        "top": 58093
+      },
+      "merged_polygon_ids": [
+        171,
+        178
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 170,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 123470,
+        "bottom": 61587,
+        "right": 124470,
+        "top": 63153
+      },
+      "merged_polygon_ids": [
+        188,
+        189
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 171,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 123930,
+        "bottom": 55705,
+        "right": 124470,
+        "top": 57310
+      },
+      "merged_polygon_ids": [
+        171,
+        178
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 172,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 123930,
+        "bottom": 62370,
+        "right": 124470,
+        "top": 63975
+      },
+      "merged_polygon_ids": [
+        188,
+        189
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 173,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 124390,
+        "bottom": 28505,
+        "right": 124470,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        213,
+        214
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 174,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 125310,
+        "bottom": 51490,
+        "right": 126310,
+        "top": 53095
+      },
+      "merged_polygon_ids": [
+        168,
+        169
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 175,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 125770,
+        "bottom": 78690,
+        "right": 126770,
+        "top": 80295
+      },
+      "merged_polygon_ids": [
+        27,
+        28
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 176,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 126690,
+        "bottom": 28505,
+        "right": 126770,
+        "top": 29730
+      },
+      "merged_polygon_ids": [
+        214
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 177,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 127150,
+        "bottom": 44825,
+        "right": 127690,
+        "top": 46430
+      },
+      "merged_polygon_ids": [
+        155,
+        156
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 178,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 127150,
+        "bottom": 73630,
+        "right": 128150,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        20
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 179,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 129450,
+        "bottom": 39385,
+        "right": 129530,
+        "top": 40990
+      },
+      "merged_polygon_ids": [
+        199,
+        204
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 180,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 129450,
+        "bottom": 40207,
+        "right": 130450,
+        "top": 41773
+      },
+      "merged_polygon_ids": [
+        199,
+        204
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 181,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 129910,
+        "bottom": 72025,
+        "right": 129990,
+        "top": 74855
+      },
+      "merged_polygon_ids": [
+        11,
+        20
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 182,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 130370,
+        "bottom": 34021,
+        "right": 130910,
+        "top": 36699
+      },
+      "merged_polygon_ids": [
+        174,
+        175
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 183,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 131290,
+        "bottom": 56930,
+        "right": 132290,
+        "top": 58535
+      },
+      "merged_polygon_ids": [
+        179,
+        180
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 184,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 132210,
+        "bottom": 12185,
+        "right": 132750,
+        "top": 13410
+      },
+      "merged_polygon_ids": [
+        160
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 185,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 132210,
+        "bottom": 55705,
+        "right": 132290,
+        "top": 58535
+      },
+      "merged_polygon_ids": [
+        179,
+        180
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 186,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 133130,
+        "bottom": 72025,
+        "right": 133670,
+        "top": 73630
+      },
+      "merged_polygon_ids": [
+        11,
+        21
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 187,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 133590,
+        "bottom": 62370,
+        "right": 134130,
+        "top": 63975
+      },
+      "merged_polygon_ids": [
+        190,
+        191
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 188,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 135890,
+        "bottom": 28505,
+        "right": 135970,
+        "top": 29730
+      },
+      "merged_polygon_ids": [
+        215
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 189,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 136350,
+        "bottom": 30110,
+        "right": 136890,
+        "top": 31335
+      },
+      "merged_polygon_ids": [
+        215
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 190,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 136810,
+        "bottom": 72025,
+        "right": 136890,
+        "top": 73250
+      },
+      "merged_polygon_ids": [
+        21
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 191,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 137270,
+        "bottom": 35550,
+        "right": 137810,
+        "top": 36775
+      },
+      "merged_polygon_ids": [
+        175
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 192,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 137270,
+        "bottom": 55705,
+        "right": 137810,
+        "top": 58459
+      },
+      "merged_polygon_ids": [
+        180,
+        181
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 193,
+      "rule": "nwell.space.1",
+      "bbox": {
+        "left": 139570,
+        "bottom": 61145,
+        "right": 139650,
+        "top": 62370
+      },
+      "merged_polygon_ids": [
+        192
+      ],
+      "classification": "check_engine_limitation"
+    },
+    {
+      "index": 194,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 13530,
+        "bottom": 13410,
+        "right": 14359,
+        "top": 13790
+      },
+      "merged_polygon_ids": [
+        105
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 195,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 13610,
+        "bottom": 13041,
+        "right": 13990,
+        "top": 14159
+      },
+      "merged_polygon_ids": [
+        105
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 196,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 28421,
+        "bottom": 51490,
+        "right": 29539,
+        "top": 51870
+      },
+      "merged_polygon_ids": [
+        118
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 197,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 28790,
+        "bottom": 51121,
+        "right": 29170,
+        "top": 52239
+      },
+      "merged_polygon_ids": [
+        118
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 198,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 28881,
+        "bottom": 7970,
+        "right": 29999,
+        "top": 8350
+      },
+      "merged_polygon_ids": [
+        127
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 199,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 29250,
+        "bottom": 7601,
+        "right": 29630,
+        "top": 8719
+      },
+      "merged_polygon_ids": [
+        127
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 200,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 33310,
+        "bottom": 89570,
+        "right": 33850,
+        "top": 89950
+      },
+      "merged_polygon_ids": [
+        72
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 201,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 33390,
+        "bottom": 89201,
+        "right": 33770,
+        "top": 90319
+      },
+      "merged_polygon_ids": [
+        72
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 202,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 51881,
+        "bottom": 18850,
+        "right": 52999,
+        "top": 19230
+      },
+      "merged_polygon_ids": [
+        139
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 203,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 51881,
+        "bottom": 29730,
+        "right": 52710,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        88
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 204,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 52250,
+        "bottom": 18481,
+        "right": 52630,
+        "top": 19599
+      },
+      "merged_polygon_ids": [
+        139
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 205,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 52250,
+        "bottom": 29361,
+        "right": 52630,
+        "top": 30479
+      },
+      "merged_polygon_ids": [
+        88
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 206,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 54181,
+        "bottom": 84130,
+        "right": 55299,
+        "top": 84510
+      },
+      "merged_polygon_ids": [
+        82
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 207,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 54550,
+        "bottom": 83761,
+        "right": 54930,
+        "top": 84879
+      },
+      "merged_polygon_ids": [
+        82
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 208,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 64301,
+        "bottom": 46050,
+        "right": 65419,
+        "top": 46430
+      },
+      "merged_polygon_ids": [
+        7
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 209,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 64670,
+        "bottom": 45681,
+        "right": 65050,
+        "top": 46799
+      },
+      "merged_polygon_ids": [
+        7
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 210,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 68441,
+        "bottom": 84130,
+        "right": 69559,
+        "top": 84510
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 211,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 68810,
+        "bottom": 83761,
+        "right": 69190,
+        "top": 84879
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 212,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 77641,
+        "bottom": 84130,
+        "right": 78470,
+        "top": 84510
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 213,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 78010,
+        "bottom": 83761,
+        "right": 78390,
+        "top": 84879
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 214,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 79021,
+        "bottom": 18850,
+        "right": 80139,
+        "top": 19230
+      },
+      "merged_polygon_ids": [
+        2
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 215,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 79390,
+        "bottom": 18481,
+        "right": 79770,
+        "top": 19599
+      },
+      "merged_polygon_ids": [
+        2
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 216,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 80401,
+        "bottom": 18850,
+        "right": 81519,
+        "top": 19230
+      },
+      "merged_polygon_ids": [
+        2
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 217,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 80770,
+        "bottom": 18481,
+        "right": 81150,
+        "top": 19599
+      },
+      "merged_polygon_ids": [
+        2
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 218,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 81321,
+        "bottom": 46050,
+        "right": 82439,
+        "top": 46430
+      },
+      "merged_polygon_ids": [
+        151
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 219,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 81690,
+        "bottom": 45681,
+        "right": 82070,
+        "top": 46799
+      },
+      "merged_polygon_ids": [
+        151
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 220,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 89141,
+        "bottom": 40610,
+        "right": 90259,
+        "top": 40990
+      },
+      "merged_polygon_ids": [
+        198
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 221,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 89510,
+        "bottom": 40241,
+        "right": 89890,
+        "top": 41359
+      },
+      "merged_polygon_ids": [
+        198
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 222,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 90061,
+        "bottom": 84130,
+        "right": 91179,
+        "top": 84510
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 223,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 90430,
+        "bottom": 83761,
+        "right": 90810,
+        "top": 84879
+      },
+      "merged_polygon_ids": [
+        22
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 224,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 101101,
+        "bottom": 84130,
+        "right": 102219,
+        "top": 84510
+      },
+      "merged_polygon_ids": [
+        33
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 225,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 101470,
+        "bottom": 83761,
+        "right": 101850,
+        "top": 84879
+      },
+      "merged_polygon_ids": [
+        33
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 226,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 122090,
+        "bottom": 46050,
+        "right": 122919,
+        "top": 46430
+      },
+      "merged_polygon_ids": [
+        155
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 227,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 122170,
+        "bottom": 45681,
+        "right": 122550,
+        "top": 46799
+      },
+      "merged_polygon_ids": [
+        155
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 228,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 123641,
+        "bottom": 7970,
+        "right": 124759,
+        "top": 8350
+      },
+      "merged_polygon_ids": [
+        163
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 229,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 124010,
+        "bottom": 7601,
+        "right": 124390,
+        "top": 8719
+      },
+      "merged_polygon_ids": [
+        163
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 230,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 126401,
+        "bottom": 73250,
+        "right": 127519,
+        "top": 73630
+      },
+      "merged_polygon_ids": [
+        20
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 231,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 126770,
+        "bottom": 72881,
+        "right": 127150,
+        "top": 73999
+      },
+      "merged_polygon_ids": [
+        20
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 232,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 135890,
+        "bottom": 29730,
+        "right": 136719,
+        "top": 30110
+      },
+      "merged_polygon_ids": [
+        215
+      ],
+      "classification": "accepted_documented_gap"
+    },
+    {
+      "index": 233,
+      "rule": "nwell.width.1",
+      "bbox": {
+        "left": 135970,
+        "bottom": 29361,
+        "right": 136350,
+        "top": 30479
+      },
+      "merged_polygon_ids": [
+        215
+      ],
+      "classification": "accepted_documented_gap"
+    }
+  ]
+}
