@@ -1,0 +1,31 @@
+== post-route gate-level cross-check ==
+netlist:  verification/gate-level/modexp_post_route.v
+cells:    /home/ubuntu/.volare/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
+pdk:      open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b
+width:    16 (fixed -- the layout is one elaboration)
+cases:    500   seed: 20260807016
+
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/usr/lib/x86_64-linux-gnu/libpython3.12.so.1.0'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:233  in gpi_load_users                  Running entry func 'initialize' from loaded library '/home/ubuntu/loom-workspaces/sky130-modexp/.loom/worktrees/issue-83/.venv/lib/python3.12/site-packages/cocotb/simulator.cpython-312-x86_64-linux-gnu.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:114  in initialize                      Using Python 3.12.12 interpreter at /home/ubuntu/loom-workspaces/sky130-modexp/.loom/worktrees/issue-83/.venv/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Seeding Python random module with 20260807016
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /home/ubuntu/loom-workspaces/sky130-modexp/.loom/worktrees/issue-83/.venv/lib/python3.12/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running cross_check_tb.test_cross_check (1/1)
+                                                            Randomized bit-exact cross-check, parameterized entirely through env
+2264710.00ns INFO     cocotb.regression                  cross_check_tb.test_cross_check passed
+2264710.00ns INFO     cocotb.regression                  *****************************************************************************************
+                                                        ** TEST                             STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        *****************************************************************************************
+                                                        ** cross_check_tb.test_cross_check   PASS     2264710.00          25.62      88393.72  **
+                                                        *****************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0               2264710.00          25.62      88392.15  **
+                                                        *****************************************************************************************
+
+500/500 match, 0 mismatches
+transcript is BYTE-IDENTICAL to the RTL transcript verification/records/width-cross-check/artifacts/20260815-073109-564b598/width-16.jsonl
+RESULT: PASS
+
+(transcript + build kept at /tmp/issue83-transcript)
