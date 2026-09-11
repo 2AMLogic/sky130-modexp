@@ -4,6 +4,63 @@ LVS evidence for the routed GDS (`layout/modexp.gds`, from #7) — see
 `docs/signoff-claim.md` for the overall claim and the comparison level this
 establishes.
 
+## Update (issue #81, 2026-09-11): re-run against the tapcell/PDN/filler-cell
+## GDS — still `mismatch`, count grew from 15 to 17 for a fully-attributed
+## reason, read this first
+
+Issue #81 added `request.power` (tapcell + PDN + filler-cell insertion) to
+`flow/par-modexp.json` and regenerated `layout/modexp.def`/`layout/modexp.gds`
+(closing all 234 previously-open `nwell` DRC violations, see
+`layout/drc/README.md`). This section documents a **fresh** re-run of the
+same extraction/reference/comparison methodology issue #8's original
+comparison used (below), against the **new** GDS — not the "fresh
+self-consistent build" methodology issue #55 introduced (further below),
+which remains a separate, unrelated, still-current evidence chain against
+its own independently-rebuilt reference.
+
+**Result: still `status: "mismatch"`, now 17 mismatches (was 15), 100%
+`category: "topology"`, `"circuit could not be matched to a counterpart"`
+— no new mismatch category, matched net/pin counts (333/333) unchanged.**
+Fully attributed, by the same direct instance-by-instance DEF-vs-Verilog
+accounting issue #8's comparison used: of `layout/modexp.def`'s new 3074
+`COMPONENTS`, 718 remain logic-bearing (excluding `TAP_*`/`FILLER_*`/
+`ANTENNA_*` physical-only instances) — 680 present under an identical
+instance name and cell type vs. the same, unchanged frozen synthesis
+netlist, 3 resized, 35 new CTS/timing/antenna-fixup insertions, 0
+synthesis instances missing. The other 2356 instances are this issue's own
+new physical-only cells (265 tapcells + 2087 fillers + 4 antenna-fixup
+diodes) — by construction, none has a synthesis-side counterpart. `klt
+lvs`'s 15 `side: "layout"` unmatched circuit types are exactly: 6
+CTS/timing-fixup-only types + 1 antenna-fixup type + 3 post-resize types +
+the 5 new physical-only types (`sky130_fd_sc_hd__tapvpwrvgnd_1`,
+`__fill_1`, `__fill_2`, `__fill_4`, `__fill_8`); the 1 `side: "reference"`
+unmatched type is the same pre-resize `sky130_fd_sc_hd__o22ai_1` the
+superseded comparison found. Full narrative, per-type detail, and the
+`write_verilog -remove_cells` scoping finding (this repo's own LVS
+methodology extracts directly from the GDS, a code path that flag does not
+touch, so the 5 new physical-only types are **not** automatically filtered
+and require the same manual classification as ordinary CTS-buffer
+insertions):
+`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md` (and its
+twin, `20260911-053520-d5e43d3.md`).
+
+**A separate, unattempted finding, not part of this comparison**: this
+issue's new, PDN-equipped `layout/modexp.gds` gives `klt extract` a
+genuine top-level `VDD`/`VSS` pin pair for the first time (a real,
+continuous power net now reaches the die boundary). `layout/lvs/`'s
+committed `modexp_layout_abstracted.spice`/`modexp_layout_extract_report.json`
+below are **deliberately left unchanged** (still describing the *pre*-#81,
+no-PDN GDS) because `verification/gate-level/`'s own gate-level-simulation
+pipeline (a separate claim, `docs/baseline.md#post-route-gate-level-simulation`)
+regenerates its simulated netlist directly from these same two files, and
+`verification/gate-level/spice_to_verilog.py`'s netlist-derivation
+validator — written before any GDS in this repo had a PDN — rejects the
+new `VDD`/`VSS` top-level pins as validation errors rather than recognizing
+them as legitimate power ports. Regenerating these two files (and the
+gate-level-sim pipeline that depends on them) for the new, PDN-equipped GDS
+is tracked as a dedicated follow-up, explicitly out of issue #81's own
+DRC/LVS-focused scope: [sky130-modexp#83](https://github.com/2AMLogic/sky130-modexp/issues/83).
+
 ## Update (issue #55, 2026-08-16): a true as-built reference now exists, run
 ## against a fresh build — read this before the historical section below
 

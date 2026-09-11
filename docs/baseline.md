@@ -294,15 +294,76 @@ an RTL restructuring of that chain — explicitly out of scope for the issue
 that produced this update (its own decision record, latency-formula
 re-derivation, and full bit-exact re-verification required first).
 
+### Nominal-corner re-measurement with tapcell/PDN/filler-cell insertion (issue #81)
+
+**Status: measured, 2026-09-11.** Same reasoning as the "mapping-only
+re-run" section above — this is an *addition*, not a correction; the
+682/718-cell figures above remain exactly as measured for the
+configuration they describe. `flow/par-modexp.json` (the single-corner
+nominal recipe backing the *committed* `layout/modexp.gds`/`layout/
+modexp.def`, unlike the 55%-utilization sweep above which uses its own
+separate `flow/run-corner-sweep.sh` floorplan) gained a `power` block
+(`request.power`: tapcell + PDN + filler-cell insertion, per
+[klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120)),
+with the `floorplan`/`io`/`constraints`/`seed` blocks left byte-identical
+to the original issue #7 recipe — only the new `power` block differs.
+
+| Quantity | Issue #7 (original, `power` absent) | Issue #81 (this update, `power` added) |
+| --- | --- | --- |
+| sky130 cell count (`WIDTH=16`) | 718 | 718 logic-bearing + **2356 new physical-only** (265 tapcells + 2087 fillers + 4 antenna-fixup diodes) = **3074** |
+| Die area | 21969.2 µm² | 21969.2 µm² (unchanged — same floorplan) |
+| Core area | 19398.6 µm² | 19398.6 µm² (unchanged) |
+| Utilization | 37.08% | 39.31% (more of the same core area is now occupied, by tapcells/fillers) |
+| Achieved Fmax at `tt_025C_1v80` | 149.66 MHz | 159.63 MHz |
+| Setup / hold / antenna / route-DRC violations | 0/0/—/— | 0/0/0/0 |
+| Estimated power at `tt_025C_1v80` | 0.876 mW | 0.983 mW |
+| Routed wirelength | 17805 µm | 19060 µm |
+
+**100 MHz still closes at the nominal corner, with more margin than
+before.** The Fmax/wirelength/power deltas are incidental — the floorplan
+is unchanged; they are OpenROAD's own legalization/CTS/optimization
+responding to tapcell rows now occupying fixed placement sites and antenna
+fix-ups now running, **not a claim of anything beyond what they are** (see
+`CLAUDE.md`'s overclaim-trap note — this is not a PPA comparison against
+any external work). The 718 logic-bearing instances are otherwise the same
+concept as issue #7's own 718: 680 present under an identical instance
+name and cell type against the unchanged synthesis netlist, 3 resized, 35
+new CTS/timing/antenna-fixup insertions, 0 missing.
+
+**This closes DRC for real** (`docs/signoff-claim.md`): all 234
+`nwell.space.1`/`nwell.width.1` violations issue #79 classified against
+the pre-#81 GDS are gone. LVS is re-run and still reports `mismatch` (17,
+was 15 — fully attributed to the 5 new physical-only cell types plus
+ordinary CTS churn), so `spec/modexp.md`'s Signoff row remains not met
+overall. Full record:
+[`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`](../verification/records/place-and-route/records/20260911-052542-d5e43d3.md).
+
+**The 18-corner sweep above (both the original and the mapping-only
+re-run) is unaffected** — neither used the committed `flow/par-modexp.json`
+recipe this section's original table measures, and issue #81 did not
+re-run either sweep with `power` enabled.
+
 ### What this run does not claim
 
-Per `klt place-and-route`'s documented scope, the produced GDS
-(`layout/modexp.gds`) has **no tapcell insertion, no power-grid (PDN)
-generation, no metal fill, no filler-cell insertion, and no
-`DONT_USE_CELLS` exclusion** — core-only floorplanning, no IO ring. It is
-not a signoff-ready macro; DRC/LVS-clean signoff is later work (issue #8 and
-beyond). The full record, including provenance and the reproduction recipe,
-is at
+Per `klt place-and-route`'s documented v1 scope, the GDS this section's
+figures were originally measured against had **no tapcell insertion, no
+power-grid (PDN) generation, no metal fill, no filler-cell insertion, and
+no `DONT_USE_CELLS` exclusion** — core-only floorplanning, no IO ring.
+**Updated, issue #81 (2026-09-11)**: `flow/par-modexp.json` (the
+committed, single-corner nominal recipe backing `layout/modexp.gds`) has
+since gained a `power` block, and the regenerated GDS now has tapcell
+insertion, PDN generation, and filler-cell insertion — see
+[`layout/README.md`](../layout/README.md) and
+[`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`](../verification/records/place-and-route/records/20260911-052542-d5e43d3.md)
+for the current state; DRC is now clean against it
+([`docs/signoff-claim.md`](signoff-claim.md)). Metal (density) fill and
+`DONT_USE_CELLS` exclusion remain absent. **The 18-corner sweep figures in
+this section are unaffected** — they were always measured via
+`flow/run-corner-sweep.sh`'s separate, revised (55% utilization) floorplan,
+never against the committed `layout/modexp.gds`/`flow/par-modexp.json`
+this note describes, and issue #81 did not re-run that sweep. It is not
+yet a fully signoff-ready macro (LVS is still not clean); the full record,
+including provenance and the reproduction recipe, is at
 [`verification/records/place-and-route/`](../verification/records/place-and-route/).
 
 ## Post-route gate-level simulation — appended, issue #9; Leg 2 updated, issues #55, #78
