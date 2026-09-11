@@ -16,9 +16,11 @@ runs in CI exactly as `verification/test_check_records.py` does):
    abstraction + LEF are written to a temp dir and the *real*
    `spice_to_verilog.py` is run against them as a subprocess. Covers pin
    binding, power-pin dropping, structural port-direction derivation, bus
-   reassembly, and the three validation classes (`--check`): a two-output
-   short, an undriven cell input, and a mismatch against the extraction
-   report.
+   reassembly (both top-level ports and, issue #83, an internal
+   DEF-net-named bus), and the validation classes (`--check`): a
+   two-output short, an undriven cell input, a mismatch against the
+   extraction report, and (issue #83) a real top-level `VDD`/`VSS` power
+   port pair recognized rather than misreported as a short/unconnected.
 
 2. **Committed-artifact consistency** -- the checked-in
    `modexp_post_route.v` is parsed and its instance count, per-cell-type
@@ -121,15 +123,39 @@ MACRO sky130_fd_sc_hd__clkinv_1
   END Y
 END sky130_fd_sc_hd__clkinv_1
 
+MACRO tie_pdn
+  PIN HI
+    DIRECTION OUTPUT ;
+  END HI
+  PIN VGND
+    DIRECTION INOUT ;
+  END VGND
+  PIN VPB
+    DIRECTION INOUT ;
+  END VPB
+  PIN VPWR
+    DIRECTION INOUT ;
+  END VPWR
+END tie_pdn
+
 END LIBRARY
 """
 
+# `nets[].name` in the fixture report below is written the way this repo's
+# pinned `klt` actually spells it (schema_version 3, klayout-tools#1162): an
+# unlabelled `$<n>` net backslash-escapes its leading `$`, matching the
+# abstracted SPICE deck's own node-reference spelling -- NOT the plain
+# `$<n>` an older `klt` used to write. `check_against_report` must re-escape
+# before comparing (`report_net_spelling`), so this exercises that.
 FIXTURE_REPORT = {
     "pin_count": 6,
     "net_count": 8,
     "nets": [
         {"name": n}
-        for n in ("clk", "d_in[0]", "d_in[1]", "q_out[0]", "q_out[1]", "rst_n", "$10", "$99", "$98")
+        for n in (
+            "clk", "d_in[0]", "d_in[1]", "q_out[0]", "q_out[1]", "rst_n",
+            "\\$10", "\\$99", "\\$98",
+        )
     ],
     "abstracted_cells": [
         {"cell": "sky130_fd_sc_hd__dfrtp_1", "instance_count": 2},
@@ -137,8 +163,70 @@ FIXTURE_REPORT = {
     ],
 }
 
+# --------------------------------------------------------------------------
+# Synthetic fixture: a PDN-equipped layout -- a real top-level VDD/VSS pin
+# pair, one instance (a stand-in for a synthesis-inserted tie-high cell)
+# whose non-power HI output pin the router merged directly onto the VDD
+# strap (electrically identical, a legitimate optimization -- see issue
+# #83), same as the real `sky130_fd_sc_hd__conb_1` instance this fixture
+# shape was found against in `layout/lvs/modexp_layout_abstracted.spice`.
+# --------------------------------------------------------------------------
+FIXTURE_SPICE_PDN = """* extracted by klt extract --deck sky130
 
-def run_converter(workdir: Path, spice: str, report: dict | None, extra=()):
+* cell tiny_pdn
+.SUBCKT tiny_pdn VDD VSS clk d_in q_out rst_n
+Xdff0 clk d_in q_out rst_n VSS VDD VDD
++ sky130_fd_sc_hd__dfrtp_1
+Xtie0 VDD VSS VDD VDD
++ tie_pdn
+.ENDS tiny_pdn
+
+* cell sky130_fd_sc_hd__dfrtp_1
+.SUBCKT sky130_fd_sc_hd__dfrtp_1 CLK D Q RESET_B VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__dfrtp_1
+
+* cell tie_pdn
+.SUBCKT tie_pdn HI VGND VPB VPWR
+.ENDS tie_pdn
+"""
+
+FIXTURE_REPORT_PDN = {
+    "pin_count": 6,
+    "net_count": 6,
+    "nets": [
+        {"name": n} for n in ("VDD", "VSS", "clk", "d_in", "q_out", "rst_n")
+    ],
+    "abstracted_cells": [
+        {"cell": "sky130_fd_sc_hd__dfrtp_1", "instance_count": 1},
+        {"cell": "tie_pdn", "instance_count": 1},
+    ],
+}
+
+# --------------------------------------------------------------------------
+# Synthetic fixture: an *internal* (non-port) net bus. `klt extract
+# --def-net-names` can label an interior net `base[idx]` just as readily as
+# a top-level port -- issue #83 found this against the real design's own
+# regenerated extraction (an internal net the DEF calls e.g. `mm_p[3]`).
+# --------------------------------------------------------------------------
+FIXTURE_SPICE_INTERNAL_BUS = """* extracted by klt extract --deck sky130
+
+* cell tiny_ibus
+.SUBCKT tiny_ibus clk d_in q_out rst_n
+Xdff0 clk d_in ibus[0] rst_n \\$98 \\$98 \\$98
++ sky130_fd_sc_hd__dfrtp_1
+Xdff1 clk ibus[0] ibus[1] rst_n \\$98 \\$98 \\$98
++ sky130_fd_sc_hd__dfrtp_1
+Xdff2 clk ibus[1] q_out rst_n \\$98 \\$98 \\$98
++ sky130_fd_sc_hd__dfrtp_1
+.ENDS tiny_ibus
+
+* cell sky130_fd_sc_hd__dfrtp_1
+.SUBCKT sky130_fd_sc_hd__dfrtp_1 CLK D Q RESET_B VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__dfrtp_1
+"""
+
+
+def run_converter(workdir: Path, spice: str, report: dict | None, extra=(), top="tiny"):
     """Run the real converter as a subprocess. Returns (exit_code, stdout+stderr, verilog_text)."""
     spice_path = workdir / "layout.spice"
     lef_path = workdir / "cells.lef"
@@ -147,7 +235,7 @@ def run_converter(workdir: Path, spice: str, report: dict | None, extra=()):
     lef_path.write_text(FIXTURE_LEF)
     argv = [
         sys.executable, str(CONVERTER), str(spice_path), str(lef_path), str(out_path),
-        "--top", "tiny",
+        "--top", top,
     ]
     if report is not None:
         report_path = workdir / "report.json"
@@ -282,11 +370,63 @@ def case_pin_arity_mismatch():
     return problems
 
 
+def case_pdn_power_ports():
+    """A real top-level VDD/VSS pin pair (issue #83): recognized as power
+    ports, not flagged as unconnected or as a power/signal short, dropped
+    from the module's port list, and declared supply1/supply0 so the
+    tie-cell-style instance wired directly onto the rail reads a real
+    constant. Existing no-PDN behavior (covered by every other case above,
+    all of whose fixtures carry no VDD/VSS pin) must be unaffected."""
+    with tempfile.TemporaryDirectory(prefix="s2v-selftest-") as tmp:
+        rc, out, v = run_converter(
+            Path(tmp), FIXTURE_SPICE_PDN, FIXTURE_REPORT_PDN, ["--check"], top="tiny_pdn",
+        )
+    problems = []
+    if rc != 0:
+        problems.append(f"exit {rc}, expected 0 -- output:\n{out}")
+    if "validation: OK" not in out:
+        problems.append(f"did not report a clean validation -- output:\n{out}")
+    for banned in ("input  wire VDD", "output wire VDD", "input  wire VSS",
+                   "output wire VSS", "wire VDD;", "wire VSS;"):
+        if banned in v:
+            problems.append(f"{banned!r} found -- VDD/VSS must not be an ordinary port/wire")
+    if "supply1 VDD;" not in v:
+        problems.append("VDD was not declared supply1")
+    if "supply0 VSS;" not in v:
+        problems.append("VSS was not declared supply0")
+    if ".HI(VDD)" not in v:
+        problems.append("tie0's HI pin is not wired to VDD in the emitted instantiation")
+    return problems
+
+
+def case_internal_bus_grouping():
+    """An internal (non-port) DEF-net-named bus must be declared once as a
+    ranged `wire`, not once per bit. Regression: emitting `wire ibus[0];`
+    then `wire ibus[1];` has Icarus parse each as a SystemVerilog
+    unpacked-array declaration of a *different* size for the same name
+    `ibus` -- a redeclaration error compiling the second one, not the two
+    bits of one 2-bit net."""
+    with tempfile.TemporaryDirectory(prefix="s2v-selftest-") as tmp:
+        rc, out, v = run_converter(
+            Path(tmp), FIXTURE_SPICE_INTERNAL_BUS, None, ["--check"], top="tiny_ibus",
+        )
+    problems = []
+    if rc != 0:
+        problems.append(f"exit {rc}, expected 0 -- output:\n{out}")
+    if "wire [1:0] ibus;" not in v:
+        problems.append(f"internal bus was not declared as a single ranged wire -- output:\n{v}")
+    for banned in ("wire ibus[0];", "wire ibus[1];"):
+        if banned in v:
+            problems.append(f"{banned!r} found -- bus was declared per-bit instead of ranged")
+    return problems
+
+
 # --------------------------------------------------------------------------
 # Committed-artifact consistency (no PDK, no simulator)
 # --------------------------------------------------------------------------
 _INST_RE = re.compile(r"^  (sky130_fd_sc_hd__\w+) (\S+) \($", re.MULTILINE)
 _PORT_RE = re.compile(r"^    (input|output)\s+wire\s*(?:\[(\d+):(\d+)\])?\s*(\w+)", re.MULTILINE)
+_SUPPLY_RE = re.compile(r"^  supply[01] (\w+);$", re.MULTILINE)
 
 
 def case_committed_netlist_matches_extraction():
@@ -318,15 +458,19 @@ def case_committed_netlist_matches_extraction():
     if len(set(inst for _c, inst in instances)) != len(instances):
         problems.append("committed netlist has duplicate instance names")
 
-    # Top-level port bits must equal the extraction's own pin count and the
+    # Top-level port bits, plus any recognized top-level power port
+    # (declared `supply1`/`supply0` instead of an ordinary port -- issue
+    # #83), must together equal the extraction's own pin count and the
     # abstracted SPICE's own top .SUBCKT pin list.
     port_bits = 0
     for _dir, msb, lsb, _name in _PORT_RE.findall(text):
         port_bits += 1 if msb == "" else abs(int(msb) - int(lsb)) + 1
-    if port_bits != report["pin_count"]:
+    power_port_bits = len(_SUPPLY_RE.findall(text))
+    if port_bits + power_port_bits != report["pin_count"]:
         problems.append(
-            f"committed netlist declares {port_bits} port bits, extraction "
-            f"report says pin_count={report['pin_count']}"
+            f"committed netlist declares {port_bits} port bits + "
+            f"{power_port_bits} top-level power port(s), extraction report "
+            f"says pin_count={report['pin_count']}"
         )
 
     spice_text = ABSTRACTED_SPICE.read_text()
@@ -354,6 +498,8 @@ CASES = (
     ("validation: per-cell instance count vs extraction report", case_report_mismatch),
     ("validation: top-level pin count vs extraction report", case_pin_count_mismatch),
     ("hard error: X-card arity vs .SUBCKT arity", case_pin_arity_mismatch),
+    ("PDN case: real VDD/VSS top-level power ports", case_pdn_power_ports),
+    ("internal DEF-net-named bus declared once, ranged", case_internal_bus_grouping),
     ("committed modexp_post_route.v matches the extraction", case_committed_netlist_matches_extraction),
 )
 

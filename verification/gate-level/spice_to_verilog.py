@@ -29,10 +29,23 @@ What the conversion does
   against the PDK's own behavioural/timing Verilog cell models.
 * **Drops the power pins** (`VPWR`/`VGND`/`VPB`/`VNB`). The sky130_fd_sc_hd
   Verilog models declare those ports only under `USE_POWER_PINS`; compiled
-  without it they are internal `supply1`/`supply0` nets. This is also the
-  only defensible choice here: this GDS has no PDN (see `layout/README.md`),
-  so the extracted rail connectivity is fragmented per placement row and is
-  not a meaningful power network to simulate.
+  without it they are internal `supply1`/`supply0` nets. Before issue #81's
+  PDN this was also the only defensible choice for the *rail* itself: the
+  GDS had no PDN, so the extracted rail connectivity was fragmented per
+  placement row and not a meaningful power network to simulate. It remains
+  correct with a PDN too -- `USE_POWER_PINS` stays undefined either way.
+* **Recognizes real top-level `VDD`/`VSS` power ports** (issue #83, once a
+  PDN gives the layout a continuous power grid reaching the die boundary --
+  `flow/par-modexp.json`'s `power.power_net`/`ground_net`, always exactly
+  these two names for this repo). Such a pin is dropped from the emitted
+  module's port list (same spirit as the per-cell power pins above -- this
+  is a rail, not a functional I/O signal) and declared `supply1`/`supply0`
+  instead of an ordinary `wire`, so anything structurally wired to it
+  (e.g. a synthesis-inserted tie-high cell whose output the router merged
+  directly onto the `VDD` strap -- electrically identical, a legitimate
+  layout optimization, not a short) reads a well-defined constant instead
+  of an undriven top-level input's `x`. A no-PDN layout has no such pin at
+  all, so this is a no-op for it -- the case above is unchanged.
 * Derives top-level **port directions structurally** from the netlist plus
   the standard-cell LEF's own `DIRECTION` declarations -- a top pin driven by
   some cell's output pin is an `output`, anything else is an `input`. Nothing
@@ -76,6 +89,15 @@ from spice_lef_parsing import (  # noqa: E402
 )
 
 POWER_PINS = ("VPWR", "VGND", "VPB", "VNB")
+
+# Real top-level power/ground ports a PDN-equipped layout's `klt extract` can
+# report (issue #83) -- the names are this repo's own PDN configuration
+# (`flow/par-modexp.json`'s `power.power_net`/`ground_net`), always exactly
+# these two, never a design-chosen alternative. Mapped to the Verilog net
+# type that gives every reader of the (power-pin-dropped, no
+# `USE_POWER_PINS`) emitted netlist a well-defined constant value matching
+# what the rail physically is, instead of an undriven top-level input's `x`.
+TOP_POWER_PINS = {"VDD": "supply1", "VSS": "supply0"}
 
 DEFAULT_TOP_CELL = "modexp"
 
@@ -162,6 +184,23 @@ def verilog_net_name(name: str) -> str:
     return "\\" + name + " "
 
 
+def report_net_spelling(name: str) -> str:
+    """Re-derive `klt extract`'s own JSON-report spelling of a net name.
+
+    `conv.*`'s net names are always the *unescaped* form (`parse_spice`
+    unescapes every SPICE token via `spice_lef_parsing.unescape`). The JSON
+    report's `nets[].name` (and `devices[].nets[...]`, `parasitics.nets[]`)
+    instead carries the same SPICE-escaped spelling the abstracted SPICE
+    deck's own node references use -- an unlabelled net's `$<n>` placeholder
+    backslash-escapes its leading `$` (`\\$<n>`) so a downstream SPICE reader
+    never mistakes it for an inline comment. This mirrors this repo's pinned
+    `klt`'s own escaping (klayout-tools#1162, schema_version 3); this
+    function does the same transform in reverse of `unescape` so the two
+    spellings compare equal.
+    """
+    return "\\" + name if name.startswith("$") else name
+
+
 def repo_relative(path: Path) -> str:
     """Path relative to the enclosing git working tree, when there is one.
 
@@ -230,6 +269,18 @@ class Conversion:
         self.power_nets = power_nets
         self.signal_nets = signal_nets
 
+        # Real top-level power/ground ports (issue #83): a top pin named
+        # VDD/VSS *and* actually reached via at least one instance's power
+        # pin -- the second condition means a hypothetical layout that
+        # happens to label an ordinary signal pin "VDD" without it being a
+        # true rail is never misclassified. Empty for a no-PDN layout (no
+        # such pin exists in `self.top_pins` at all), so every check below
+        # is a no-op there, preserving the pre-#83 no-PDN behavior exactly.
+        self.top_power_pins = sorted(
+            p for p in top_pin_set if p in TOP_POWER_PINS and p in power_nets
+        )
+        top_power_pin_set = set(self.top_power_pins)
+
         # Top-level port directions, derived structurally.
         self.port_direction = {}
         for pin in self.top_pins:
@@ -252,14 +303,24 @@ class Conversion:
             names = ", ".join(f"{i}.{p}" for i, p in readers[net])
             self.problems.append(f"net {net} is undriven but read by: {names}")
 
-        # A net used as both a power pin and a signal pin would be a rail short.
-        self.power_signal_overlap = sorted(power_nets & signal_nets)
+        # A net used as both a power pin and a signal pin would be a rail
+        # short -- *unless* it is a recognized top-level power port, where
+        # this is expected: e.g. a synthesis-inserted tie-high cell whose
+        # output the router merged directly onto the VDD strap (DC
+        # equivalent, a legitimate layout optimization, not a short).
+        self.power_signal_overlap = sorted((power_nets & signal_nets) - top_power_pin_set)
         for net in self.power_signal_overlap:
             self.problems.append(f"net {net} is used as both a power pin and a signal pin")
 
-        # Unused top-level pins (connected to nothing).
+        # Unused top-level pins (connected to nothing). A recognized
+        # top-level power port is, by construction, connected via the power
+        # network even though it never appears in `drivers`/`readers`
+        # (those only track non-power-pin connections), so it is excluded
+        # here rather than reported as floating.
         self.unconnected_top_pins = sorted(
-            p for p in self.top_pins if not drivers.get(p) and not readers.get(p)
+            p
+            for p in self.top_pins
+            if p not in top_power_pin_set and not drivers.get(p) and not readers.get(p)
         )
         for pin in self.unconnected_top_pins:
             self.problems.append(f"top-level pin {pin} is connected to no cell pin")
@@ -271,7 +332,10 @@ class Conversion:
         scalars: list[tuple[str, str]] = []
         buses: "OrderedDict[str, list[int]]" = OrderedDict()
         bus_dir: dict[str, str] = {}
+        top_power_pin_set = set(self.top_power_pins)
         for pin in sorted(self.top_pins):
+            if pin in top_power_pin_set:
+                continue
             m = _BUS_BIT_RE.match(pin)
             direction = self.port_direction[pin]
             if m:
@@ -303,15 +367,29 @@ class Conversion:
         port_names = {name for _d, name, _m, _l in ports}
 
         # Nets needing a `wire` declaration: every signal net that is not a
-        # top-level port bit and not power-only.
-        declared = OrderedDict()
+        # top-level port bit, not power-only, and not a recognized top-level
+        # power port (those get a `supply1`/`supply0` declaration below
+        # instead, so anything wired to them reads a well-defined constant).
+        # Grouped into scalars and bus ranges the same way top-level ports
+        # are grouped above (`ports()`): `--def-net-names` can label an
+        # *internal* net `mm_p[3]`, not just a top-level port, and
+        # declaring one `wire mm_p[3];` per bit would have Icarus parse each
+        # as a SystemVerilog unpacked-array declaration of a *different*
+        # size for the same name `mm_p` -- a redeclaration error on the
+        # second bit, not the intended single multi-bit net.
+        top_power_pin_set = set(self.top_power_pins)
+        declared_scalars: list[str] = []
+        declared_buses: "OrderedDict[str, list[int]]" = OrderedDict()
         for net in self.signal_nets:
-            if net in port_names:
+            if net in port_names or net in top_power_pin_set:
                 continue
             m = _BUS_BIT_RE.match(net)
             if m and m.group(1) in port_names:
                 continue
-            declared[verilog_net_name(net)] = True
+            if m:
+                declared_buses.setdefault(m.group(1), []).append(int(m.group(2)))
+            else:
+                declared_scalars.append(net)
 
         lines: list[str] = []
         for line in header_lines:
@@ -328,8 +406,16 @@ class Conversion:
         lines.append(",\n".join(decls))
         lines.append(");")
         lines.append("")
-        for net in sorted(declared):
-            lines.append(f"  wire {net};")
+        for pin in self.top_power_pins:
+            lines.append(f"  {TOP_POWER_PINS[pin]} {verilog_net_name(pin)};")
+        for net in sorted(set(declared_scalars)):
+            lines.append(f"  wire {verilog_net_name(net)};")
+        for base in sorted(declared_buses):
+            idxs = declared_buses[base]
+            lo, hi = min(idxs), max(idxs)
+            if sorted(idxs) != list(range(lo, hi + 1)):
+                self.problems.append(f"bus {base} has non-contiguous bit indices")
+            lines.append(f"  wire [{hi}:{lo}] {base};")
         lines.append("")
         for inst, cell_type, port_map in self.instances:
             conns = [
@@ -378,9 +464,20 @@ def check_against_report(conv: Conversion, report_path: Path) -> list[str]:
     # Every net named in the report must be one this netlist knows about
     # (the reverse does not hold: the report also lists nets carrying no cell
     # pin at all, e.g. isolated rail fragments).
+    #
+    # `report_net_spelling` re-applies the escaping `klt extract`'s own JSON
+    # response now uses for `nets[].name` (since klayout-tools#1162, this
+    # repo's pinned `klt` schema_version 3): an unlabelled net's placeholder
+    # name is written SPICE-escaped (`\$1568`, matching the abstracted
+    # SPICE's own `NetlistSpiceWriter` node-reference spelling) rather than
+    # the older, plain `$1568`. `conv.*`'s own net names are always the
+    # *unescaped* form (`parse_spice` unescapes every SPICE token), so the
+    # comparison below must re-escape before comparing -- otherwise every
+    # unlabelled net in the design (there are hundreds) would spuriously
+    # read as "absent from the report."
     known = conv.signal_nets | conv.power_nets | set(conv.top_pins)
     report_nets = {n["name"] for n in report.get("nets", [])}
-    stray = sorted(known - report_nets)
+    stray = sorted({n for n in known if report_net_spelling(n) not in report_nets})
     if stray:
         errors.append(
             f"{len(stray)} net(s) in the netlist are absent from the extract "
@@ -446,11 +543,23 @@ def main(argv=None) -> int:
         f"cell types, {len(top_pins)} top-level pins.",
         "",
         "Power pins (VPWR/VGND/VPB/VNB) are intentionally absent: compile the",
-        "sky130_fd_sc_hd models WITHOUT `USE_POWER_PINS`. This GDS has no PDN,",
-        "so extracted rail connectivity is fragmented per placement row and is",
-        "not a power network worth simulating -- see verification/gate-level/",
-        "README.md for the full scope statement.",
+        "sky130_fd_sc_hd models WITHOUT `USE_POWER_PINS`.",
     ]
+    if conv.top_power_pins:
+        header += [
+            f"This layout has a real PDN -- {', '.join(conv.top_power_pins)} are",
+            "genuine top-level power/ground pins in the extraction, so they are",
+            "likewise dropped from this module's own port list and declared",
+            "supply1/supply0 instead of an ordinary wire (see issue #83), giving",
+            "anything structurally wired to them a well-defined constant instead",
+            "of an undriven top-level input's `x`.",
+        ]
+    else:
+        header += [
+            "This GDS has no PDN, so extracted rail connectivity is fragmented",
+            "per placement row and is not a power network worth simulating --",
+            "see verification/gate-level/README.md for the full scope statement.",
+        ]
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(conv.to_verilog(header))
 
@@ -466,6 +575,11 @@ def main(argv=None) -> int:
         outs = [p for p in conv.ports() if p[0] == "output"]
         ins = [p for p in conv.ports() if p[0] == "input"]
         print(f"  ports: {len(ins)} input, {len(outs)} output (directions derived from LEF)")
+        if conv.top_power_pins:
+            print(
+                f"  top-level power ports: {', '.join(conv.top_power_pins)} "
+                "(dropped from ports, declared supply1/supply0)"
+            )
         if args.report:
             print(f"  cross-checked against {args.report}")
         if problems:

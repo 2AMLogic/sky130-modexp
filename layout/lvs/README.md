@@ -61,6 +61,30 @@ gate-level-sim pipeline that depends on them) for the new, PDN-equipped GDS
 is tracked as a dedicated follow-up, explicitly out of issue #81's own
 DRC/LVS-focused scope: [sky130-modexp#83](https://github.com/2AMLogic/sky130-modexp/issues/83).
 
+## Update (issue #83, 2026-09-11): the two files above are now regenerated
+## — LVS-neutral, read this if you came from the paragraph above
+
+Issue #83 taught `verification/gate-level/spice_to_verilog.py` to recognize
+`VDD`/`VSS` as real top-level power ports and regenerated
+`modexp_layout_abstracted.spice`/`modexp_layout_extract_report.json` against
+the current, PDN-equipped `layout/modexp.gds` (content_hash unchanged from
+the issue #81 record above, `sha256:9fa0dbe1...`). One refinement was needed
+beyond the recipe the paragraph above and issue #81's own record cite:
+without `klt extract`'s `--def-pins <path-to-def>` (issue #1390 upstream),
+an unrestricted `--def-net-names` extraction over-promotes every internal,
+DEF-net-named net to top-level-pin status (`pin_count` 756, not the correct
+70 — the real 68 functional I/O + `VDD`/`VSS`) — `--def-pins
+../modexp.def` restricts pin promotion back to the DEF's own genuine
+`PINS` section, exactly as upstream's docs prescribe for this scenario.
+**This is a metadata-only refinement, not a connectivity change**: the two
+extractions' `X`-card instance bodies are byte-identical with or without
+`--def-pins` (verified directly, diffed sorted), so this does **not**
+reopen or alter this section's own LVS mismatch-count claim above (17
+mismatches) — that comparison's own connectivity graph is unchanged.
+`verification/gate-level/README.md` and
+`verification/records/gate-level-sim/` carry the regenerated Leg 1 result;
+this page's own LVS narrative above is untouched.
+
 ## Update (issue #55, 2026-08-16): a true as-built reference now exists, run
 ## against a fresh build — read this before the historical section below
 

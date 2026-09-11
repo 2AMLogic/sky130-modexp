@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "modexp",
+  "testbench": "test_modexp",
+  "status": "pass",
+  "test_count": 2,
+  "passed_count": 2,
+  "failed_count": 0,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "test_modexp_known_vectors",
+      "status": "passed",
+      "sim_time_ns": null,
+      "real_time_s": 0.143
+    },
+    {
+      "name": "test_modexp_random",
+      "status": "passed",
+      "sim_time_ns": null,
+      "real_time_s": 2.102
+    }
+  ],
+  "coverage": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "12.0",
+    "cocotb_version": "2.1.0",
+    "results_xml": "/home/ubuntu/loom-workspaces/sky130-modexp/.loom/worktrees/issue-83/verification/gate-level/.klt/functional-verification/results_icarus.xml",
+    "random_seed": 1,
+    "sdf": null
+  }
+}
