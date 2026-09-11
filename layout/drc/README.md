@@ -8,7 +8,13 @@ the deck's documented coverage gaps.
 
 - `modexp-drc-report.json` — the full `klt drc --deck sky130 --format json`
   report, including the `coverage` block and `provenance` (deck
-  `content_hash`, `klt`/`klayout` versions, input `content_hash`).
+  `content_hash`, `klt`/`klayout` versions, input `content_hash`), from the
+  last time this design was clean at the deck's then-current rule set (see
+  "Result summary" below for why the current state is not clean and this
+  file is retained as history). The current, non-clean report's frozen copy
+  and the per-violation classification live under
+  `verification/records/drc-lvs/artifacts/20260911-012604-6e5ac66/`
+  (`drc-report.json`, `classification.json`) — see "Current result" below.
 
 ## Reproducing cold
 
@@ -17,16 +23,63 @@ the deck's documented coverage gaps.
 klt drc layout/modexp.gds --deck sky130 --format json
 ```
 
-Exit code `0` (`status: "clean"`), matching this report.
+Exit code `3` (`status: "violations"`), **234 violations** as of the
+current `klt` pin — see "Current result" below. This is a change from
+this file's own prior "clean, exit 0" reproduction recipe result: the
+layout has not changed (`layout/modexp.gds`'s `content_hash` is
+byte-identical throughout, see below), the DRC deck's rule coverage has.
 
-## Result summary (fresh as of issue #55, 2026-08-16)
+## Current result (issue #79, 2026-09-11): NOT CLEAN — 234 violations, all classified
+
+- `status`: **`"violations"`**, `violation_count`: **234**
+  (`nwell.space.1`: 194, `nwell.width.1`: 40).
+- Deck `content_hash`: `sha256:5afac7ab8561545859f5e2e74f4621c6ffc052756dc8fe344ea263398e96b240`.
+- Input (`layout/modexp.gds`) `content_hash`: `sha256:229ed6a5f92938699acc969f757d84b9348731bacbe12a485473161e917c8d10`
+  — **identical** to every prior run's input hash: this is the same,
+  unmodified GDS the "Result summary (clean)" section below describes.
+  Nothing about the layout changed; the verdict changed because the DRC
+  deck's own rule coverage grew (see "What changed, issue #78" below).
+- **Every one of the 234 violations is individually classified** — none is
+  a newly-discovered real design defect:
+  - **73 `nwell.space.1` violations — a `klt drc` check-engine
+    limitation.** `nwell.space.1` is transcribed as `check="space"`
+    (`Region.space_check`), which (unlike the source `sky130.lydrc` rule
+    `nwell.2a`'s `isolated` semantics) also flags a concave notch within a
+    *single* merged `nwell` polygon, not just spacing between two distinct
+    wells. Confirmed by direct inspection: each of these 73 touches exactly
+    one merged, non-box, many-vertex `nwell.drawing` polygon. Filed
+    upstream, generic: [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654).
+  - **121 `nwell.space.1` + 40 `nwell.width.1` (161 total) violations — an
+    accepted/documented gap.** Each traces to this GDS's already-documented
+    "no filler-cell insertion" limitation (see "What this GDS does *not*
+    contain" in `layout/README.md`): sparsely-placed, non-abutting
+    standard-cell instances leave two distinct `nwell` wells too close
+    together (`nwell.space.1`) or merge into a locally too-narrow shape
+    (`nwell.width.1`), where a filler cell's continuous `nwell` material
+    would normally bridge the gap. Confirmed not a library-cell defect:
+    every one of the 718 individual, per-instance, unmerged `nwell`
+    rectangles is >= 1.76 µm x 1.605 µm, well above the 0.84 µm
+    `nwell.width.1` threshold. Follow-up tracking real closure (filler
+    cell / tapcell / PDN insertion in the P&R flow):
+    [sky130-modexp#81](https://github.com/2AMLogic/sky130-modexp/issues/81).
+- Full method, per-violation detail, and provenance:
+  `verification/records/drc-lvs/records/20260911-012604-6e5ac66.md` (and
+  its twin, `20260911-012620-6e5ac66.md`) —
+  `verification/records/drc-lvs/artifacts/20260911-012604-6e5ac66/classification.json`
+  carries every violation's classification and the merged-polygon IDs it
+  was decided from.
+- Full narrative, including why this is not a layout regression:
+  `docs/signoff-claim.md`, "DRC" section.
+
+## Result summary (clean, historical — issue #55, 2026-08-16)
 
 - `status`: **`"clean"`**, `violation_count`: **0**.
 - Deck `content_hash`: `sha256:2e78949d63f03012c505528158948a250e18c2c21c8710c85a23a8243649f4d0`.
 - Input (`layout/modexp.gds`) `content_hash`: `sha256:229ed6a5f92938699acc969f757d84b9348731bacbe12a485473161e917c8d10`
-  — **identical** to the input hash the prior (violating) run cited: this is
-  the same, unmodified GDS. Nothing about the layout changed; the verdict
-  changed because the check engine did.
+  — **identical** to the prior (violating) run cited below: this is the
+  same, unmodified GDS. Nothing about the layout changed; the verdict
+  changed because the check engine did (both then, per this section, and
+  again since — see "Current result" above).
 
 ## What changed since the prior (10-violation) run
 
@@ -48,22 +101,44 @@ analysis above identified. Issue #55 bumped this repo's `klt` pin
 (`a482d3934bd644b763cf925f6344ac05f54a1623`, re-verified a descendant of the
 fix commit via `gh api .../compare/...` → `"status": "ahead"`) and re-ran
 `klt drc` against the same, unchanged `layout/modexp.gds` — see "Result
-summary" above. The fix eliminates the false positive at its source: the
-10 previously-reported violations do not recur, and no new violations
-appeared in their place.
+summary (clean, historical)" above. The fix eliminates the false positive at
+its source: the 10 previously-reported violations do not recur, and no new
+violations appeared in their place — at that pin.
 
-## Deck coverage (unchanged)
+## What changed, issue #78 (2026-09-09): 234 new violations, new deck coverage
 
-`klt drc --deck sky130` still runs a curated starter subset of 17 rules, not
-the full sky130 design rule manual — see `docs/signoff-claim.md`'s "Deck
-coverage gaps" enumeration (six approximated rules, one untranscribed rule
-`m2.6`, one deliberately non-source threshold `li1.enclosing.licon1.1`).
-None of those gaps are implicated in this result: a `"clean"` verdict from
-this deck means clean against the 17 rules it runs, not against the full
-sky130 DRM.
+A later, unrelated `klt` pin bump (issue #78, taken for a gate-level-sim
+SDF back-annotation fix) brought in
+[klayout-tools#1433](https://github.com/2AMLogic/klayout-tools/pull/1433)
+("feat(decks): add sky130 nwell.width.1/nwell.space.1 DRC rules", merged
+2026-08-26), which added `nwell.space.1`/`nwell.width.1` to the deck's
+curated subset for the first time. Re-running `klt drc` against the same,
+byte-unchanged `layout/modexp.gds` under the new deck reports
+`status: "violations"`, `violation_count: 234` on exactly these two new
+rules — this design's compliance with them was simply never checked
+before. Not a layout regression, not a `klt` defect: legitimate upstream
+rule-coverage growth revealing a genuine, previously-invisible gap. Issue
+#79 (2026-09-11) individually classified all 234 — see "Current result"
+above.
+
+## Deck coverage (as of the issue #55 pin; grown since, issue #78)
+
+`klt drc --deck sky130` ran a curated starter subset of 17 rules, not the
+full sky130 design rule manual, at the issue #55 pin — see
+`docs/signoff-claim.md`'s "Deck coverage gaps" enumeration (six
+approximated rules, one untranscribed rule `m2.6`, one deliberately
+non-source threshold `li1.enclosing.licon1.1`) for the enumeration at that
+pin. The deck has since grown (`klayout-tools#1433` added
+`nwell.width.1`/`nwell.space.1`, see above); `klt deck info --format json`
+reports the installed build's own current coverage directly rather than
+this file re-enumerating it.
 
 ## Evidence record
 
-`verification/records/drc-lvs/records/20260816-174310-5e656e5.md` (append-only
-convention, `verification/README.md`) — supersedes the prior
-`20260815-013937-fa169a4` record for freshness (same layout, fixed tool).
+`verification/records/drc-lvs/records/20260911-012604-6e5ac66.md` (append-only
+convention, `verification/README.md`) — supersedes
+`20260909-230959-92e00f2` (twin: `20260911-012620-6e5ac66` supersedes
+`20260909-231045-92e00f2`), which in turn superseded
+`20260817-002327-4dd3bfa` (twin `20260817-002415-4dd3bfa`), which
+superseded `20260816-174310-5e656e5` — the "clean" record this file
+originally reported.

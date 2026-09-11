@@ -5,37 +5,51 @@ evidence establishes and does not establish**, per issue #8 (and re-verified
 by issue #55). It answers `spec/modexp.md`'s Signoff row — *"DRC + LVS clean
 on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 
-## Verdict (updated 2026-09-09, issue #78): **not met** — DRC has newly
-surfaced, unresolved violations; LVS still mismatches
+## Verdict (updated 2026-09-11, issue #79): **not met** — DRC's 234
+violations are now individually classified (none a new real defect); LVS
+still mismatches
 
 **DRC was clean at the issue #55 pin, but issue #78's later pin bump
 (taken for an unrelated reason — gate-level-sim Leg 2's SDF fix) surfaced
 234 new violations (`nwell.space.1`: 194, `nwell.width.1`: 40) against the
-same, byte-identical `layout/modexp.gds`.** This is **not** a design
+same, byte-identical `layout/modexp.gds`.** This was **not** a design
 regression: the DRC deck itself grew coverage between the two pins
 (`klayout-tools#1433`, merged 2026-08-26, added these two rules to the
 deck for the first time) — the design was never actually checked against
 these two rules before, so the prior "clean" verdict was clean *against
 the rules the deck ran at the time*, not evidence the design satisfies
-these two rules. See "DRC" below for the full account. **LVS still reports
-`status: "mismatch"`** (unchanged, not re-run by issue #78 — out of its
-scope). `spec/modexp.md`'s Signoff row (*"DRC + LVS clean"*, both conjuncts
-required) remains **not met** overall — stated plainly, not "met with
-caveats." What follows is why neither the historical DRC violations nor the
-current LVS mismatches indicate a defect *beyond* what is documented below;
-every reported finding on both sides is classified with evidence, not
-asserted.
+these two rules. **Issue #79 has since individually classified all 234
+violations** against the per-violation geometry: 73 are a check-engine
+approximation limitation (filed upstream,
+[klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)),
+and 161 (121 `nwell.space.1` + all 40 `nwell.width.1`) are an
+accepted/documented gap already on record in `layout/README.md` (no
+filler-cell insertion). **None of the 234 is a newly-discovered real design
+defect requiring an unplanned layout change.** See "DRC" below for the full
+classification. **LVS still reports `status: "mismatch"`** (unchanged, not
+re-run — out of issue #79's scope, same as issue #78's). `spec/modexp.md`'s
+Signoff row (*"DRC + LVS clean"*, both conjuncts required) remains **not
+met** overall — stated plainly, not "met with caveats," and not relaxed:
+closing DRC for real needs an upstream `klt` fix (the 73) and filler-cell/
+tapcell/PDN insertion in the P&R flow (the 161,
+[sky130-modexp#81](https://github.com/2AMLogic/sky130-modexp/issues/81)),
+and closing LVS remains a separate, unstarted effort. What follows is why
+neither the DRC violations nor the LVS mismatches indicate a defect *beyond*
+what is documented below; every reported finding on both sides is
+classified with evidence, not asserted.
 
-## DRC — **NOT CLEAN: 234 violations** (was: clean, 0 violations, at the
-issue #55 pin; before that, 10 violations)
+## DRC — **NOT CLEAN: 234 violations, all individually classified** (was:
+clean, 0 violations, at the issue #55 pin; before that, 10 violations)
 
 `klt drc layout/modexp.gds --deck sky130 --format json` → **`status:
 "violations"`, `violation_count: 234`** (`nwell.space.1`: 194,
 `nwell.width.1`: 40), against the same, unmodified `layout/modexp.gds`
 (identical content hash to every prior run: `layout/modexp.gds` has not
-changed since issue #7). Full report and provenance:
-`verification/records/drc-lvs/records/20260909-230959-92e00f2.md` (and its
-twin, `20260909-231045-92e00f2.md`).
+changed since issue #7). Full report, provenance, and (new, issue #79) the
+per-violation classification:
+`verification/records/drc-lvs/records/20260911-012604-6e5ac66.md` (and its
+twin, `20260911-012620-6e5ac66.md`), superseding
+`20260909-230959-92e00f2`/`20260909-231045-92e00f2`.
 
 **What changed, issue #78 (2026-09-09)**: the DRC deck's own
 `content_hash` changed between this repo's two most recent `klt` pins
@@ -51,10 +65,58 @@ prior to this pin bump; there is no design or GDS change to explain, and no
 false-positive check-engine defect to file upstream (unlike the prior two
 findings below) — the new coverage is legitimate upstream feature growth,
 and it revealed a genuine, previously-invisible gap in this design's own
-signoff status. **These 234 violations are an open, unresolved finding as
-of this record** — closing them requires a layout change, which is outside
-issue #78's scope (no edit to `layout/modexp.gds`); tracked by
-[sky130-modexp#79](https://github.com/2AMLogic/sky130-modexp/issues/79).
+signoff status.
+
+**Classification (issue #79, 2026-09-11)**: all 234 violations were
+individually classified by cross-referencing each violation's geometry
+against the merged `nwell.drawing` region (the same region `klt drc`
+itself checks) and `layout/modexp.def`'s cell-instance placement. Full
+method, counts, and per-violation detail:
+`verification/records/drc-lvs/records/20260911-012604-6e5ac66.md` and
+`verification/records/drc-lvs/artifacts/20260911-012604-6e5ac66/classification.json`.
+
+- **73 of 194 `nwell.space.1` violations — (iii) check-engine limitation.**
+  Each touches exactly one merged `nwell.drawing` polygon (a large,
+  non-box, many-vertex outline) — a concave notch within a single physical
+  well, not a gap between two distinct wells. `nwell.space.1` is
+  transcribed as `check="space"` (`Region.space_check`), which — unlike the
+  source `sky130.lydrc` rule `nwell.2a`'s `isolated` semantics — also flags
+  same-polygon notches, exactly as the rule's own docstring in
+  `src/klayout_tools/decks/sky130.py` warns is possible ("no corpus
+  regression found... but that doesn't rule out a false positive specific
+  to this design's own nwell geometry"). Filed upstream, generic, no
+  design-specific detail:
+  [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654).
+- **121 of 194 `nwell.space.1` violations — (ii) accepted/documented gap.**
+  Each touches two or more *distinct* merged `nwell.drawing` polygons,
+  confirmed (via `layout/modexp.def` placement) to belong to two different,
+  non-abutting standard-cell instances. This traces directly to
+  `layout/README.md`'s already-documented "no filler-cell insertion" gap:
+  without filler cells bridging sparsely-placed instances, two separate
+  PMOS wells can end up closer than the 1.27 µm `nwell.2a` threshold with
+  no filler-cell nwell material between them.
+- **40 of 40 `nwell.width.1` violations — (ii) accepted/documented gap.**
+  Every one touches exactly one merged, non-box, many-vertex polygon at a
+  locally narrow "waist" formed where two or more misaligned adjacent
+  standard-cell instances' `nwell` rectangles partially overlap or
+  corner-touch. Not a library-cell defect (every one of the 718
+  individual, per-instance, unmerged `nwell.drawing` rectangles measures
+  >= 1.76 µm x 1.605 µm, well above the 0.84 µm threshold) and not a
+  check-engine limitation (`nwell.width.1`'s docstring carries no
+  approximation caveat) — the narrow waist is purely a merge artifact of
+  the same missing-filler-cell gap as above, on the width failure mode
+  rather than spacing.
+
+**No violation is classified (i) — a newly-discovered real design defect
+requiring an unplanned layout/floorplan change.** Closing the 161
+documented-gap violations for real needs filler-cell (and ultimately
+tapcell/PDN) insertion in the place-and-route flow — a new flow capability,
+out of issue #79's scope per its own "Out of scope" section, tracked as
+[sky130-modexp#81](https://github.com/2AMLogic/sky130-modexp/issues/81).
+Closing the 73 check-engine-limitation violations needs an upstream `klt`
+fix ([klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)).
+**These 234 violations remain open, unresolved** — this record classifies
+them but fixes none; `layout/modexp.gds` is unchanged.
 
 **History (issue #55)**: the prior 10 violations (all `diff.enclosing.licon.1`, all
 on `sky130_fd_sc_hd__and3_1` instances) were classified as **(iii) — a `klt
@@ -195,18 +257,27 @@ comparison above excludes power-net correspondence from its scope rather
 than reporting an unexplained mismatch, and it is a real, prior, already-
 recorded gap (`layout/README.md`, from #7) rather than a new finding.
 
-## Reading the spec's Signoff row (updated 2026-09-09, issue #78)
+## Reading the spec's Signoff row (updated 2026-09-11, issue #79)
 
 `spec/modexp.md`'s Signoff row — *"DRC + LVS clean on the OpenROAD-produced
 GDS"* — is **still not met** by `layout/modexp.gds`, stated plainly: neither
-DRC nor LVS reports a clean verdict as of this update. What this repo's
-evidence establishes, precisely bounded:
+DRC nor LVS reports a clean verdict as of this update, and the ratified
+table itself is unchanged (this update adds classification evidence, it
+does not relax the target — no decision-record entry is needed since
+nothing about the ratified row changes). What this repo's evidence
+establishes, precisely bounded:
 
 - **DRC is not clean against `layout/modexp.gds`** as of the current `klt`
   pin — 234 violations (`nwell.space.1`/`nwell.width.1`), newly surfaced by
-  expanded deck coverage (`klayout-tools#1433`), not by any layout change.
-  This reopens what issue #55 had closed; see "DRC" above for the full
-  account and the follow-up issue tracking these as an open finding.
+  expanded deck coverage (`klayout-tools#1433`), not by any layout change,
+  and (issue #79) now **individually classified**: 73 are a `klt`
+  check-engine approximation limitation
+  ([klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)),
+  161 trace to this GDS's already-documented "no filler-cell insertion" gap
+  ([sky130-modexp#81](https://github.com/2AMLogic/sky130-modexp/issues/81)
+  tracks closing them for real), and **none is a newly-discovered real
+  design defect**. This reopens what issue #55 had closed and issue #79
+  classifies but does not close it — see "DRC" above for the full account.
 - LVS gets, for the first time, past the circuit-type-level block a pre-CTS
   reference always produced, and every LVS mismatch remaining (net-name
   correlation, extraction-deck layer coverage) is individually classified
@@ -284,6 +355,19 @@ design-specific detail beyond PDK standard-cell names) at
    once the fix made this attempt reach that far — see "Post-route
    gate-level simulation" below for the account. Filed generically as
    [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619).
+4. **A `DrcRule` transcribed as `check="space"` to approximate a
+   source rule whose real semantics is `isolated` can false-positive on a
+   concave notch within a single merged polygon**, since `Region.space_check`
+   (unlike `Region.isolated_check`) does not distinguish "different
+   polygons" from "one polygon with a narrow inward corner." Found while
+   classifying `nwell.space.1`'s 194 violations (issue #79): 73 of them
+   (confirmed by direct inspection of the merged `nwell.drawing` region)
+   are exactly this same-polygon case, on an unmodified `layout/modexp.gds`.
+   The rule's own docstring in `src/klayout_tools/decks/sky130.py` already
+   documents this as a known approximation with "no corpus regression
+   found" in the deck's own test corpus — this is a concrete instance the
+   corpus did not cover. Filed generically as
+   [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654).
 
 ## Post-route gate-level simulation (appended, issue #9)
 
