@@ -82,12 +82,20 @@ arm64 host, see `docs/environment.md`).
 
 ## What this flow does *not* produce
 
-Per `klt place-and-route`'s own documented scope, the routed DEF/GDS this
-flow produces has: **no tapcell insertion, no power-grid (PDN) generation,
-no metal fill, no filler-cell insertion, and no `DONT_USE_CELLS`
-exclusion** — core-only floorplanning, no IO ring. It is evidence toward
-Decision 2/4's revisit triggers (`spec/modexp.md`), not a signoff-ready
-macro; DRC/LVS-clean signoff on this GDS is a later issue's job.
+**Updated, issue #81 (2026-09-11)**: `flow/par-modexp.json` now carries a
+`power` block, driving `klt place-and-route`'s `request.power` field
+(tapcell + PDN + filler-cell insertion, added upstream by
+[klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120))
+— the routed DEF/GDS this flow produces for the committed nominal-corner
+recipe now has all three. `flow/run-corner-sweep.sh`'s separate 18-corner
+sweep recipe does **not** carry this block (unaffected by issue #81) and
+still produces layouts with none of the three. **Still absent either way**:
+metal (density) fill (a routing-layer CMP-density pass, not the same thing
+as standard-cell row fillers) and `DONT_USE_CELLS` exclusion — core-only
+floorplanning, no IO ring. It is evidence toward Decision 2/4's revisit
+triggers (`spec/modexp.md`); DRC is now clean against the committed
+nominal-corner GDS (`docs/signoff-claim.md`), but LVS is not, so it is not
+yet a fully signoff-ready macro.
 
 ## Known upstream gaps (friction protocol, `CLAUDE.md`)
 
