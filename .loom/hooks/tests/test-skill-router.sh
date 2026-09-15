@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Test suite for defaults/hooks/skill-router.sh (issue #3609)
+# Test suite for .loom/hooks/skill-router.sh (issue #3609)
 #
-# Usage: ./defaults/hooks/tests/test-skill-router.sh
+# Usage: ./.loom/hooks/tests/test-skill-router.sh
 #
 # Covers the #3609 rework of the UserPromptSubmit routing hook:
 #   - non-matching / short / slash prompts emit NO additionalContext
@@ -12,18 +12,18 @@
 #     with rjwalters/loom") no longer route
 #   - the hook never exits non-zero and never emits invalid JSON
 #
-# The hook + routing config under test are the canonical sources at
-# defaults/ (the version-controlled source of truth), copied into an isolated
-# temp tree so the hook's MAIN_ROOT resolves there (git-common-dir fails
-# outside a repo, so the BASH_SOURCE fallback locates our temp root).
-# Exit code 0 = all tests pass, 1 = failures detected.
+# The hook + routing config under test are the installed sources at
+# .loom/ (the version-controlled source of truth for a consumer repo),
+# copied into an isolated temp tree so the hook's MAIN_ROOT resolves there
+# (git-common-dir fails outside a repo, so the BASH_SOURCE fallback locates
+# our temp root). Exit code 0 = all tests pass, 1 = failures detected.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-SRC_HOOK="$REPO_ROOT/defaults/hooks/skill-router.sh"
-SRC_CONFIG="$REPO_ROOT/defaults/config/skill-routes.json"
+SRC_HOOK="$REPO_ROOT/.loom/hooks/skill-router.sh"
+SRC_CONFIG="$REPO_ROOT/.loom/config/skill-routes.json"
 
 PASS=0
 FAIL=0
@@ -39,11 +39,11 @@ NC='\033[0m'
 TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 git init -q "$TMPROOT"
-mkdir -p "$TMPROOT/defaults/hooks" "$TMPROOT/.loom/config"
-cp "$SRC_HOOK" "$TMPROOT/defaults/hooks/skill-router.sh"
-chmod +x "$TMPROOT/defaults/hooks/skill-router.sh"
+mkdir -p "$TMPROOT/.loom/hooks" "$TMPROOT/.loom/config"
+cp "$SRC_HOOK" "$TMPROOT/.loom/hooks/skill-router.sh"
+chmod +x "$TMPROOT/.loom/hooks/skill-router.sh"
 cp "$SRC_CONFIG" "$TMPROOT/.loom/config/skill-routes.json"
-HOOK="$TMPROOT/defaults/hooks/skill-router.sh"
+HOOK="$TMPROOT/.loom/hooks/skill-router.sh"
 
 # Build stdin JSON. Second arg (session_id) is optional.
 make_input() {

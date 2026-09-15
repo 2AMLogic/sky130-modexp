@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Test suite for the `loom-daemon workspace` guard in
-# defaults/hooks/guard-loom-workflow.sh (issue #4326)
+# .loom/hooks/guard-loom-workflow.sh (issue #4326)
 #
-# Usage: ./defaults/hooks/tests/test-guard-loom-workspace.sh
+# Usage: ./.loom/hooks/tests/test-guard-loom-workspace.sh
 #
 # Covers the #4326 guard: `loom-daemon workspace add|remove|set-priority`
 # mutate the machine-level registry (normally the operator's real
@@ -25,15 +25,16 @@
 #   - contract: exit is always 0; ask output is well-formed JSON with
 #     permissionDecision == "ask"
 #
-# The hook under test is the canonical source at defaults/ (the version-
-# controlled source of truth), copied into an isolated temp git tree so the
-# hook's REPO_ROOT/HOOK_ERROR_LOG resolve there. Exit 0 = all pass, 1 = fail.
+# The hook under test is the installed copy at .loom/hooks/ (the version-
+# controlled source of truth for a consumer repo), copied into an isolated
+# temp git tree so the hook's REPO_ROOT/HOOK_ERROR_LOG resolve there.
+# Exit 0 = all pass, 1 = fail.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-SRC_HOOK="$REPO_ROOT/defaults/hooks/guard-loom-workflow.sh"
+SRC_HOOK="$REPO_ROOT/.loom/hooks/guard-loom-workflow.sh"
 
 PASS=0
 FAIL=0
@@ -53,7 +54,7 @@ chmod +x "$TMPROOT/.loom/hooks/guard-loom-workflow.sh"
 # resolver at the equivalent installed-layout path (mirrors
 # test-guard-worktree-paths.sh) so decision_log_enabled() exercises the real
 # tiered resolution rather than silently no-op'ing.
-cp "$REPO_ROOT/defaults/scripts/lib/config-resolver.sh" "$TMPROOT/.loom/scripts/lib/config-resolver.sh"
+cp "$REPO_ROOT/.loom/scripts/lib/config-resolver.sh" "$TMPROOT/.loom/scripts/lib/config-resolver.sh"
 HOOK="$TMPROOT/.loom/hooks/guard-loom-workflow.sh"
 
 pass() { PASS=$((PASS + 1)); TOTAL=$((TOTAL + 1)); printf "${GREEN}PASS${NC} %s\n" "$1"; }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Test suite for defaults/hooks/methodology-inject.sh (issue #3758)
+# Test suite for .loom/hooks/methodology-inject.sh (issue #3758)
 #
-# Usage: ./defaults/hooks/tests/test-methodology-inject.sh
+# Usage: ./.loom/hooks/tests/test-methodology-inject.sh
 #
 # Covers the #3758 rework of the UserPromptSubmit methodology-injection hook:
 #   - opt-in gate: .loom/context/ absent -> silent exit 0, no output
@@ -12,16 +12,17 @@
 #   - role and topic injection are UNCHANGED (still fire every matching turn)
 #   - the hook never exits non-zero and never emits invalid JSON
 #
-# The hook under test is the canonical source at defaults/ (the version-
-# controlled source of truth), copied into an isolated temp git tree so the
-# hook's MAIN_ROOT resolves there (git-common-dir pins MAIN_ROOT to the temp
-# root, and .loom/logs/ markers are written there). Exit 0 = all pass, 1 = fail.
+# The hook under test is the installed copy at .loom/hooks/ (the version-
+# controlled source of truth for a consumer repo), copied into an isolated
+# temp git tree so the hook's MAIN_ROOT resolves there (git-common-dir pins
+# MAIN_ROOT to the temp root, and .loom/logs/ markers are written there).
+# Exit 0 = all pass, 1 = fail.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-SRC_HOOK="$REPO_ROOT/defaults/hooks/methodology-inject.sh"
+SRC_HOOK="$REPO_ROOT/.loom/hooks/methodology-inject.sh"
 
 PASS=0
 FAIL=0
@@ -37,10 +38,10 @@ NC='\033[0m'
 TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 git init -q "$TMPROOT"
-mkdir -p "$TMPROOT/defaults/hooks"
-cp "$SRC_HOOK" "$TMPROOT/defaults/hooks/methodology-inject.sh"
-chmod +x "$TMPROOT/defaults/hooks/methodology-inject.sh"
-HOOK="$TMPROOT/defaults/hooks/methodology-inject.sh"
+mkdir -p "$TMPROOT/.loom/hooks"
+cp "$SRC_HOOK" "$TMPROOT/.loom/hooks/methodology-inject.sh"
+chmod +x "$TMPROOT/.loom/hooks/methodology-inject.sh"
+HOOK="$TMPROOT/.loom/hooks/methodology-inject.sh"
 
 CONTEXT_DIR="$TMPROOT/.loom/context"
 
