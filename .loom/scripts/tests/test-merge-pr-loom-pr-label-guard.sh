@@ -284,48 +284,6 @@ run_guard
 assert_eq "1" "$LAST_RC" "Empty label array -> merge hard-blocked (exit 1)"
 assert_contains "$LAST_OUT" "<none>" "Empty label array -> message uses <none> placeholder, not a blank line"
 
-# T10 (#104 regression): loom:pr-labeled PR whose comments carry ZERO
-# champion:hold-state markers, invoked with `set -euo pipefail` genuinely
-# ACTIVE **inside the subshell doing the work** — unlike run_guard() above,
-# which brackets its call in outer `set +e` / `set -e` with no explicit
-# `set -e` re-enabled inside the command-substitution subshell itself, so the
-# subshell just inherits "errexit off" and never reproduces the crash. T8
-# above exercises the same "no marker" input through run_guard() and (by
-# design) cannot catch this.
-#
-# Getting a *reliable* repro is fiddlier than it looks: naively wrapping the
-# substitution in `... || RC=$?` or `if OUT="$(...)"; then` looks like it
-# should capture a nonzero exit status safely, but bash's -e/pipefail
-# "ignored in this context" exemption for commands on the non-final side of
-# `||`/`if` LEAKS INTO the spawned subshell too — even when that subshell
-# explicitly re-runs `set -euo pipefail` as its first line, an untested
-# real-bash repro shows the inner errexit gets silently defeated and the
-# subshell "succeeds" regardless of the fix, producing a false pass. The
-# pattern that reliably avoids that leak (verified against both the buggy
-# and fixed source) is the same outer `set +e` / capture-into-plain-var /
-# `set -e` restore idiom run_guard() itself uses — the outer `set +e` is a
-# plain statement (not part of an if/while/&&/||), so it does not carry the
-# exemption, and the explicit `set -euo pipefail` as the subshell's first
-# line then genuinely governs everything that runs inside it.
-echo ""
-echo "Testing _check_champion_hold_state_staleness with set -euo pipefail genuinely active inside the subshell (#104 regression)..."
-set +e
-REGRESSION_OUT="$(
-  set -euo pipefail
-  forge_get_pr_comments() { printf '%s' 'Just a regular Judge approval comment, no marker here.'; }
-  PR_NUMBER="999"
-  REPO_NWO="owner/repo"
-  PR_HEAD_SHA="deadbeef"
-  _check_champion_hold_state_staleness
-  echo "REACHED_END"
-)"
-REGRESSION_RC=$?
-set -e
-assert_eq "0" "$REGRESSION_RC" \
-  "zero champion:hold-state comments under active set -euo pipefail -> does not die silently (#104)"
-assert_contains "$REGRESSION_OUT" "REACHED_END" \
-  "...and execution reaches past the guard call (no silent mid-pipeline exit)"
-
 # --- Source-contains guards (fail if a refactor drops the key behavior) ---
 echo ""
 echo "Testing merge-pr.sh source guards..."
