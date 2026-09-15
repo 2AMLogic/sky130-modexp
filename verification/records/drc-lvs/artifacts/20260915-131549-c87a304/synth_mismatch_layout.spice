@@ -1,0 +1,20 @@
+* synthetic layout-side netlist (mismatch variant) for issue #92
+* investigation -- layout has an extra CELL3 instance/type with no
+* reference-side counterpart, so the top TOP circuit itself cannot be
+* judged equivalent (mirrors the real modexp report's "side: both"
+* top-circuit mismatch pattern), while CELL1/CELL2 remain matched types.
+
+.SUBCKT TOP A B
+X_U1 A N1 B CELL1
+X_U2 N1 B CELL2
+X_U3 A B CELL3
+.ENDS TOP
+
+.SUBCKT CELL1 P1 P2 P3
+.ENDS CELL1
+
+.SUBCKT CELL2 Q1 Q2
+.ENDS CELL2
+
+.SUBCKT CELL3 R1 R2
+.ENDS CELL3

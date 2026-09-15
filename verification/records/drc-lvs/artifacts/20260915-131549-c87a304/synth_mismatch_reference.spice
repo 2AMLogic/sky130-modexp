@@ -1,0 +1,14 @@
+* synthetic reference-side netlist (mismatch variant) for issue #92
+* investigation -- no CELL3 counterpart, so TOP itself is unmatched
+* even though CELL1/CELL2 remain matched leaf types.
+
+.SUBCKT TOP A B
+X_U1 A N1 B CELL1
+X_U2 N1 B CELL2
+.ENDS TOP
+
+.SUBCKT CELL1 P1 P2 P3
+.ENDS CELL1
+
+.SUBCKT CELL2 Q1 Q2
+.ENDS CELL2
