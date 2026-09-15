@@ -7833,7 +7833,33 @@ if worktree_isolation_guard_enabled && \
         case "$_wabs" in
             "$_WT_MAIN_ROOT"|"$_WT_MAIN_ROOT"/*) : ;;
             "$_WT_MAIN_ROOT_LOGICAL"|"$_WT_MAIN_ROOT_LOGICAL"/*) : ;;
-            *) continue ;;
+            *)
+                # Neither main-checkout spelling matched LEXICALLY. Before
+                # concluding this write target is unrelated to the main
+                # checkout, retry with $_wabs resolved through the SAME
+                # physical-symlink pass (`pwd -P`, via physical_abs_path())
+                # that produced $_WT_MAIN_ROOT (computed above via `pwd -P`)
+                # — $_wabs itself
+                # only ever went through normalize_abs_path(), which is
+                # deliberately lexical-only (see its header) and so never
+                # resolves a symlinked ancestor. On macOS this bites every
+                # mkdir(1)/write-idiom target built from a $TMPDIR path:
+                # `mktemp -d` yields `/var/folders/...` while `pwd -P`
+                # resolves the identical directory to
+                # `/private/var/folders/...` (#6684; the same divergence
+                # documented at physical_abs_path()'s own header and at the
+                # `/tmp` -> `/private/tmp` note where $_WT_MAIN_ROOT is
+                # computed above). Without this fallback, EVERY escaping
+                # target under such a path silently fell through to the
+                # `continue` (allow) below — issue #115. Only widens what
+                # this block treats as "inside the main checkout"; never
+                # narrows the existing lexical match above.
+                _wabs_phys=$(physical_abs_path "$_wabs")
+                case "$_wabs_phys" in
+                    "$_WT_MAIN_ROOT"|"$_WT_MAIN_ROOT"/*) : ;;
+                    *) continue ;;
+                esac
+                ;;
         esac
 
         # CARVE-OUT (#6021): a read-only-by-role session (no Write/Edit tool
