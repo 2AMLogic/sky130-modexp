@@ -1738,25 +1738,77 @@ function strip_cd_quoting(tok,   out, n, i, c, in_s, in_d, sq, dq) {
 # and parse_force_ops() both do this per-segment, in their own main loops.
 # =============================================================================
 _VARRESOLVE_AWK='
-function resolve_var(tok,   vname, rest, vv) {
-    if (substr(tok, 1, 1) != "$") return tok
-    if (match(tok, /^\$\{[A-Za-z_][A-Za-z0-9_]*\}/)) {
-        vname = substr(tok, RSTART + 2, RLENGTH - 3)
-        rest = substr(tok, RSTART + RLENGTH)
-    } else if (match(tok, /^\$[A-Za-z_][A-Za-z0-9_]*/)) {
-        vname = substr(tok, RSTART + 1, RLENGTH - 1)
-        rest = substr(tok, RSTART + RLENGTH)
+function resolve_var(tok,   vname, rest, vv, dpos, prefix, varpart) {
+    if (substr(tok, 1, 1) == "$") {
+        if (match(tok, /^\$\{[A-Za-z_][A-Za-z0-9_]*\}/)) {
+            vname = substr(tok, RSTART + 2, RLENGTH - 3)
+            rest = substr(tok, RSTART + RLENGTH)
+        } else if (match(tok, /^\$[A-Za-z_][A-Za-z0-9_]*/)) {
+            vname = substr(tok, RSTART + 1, RLENGTH - 1)
+            rest = substr(tok, RSTART + RLENGTH)
+        } else {
+            # `$(...)`, `${VAR:-x}`, `$1`, … — not a bare variable reference.
+            return tok
+        }
+        if (!(vname in varmap)) return tok
+        vv = varmap[vname]
+        # A value that itself still starts with an unresolved "$" (chained
+        # assignment this single-pass resolver does not follow) stays
+        # unresolved rather than being guessed.
+        if (vv == "" || substr(vv, 1, 1) == "$") return tok
+        return vv rest
+    }
+    # MID-TOKEN embedded reference (#93): a `$NAME`/`${NAME}` reference
+    # appearing AFTER literal path text in the same token, e.g.
+    # `"verification/records/sta-corner-sweep/artifacts/$REC/out.json"`. The
+    # leading-`$`-only branch above never even looked at this shape — see
+    # the issue-#93 root cause: a same-command literal assignment
+    # (`REC=<literal>`) was already fully known, but the resolver bailed on
+    # the very first `substr(tok, 1, 1) != "$"` check and left the whole
+    # token, and thus the whole write target, unresolved and denied at the
+    # catastrophic tier.
+    #
+    # Only attempted when `tok` is ENTIRELY free of quote characters. By the
+    # time resolve_var() runs, resolve_var_q() has already peeled at most one
+    # matching pair of surrounding double quotes (the common, safe
+    # `"prefix/$NAME/suffix"` idiom this issue reports), so the ordinary case
+    # reaches here quote-free. A quote character STILL present anywhere in
+    # `tok` means either a literal quote byte or a PARTIALLY-quoted token
+    # (e.g. `prefix"$VAR"/rest`, where only part of the token is inside a
+    # quoted span) — naively splicing `prefix vv rest` there would fabricate
+    # a resolved string containing quote bytes the real shell never produces
+    # (a quoted mid-token span is unwrapped by the shell, not left literal).
+    # Bail out and return `tok` unchanged rather than risk that — fail
+    # closed, byte-identical to this function'"'"'s pre-#93 behavior for any
+    # such token.
+    if (index(tok, DQ) > 0 || index(tok, SQ) > 0) return tok
+    dpos = index(tok, "$")
+    if (dpos == 0) return tok
+    prefix = substr(tok, 1, dpos - 1)
+    varpart = substr(tok, dpos)
+    if (match(varpart, /^\$\{[A-Za-z_][A-Za-z0-9_]*\}/)) {
+        vname = substr(varpart, RSTART + 2, RLENGTH - 3)
+        rest = substr(varpart, RSTART + RLENGTH)
+    } else if (match(varpart, /^\$[A-Za-z_][A-Za-z0-9_]*/)) {
+        vname = substr(varpart, RSTART + 1, RLENGTH - 1)
+        rest = substr(varpart, RSTART + RLENGTH)
     } else {
-        # `$(...)`, `${VAR:-x}`, `$1`, … — not a bare variable reference.
+        # `$(...)`, `${VAR:-x}`, `$1`, … at this position — not a bare
+        # variable reference. Leave unresolved (fail closed).
         return tok
     }
     if (!(vname in varmap)) return tok
     vv = varmap[vname]
-    # A value that itself still starts with an unresolved "$" (chained
-    # assignment this single-pass resolver does not follow) stays
-    # unresolved rather than being guessed.
     if (vv == "" || substr(vv, 1, 1) == "$") return tok
-    return vv rest
+    # `rest` is returned verbatim (unchanged substring of the original
+    # token). If it still contains a SECOND, distinct `$NAME` reference
+    # (the chained/multi-var shape this resolver deliberately does not try
+    # to prove), the spliced-together result still contains a literal `$`
+    # byte — the caller'"'"'s downstream write-confinement check already
+    # fails closed on ANY unresolved `$` surviving in a write target, so a
+    # multi-var token is never silently over-resolved here even though only
+    # a single substitution pass runs.
+    return prefix vv rest
 }
 function record_assign(word,   eqpos, vname, vval, vlen, c1, c2) {
     eqpos = index(word, "=")
