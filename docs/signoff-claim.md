@@ -297,8 +297,11 @@ circuit types (6 CTS/timing-fixup-only + 1 antenna-fixup + 3 post-resize +
 masters, none of which can have a synthesis-side counterpart by
 construction), 1 `side: "reference"` unmatched type (same pre-resize
 `o22ai_1` as before), 1 `side: "both"` (top circuit, cascading). No new
-mismatch category (still 0 `net.split`/`net.merged`/`device.*`), matched
-net/pin counts (333/333) unchanged. Direct instance-by-instance
+mismatch category (still 0 `net.split`/`net.merged`/`device.*`); `klt
+lvs`'s `net_correspondence` table still carries 333 entries, reported
+identically as both `counts.nets.matched` and `counts.pins.matched`
+(unchanged) — **not** a comparison against the 70/68 top-level I/O pins,
+see the "counts.pins.matched" note below. Direct instance-by-instance
 DEF-vs-Verilog accounting confirms the 718 logic-bearing instances
 (excluding 2356 new `TAP_*`/`FILLER_*`/`ANTENNA_*` physical-only
 instances) are otherwise unchanged in kind from the pre-#81 comparison: 680
@@ -315,12 +318,36 @@ but the committed `layout/lvs/modexp_lvs_report.json` was left at the
 original 2026-08-14 run (15 mismatches) until now — so the JSON on disk
 contradicted this page. Issue #86 re-ran `klt lvs` against the current
 committed netlist pair and committed the result: `status: "mismatch"`,
-`mismatch_count: 17`, 100% `topology`, matched nets/pins 333/333, with the
-same 15/1/1 `layout`/`reference`/`both` split described above. The re-run
-**reproduces** the recorded finding rather than changing it, so no new
-evidence record is minted; `layout/drc/modexp-drc-report.json` was re-run in
-the same pass as a freshness check and came back byte-identical (`clean`, 0
-violations). Detail: `layout/lvs/README.md`'s issue #86 section.
+`mismatch_count: 17`, 100% `topology`, `net_correspondence` still 333
+entries (reported identically as `counts.nets.matched`/`counts.pins.matched`
+— see the note below), with the same 15/1/1 `layout`/`reference`/`both`
+split described above. The re-run **reproduces** the recorded finding
+rather than changing it, so no new evidence record is minted;
+`layout/drc/modexp-drc-report.json` was re-run in the same pass as a
+freshness check and came back byte-identical (`clean`, 0 violations).
+Detail: `layout/lvs/README.md`'s issue #86 section.
+
+**`counts.pins.matched` is not a top-level-I/O-pin match count (issue #92,
+2026-09-15)**: `modexp_lvs_report.json` reports `pins: {layout: 70,
+reference: 68, matched: 333}` — a `matched` figure larger than either
+side's own declared pin count, which reads as impossible or as a
+tool-side field swap at a glance. Issue #92 confirmed, with a synthetic
+SPICE netlist pair run against the exact pinned `klt` revision
+(`f77036bff1eaf97b992e121acd702a98519142fb`), that this is **not** a
+mix-up: `klt lvs`'s `counts.{nets,pins}.matched` are scoped across the
+*whole* compared hierarchy (every matched circuit, top and subcircuits
+alike), while `counts.{nets,pins}.{layout,reference}` are scoped to the
+*top circuit only* — a genuine scope inconsistency between the two halves
+of the same field, filed upstream as
+[2AMLogic/klayout-tools#1887](https://github.com/2AMLogic/klayout-tools/issues/1887).
+333 is the size of `net_correspondence`, i.e. the number of matched local
+pin-name pairs across the 46 matched per-cell-type `.SUBCKT` declarations
+(`layout/lvs/README.md` already documented this hypothesis before it was
+confirmed); it says nothing about whether `modexp`'s own 68/70 top-level
+I/O pins correspond, and in this report they do not even get a
+`net_correspondence` entry, since the top `modexp` circuit itself could
+not be matched. Full synthetic-test evidence:
+`verification/records/drc-lvs/records/20260915-131549-c87a304.md`.
 
 **This re-run does not touch or supersede** the separate "fresh
 self-consistent build" comparison issue #55 introduced below (1324

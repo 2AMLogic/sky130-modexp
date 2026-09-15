@@ -1,0 +1,18 @@
+* synthetic layout-side netlist for issue #92 investigation
+* purpose: disambiguate whether klt lvs's counts.pins.matched counts
+* top-level I/O pin matches or matched-subcircuit-pin-correspondence
+* entries. Deliberately designed so the two candidate counts differ:
+*   top-level matched pins       = 2  (A, B)
+*   matched internal nets        = 3  (A, B, N1)
+*   matched subcircuit-pin-corr. = 5  (CELL1: 3 pins + CELL2: 2 pins)
+
+.SUBCKT TOP A B
+X_U1 A N1 B CELL1
+X_U2 N1 B CELL2
+.ENDS TOP
+
+.SUBCKT CELL1 P1 P2 P3
+.ENDS CELL1
+
+.SUBCKT CELL2 Q1 Q2
+.ENDS CELL2
