@@ -82,6 +82,9 @@ context_of() {
 
 pass() { PASS=$((PASS + 1)); TOTAL=$((TOTAL + 1)); printf "${GREEN}PASS${NC} %s\n" "$1"; }
 fail() { FAIL=$((FAIL + 1)); TOTAL=$((TOTAL + 1)); printf "${RED}FAIL${NC} %s\n" "$1"; }
+# Not counted toward pass/fail: used when a subtest's precondition (e.g. a
+# defaults/ tree this repo does not have) is unavailable in this environment.
+skip() { echo "  SKIP: $1"; }
 
 assert_no_output() {
     local desc="$1" out="$2"
@@ -291,15 +294,20 @@ fi
 # --- defaults/ vs .loom/ sync (both hook and config) ------------------------
 DEPLOY_HOOK="$REPO_ROOT/.loom/hooks/skill-router.sh"
 DEPLOY_CONFIG="$REPO_ROOT/.loom/config/skill-routes.json"
-if [[ -f "$DEPLOY_HOOK" ]] && diff -q "$SRC_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
-    pass ".loom/ hook byte-identical to defaults/"
+if [[ -d "$REPO_ROOT/defaults" ]]; then
+    if [[ -f "$DEPLOY_HOOK" ]] && diff -q "$SRC_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
+        pass ".loom/ hook byte-identical to defaults/"
+    else
+        fail ".loom/ hook byte-identical to defaults/"
+    fi
+    if [[ -f "$DEPLOY_CONFIG" ]] && diff -q "$SRC_CONFIG" "$DEPLOY_CONFIG" >/dev/null 2>&1; then
+        pass ".loom/ config byte-identical to defaults/"
+    else
+        fail ".loom/ config byte-identical to defaults/"
+    fi
 else
-    fail ".loom/ hook byte-identical to defaults/"
-fi
-if [[ -f "$DEPLOY_CONFIG" ]] && diff -q "$SRC_CONFIG" "$DEPLOY_CONFIG" >/dev/null 2>&1; then
-    pass ".loom/ config byte-identical to defaults/"
-else
-    fail ".loom/ config byte-identical to defaults/"
+    skip ".loom/ hook byte-identical to defaults/ (no defaults/ tree in this repo)"
+    skip ".loom/ config byte-identical to defaults/ (no defaults/ tree in this repo)"
 fi
 
 echo "=== $PASS/$TOTAL passed ==="
