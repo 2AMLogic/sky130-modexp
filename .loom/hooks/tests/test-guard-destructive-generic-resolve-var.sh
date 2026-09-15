@@ -204,5 +204,64 @@ assert_deny "(i) #37 evidence line 2: cp into \"\$tmp/\" from \$(mktemp -d) -> s
 result=$(run_hook 'cd '"$WT"'; tmp=$(mktemp -d); cp rtl/modexp.v "$tmp/"' "$TMPROOT")
 assert_deny "(j) #37 evidence line 3: cd + cp into \"\$tmp/\" from \$(mktemp -d) -> still deny (out of scope)" "$result"
 
+echo "=== guard-destructive-generic.sh resolve_var() MID-TOKEN embedded-variable tests (issue #93) ==="
+#
+# Root cause (#93): resolve_var()/resolve_var_q() above only ever substituted
+# a `$NAME`/`${NAME}` reference when it was the token's OWN first character
+# (after resolve_var_q()'s one-layer double-quote strip). A same-command
+# literal assignment followed by a write target where the variable is
+# embedded AFTER literal path text in the same token --
+# `"verification/records/sta-corner-sweep/artifacts/$REC/out.json"` -- was
+# left completely unresolved and denied at the catastrophic tier even though
+# the value was fully known. resolve_var() now also substitutes a proven
+# same-command literal `$NAME`/`${NAME}` reference appearing ANYWHERE in an
+# otherwise quote-free token.
+
+# --- (k) the exact reported repro shape: a same-command literal `REC=`
+# assignment, then a relative write target embedding `$REC` AFTER literal
+# path text, staying inside the worktree -> must now ALLOW.
+result=$(run_hook 'cd '"$WT"' && REC=20260915-111931-2c125f8 && cp /tmp/x.json "verification/records/sta-corner-sweep/artifacts/$REC/out.json"' "$TMPROOT")
+assert_allow "(k) reported repro: mid-path \$REC after literal prefix, resolves inside worktree -> allow" "$result"
+
+# --- (l) SAFETY: the identical mid-path shape, but the literal prefix +
+# resolved value land OUTSIDE the worktree (still inside the main checkout)
+# -> must still DENY. Proves the fix only resolves what it can prove and
+# still runs the resolved path through the same containment check.
+result=$(run_hook 'cd '"$TMPROOT"' && REC=escape && cp /tmp/x.json "secrets/prefix-$REC/out.json"' "$TMPROOT")
+assert_deny "(l) mid-path \$REC after literal prefix, resolves OUTSIDE worktree -> still deny" "$result"
+
+# --- (m) mid-path variable resolving to a path INSIDE the worktree, with a
+# short literal prefix directly abutting the variable (no `/` separator) --
+# a narrower shape than (k)'s directory-boundary case.
+result=$(run_hook 'cd '"$WT"' && REC=abc123 && cp /tmp/src.txt "rtl/out-$REC.v"' "$TMPROOT")
+assert_allow "(m) literal-prefix directly abutting \$REC, resolves inside worktree -> allow" "$result"
+
+# --- (n) \${NAME} brace form embedded mid-path (not just bare \$NAME).
+result=$(run_hook 'cd '"$WT"' && REC=abc123 && cp /tmp/src.txt "rtl/out-${REC}.v"' "$TMPROOT")
+assert_allow "(n) \${REC} brace form embedded mid-path, resolves inside worktree -> allow" "$result"
+
+# --- (o) SAFETY: two separate \$NAME/\$OTHER references in the same token,
+# with the SECOND spanning a DIRECTORY component -- confirms the fix does
+# not silently over-resolve a shape it cannot fully prove. resolve_var()
+# only ever substitutes the FIRST reference it finds in a token; the second,
+# still-literal "$OTHER" survives in the returned string, and it sits inside
+# the directory portion of the path here, so the existing (pre-#93,
+# unmodified) unresolved-directory-component deny check still fires.
+result=$(run_hook 'cd '"$WT"' && REC=abc123 && OTHER=def456 && cp /tmp/src.txt "prefix-$REC/mid-$OTHER/out.json"' "$TMPROOT")
+assert_deny "(o) two vars in one token, second spans a directory component -> still deny (not over-resolved)" "$result"
+
+# --- (p) the SAME two-var shape, but the second (\$OTHER) is confined to
+# the FILENAME component only -- not a directory boundary. The already-known
+# DIRECTORY ('rtl/', fully resolved via \$REC) is what confinement actually
+# depends on, so this legitimately ALLOWs: an unresolved \$OTHER can only
+# change which filename gets written inside that already-confined
+# directory, never which directory. This is the same pre-existing,
+# deliberate distinction the suite's (h) case above documents for the
+# leading-\$ shape (a directory-component var denies; a filename-only var
+# does not) -- asserted here explicitly so this is never mistaken for an
+# accidental over-resolution regression.
+result=$(run_hook 'cd '"$WT"' && REC=abc123 && OTHER=def456 && cp /tmp/src.txt "rtl/$REC-$OTHER.v"' "$TMPROOT")
+assert_allow "(p) two vars in one token, second confined to filename only -> allow (containment unaffected)" "$result"
+
 echo "=== $PASS/$TOTAL passed ==="
 [[ "$FAIL" -eq 0 ]]
