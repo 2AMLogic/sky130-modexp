@@ -122,7 +122,15 @@ jobs:
 
       - name: Run .loom/hooks/tests/ suites
         run: |
-          set -uo pipefail
+          # Deliberately NOT `set -e`: GitHub Actions' default `run:` shell
+          # is `bash -eo pipefail`, and several of these suites are EXPECTED
+          # to exit non-zero (e.g. the resolve-var suite's known #96
+          # carve-out below) -- under `-e`, the `out=$(bash "$f" 2>&1)`
+          # assignment failing would abort this whole step immediately,
+          # before the pass/fail classification below ever runs, silently
+          # turning every suite after the first non-zero one into a false
+          # "did not run" pass. `set +e` here overrides the runner default.
+          set +e -u -o pipefail
           overall_fail=0
           for f in .loom/hooks/tests/*.sh; do
             echo "::group::$f"
