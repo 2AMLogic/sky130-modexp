@@ -66,21 +66,39 @@ fi
 
 MOUNT_DIR="${OPENROAD_DOCKER_MOUNT:-$(pwd)}"
 
-# Resolve the PDK root the same way klayout-tools' `find_pdk()` does
-# (docs/environment.md / klayout_tools/pdk.py resolution order: $PDK_ROOT
-# env var, then ~/.ciel, then ~/.volare) so it can be bind-mounted too --
-# `klt place-and-route`/`klt synthesize` resolve liberty/LEF paths under
-# there, and those absolute host paths need to exist inside the container
-# at the identical path (see comment block above). Best-effort: if none of
-# these exist, no extra mount is added and a downstream `openroad` "cannot
-# read file" error will point at the same gap this comment describes.
-PDK_MOUNT_DIR=""
-if [ -n "${PDK_ROOT:-}" ] && [ -d "${PDK_ROOT}" ]; then
-  PDK_MOUNT_DIR="${PDK_ROOT}"
-elif [ -d "${HOME}/.ciel" ]; then
-  PDK_MOUNT_DIR="${HOME}/.ciel"
-elif [ -d "${HOME}/.volare" ]; then
-  PDK_MOUNT_DIR="${HOME}/.volare"
+# Resolve the PDK root by *asking* klayout-tools rather than re-deriving its
+# answer (CLAUDE.md: drive the engines through `klt`) -- `klt pdk find` is
+# variant-aware, picking the root that actually *contains* the requested
+# variant, whereas an existence-only ladder can stop at an unrelated PDK
+# family (e.g. a `~/.ciel` install of some other variant) before ever
+# reaching the `~/.volare` root that holds sky130A (#90). That resolved root
+# gets bind-mounted too -- `klt place-and-route`/`klt synthesize` resolve
+# liberty/LEF paths under there, and those absolute host paths need to exist
+# inside the container at the identical path (see comment block above).
+#
+# `klt pdk find` (invoked here with no `--pdk-root` override) honours an
+# explicit `$PDK_ROOT` first, same as this script's caller-set `PDK_ROOT`
+# always took precedence -- so an explicit `PDK_ROOT` continues to win over
+# both this resolution and the fallback ladder below without any extra
+# handling here.
+#
+# Falls back to the previous existence-only ladder (docs/environment.md /
+# klayout_tools/pdk.py resolution order: $PDK_ROOT env var, then ~/.ciel,
+# then ~/.volare) only when `klt`/`python3` are not invocable from this
+# shell -- this script is documented above as runnable standalone. Best
+# effort throughout: if nothing resolves, no extra mount is added and a
+# downstream `openroad` "cannot read file" error will point at the same gap
+# this comment describes.
+PDK_MOUNT_DIR="$(klt pdk find --pdk "${PDK:-sky130A}" --format json 2>/dev/null \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["root"])' 2>/dev/null || true)"
+if [ -z "${PDK_MOUNT_DIR}" ]; then
+  if [ -n "${PDK_ROOT:-}" ] && [ -d "${PDK_ROOT}" ]; then
+    PDK_MOUNT_DIR="${PDK_ROOT}"
+  elif [ -d "${HOME}/.ciel" ]; then
+    PDK_MOUNT_DIR="${HOME}/.ciel"
+  elif [ -d "${HOME}/.volare" ]; then
+    PDK_MOUNT_DIR="${HOME}/.volare"
+  fi
 fi
 
 VOLUME_ARGS=(-v "${MOUNT_DIR}:${MOUNT_DIR}")
