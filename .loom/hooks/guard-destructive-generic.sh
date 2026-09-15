@@ -5990,8 +5990,15 @@ rm_scope_literal_same_command_resolve() {
 #     rather than guessed — allow on uncertainty, never deny on uncertainty.
 #   - `cp` / `mv ... <dest>`     — the LAST non-flag argument (the common
 #     `cp/mv src... dest` shape).
+#   - `mkdir <dir>...`            — EVERY non-flag argument is a target (#95),
+#     mirroring `tee`: unlike `cp`/`mv`, `mkdir -p dir1 dir2` genuinely
+#     creates all of them, so each one is scanned rather than just the last.
+#     `-m MODE` / `--mode MODE` in the separate-argument spelling consumes
+#     its mode value, not a directory target (mirrors the `sed -i`
+#     BSD-separate-argument handling, #5674); the attached `-m0755` /
+#     `--mode=0755` forms are excluded by the leading-`-` flag test itself.
 #
-# In the three idiom scans above (NOT the `>`/`>>` scan, which has its own
+# In the four idiom scans above (NOT the `>`/`>>` scan, which has its own
 # operator detection), a `<` stdin redirection is recognized and EXCLUDED
 # (#5369): neither the operator token (`<`, `0<`, `</path`) nor the file a
 # bare `<` reads FROM is a write target. Skipping it fixes both a false DENY
@@ -6636,6 +6643,52 @@ extract_write_targets() {
                     nfargs[nf] = toks[j]
                 }
                 if (nf >= 2) print curcwd SEP resolve_var_q(nfargs[nf])
+            } else if (toks[1] == "mkdir") {
+                # `mkdir` (with or without `-p`, and other common flags such
+                # as `-m`) is a write idiom -- it creates a directory -- but
+                # was never recognized here at all (#95), so
+                # `mkdir -p "../../../pwned-dir"` from inside a Loom-managed
+                # worktree silently ALLOWed directory creation outside the
+                # worktree into the main repo checkout, with zero ask/deny/
+                # telemetry, even though the equivalent cp/mv/>/tee/sed -i
+                # idioms are correctly confined. Every non-flag argument is a
+                # DIRECTORY TARGET (unlike cp/mv, which take exactly one
+                # destination): `mkdir -p dir1 dir2` really does create BOTH,
+                # so every one of them is scanned and printed here, not just
+                # the first or the last -- each flows through the identical
+                # curcwd-join + resolve_var_q() same-command variable
+                # resolution path every other write idiom uses, then the same
+                # worktree-write-confinement check downstream.
+                delete mkdir_skip
+                for (j = 2; j <= m; j++) {
+                    if (j in stdin_redir) continue
+                    if (j in numfd_redir) continue
+                    if (toks[j] == "") continue
+                    if (j in mkdir_skip) continue
+                    # Same heredoc/herestring exclusion as the `tee`/`cp`/`mv`
+                    # branches above (#5232) -- a trailing `<<EOF` (or
+                    # `<<< word`) after the real mkdir operands must not be
+                    # misread as an extra directory target.
+                    if (toks[j] ~ /^<<-?/) {
+                        if (toks[j] == "<<" || toks[j] == "<<-" || toks[j] == "<<<") j++
+                        continue
+                    }
+                    if (toks[j] ~ /^-/) {
+                        # `-m MODE` / `--mode MODE` (SEPARATE-argument form,
+                        # e.g. `mkdir -m 0755 dir`) consumes the NEXT token as
+                        # the mode value, not a directory target -- mirrors
+                        # the `sed -i` BSD-separate-argument handling above
+                        # (#5674). The far more common ATTACHED forms
+                        # (`-m0755`, `--mode=0755`) are already excluded by
+                        # the leading `-` test itself and consume nothing
+                        # extra.
+                        if (toks[j] == "-m" || toks[j] == "--mode") {
+                            if (j + 1 <= m) mkdir_skip[j + 1] = 1
+                        }
+                        continue
+                    }
+                    print curcwd SEP resolve_var_q(toks[j])
+                }
             }
 
             # >/>>  redirection — token-boundary detection only (never a
@@ -7110,7 +7163,7 @@ fi
 
 # =============================================================================
 # BASH-TOOL WRITE CONFINEMENT — worktree isolation for `>`/`>>`/tee/sed -i/
-# cp/mv (issue #4178)
+# cp/mv/mkdir (issue #4178, mkdir added by #95)
 #
 # guard-worktree-paths.sh confines Edit/Write tool calls to a builder's issue
 # worktree, but the Bash tool has no equivalent confinement — a session denied
@@ -7192,7 +7245,7 @@ _wt_dist_scratch_path() {
 if worktree_isolation_guard_enabled && \
    { [[ "$COMMAND_ASK_SCAN" == *">"* ]] || [[ "$COMMAND_ASK_SCAN" == *"tee"* ]] || \
      [[ "$COMMAND_ASK_SCAN" == *"sed"* ]] || [[ "$COMMAND_ASK_SCAN" == *"cp "* ]] || \
-     [[ "$COMMAND_ASK_SCAN" == *"mv "* ]]; }; then
+     [[ "$COMMAND_ASK_SCAN" == *"mv "* ]] || [[ "$COMMAND_ASK_SCAN" == *"mkdir"* ]]; }; then
     _WT_WRITE_BASE=""
     _WT_WRITE_BASE_DONE=""
 
@@ -7749,7 +7802,7 @@ if worktree_isolation_guard_enabled && \
         # base is resolved off the same main-checkout root so the "a managed
         # worktree exists" gate stays consistent with the containment test.
         if _wt_isolation_in_play; then
-            deny "BLOCKED: Bash-tool write to '${_wabs}' resolves to the main repository checkout ('${_WT_MAIN_ROOT}'), but a Loom-managed worktree exists elsewhere in this repository (this check cannot verify it belongs to the acting session — see #4245). This is a worktree-isolation bypass via Bash redirection/tee/sed -i/cp/mv — do NOT retry the write through Bash. cd into your issue worktree ($(_wt_worktree_hint)) and write there instead. Not a Builder and need to write here directly? Set guards.worktreeIsolation:false in .loom/config.json for the session -- an inline 'LOOM_GUARD_WORKTREE_ISOLATION=0 <command>' prefix does NOT work (this hook runs as a separate process). (#4178)" "worktree-write-confinement"
+            deny "BLOCKED: Bash-tool write to '${_wabs}' resolves to the main repository checkout ('${_WT_MAIN_ROOT}'), but a Loom-managed worktree exists elsewhere in this repository (this check cannot verify it belongs to the acting session — see #4245). This is a worktree-isolation bypass via Bash redirection/tee/sed -i/cp/mv/mkdir — do NOT retry the write through Bash. cd into your issue worktree ($(_wt_worktree_hint)) and write there instead. Not a Builder and need to write here directly? Set guards.worktreeIsolation:false in .loom/config.json for the session -- an inline 'LOOM_GUARD_WORKTREE_ISOLATION=0 <command>' prefix does NOT work (this hook runs as a separate process). (#4178)" "worktree-write-confinement"
         fi
     done <<< "$WRITE_TARGETS"
 fi
