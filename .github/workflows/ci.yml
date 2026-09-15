@@ -103,3 +103,65 @@ jobs:
             cmp "/tmp/determinism-a/width-$w.jsonl" "/tmp/determinism-b/width-$w.jsonl"
             echo "WIDTH=$w: transcripts byte-identical across runs"
           done
+
+  guard-hooks:
+    name: Loom guard-hook regression suites
+    runs-on: ubuntu-latest
+    # Regression protection for #107: a `chore: resync installed Loom
+    # surfaces` commit copies the upstream Loom `.loom/hooks/*.sh` wholesale
+    # over this repo's installed copies with no diff review, which has
+    # already silently reverted three merged, tested fixes to
+    # `guard-destructive-generic.sh` (#71/#72, #98, #100) because nothing ran
+    # these suites in CI. Each `.loom/hooks/tests/test-*.sh` file is a
+    # self-contained regression suite (its own `mktemp -d` sandbox, its own
+    # scratch git repo/worktree) that exercises the corresponding installed
+    # hook directly -- running them here means a future resync that reverts
+    # a fix fails the build instead of waiting for a human/Curator to notice.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run .loom/hooks/tests/ suites
+        run: |
+          # Deliberately NOT `set -e`: GitHub Actions' default `run:` shell
+          # is `bash -eo pipefail`, and several of these suites are EXPECTED
+          # to exit non-zero (e.g. the resolve-var suite's known #96
+          # carve-out below) -- under `-e`, the `out=$(bash "$f" 2>&1)`
+          # assignment failing would abort this whole step immediately,
+          # before the pass/fail classification below ever runs, silently
+          # turning every suite after the first non-zero one into a false
+          # "did not run" pass. `set +e` here overrides the runner default.
+          set +e -u -o pipefail
+          overall_fail=0
+          for f in .loom/hooks/tests/*.sh; do
+            echo "::group::$f"
+            out=$(bash "$f" 2>&1)
+            rc=$?
+            printf '%s\n' "$out"
+            echo "::endgroup::"
+
+            if [[ "$f" == *"test-guard-destructive-generic-resolve-var.sh" ]]; then
+              # Cases (i)/(j) are a known, already-tracked pre-existing
+              # failure unrelated to a resync revert (#96): a same-command
+              # `$(mktemp -d)` write target is intentionally ALLOWed by
+              # wt_write_mktemp_same_command_safe(), a documented safety
+              # feature added after this suite's older "still deny"
+              # assertion was written. Reproduces identically on both Linux
+              # and macOS (#96), so it is not this job's environment either.
+              # Tolerate ONLY these two named cases -- any OTHER FAIL line in
+              # this suite still fails the build (e.g. a regression of the
+              # #98 mid-token $VAR fix this suite's case (k) also covers).
+              unexpected=$(printf '%s\n' "$out" | grep "FAIL" | grep -v "(i) #37" | grep -v "(j) #37" || true)
+              if [[ -n "$unexpected" ]]; then
+                echo "Unexpected failure(s) in $f:"
+                printf '%s\n' "$unexpected"
+                overall_fail=1
+              fi
+              continue
+            fi
+
+            if [[ "$rc" -ne 0 ]]; then
+              echo "FAILED: $f (exit $rc)"
+              overall_fail=1
+            fi
+          done
+          exit "$overall_fail"
