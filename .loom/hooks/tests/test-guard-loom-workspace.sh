@@ -59,6 +59,9 @@ HOOK="$TMPROOT/.loom/hooks/guard-loom-workflow.sh"
 
 pass() { PASS=$((PASS + 1)); TOTAL=$((TOTAL + 1)); printf "${GREEN}PASS${NC} %s\n" "$1"; }
 fail() { FAIL=$((FAIL + 1)); TOTAL=$((TOTAL + 1)); printf "${RED}FAIL${NC} %s\n" "$1"; }
+# Not counted toward pass/fail: used when a subtest's precondition (e.g. a
+# defaults/ tree this repo does not have) is unavailable in this environment.
+skip() { echo "  SKIP: $1"; }
 
 make_input() {
     local cmd="$1"
@@ -206,10 +209,14 @@ rm -rf "$NOJQ_DIR"
 
 # --- defaults/ vs .loom/ sync ------------------------------------------------
 DEPLOY_HOOK="$REPO_ROOT/.loom/hooks/guard-loom-workflow.sh"
-if [[ -f "$DEPLOY_HOOK" ]] && diff -q "$SRC_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
-    pass ".loom/ hook byte-identical to defaults/"
+if [[ -d "$REPO_ROOT/defaults" ]]; then
+    if [[ -f "$DEPLOY_HOOK" ]] && diff -q "$SRC_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
+        pass ".loom/ hook byte-identical to defaults/"
+    else
+        fail ".loom/ hook byte-identical to defaults/"
+    fi
 else
-    fail ".loom/ hook byte-identical to defaults/"
+    skip ".loom/ hook byte-identical to defaults/ (no defaults/ tree in this repo)"
 fi
 
 echo "=== $PASS/$TOTAL passed ==="
