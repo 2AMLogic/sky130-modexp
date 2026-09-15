@@ -73,12 +73,46 @@ gitignored — regenerate on demand; the frozen evidence lives under
 `verification/records/place-and-route/artifacts/`).
 
 **Cost**: each corner is an independent full `floorplan → place → cts →
-route` OpenROAD run — there is currently no `klt` capability to re-time an
-already-routed design at a different corner without rebuilding it (see
-"Known upstream gaps" below) — so the full 18-corner sweep takes on the
-order of an hour or more (each corner run measured at roughly 5–10 minutes
-in this environment: Docker Desktop's `linux/amd64` emulation on a macOS/
-arm64 host, see `docs/environment.md`).
+route` OpenROAD run, so the full 18-corner sweep takes on the order of an
+hour or more (each corner run measured at roughly 5–10 minutes in the
+environment that record was produced on: Docker Desktop's `linux/amd64`
+emulation on a macOS/arm64 host, see `docs/environment.md`).
+
+## Multi-corner STA of the committed layout (`run-sta-corner-sweep.sh`)
+
+**Added by issue #86.** `flow/run-sta-corner-sweep.sh` answers a different
+question from `run-corner-sweep.sh` above, and is the one to reach for when
+you want per-corner timing **of the layout this repo actually ships**:
+
+```bash
+./flow/run-sta-corner-sweep.sh                     # all 18 ratified corners
+./flow/run-sta-corner-sweep.sh ss_n40C_1v28         # a named subset
+```
+
+It runs `klt sta` — a standalone OpenSTA analysis of an already-routed DEF
+(klayout-tools#1099, available at this repo's pinned `klt` revision; see
+`docs/cli/sta.md`) — against the committed `layout/modexp.def`, once per
+corner, varying only `pdk.corner`. It never places, routes, or runs CTS, so
+**the geometry is byte-identical across all eighteen runs**: the table it
+produces characterizes one design at eighteen corners, rather than
+measuring eighteen differently-optimized designs the way a per-corner
+rebuild necessarily does. It also needs no synthesis netlist and no P&R
+run, and completes in seconds per corner rather than minutes.
+
+Both scripts are kept, deliberately: `run-corner-sweep.sh` is how issue
+#56's "how much of the slow-corner gap is mapping-attributable" question
+was answered (that one genuinely needs per-corner rebuilds), and its
+evidence record stays live and unedited. Results:
+[`verification/records/sta-corner-sweep/`](../verification/records/sta-corner-sweep/)
+and `docs/baseline.md`.
+
+Requires an `openroad` on `$PATH` and a resolvable `sky130A`. On a host that
+has both a `~/.ciel` directory and a `~/.volare` PDK install, set
+`PDK_ROOT` explicitly (`PDK_ROOT=~/.volare`) so `scripts/openroad-docker.sh`
+bind-mounts the same root `klt pdk find` resolves — see issue #90.
+
+Per-corner scratch lands in `flow/sta-corners/<corner>/` and the aggregated
+summary in `flow/sta-corner-sweep-results.json`, both gitignored.
 
 ## What this flow does *not* produce
 
@@ -139,6 +173,20 @@ this issue's scope).
   this in one OpenSTA session against one physical build, and adds the
   missing hold-slack field) — expect a large wall-clock/engineering-cost
   reduction once this repo's pin moves past #955.
+
+  **Update (issue #86, 2026-09-15): this gap is closed at the current pin.**
+  `docs/environment.md`'s pin has since moved to `f77036bf...`
+  (2026-09-09), well past #955, and separately gained `klt sta`
+  (klayout-tools#1099) — a standalone OpenSTA analysis of an already-routed
+  DEF. `flow/run-sta-corner-sweep.sh` (above) uses it; the eighteen-corner
+  analysis it drives takes seconds per corner instead of minutes, and needs
+  no rebuild. The remaining residue is smaller and separately filed:
+  `klt sta` still analyses one corner per invocation
+  ([klayout-tools#1871](https://github.com/2AMLogic/klayout-tools/issues/1871)),
+  and hold-side WNS/TNS landed upstream
+  ([klayout-tools#1634](https://github.com/2AMLogic/klayout-tools/pull/1634))
+  later than this repo's pin, so only a hold *violation count* is available
+  here.
 
 Also fixed in the same window, load-bearing for this run but owned by this
 repo rather than `klayout-tools`: `scripts/openroad-docker.sh` (from issue

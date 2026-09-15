@@ -1,17 +1,31 @@
 {
   "schema_version": 1,
   "engine": "klayout",
-  "layout": "/tmp/issue8/modexp_layout_abstracted.spice",
-  "reference": "/tmp/issue8/modexp_reference.spice",
+  "layout": "layout/lvs/modexp_layout_abstracted.spice",
+  "reference": "layout/lvs/modexp_reference.spice",
   "top": "MODEXP",
+  "reference_top": "MODEXP",
+  "parameter_tolerance": null,
+  "options": {
+    "combine_devices": false,
+    "combine_devices_per_circuit": null,
+    "flatten_layout": false,
+    "flatten_reference": false,
+    "netgen_setup": null,
+    "parameter_tolerance": null
+  },
   "status": "mismatch",
-  "mismatch_count": 15,
+  "mismatch_count": 17,
+  "error_count": 17,
   "category_counts": {
-    "topology": 15
+    "topology": 17
+  },
+  "category_error_counts": {
+    "topology": 17
   },
   "counts": {
     "nets": {
-      "layout": 1214,
+      "layout": 771,
       "reference": 739,
       "matched": 333
     },
@@ -21,7 +35,7 @@
       "matched": 0
     },
     "pins": {
-      "layout": 68,
+      "layout": 70,
       "reference": 68,
       "matched": 333
     }
@@ -29,14 +43,14 @@
   "device_classes": null,
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.10",
-    "layout_sha256": "04748e40b81d7e623dde2ed380be0d61cc097e57b0ff21bcd312f3f0a0691e0b",
-    "reference_sha256": "5b0e55bb15b725262d7390185fa16756dcc9a65311639532bdd5546764c2df07",
+    "engine_version": "0.30.12",
+    "layout_sha256": "34c62150f0a4c49973bc1cc8845c901c61033ffbab26b251d2eae68611a683f7",
+    "reference_sha256": "84e054fbfc8d4cd7180cc8b4fff3d17f826617838e2ebb18d61b0fc6c54f6624",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.2.0",
-    "klayout_version": "0.30.10",
+    "klt_version": "0.4.0",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": null,
     "input": null
@@ -50,7 +64,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "MODEXP",
+        "reference": "MODEXP"
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -60,7 +80,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__BUF_4",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -70,7 +96,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__BUFINV_16",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -80,7 +112,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__CLKINV_2",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -90,7 +128,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__CLKINV_4",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -100,7 +144,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__DIODE_2",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -110,7 +160,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__FILL_1",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -120,7 +176,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__FILL_2",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -130,7 +192,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__FILL_4",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -140,7 +208,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__FILL_8",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -150,7 +224,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__INV_1",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -160,7 +240,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__INV_6",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -170,7 +256,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__NOR2_2",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -180,7 +272,45 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__O21AI_2",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__O22AI_2",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology",
+      "severity": "error",
+      "description": "circuit could not be matched to a counterpart",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "SKY130_FD_SC_HD__TAPVPWRVGND_1",
+        "reference": null
+      },
+      "instance": null,
+      "subcircuit": null
     },
     {
       "category": "topology",
@@ -190,7 +320,13 @@
       "net": null,
       "device": null,
       "property": null,
-      "details": null
+      "details": null,
+      "circuit": {
+        "layout": null,
+        "reference": "SKY130_FD_SC_HD__O22AI_1"
+      },
+      "instance": null,
+      "subcircuit": null
     }
   ],
   "net_correspondence": [

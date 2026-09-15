@@ -246,6 +246,19 @@ extraction methodology:
 `verification/records/drc-lvs/records/20260911-053500-d5e43d3.md` (and its
 twin, `20260911-053520-d5e43d3.md`), `layout/lvs/README.md`.
 
+**Artifact/narrative gap closed (issue #86, 2026-09-15)**: the 17-mismatch
+result above was recorded in the records cited here from 2026-09-11 onward,
+but the committed `layout/lvs/modexp_lvs_report.json` was left at the
+original 2026-08-14 run (15 mismatches) until now — so the JSON on disk
+contradicted this page. Issue #86 re-ran `klt lvs` against the current
+committed netlist pair and committed the result: `status: "mismatch"`,
+`mismatch_count: 17`, 100% `topology`, matched nets/pins 333/333, with the
+same 15/1/1 `layout`/`reference`/`both` split described above. The re-run
+**reproduces** the recorded finding rather than changing it, so no new
+evidence record is minted; `layout/drc/modexp-drc-report.json` was re-run in
+the same pass as a freshness check and came back byte-identical (`clean`, 0
+violations). Detail: `layout/lvs/README.md`'s issue #86 section.
+
 **This re-run does not touch or supersede** the separate "fresh
 self-consistent build" comparison issue #55 introduced below (1324
 mismatches) — that comparison already builds its own reference from an

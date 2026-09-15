@@ -13,6 +13,11 @@ flow/reports/scratch/
 # frozen under verification/records/place-and-route/artifacts/ instead.
 flow/corners/
 flow/corner-sweep-results.json
+# flow/run-sta-corner-sweep.sh's per-corner scratch requests/outputs and its
+# aggregated summary -- same rule as above; the evidence that matters is
+# frozen under verification/records/sta-corner-sweep/artifacts/ instead.
+flow/sta-corners/
+flow/sta-corner-sweep-results.json
 # local klt install, created by the setup script
 .venv/
 
