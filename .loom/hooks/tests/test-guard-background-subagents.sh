@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Test suite for defaults/hooks/guard-background-subagents.sh (issues #4257, #4389)
+# Test suite for .loom/hooks/guard-background-subagents.sh (issues #4257, #4389)
 #
-# Usage: ./defaults/hooks/tests/test-guard-background-subagents.sh
+# Usage: ./.loom/hooks/tests/test-guard-background-subagents.sh
 #
 # Covers the Stop-hook mechanical backstop for the #3822/#4257/#4389 hazard: an
 # orchestrator ending its turn in headless `claude -p` mode kills every
@@ -63,7 +63,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-SRC_HOOK="$REPO_ROOT/defaults/hooks/guard-background-subagents.sh"
+SRC_HOOK="$REPO_ROOT/.loom/hooks/guard-background-subagents.sh"
 
 PASS=0
 FAIL=0

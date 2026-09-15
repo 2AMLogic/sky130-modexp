@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Test suite for defaults/hooks/guard-worktree-paths.sh (issue #4007)
+# Test suite for .loom/hooks/guard-worktree-paths.sh (issue #4007)
 #
-# Usage: ./defaults/hooks/tests/test-guard-worktree-paths.sh
+# Usage: ./.loom/hooks/tests/test-guard-worktree-paths.sh
 #
 # Covers the #4007 rework from an env-only (LOOM_WORKTREE_PATH) worktree
 # guard -- structurally inert on the daemon-dispatched sweep path, where
@@ -19,16 +19,16 @@
 #   - fail-open contract: exit is always 0, and any denial emits well-formed
 #     hookSpecificOutput JSON
 #
-# The hook under test is the canonical source at defaults/ (the version-
-# controlled source of truth), copied into an isolated temp git tree so the
-# hook's MAIN_ROOT/HOOK_ERROR_LOG resolve there (git-common-dir pins
-# MAIN_ROOT to the temp root). Exit 0 = all pass, 1 = fail.
+# The hook under test is the installed copy at .loom/hooks/ (the version-
+# controlled source of truth for a consumer repo), copied into an isolated
+# temp git tree so the hook's MAIN_ROOT/HOOK_ERROR_LOG resolve there
+# (git-common-dir pins MAIN_ROOT to the temp root). Exit 0 = all pass, 1 = fail.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-SRC_HOOK="$REPO_ROOT/defaults/hooks/guard-worktree-paths.sh"
+SRC_HOOK="$REPO_ROOT/.loom/hooks/guard-worktree-paths.sh"
 
 PASS=0
 FAIL=0
@@ -48,12 +48,12 @@ chmod +x "$TMPROOT/.loom/hooks/guard-worktree-paths.sh"
 # #4262) relative to its own SCRIPT_DIR — stage the real resolver at the
 # equivalent installed-layout path so the guards.worktreeIsolation /
 # worktree.root reads exercise the actual tiered resolution, not a stub.
-cp "$REPO_ROOT/defaults/scripts/lib/config-resolver.sh" "$TMPROOT/.loom/scripts/lib/config-resolver.sh"
+cp "$REPO_ROOT/.loom/scripts/lib/config-resolver.sh" "$TMPROOT/.loom/scripts/lib/config-resolver.sh"
 # The hook also sources ../scripts/lib/canonical-path.sh (#4495) for
 # symlink-aware target canonicalization. Stage it at the installed-layout path
 # so the symlink-escape cases below exercise the real resolver rather than the
 # lexical fallback.
-cp "$REPO_ROOT/defaults/scripts/lib/canonical-path.sh" "$TMPROOT/.loom/scripts/lib/canonical-path.sh"
+cp "$REPO_ROOT/.loom/scripts/lib/canonical-path.sh" "$TMPROOT/.loom/scripts/lib/canonical-path.sh"
 HOOK="$TMPROOT/.loom/hooks/guard-worktree-paths.sh"
 
 pass() { PASS=$((PASS + 1)); TOTAL=$((TOTAL + 1)); printf "${GREEN}PASS${NC} %s\n" "$1"; }
