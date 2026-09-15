@@ -1462,6 +1462,62 @@ resolve_default_branch() {
 # strip_literal_text(): backslash-escaped quotes and an unterminated quote fall
 # back to the old separator-active behaviour, never widening a deny into an allow.
 #
+# UNQUOTED BACKSLASH-NEWLINE LINE CONTINUATION (#71, re-applied for #99): every
+# caller downstream of qsplit() ultimately does `n = split($0, segs, "\n")` and
+# treats each resulting piece as ONE simple command (extract_write_targets(),
+# extract_rm_targets(), lifecycle_or_cloud_reason(), parse_force_ops(), ...).
+# Without this branch, qsplit() copies an embedded `\n` through unchanged for any
+# reason OTHER than the ;/&/| separators above -- including the newline half of a
+# real shell line-continuation (`cmd arg1 \` + newline + `arg2`), which is not a
+# statement boundary at all: the real shell deletes the backslash and the newline
+# and joins the two physical lines into one logical command. Leaving it unjoined
+# splits a single multi-line invocation into N bogus "commands", one per physical
+# line -- for a `cp`/`mv` whose ARGUMENTS spill across a `\`-continued line, this
+# strands the real destination argument in its own line-only segment (never
+# reaching the cp/mv branch's "last argument" check at all) while the trailing
+# "\" on an EARLIER line becomes a phantom extra argument on the `cp <source> \`
+# segment, which the cp/mv branch then misreads as the write target -- resolving
+# it relative to curcwd and denying a legitimate multi-source `cp`/`mv` that
+# reads from outside the worktree into an in-worktree destination (the false
+# positive reported in #71). The same stranding can also cause a false NEGATIVE
+# for extract_rm_targets()/lifecycle_or_cloud_reason(): a continuation-split
+# `rm -rf \` line has no target on its own line, and the target-bearing
+# continuation line no longer starts with `rm`, so the real target is never
+# scanned at all.
+#
+# The fix: qsplit() elides a `\` immediately followed by `\n` -- but ONLY when
+# reached OUTSIDE any quoted span, i.e. only in the per-character default path
+# below, never inside the DQ/SQ branch above (an inert quoted span is copied
+# VERBATIM as one `substr()`, backslash-newline and all, before this check ever
+# sees its bytes; a command-substitution-carrying span is walked by its own
+# separator-only loop, which likewise never elides -- so a continuation-looking
+# sequence that is really literal DATA inside a quoted string is never touched).
+# This exactly mirrors real shell semantics: the backslash and the newline are
+# simply deleted, with nothing inserted in their place (a leading space on the
+# continuation line, if any, is untouched and is what naturally keeps the joined
+# tokens separated). It only ever REDUCES spurious mid-invocation segment
+# boundaries -- it can never manufacture a NEW deny (a joined command is scanned
+# exactly as if the operator had typed it on one line), so it stays on the safe
+# side of "never widen a deny".
+#
+# KNOWN LIMITATION: qsplit() has no general backslash-escape tracking outside
+# quotes (a bare `\` was, and remains, passed through as a literal character in
+# every other position). A doubled `\\` immediately followed by a real newline
+# (an escaped literal backslash, THEN an ordinary unescaped line end -- not a
+# continuation) is misread as a continuation and joined too. This shape is
+# vanishingly rare in real commands and, per the "never widen a deny" contract
+# above, over-joining can only ever suppress a spurious segment split -- never
+# create a new false ALLOW of an otherwise-flagged write.
+#
+# REGRESSION HISTORY (#99): this branch originally landed in #72 and was then
+# silently reverted by a `chore: resync installed Loom surfaces` commit that
+# overwrote the installed hook with an upstream copy predating the fix, taking
+# the repo from 9/9 to 6/9 on the #71 regression suite. The suite
+# .loom/hooks/tests/test-guard-destructive-generic-cp-mv-continuation.sh is the
+# standing detector for that class of regression -- if it drops back to 6/9 with
+# cases (a)/(b)/(c) failing, check whether this branch is still present here
+# before looking anywhere else.
+#
 # Shared as a single awk source string so the three parsers cannot drift.
 # =============================================================================
 _QSPLIT_AWK='
@@ -1556,6 +1612,16 @@ function qsplit(s,   out, n, i, c, j, qc, ci, inner, SQ, DQ, k, ch, scanfrom) {
             }
             out = out qc   # the real closing quote -- emitted literally, never re-opened
             i = ci + 1
+            continue
+        }
+        if (c == "\\" && i < n && substr(s, i + 1, 1) == "\n") {
+            # Unquoted line continuation (#71): the real shell deletes BOTH
+            # the backslash and the newline and joins the two physical lines
+            # into one logical command -- so this emits nothing at all
+            # (never a "\n", unlike the separators below, which really do
+            # end a statement). See the header comment above for the false
+            # positive/negative this fixes and why over-joining stays safe.
+            i += 2
             continue
         }
         if (c == ";") { out = out "\n"; i++; continue }
