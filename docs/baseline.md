@@ -69,6 +69,15 @@ input content hashes) and the git revision it was produced against:
 - `verification/records/gate-level-sim/records/` — the same suite re-run
   against a gate-level netlist of the **routed layout** rather than the RTL
   (issue #9); see "Post-route gate-level simulation" below.
+- `verification/records/place-and-route/records/` — the OpenROAD
+  place-and-route runs behind the area/Fmax/power figures below, including
+  the two per-corner rebuild sweeps.
+- `verification/records/sta-corner-sweep/records/` — standalone multi-corner
+  STA (`klt sta`) of the **committed** routed DEF, one fixed geometry
+  analysed at all eighteen ratified corners (issue #86); see "STA corner
+  characterization of the committed layout" below.
+- `verification/records/drc-lvs/records/` — the DRC and LVS runs against the
+  routed GDS; `docs/signoff-claim.md` is the authoritative summary.
 
 `verification/README.md` is the authoritative description of that record
 format; `verification/check_records.py` enforces it, and fails on a record
@@ -341,7 +350,75 @@ overall. Full record:
 **The 18-corner sweep above (both the original and the mapping-only
 re-run) is unaffected** — neither used the committed `flow/par-modexp.json`
 recipe this section's original table measures, and issue #81 did not
-re-run either sweep with `power` enabled.
+re-run either sweep with `power` enabled. **That left the committed layout
+itself without corner evidence of its own until issue #86; see the next
+section.**
+
+### STA corner characterization of the committed layout (issue #86)
+
+**Status: measured, 2026-09-15.** This is the first per-corner timing
+evidence about `layout/modexp.def`/`layout/modexp.gds` **themselves** — the
+post-#81, tapcell/PDN/filler-cell-bearing artifacts this repo signs off DRC
+and LVS against. Both 18-corner sweeps above characterize
+`flow/run-corner-sweep.sh`'s *separate* 55%-utilization floorplan and
+predate issue #81, so neither could answer "how does the shipped layout
+time across the ratified corner set?"
+
+`klt sta` ([klayout-tools#1099](https://github.com/2AMLogic/klayout-tools/issues/1099),
+`docs/cli/sta.md`) makes that question answerable: it runs a standalone
+OpenSTA session against an already-routed DEF and never places, routes, or
+runs CTS. `flow/run-sta-corner-sweep.sh` drives it once per corner against
+the **byte-identical** committed DEF — verified, not assumed: all eighteen
+responses report the same `provenance.input.content_hash`.
+
+| Corner | WNS (ns) | TNS (ns) | Fmax (MHz) | Setup viol. | Hold viol. | Clock skew (ns) | Power (mW) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `ff_100C_1v65` | 5.7193 | 0.000 | 233.61 | 0 | 0 | 0.00174 | 0.7969 |
+| `ff_100C_1v95` | 6.6880 | 0.000 | 301.93 | 0 | 0 | 0.00161 | 1.1370 |
+| `ff_n40C_1v56` | 4.4079 | 0.000 | 178.82 | 0 | 0 | 0.00282 | 0.6778 |
+| `ff_n40C_1v65` | 5.1717 | 0.000 | 207.11 | 0 | 0 | 0.00249 | 0.7604 |
+| `ff_n40C_1v76` | 5.8483 | 0.000 | 240.87 | 0 | 0 | 0.00221 | 0.8713 |
+| `ff_n40C_1v95` | 6.6144 | 0.000 | 295.37 | 0 | 0 | 0.00185 | 1.0774 |
+| `ff_n40C_1v95_ccsnoise` | 6.6144 | 0.000 | 295.37 | 0 | 0 | 0.00185 | 1.0774 |
+| `tt_025C_1v80` | 4.3673 | 0.000 | 177.53 | 0 | 0 | 0.00244 | 0.9307 |
+| `tt_100C_1v80` | 4.5229 | 0.000 | 182.58 | 0 | 0 | 0.00241 | 0.9517 |
+| `ss_100C_1v40` | **-6.2324** | -94.513 | 61.61 | 16 | 0 | 0.00746 | 0.5515 |
+| `ss_100C_1v60` | **-1.0831** | -13.736 | 90.23 | 16 | 0 | 0.00575 | 0.7563 |
+| `ss_n40C_1v28` | **-33.8669** | -671.109 | 22.80 | 105 | 0 | 0.02170 | 0.3169 |
+| `ss_n40C_1v35` | **-20.2293** | -310.917 | 33.08 | 19 | 0 | 0.01051 | 0.4042 |
+| `ss_n40C_1v40` | **-14.4282** | -219.811 | 40.94 | 16 | 0 | 0.01154 | 0.4789 |
+| `ss_n40C_1v44` | **-11.0545** | -167.670 | 47.50 | 16 | 0 | 0.01233 | 0.5401 |
+| `ss_n40C_1v60` | **-3.2067** | -45.830 | 75.72 | 16 | 0 | 0.00722 | 0.7192 |
+| `ss_n40C_1v60_ccsnoise` | **-3.2067** | -45.830 | 75.72 | 16 | 0 | 0.00722 | 0.7192 |
+| `ss_n40C_1v76` | 0.5433 | 0.000 | 105.75 | 0 | 0 | 0.00490 | 0.8792 |
+
+- **Setup: 100 MHz closes at 10 of 18 corners** (both `tt`, all seven `ff`,
+  and `ss_n40C_1v76`) and **does not close at the other eight `ss`
+  corners**. Binding corner `ss_n40C_1v28`: WNS **-33.867 ns**, Fmax
+  **22.80 MHz**, ~4.4x short of the target. Stated plainly, per
+  `spec/decision-records/0002-...` Decision 1: **this layout does not close
+  100 MHz across the ratified corner set.**
+- **Hold: 0 violations at all eighteen corners** — the hold half of the T1
+  checklist's "setup *and* hold across the PVT corner set", measured against
+  the committed layout for the first time. Bounded: this `klt` pin reports a
+  hold violation *count*, not hold-side WNS/TNS
+  ([klayout-tools#1634](https://github.com/2AMLogic/klayout-tools/pull/1634)
+  landed later than the pin), so corners cannot be ranked by hold margin.
+
+**Do not read a delta between this table and the two above.** They differ in
+both the artifact and the method: those measure a different floorplan with
+no `power` block, and rebuild (and re-optimize) *per corner*, so each corner
+carries its own `repair_timing` buffering; this one re-times a single fixed
+geometry optimized only at the nominal corner, which reads *worse* at a slow
+corner by construction. Separately, `klt sta` with `spef` omitted times
+against LEF/DEF-derived parasitics rather than the
+`estimate_parasitics -global_routing` basis `klt place-and-route`'s in-flow
+STA uses — which is why the nominal corner reads +4.367 ns / 177.53 MHz here
+against the +3.736 ns / 159.63 MHz the P&R record reports for the same DEF.
+**That is a methodology difference, not an improvement**, and it makes this
+table optimistic, not conservative. Full record, limitations, and raw
+per-corner envelopes:
+[`verification/records/sta-corner-sweep/records/20260915-111931-2c125f8.md`](../verification/records/sta-corner-sweep/records/20260915-111931-2c125f8.md).
 
 ### What this run does not claim
 

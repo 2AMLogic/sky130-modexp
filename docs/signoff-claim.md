@@ -219,6 +219,69 @@ deck's full current rule set is not attempted here (out of this issue's
 scope); `klt deck info --format json` reports the installed build's own
 current coverage directly.
 
+**Update (issue #86, 2026-09-15): the current rule set, re-enumerated.**
+The note above left the deck's coverage disclosed-as-incomplete rather than
+enumerated, which is not what T1 checklist item 3 asks for (a clean verdict
+must come with its coverage gaps *enumerated*, not merely flagged as
+unlisted). Re-derived directly from the deck this repo's pinned `klt`
+(`f77036bf…`) actually runs — `deck.content_hash`
+`sha256:5afac7ab8561545859f5e2e74f4621c6ffc052756dc8fe344ea263398e96b240`,
+the same hash `layout/drc/modexp-drc-report.json` carries, so this describes
+the exact deck the committed clean verdict came from:
+
+- **47 rules, not 17.** The deck has grown by 30 rules since the
+  enumeration above was written. Note that
+  `klt deck info --format json` — which the issue #78 note above points at —
+  reports the *extraction* deck's structural device-class coverage and the
+  deck content hash, **not** the DRC rule inventory; the inventory below was
+  read from the deck definition the pinned build ships.
+- **Coverage by check kind**: 15 `width`, 14 `space`, 16 `enclosing`, 2
+  `separation`.
+- **Coverage by layer scope**: `nwell`, `poly`, `difftap`, `licon`, `ct`
+  (mcon), `li`, `m1`, `via`, `m2`, `via2`, `m3`, `via3`, `m4`, `via4`, `m5`,
+  `capm`, `cap2m`.
+- **Full rule list**: `poly.width.1`, `diff.width.1`, `li1.width.1`,
+  `li1.space.1`, `met1.width.1`, `met1.space.1`, `met1.enclosing.mcon.1`,
+  `diff.enclosing.licon.1`, `poly.enclosing.licon.1`,
+  `li1.enclosing.licon1.1`, `mcon.space.1`, `met2.width.1`, `met2.space.1`,
+  `via.width.1`, `via.space.1`, `met1.enclosing.via.1`,
+  `met2.enclosing.via.1`, `met3.width.1`, `met3.space.1`, `via2.width.1`,
+  `via2.space.1`, `met2.enclosing.via2.1`, `met3.enclosing.via2.1`,
+  `met4.width.1`, `met4.space.1`, `via3.width.1`, `via3.space.1`,
+  `met3.enclosing.via3.1`, `met4.enclosing.via3.1`, `met5.width.1`,
+  `met5.space.1`, `via4.width.1`, `via4.space.1`, `met4.enclosing.via4.1`,
+  `met5.enclosing.via4.1`, `capm.width.1`, `capm.space.1`,
+  `met3.enclosing.capm.1`, `capm.enclosing.via3.1`,
+  `capm.separation.via3.1`, `capm2.width.1`, `capm2.space.1`,
+  `met4.enclosing.capm2.1`, `capm2.enclosing.via4.1`,
+  `capm2.separation.via4.1`, `nwell.width.1`, `nwell.space.1`.
+
+**What is still not covered, stated as a gap rather than implied:**
+
+- **No area, density, or antenna rule is transcribed at all** — zero of the
+  47 rules carry an area/density/antenna bound, so `m2.6` (minimum met2
+  area) and its whole rule class remain untranscribed, exactly as the
+  original enumeration said. Antenna checking is a separate verb
+  (`klt erc`), not part of this deck, and is not run in this repo's evidence.
+- **The approximation caveats above still apply**, and there are more of
+  them than the original six: every rule whose transcription approximates
+  its source rule carries that warning in its own docstring in the deck
+  definition (31 such notes across the current deck). The two named
+  approximations this design actually tripped are already documented above
+  (`nwell.space.1`'s `space`-vs-`isolated` semantics,
+  [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654);
+  and `li1.enclosing.licon1.1`'s deliberate unconditional-floor threshold).
+- **18 of the 47 rules carry no `source_repo`/`rule_id` provenance** (all of
+  them `enclosing`/`separation` rules derived from a layer pair rather than
+  transcribed one-for-one from a named `sky130.lydrc` rule), so they cannot
+  be traced back to a single official DRM rule id from the deck alone.
+- **This is still a curated subset, not the full sky130 design rule
+  manual.** A `clean` verdict from this deck does not mean "DRC-clean
+  against the sky130 DRM"; it means clean against these 47 rules, with the
+  bounds above. That framing is unchanged by the re-enumeration — the point
+  of the re-enumeration is that the list is now current and complete *as a
+  description of what ran*, which is what item 3 requires.
+
 ## LVS — still `status: "mismatch"` against the regenerated,
 tapcell/PDN/filler-cell GDS (updated 2026-09-11, issue #81)
 
@@ -245,6 +308,19 @@ identical name+type, 3 resized, 35 new CTS/timing/antenna-fixup insertions,
 extraction methodology:
 `verification/records/drc-lvs/records/20260911-053500-d5e43d3.md` (and its
 twin, `20260911-053520-d5e43d3.md`), `layout/lvs/README.md`.
+
+**Artifact/narrative gap closed (issue #86, 2026-09-15)**: the 17-mismatch
+result above was recorded in the records cited here from 2026-09-11 onward,
+but the committed `layout/lvs/modexp_lvs_report.json` was left at the
+original 2026-08-14 run (15 mismatches) until now — so the JSON on disk
+contradicted this page. Issue #86 re-ran `klt lvs` against the current
+committed netlist pair and committed the result: `status: "mismatch"`,
+`mismatch_count: 17`, 100% `topology`, matched nets/pins 333/333, with the
+same 15/1/1 `layout`/`reference`/`both` split described above. The re-run
+**reproduces** the recorded finding rather than changing it, so no new
+evidence record is minted; `layout/drc/modexp-drc-report.json` was re-run in
+the same pass as a freshness check and came back byte-identical (`clean`, 0
+violations). Detail: `layout/lvs/README.md`'s issue #86 section.
 
 **This re-run does not touch or supersede** the separate "fresh
 self-consistent build" comparison issue #55 introduced below (1324

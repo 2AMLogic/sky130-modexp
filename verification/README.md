@@ -190,9 +190,12 @@ verification/records/
 ```
 
 - **`<experiment-slug>`** — short, descriptive, kebab-case name for the
-  claim being verified (`width-cross-check`, `synthesis-baseline`, and
-  future entries such as `place-and-route`, `drc-lvs`, `gate-level-sim`).
-  One directory per distinct claim, not per run.
+  claim being verified. The slugs in use are `width-cross-check`,
+  `synthesis-baseline`, `place-and-route`, `drc-lvs`, `gate-level-sim`, and
+  `sta-corner-sweep` (standalone multi-corner STA of the *committed* routed
+  DEF via `klt sta`, distinct from `place-and-route`'s own per-corner
+  rebuild sweeps — see that directory's records for why the two are not
+  interchangeable). One directory per distinct claim, not per run.
 - **`<record-id>`** — unique and traceable:
   `<YYYYMMDD>-<HHMMSS>-<short-git-sha>` (e.g. `20260808-031948-5488082`),
   identical grammar to the analog canaries' convention. Re-runs mint a new

@@ -1,0 +1,703 @@
+[
+{
+  "corner": "ff_100C_1v65",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 5.71928,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 233.606,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00174,
+    "estimated_power_mw": 0.7969,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_100C_1v65",
+        "content_hash": "sha256:913e67fc551be7e4e97fc031f3e72e5ef3251438ceeb44753f73b68df58f5650",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ff_100C_1v95",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 6.68796,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 301.929,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00161,
+    "estimated_power_mw": 1.137,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_100C_1v95",
+        "content_hash": "sha256:15c9ccefec536ff35d694314af5812e7c03b4e5a356ec8ea28f2e40bbeec04e7",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ff_n40C_1v56",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 4.40793,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 178.825,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00282,
+    "estimated_power_mw": 0.6778,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_n40C_1v56",
+        "content_hash": "sha256:d64f38f3e67f8adab818531901385dbd29c6a4805e6166f7166bcc3e9370ef88",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ff_n40C_1v65",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 5.17169,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 207.112,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00249,
+    "estimated_power_mw": 0.7604,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_n40C_1v65",
+        "content_hash": "sha256:dd777cb159bf2fc853773d74a3c3e8269b73869d25aae49d0f80f117df9631ee",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ff_n40C_1v76",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 5.84829,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 240.865,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00221,
+    "estimated_power_mw": 0.8713,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_n40C_1v76",
+        "content_hash": "sha256:0f5b7ceef23114c3834870f86c2f90ea24d597622fcd5abd2916b1fb604e8a26",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ff_n40C_1v95",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 6.61437,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 295.366,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00185,
+    "estimated_power_mw": 1.0774,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_n40C_1v95",
+        "content_hash": "sha256:fb61d91c55a7f85b1989e8149d040b13ba5e7f5478f5bf0c3c16c5da30720139",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ff_n40C_1v95_ccsnoise",
+  "run_status": "ok",
+  "elapsed_s": 4,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 6.61437,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 295.366,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00185,
+    "estimated_power_mw": 1.0774,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ff_n40C_1v95_ccsnoise",
+        "content_hash": "sha256:425315ca7a49debcb1c715daf6e5e5a27bb78587cac6f3b358b1fe114c787132",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "tt_025C_1v80",
+  "run_status": "ok",
+  "elapsed_s": 4,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 4.36728,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 177.534,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00244,
+    "estimated_power_mw": 0.9307,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__tt_025C_1v80",
+        "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "tt_100C_1v80",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 4.52294,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 182.58,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00241,
+    "estimated_power_mw": 0.9517,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__tt_100C_1v80",
+        "content_hash": "sha256:7c6b9fc62d7e83b8317cdca883d79107d8f2ff1061b04519fda7d3088560015b",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_100C_1v40",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -6.23238,
+    "total_negative_slack_ns": -94.5131,
+    "fmax_mhz": 61.6053,
+    "setup_violation_count": 16,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00746,
+    "estimated_power_mw": 0.5515,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_100C_1v40",
+        "content_hash": "sha256:88c8ce95b6a7f333bd9e618fc765c3005fbeccfca2727226bd821c0d16fcaac8",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_100C_1v60",
+  "run_status": "ok",
+  "elapsed_s": 2,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -1.08306,
+    "total_negative_slack_ns": -13.7359,
+    "fmax_mhz": 90.2278,
+    "setup_violation_count": 16,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00575,
+    "estimated_power_mw": 0.7563,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_100C_1v60",
+        "content_hash": "sha256:9b24f0db3967ac67b4cae1f74bb480fd47922d18d0ed577e3c121739b412c361",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v28",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -33.8669,
+    "total_negative_slack_ns": -671.109,
+    "fmax_mhz": 22.7963,
+    "setup_violation_count": 105,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.0217,
+    "estimated_power_mw": 0.3169,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v28",
+        "content_hash": "sha256:afd8201328f73996b7c80bf13909674ba7b483ec413dea3fca74831cec712578",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v35",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -20.2293,
+    "total_negative_slack_ns": -310.917,
+    "fmax_mhz": 33.0805,
+    "setup_violation_count": 19,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.01051,
+    "estimated_power_mw": 0.4042,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v35",
+        "content_hash": "sha256:8fd5aefd2053feef0a9bd3a5a972680dd77ddb8dda744836611656f37f969855",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v40",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -14.4282,
+    "total_negative_slack_ns": -219.811,
+    "fmax_mhz": 40.9362,
+    "setup_violation_count": 16,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.01154,
+    "estimated_power_mw": 0.4789,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v40",
+        "content_hash": "sha256:2c6c61b165c313a6eb18d805431f981cebf9cf138cec39a67d01ea99f63a4717",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v44",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -11.0545,
+    "total_negative_slack_ns": -167.67,
+    "fmax_mhz": 47.4957,
+    "setup_violation_count": 16,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.01233,
+    "estimated_power_mw": 0.5401,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v44",
+        "content_hash": "sha256:88814187f8226bb6e7ad394a1afef161eb1c4006ed1f095cc31ab0da7dae1f0f",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v60",
+  "run_status": "ok",
+  "elapsed_s": 3,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -3.20668,
+    "total_negative_slack_ns": -45.8301,
+    "fmax_mhz": 75.7193,
+    "setup_violation_count": 16,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00722,
+    "estimated_power_mw": 0.7192,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v60",
+        "content_hash": "sha256:23cba893b985a950a7951e3f29ae66ae6a639aaef75c1478e2306fb68d4a7ee5",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v60_ccsnoise",
+  "run_status": "ok",
+  "elapsed_s": 5,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": -3.20668,
+    "total_negative_slack_ns": -45.8301,
+    "fmax_mhz": 75.7193,
+    "setup_violation_count": 16,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.00722,
+    "estimated_power_mw": 0.7192,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v60_ccsnoise",
+        "content_hash": "sha256:699555a07af7b05393dd7cc2b3f5cfdbe4ddebc4efbf2b1a06ac68950c78c90f",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+},
+{
+  "corner": "ss_n40C_1v76",
+  "run_status": "ok",
+  "elapsed_s": 2,
+  "response": {
+    "schema_version": 1,
+    "engine": "openroad",
+    "engine_version": "26Q3-1260-g06a5a02279",
+    "hdl_toplevel": "modexp",
+    "status": "ok",
+    "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-86/layout/modexp.def",
+    "spef_path": null,
+    "worst_slack_ns": 0.54332,
+    "total_negative_slack_ns": 0,
+    "fmax_mhz": 105.745,
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "clock_skew_ns": 0.0049,
+    "estimated_power_mw": 0.8792,
+    "provenance": {
+      "klt_version": "0.4.0",
+      "klayout_version": "0.30.12",
+      "pdk": {
+        "name": "sky130A",
+        "source": "PDK_ROOT environment variable",
+        "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      },
+      "deck": {
+        "name": "sky130_fd_sc_hd__ss_n40C_1v76",
+        "content_hash": "sha256:f4f16d4f7040623afb60d0480a035e4128c5c1212361ae3bd13c3a52d9692a84",
+        "released": false
+      },
+      "input": {
+        "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      }
+    },
+    "spef_annotation": null
+  }
+}]
