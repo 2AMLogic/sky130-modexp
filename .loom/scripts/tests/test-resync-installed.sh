@@ -88,6 +88,16 @@
 #   --output leaves no staging worktree or dangling worktree registration
 #   behind, LOOM_RESYNC_OUTPUT=<dir> is equivalent to the flag, and --output
 #   with no value exits 1.
+# Local-divergence protection (#113): an update that would REMOVE a
+# non-blank line unique to the installed copy, on a file whose most recent
+# commit was NOT routine install/resync tooling output, is BLOCKED (not
+# silently applied) -- reproduces the #98/#100 incident shape directly and
+# exits 1 (or 2 under --dry-run) with the offending file named; --force
+# applies it anyway; an ordinary update with no local divergence (the
+# make_fixture() baseline lineage) keeps applying automatically with no
+# behavior change; a pure-addition update never gates even on a diverged
+# file; and a .loom/resync-ignore pin still short-circuits before the gate,
+# reported as skipped rather than blocked.
 # Plus contract checks:
 #   - --help prints usage (documenting --allow-worktree and --output), exit 0
 #   - unknown arg exits 1
@@ -218,9 +228,16 @@ make_fixture() {
     printf '{\n  "loom_version": "0.0.0",\n  "loom_commit": "old",\n  "install_date": "2020-01-01",\n  "loom_source": "%s",\n  "installed_files": []\n}\n' \
         "$repo" > "$repo/.loom/install-metadata.json"
 
-    # A real commit so loom_commit re-stamps to an actual short sha.
+    # A real commit so loom_commit re-stamps to an actual short sha. #113:
+    # the message deliberately matches the local-divergence protection's
+    # "safe lineage" pattern (RESYNC_COMMIT_SUBJECT_RE) -- every file this
+    # fixture drifts is meant to model ordinary, never-individually-patched
+    # installed content (the ubiquitous common case throughout this suite),
+    # not a local fix. Tests that specifically want the OTHER shape (a direct
+    # fix landed on the installed copy, #98/#100) layer an additional commit
+    # with a non-matching message on top -- see "Test group 29" below.
     git -C "$repo" add -A >/dev/null 2>&1
-    git -C "$repo" commit -qm "fixture" >/dev/null 2>&1
+    git -C "$repo" commit -qm "chore: install Loom v0.0.0" >/dev/null 2>&1
 
     echo "$repo"
 }
@@ -2768,6 +2785,143 @@ if [[ $RC -eq 0 ]] && ! grep -qi "forge label" <<<"$OUT"; then
     pass "(#6716) a repo with no .github/labels.yml is unaffected by the new step"
 else
     fail "(#6716) a repo with no labels.yml unexpectedly mentioned forge labels (rc=$RC); out=$OUT"
+fi
+
+# --- (#113) local-divergence protection --------------------------------------
+#
+# Reproduces the #98/#100 incident shape directly: an installed hook contains
+# a fix that was landed with a commit DIRECTLY on the installed copy (not via
+# a resync commit), and defaults/ has not caught up yet (still the pre-fix
+# content). A resync that would silently overwrite the fix must instead be
+# blocked, not applied.
+echo "Test group 29: local-divergence protection blocks a resync that would revert a direct fix (#113)"
+REPO="$(make_fixture)"
+# Simulate #98/#100: a fix landed directly on the INSTALLED copy, adding a
+# line defaults/ does not have yet (defaults/hooks/guard.sh stays at "A",
+# unaware of the fix -- exactly "upstream's defaults/ has not caught up").
+printf 'A\nGUARD-FIX-LINE\n' > "$REPO/.loom/hooks/guard.sh"
+git -C "$REPO" add .loom/hooks/guard.sh >/dev/null 2>&1
+git -C "$REPO" commit -qm "fix(guard): resolve_var() now substitutes a mid-token embedded \$VAR reference (#98)" >/dev/null 2>&1
+OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
+RC=$?
+if [[ $RC -eq 1 ]]; then
+    pass "(#113) a resync that would revert a direct fix exits 1"
+else
+    fail "(#113) expected exit 1 when a direct fix would be reverted (got $RC)"
+fi
+if grep -q "BLOCKED" <<<"$OUT" && grep -q "hooks/guard.sh" <<<"$OUT"; then
+    pass "(#113) the blocked file is named in the summary"
+else
+    fail "(#113) the blocked file was not named in the summary; out=$OUT"
+fi
+if [[ "$(cat "$REPO/.loom/hooks/guard.sh")" == $'A\nGUARD-FIX-LINE' ]]; then
+    pass "(#113) the direct fix was NOT reverted"
+else
+    fail "(#113) the direct fix was silently reverted despite the protection"
+fi
+
+echo "Test group 29b: --dry-run previews the block without writing (#113)"
+REPO2="$(make_fixture)"
+printf 'A\nGUARD-FIX-LINE\n' > "$REPO2/.loom/hooks/guard.sh"
+git -C "$REPO2" add .loom/hooks/guard.sh >/dev/null 2>&1
+git -C "$REPO2" commit -qm "fix(guard): direct hotfix (#98)" >/dev/null 2>&1
+OUT="$(cd "$REPO2" && bash "$SCRIPT" --dry-run 2>&1)"
+RC=$?
+if [[ $RC -eq 2 ]]; then
+    pass "(#113) --dry-run with a would-be-blocked file exits 2"
+else
+    fail "(#113) --dry-run with a would-be-blocked file exits 2 (got $RC)"
+fi
+if grep -q "blocked" <<<"$OUT" && [[ "$(cat "$REPO2/.loom/hooks/guard.sh")" == $'A\nGUARD-FIX-LINE' ]]; then
+    pass "(#113) --dry-run reports the block and writes nothing"
+else
+    fail "(#113) --dry-run either did not report the block or modified the file"
+fi
+
+echo "Test group 29c: --force applies the update anyway (#113)"
+OUT="$(cd "$REPO" && bash "$SCRIPT" --force 2>&1)"
+RC=$?
+if [[ $RC -eq 0 ]]; then
+    pass "(#113) --force exits 0"
+else
+    fail "(#113) --force exits 0 (got $RC)"
+fi
+if [[ "$(cat "$REPO/.loom/hooks/guard.sh")" == "A" ]]; then
+    pass "(#113) --force applies the update despite the local divergence"
+else
+    fail "(#113) --force did not apply the update"
+fi
+if grep -qi "forcing" <<<"$OUT"; then
+    pass "(#113) --force logs that it overrode the protection"
+else
+    fail "(#113) --force gave no indication it overrode the protection"
+fi
+
+# --- (#113) regression: no local divergence still resyncs silently -----------
+#
+# The overwhelmingly common case -- an installed file whose only history is
+# ordinary install/resync lineage -- must keep applying automatically even
+# when the update removes/replaces existing lines (test group 1's hooks/guard.sh
+# "OLD" -> "A" drift already exercises this implicitly; this test makes the
+# #113 acceptance criterion explicit and independent of that fixture detail).
+echo "Test group 29d: no local divergence -- an ordinary line-replacing update still applies automatically (#113)"
+REPO3="$(make_fixture)"
+if [[ "$(cat "$REPO3/.loom/hooks/guard.sh")" == "OLD" ]]; then
+    pass "(#113) fixture precondition: hooks/guard.sh has no local-fix commit (lineage is install-only)"
+else
+    fail "(#113) fixture precondition unmet for the no-divergence regression test"
+fi
+OUT="$(cd "$REPO3" && bash "$SCRIPT" 2>&1)"
+RC=$?
+if [[ $RC -eq 0 ]] && [[ "$(cat "$REPO3/.loom/hooks/guard.sh")" == "A" ]] && ! grep -q "BLOCKED" <<<"$OUT"; then
+    pass "(#113) an ordinary update with no local divergence applies without --force"
+else
+    fail "(#113) an ordinary update with no local divergence was unexpectedly blocked (rc=$RC)"
+fi
+
+# --- (#113) a pure-addition update never gates, even when diverged ----------
+echo "Test group 29e: a pure-addition update never gates, even on a diverged file (#113)"
+REPO4="$(make_fixture)"
+printf 'A\nLOCAL-FIX-LINE\n' > "$REPO4/.loom/hooks/guard.sh"
+git -C "$REPO4" add .loom/hooks/guard.sh >/dev/null 2>&1
+git -C "$REPO4" commit -qm "fix(guard): a direct local fix (#9998)" >/dev/null 2>&1
+# defaults/ now adds a NEW line on top of "A" without removing anything the
+# installed copy already has (LOCAL-FIX-LINE survives the naive line-set
+# check as well, since it's still present in dst after the update... but the
+# point here is defaults/ removes NOTHING dst has -- everything dst has is a
+# subset of the new src).
+printf 'A\nLOCAL-FIX-LINE\nNEW-UPSTREAM-LINE\n' > "$REPO4/defaults/hooks/guard.sh"
+OUT="$(cd "$REPO4" && bash "$SCRIPT" 2>&1)"
+RC=$?
+if [[ $RC -eq 0 ]] && ! grep -q "BLOCKED" <<<"$OUT"; then
+    pass "(#113) a pure-addition update applies automatically even on a diverged file"
+else
+    fail "(#113) a pure-addition update was unexpectedly blocked on a diverged file (rc=$RC); out=$OUT"
+fi
+if [[ "$(cat "$REPO4/.loom/hooks/guard.sh")" == $'A\nLOCAL-FIX-LINE\nNEW-UPSTREAM-LINE' ]]; then
+    pass "(#113) the pure-addition update was applied"
+else
+    fail "(#113) the pure-addition update was not applied"
+fi
+
+# --- (#113) .loom/resync-ignore is unaffected by the new gate ----------------
+echo "Test group 29f: .loom/resync-ignore still short-circuits before the local-divergence gate (#113)"
+REPO5="$(make_fixture)"
+printf 'A\nLOCAL-FIX-LINE\n' > "$REPO5/.loom/hooks/guard.sh"
+git -C "$REPO5" add .loom/hooks/guard.sh >/dev/null 2>&1
+git -C "$REPO5" commit -qm "fix(guard): a direct local fix (#9999)" >/dev/null 2>&1
+printf 'hooks/guard.sh  # keep my local fix\n' > "$REPO5/.loom/resync-ignore"
+OUT="$(cd "$REPO5" && bash "$SCRIPT" 2>&1)"
+RC=$?
+if [[ $RC -eq 0 ]] && grep -q "skipped" <<<"$OUT" && ! grep -q "BLOCKED" <<<"$OUT"; then
+    pass "(#113) a resync-ignore pin reports skipped, not blocked, and exits 0"
+else
+    fail "(#113) a resync-ignore-pinned diverged file was reported incorrectly (rc=$RC); out=$OUT"
+fi
+if [[ "$(cat "$REPO5/.loom/hooks/guard.sh")" == $'A\nLOCAL-FIX-LINE' ]]; then
+    pass "(#113) the resync-ignore-pinned local fix was preserved"
+else
+    fail "(#113) the resync-ignore-pinned local fix was overwritten"
 fi
 
 # --- summary -----------------------------------------------------------------
