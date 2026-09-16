@@ -165,3 +165,44 @@ jobs:
             fi
           done
           exit "$overall_fail"
+
+  merge-pr-suites:
+    name: Loom merge-pr.sh regression suites
+    runs-on: ubuntu-latest
+    # Regression protection for #126: nothing in CI ran .loom/scripts/tests/
+    # at all, which is how resync commit 9118550 could revert both the #104
+    # `|| true` fix in merge-pr.sh's _check_champion_hold_state_staleness()
+    # AND its own T10 regression test in the same commit and still get a
+    # fully green CI run (#124 / PR #125 restored the fix; this job is the
+    # structural fix that stops it from being silently revertible again).
+    #
+    # Scoped deliberately narrow: only the `test-merge-pr-*.sh` suites, run
+    # directly by globbing the directory -- NOT via run-ci-suites.sh and the
+    # ci-wired.txt manifest, which references suites/paths (defaults/,
+    # tests/install/, tests/hermit/) that don't exist in this consumer repo
+    # and fails its own precondition check here. All test-merge-pr-*.sh
+    # suites are present in this repo and already listed in ci-wired.txt
+    # (see .loom/scripts/tests/ci-wired.txt lines ~143-164); wiring the rest
+    # of that manifest is tracked separately.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run .loom/scripts/tests/test-merge-pr-*.sh suites
+        run: |
+          # See the "Deliberately NOT set -e" rationale in the guard-hooks
+          # job above -- same reasoning applies here.
+          set +e -u -o pipefail
+          overall_fail=0
+          for f in .loom/scripts/tests/test-merge-pr-*.sh; do
+            echo "::group::$f"
+            out=$(bash "$f" 2>&1)
+            rc=$?
+            printf '%s\n' "$out"
+            echo "::endgroup::"
+
+            if [[ "$rc" -ne 0 ]]; then
+              echo "FAILED: $f (exit $rc)"
+              overall_fail=1
+            fi
+          done
+          exit "$overall_fail"
