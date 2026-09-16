@@ -1,0 +1,19 @@
+# 2am#869: local guard-hook/resync-safety fixes pending upstream PRs to
+# rjwalters/loom. Pinned here (not silently reverted) until the PRs listed
+# below merge and land in defaults/ via a normal resync; remove each entry
+# once its fix arrives upstream and this file resyncs cleanly.
+#
+# hooks/guard-destructive-generic.sh: mkdir write-target physical_abs_path()
+#   resolution + mkdir-as-write-idiom recognition (originally sky130-modexp
+#   #116/#123). Upstream PR: TBD (see 2am#869).
+hooks/guard-destructive-generic.sh
+
+# scripts/resync-installed.sh: sync_one() local-fix detection guard --
+# blocks (rather than silently reverting) an update that would remove lines
+# unique to the installed copy when the copy's last commit was not a routine
+# resync (originally sky130-modexp #117). Upstream PR: TBD (see 2am#869).
+scripts/resync-installed.sh
+
+# scripts/tests/test-resync-installed.sh: companion test coverage for the
+# guard above. Pinned alongside it.
+scripts/tests/test-resync-installed.sh
