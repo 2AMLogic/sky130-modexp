@@ -284,47 +284,93 @@ run_guard
 assert_eq "1" "$LAST_RC" "Empty label array -> merge hard-blocked (exit 1)"
 assert_contains "$LAST_OUT" "<none>" "Empty label array -> message uses <none> placeholder, not a blank line"
 
-# T10 (#104 regression): loom:pr-labeled PR whose comments carry ZERO
-# champion:hold-state markers, invoked with `set -euo pipefail` genuinely
-# ACTIVE **inside the subshell doing the work** — unlike run_guard() above,
-# which brackets its call in outer `set +e` / `set -e` with no explicit
-# `set -e` re-enabled inside the command-substitution subshell itself, so the
-# subshell just inherits "errexit off" and never reproduces the crash. T8
-# above exercises the same "no marker" input through run_guard() and (by
-# design) cannot catch this.
+# --- Regression tests for #7678 (real `set -e` semantics) ---
 #
-# Getting a *reliable* repro is fiddlier than it looks: naively wrapping the
-# substitution in `... || RC=$?` or `if OUT="$(...)"; then` looks like it
-# should capture a nonzero exit status safely, but bash's -e/pipefail
-# "ignored in this context" exemption for commands on the non-final side of
-# `||`/`if` LEAKS INTO the spawned subshell too — even when that subshell
-# explicitly re-runs `set -euo pipefail` as its first line, an untested
-# real-bash repro shows the inner errexit gets silently defeated and the
-# subshell "succeeds" regardless of the fix, producing a false pass. The
-# pattern that reliably avoids that leak (verified against both the buggy
-# and fixed source) is the same outer `set +e` / capture-into-plain-var /
-# `set -e` restore idiom run_guard() itself uses — the outer `set +e` is a
-# plain statement (not part of an if/while/&&/||), so it does not carry the
-# exemption, and the explicit `set -euo pipefail` as the subshell's first
-# line then genuinely governs everything that runs inside it.
+# T8 above ("no hold-state marker at all") already exercises the right
+# inputs, but `run_guard()` wraps the call in `set +e; ...; set -e` — which
+# disables `-e` for the ENTIRE call, including the subshell that command
+# substitution forks to run it. That is exactly the condition under which the
+# #7678 bug (a pipefail-tripped `hold_head=` assignment with no `|| true`,
+# unlike its sibling two lines above) does NOT reproduce, so T8 stayed green
+# throughout the incident despite the bug being live and reproducible
+# directly against the real script (see PR #7678 / issue #7678).
+#
+# The real script invokes `_check_loom_pr_label` as a bare top-level
+# statement under its own `set -euo pipefail` (merge-pr.sh line ~105) — no
+# enclosing `if`/`&&`/`||` and no prior `set +e`. Both of those constructs
+# suppress `-e` propagation into a command-substitution subshell for the
+# command they guard (a documented bash behavior, not specific to this
+# guard), so simply swapping `run_guard`'s `set +e ... set -e` wrapper for an
+# `if var=$(...)` wrapper does NOT fix the gap either — it reproduces the
+# identical false-negative for a different reason.
+#
+# `run_guard_strict` below instead runs the guard in a genuinely separate
+# background `bash -c '...'` process that itself sets `set -euo pipefail`
+# from a clean slate (mirroring the real script's own top-level options
+# exactly), then reads that child's real exit status via `wait` — `set +e` is
+# only toggled around the `wait` call itself, AFTER the child has already run
+# to completion under real `-e` semantics, so it cannot mask the very
+# behavior under test.
+run_guard_strict() {
+    local outfile
+    outfile="$(mktemp)"
+    export PR_NUMBER REPO_NWO PR_LABELS PR_HEAD_SHA DRY_RUN ALLOW_UNAPPROVED \
+        FAKE_PR_COMMENTS FAKE_COMMENT_POST_RC COMMENT_POST_LOG
+    export -f _check_loom_pr_label _check_champion_hold_state_staleness \
+        info success warning error forge_get_pr_comments forge_gh_comment_rl_safe
+    bash -c 'set -euo pipefail; _check_loom_pr_label' >"$outfile" 2>&1 &
+    local pid=$!
+    set +e
+    wait "$pid"
+    LAST_RC=$?
+    set -e
+    LAST_OUT="$(cat "$outfile")"
+    rm -f "$outfile"
+}
+
 echo ""
-echo "Testing _check_champion_hold_state_staleness with set -euo pipefail genuinely active inside the subshell (#104 regression)..."
-set +e
-REGRESSION_OUT="$(
-  set -euo pipefail
-  forge_get_pr_comments() { printf '%s' 'Just a regular Judge approval comment, no marker here.'; }
-  PR_NUMBER="999"
-  REPO_NWO="owner/repo"
-  PR_HEAD_SHA="deadbeef"
-  _check_champion_hold_state_staleness
-  echo "REACHED_END"
-)"
-REGRESSION_RC=$?
-set -e
-assert_eq "0" "$REGRESSION_RC" \
-  "zero champion:hold-state comments under active set -euo pipefail -> does not die silently (#104)"
-assert_contains "$REGRESSION_OUT" "REACHED_END" \
-  "...and execution reaches past the guard call (no silent mid-pipeline exit)"
+echo "Testing _check_loom_pr_label under REAL set -e semantics (regression for #7678)..."
+
+# T10: loom:pr present + comments exist but carry NO champion:hold-state
+# marker anywhere — the overwhelmingly common case (comments present, e.g. an
+# ordinary Judge-approval comment, but no Champion hold history ever
+# recorded). Before the #7678 fix, this trips the pipefail'd `hold_head=`
+# assignment and silently aborts the whole guard (and, in the real script,
+# the whole merge) with no diagnostic at all.
+DRY_RUN=false; ALLOW_UNAPPROVED=false
+PR_LABELS=$'loom:pr'
+PR_HEAD_SHA="deadbeef"
+FAKE_PR_COMMENTS='Just a regular Judge approval comment, no marker here.'
+run_guard_strict
+assert_eq "0" "$LAST_RC" "REGRESSION (#7678): loom:pr present + comments with no hold-state marker -> guard does NOT abort under real set -e semantics"
+assert_not_contains "$LAST_OUT" "champion:hold-state marker recorded" "No hold-state marker -> no staleness warning (strict mode)"
+FAKE_PR_COMMENTS=""
+
+# T11: same "no marker" family, but with comments EMPTY entirely rather than
+# marker-free prose. `[[ -n "$comments" ]] || return 0` at the top of
+# _check_champion_hold_state_staleness already short-circuits before the
+# vulnerable pipeline, so this path never regressed — kept as a companion
+# strict-mode assertion so both flavors of "no marker" are covered under real
+# set -e semantics, not just the one that happens to trip the bug.
+DRY_RUN=false; ALLOW_UNAPPROVED=false
+PR_LABELS=$'loom:pr'
+PR_HEAD_SHA="deadbeef"
+FAKE_PR_COMMENTS=""
+run_guard_strict
+assert_eq "0" "$LAST_RC" "loom:pr present + empty comments -> guard does NOT abort under real set -e semantics"
+
+# T12: loom:pr present + a STALE champion:hold-state marker, invoked under
+# real set -e semantics — confirms the #7678 fix does not regress the
+# existing staleness-WARNING behavior (issue #7678 AC #3 / this file's T6).
+DRY_RUN=false; ALLOW_UNAPPROVED=false
+PR_LABELS=$'loom:pr'
+PR_HEAD_SHA="deadbeef"
+FAKE_PR_COMMENTS='<!-- champion:hold-state head=abc1234 -->
+Some other hold-state prose.'
+run_guard_strict
+assert_eq "0" "$LAST_RC" "loom:pr present + stale hold-state -> guard passes (exit 0) under real set -e semantics"
+assert_contains "$LAST_OUT" "champion:hold-state marker recorded head=abc1234" "Stale hold-state -> warning still emitted under real set -e semantics"
+FAKE_PR_COMMENTS=""
 
 # --- Source-contains guards (fail if a refactor drops the key behavior) ---
 echo ""

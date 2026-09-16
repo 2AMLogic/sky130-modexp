@@ -352,11 +352,61 @@ _extract_refs() {
 # describe the exact same timing relationship as "blocked by #N" in different
 # words -- a sequential-ordering finding, not a merits finding -- so they are
 # included as their own phrase family rather than folded into "blocked".
+#
+# #7756: a phrase word ANYWHERE in the bullet plus a reference ANYWHERE in the
+# bullet is not enough -- a bullet can narratively mention a phrase-list word
+# (e.g. "prerequisite") while discussing an issue reference elsewhere in the
+# same bullet, with no actual "blocked by"/"depends on"/"requires" framing
+# tying the two together. Observed on #7431: "#7430 (... a **prerequisite**
+# for any meaningful soak) merged only minutes before this evaluation, so no
+# soak observation window has started yet" -- "prerequisite" explains why the
+# soak hasn't started, it does not cite #7430 as a blocker of THIS proposal.
+#
+# So in addition to the two bullet-wide checks, require the reference to sit in
+# a WINDOW next to a phrase match, not merely somewhere in the bullet. Which
+# side of the phrase that window is on depends on the phrase family (#7784):
+#
+#   (a) Prepositional family ("blocked by", "depends on", "dependent on",
+#       "dependenc(y|ies) on|of", "requires", "prerequisite", "waiting on",
+#       "waits on", "cannot ... until", "not ...able until", "must wait
+#       for|until") -- these are grammatically followed immediately by the
+#       thing they name ("blocked by #N", "depends on #N", "requires #N"), so
+#       the reference must appear within $_DEP_REF_WINDOW chars AFTER the
+#       phrase. This is the #7756 rule, unchanged: it is what keeps the #7431
+#       shape ("#7430 (... a prerequisite for any meaningful soak) merged
+#       ...") classified on the merits.
+#
+#   (b) Bare verb/noun family ("blocks", "blocking", "blocker") -- these are
+#       the exception the (a) reasoning does not cover. Their idiomatic word
+#       order puts the reference BEFORE the phrase ("#N blocks this proposal",
+#       "#N is the blocker here", "#N is still blocking this work") just as
+#       often as after it ("this blocks on #N", "blocking dependency: #N"), so
+#       for these three -- and ONLY these three -- a reference within
+#       $_DEP_REF_LEAD_WINDOW chars BEFORE the phrase also counts.
+#
+# The leading window is deliberately much narrower than the trailing one: a
+# reference far upstream of a bare "blocking" is narrative co-occurrence (the
+# #7756 failure mode), not a citation. It is NOT applied to family (a), so
+# widening it can never reopen the #7431 false positive that motivated #7756.
+_DEP_REF_WINDOW=60
+_DEP_REF_LEAD_WINDOW=30
 is_dependency_finding() {
     local bullet="$1"
-    printf '%s' "$bullet" | grep -qiE '(blocked by|blocker|blocking|blocks|depends on|dependent on|dependenc(y|ies) (on|of)|requires|prerequisite|waiting on|waits on|cannot (start|proceed|begin)( work)? until|not (start|begin)able until|must wait (for|until))' || return 1
-    printf '%s' "$bullet" | grep -qE '([A-Za-z0-9._-]+/[A-Za-z0-9._-]+)?#[0-9]+|https?://[^[:space:]),]+/(issues|pull)/[0-9]+' || return 1
-    return 0
+    local phrase_re='(blocked by|blocker|blocking|blocks|depends on|dependent on|dependenc(y|ies) (on|of)|requires|prerequisite|waiting on|waits on|cannot (start|proceed|begin)( work)? until|not (start|begin)able until|must wait (for|until))'
+    local bare_phrase_re='(blocker|blocking|blocks)'
+    local ref_re='([A-Za-z0-9._-]+/[A-Za-z0-9._-]+)?#[0-9]+|https?://[^[:space:]),]+/(issues|pull)/[0-9]+'
+    local windows
+
+    printf '%s' "$bullet" | grep -qiE "$phrase_re" || return 1
+    printf '%s' "$bullet" | grep -qE "$ref_re" || return 1
+
+    # (a) reference AFTER any phrase (both families).
+    windows="$(printf '%s' "$bullet" | grep -oiE "${phrase_re}.{0,${_DEP_REF_WINDOW}}")" || windows=""
+    printf '%s' "$windows" | grep -qE "$ref_re" && return 0
+
+    # (b) reference BEFORE a bare verb/noun phrase only.
+    windows="$(printf '%s' "$bullet" | grep -oiE ".{0,${_DEP_REF_LEAD_WINDOW}}${bare_phrase_re}")" || windows=""
+    printf '%s' "$windows" | grep -qE "$ref_re"
 }
 
 # findings_are_dependency_only <findings, one per line>
