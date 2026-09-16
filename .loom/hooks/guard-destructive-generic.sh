@@ -1819,6 +1819,9 @@ function resolve_var(tok,   vname, rest, vv, dpos, prefix, varpart) {
     # closed, byte-identical to this function'"'"'s pre-#93 behavior for any
     # such token.
     if (index(tok, DQ) > 0 || index(tok, SQ) > 0) return tok
+    if (index(tok, sprintf("%c", 92)) > 0) return tok   # backslash: `\$NAME` is
+                                                        # literal at the shell but
+                                                        # would be substituted here
     dpos = index(tok, "$")
     if (dpos == 0) return tok
     prefix = substr(tok, 1, dpos - 1)
