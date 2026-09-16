@@ -45,7 +45,11 @@
 # denied commands quoted as evidence in issue #37, this resolves the 2 whose
 # write target is a double-quoted reference to a same-command static literal.
 # The other 2 target `"$tmp/"` where `tmp=$(mktemp -d)` -- a command
-# substitution, never a proven literal -- and correctly still deny.
+# substitution, never a proven literal -- so resolve_var() itself still leaves
+# them unresolved. They are nonetheless ALLOWED today, by a LATER and
+# independent guard feature (`wt_write_mktemp_same_command_safe()`, #6949,
+# which reached this repo's vendored hook after this suite was written); see
+# the (i)/(j) block near the end of this file for the full account.
 #
 # Usage: ./.loom/hooks/tests/test-guard-destructive-generic-resolve-var.sh
 # Exit 0 = all pass, 1 = fail.
@@ -201,17 +205,61 @@ assert_deny "(h) nested/chained unresolved var in a directory component -> still
 # --- SCOPE (i)/(j): the OTHER 2 of the 4 commands quoted in issue #37 -----
 # Both write into `"$tmp/"` where `tmp=$(mktemp -d)`. A `$(...)` command
 # substitution is not a bare variable reference and its value is never
-# proven, so record_assign() stores nothing resolvable and the target stays
-# unresolved -- these still DENY, by design, both here and in the canonical
-# upstream guard. Asserted explicitly so a future telemetry pass recognizes
-# them as a known, intentional deny rather than re-filing them as a new
-# false positive, and so a later change cannot quietly start resolving
-# command-substitution-derived destinations.
+# proven, so record_assign() stores nothing resolvable and resolve_var()
+# leaves the target unresolved -- that part of the original framing still
+# holds, and this suite's own subject (resolve_var()) is genuinely not what
+# decides these two.
+#
+# WHY THESE NOW ASSERT ALLOW (issue #96). When these two cases were written
+# (PR #41, 2026-08-18) an unresolved write target had exactly one outcome:
+# the fail-closed `worktree-write-confinement-unresolved-var` deny, so
+# "unresolved" and "denied" were the same statement. That stopped being true
+# on 2026-08-25, when a `chore: resync installed Loom surfaces` commit
+# (da58670) brought `wt_write_mktemp_same_command_safe()` (#6949) into the
+# vendored `guard-destructive-generic.sh`. That function is a deliberate,
+# documented safety feature -- the write-confinement sibling of the older
+# `rm_scope_mktemp_same_command_safe()` (#6520) -- which recognizes a write
+# target that is a bare `$NAME`/`${NAME}` reference (optionally plus a
+# `/`-suffix) whose value comes from an exact-string same-command
+# `NAME=$(mktemp -d)` / `NAME=$(mktemp)` assignment, and treats it as landing
+# in a freshly created scratch directory that can never coincide with the
+# main checkout or any managed worktree. It skips the unresolved-var deny for
+# that target only. So (i)/(j) are ALLOWED by a downstream feature, not by
+# resolve_var() having started to resolve command substitutions.
+#
+# Verified for issue #96 by neutering `wt_write_mktemp_same_command_safe()`
+# (forcing it to `return 1`) in a scratch copy of the hook: with it neutered
+# both commands deny again with `worktree-write-confinement-unresolved-var`;
+# with it intact both allow. No other code path contributes to the verdict.
+#
+# The three SAFETY cases immediately below pin the boundary of that allow, so
+# a future change cannot widen it into "any command-substitution-derived
+# destination is fine".
 result=$(run_hook 'WORKTREE_ABS="'"$WT"'"; tmp=$(mktemp -d); cp "$WORKTREE_ABS/rtl/modexp.v" "$tmp/"' "$TMPROOT")
-assert_deny "(i) #37 evidence line 2: cp into \"\$tmp/\" from \$(mktemp -d) -> still deny (out of scope)" "$result"
+assert_allow "(i) #37 evidence line 2: cp into \"\$tmp/\" from same-command \$(mktemp -d) -> allow (wt_write_mktemp_same_command_safe, #6949)" "$result"
 
 result=$(run_hook 'cd '"$WT"'; tmp=$(mktemp -d); cp rtl/modexp.v "$tmp/"' "$TMPROOT")
-assert_deny "(j) #37 evidence line 3: cd + cp into \"\$tmp/\" from \$(mktemp -d) -> still deny (out of scope)" "$result"
+assert_allow "(j) #37 evidence line 3: cd + cp into \"\$tmp/\" from same-command \$(mktemp -d) -> allow (wt_write_mktemp_same_command_safe, #6949)" "$result"
+
+# --- SAFETY (i2): a second assignment to the same variable name poisons the
+# resolution (the ambiguity rule wt_write_mktemp_same_command_safe()'s own
+# header documents) -- the mktemp assignment must NOT be trusted once the
+# name is shadowed, even when the shadow points into a managed worktree.
+result=$(run_hook 'tmp=$(mktemp -d); tmp='"$WT"'; cp /tmp/x "$tmp/rtl/evil.v"' "$TMPROOT")
+assert_deny "(i2) same-command \$(mktemp -d) SHADOWED by a second assignment to \$tmp -> still deny" "$result"
+
+# --- SAFETY (i3): a `..` component in the suffix could walk back out of the
+# (statically unknown) mktemp directory into a protected area, so any `..`
+# fails closed regardless of the proven mktemp root.
+result=$(run_hook 'tmp=$(mktemp -d); cp /tmp/x "$tmp/../evil.v"' "$TMPROOT")
+assert_deny "(i3) \`..\` traversal in the suffix after a proven \$(mktemp -d) root -> still deny" "$result"
+
+# --- SAFETY (i4): a custom mktemp template/prefix is NOT the exact-string
+# shape the same-command scan proves, so it falls through to the fail-closed
+# deny -- the scratch root is only "provably outside every worktree" for
+# mktemp's own default TMPDIR location.
+result=$(run_hook 'tmp=$(mktemp -d '"$TMPROOT"'/XXXXXX); cp /tmp/x "$tmp/evil.v"' "$TMPROOT")
+assert_deny "(i4) custom \`mktemp -d <template>\` prefix (not the exact-string shape) -> still deny" "$result"
 
 echo "=== guard-destructive-generic.sh resolve_var() MID-TOKEN embedded-variable tests (issue #93) ==="
 #

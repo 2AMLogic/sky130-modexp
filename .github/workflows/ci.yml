@@ -123,13 +123,13 @@ jobs:
       - name: Run .loom/hooks/tests/ suites
         run: |
           # Deliberately NOT `set -e`: GitHub Actions' default `run:` shell
-          # is `bash -eo pipefail`, and several of these suites are EXPECTED
-          # to exit non-zero (e.g. the resolve-var suite's known #96
-          # carve-out below) -- under `-e`, the `out=$(bash "$f" 2>&1)`
-          # assignment failing would abort this whole step immediately,
-          # before the pass/fail classification below ever runs, silently
-          # turning every suite after the first non-zero one into a false
-          # "did not run" pass. `set +e` here overrides the runner default.
+          # is `bash -eo pipefail`, so a suite that exits non-zero would make
+          # the `out=$(bash "$f" 2>&1)` assignment abort this whole step
+          # immediately, before the pass/fail classification below ever runs
+          # -- silently turning every suite AFTER the first failing one into
+          # a false "did not run" pass, which is exactly the blind spot this
+          # job exists to close. `set +e` overrides the runner default so
+          # every suite runs and each rc is classified explicitly.
           set +e -u -o pipefail
           overall_fail=0
           for f in .loom/hooks/tests/*.sh; do
@@ -139,26 +139,16 @@ jobs:
             printf '%s\n' "$out"
             echo "::endgroup::"
 
-            if [[ "$f" == *"test-guard-destructive-generic-resolve-var.sh" ]]; then
-              # Cases (i)/(j) are a known, already-tracked pre-existing
-              # failure unrelated to a resync revert (#96): a same-command
-              # `$(mktemp -d)` write target is intentionally ALLOWed by
-              # wt_write_mktemp_same_command_safe(), a documented safety
-              # feature added after this suite's older "still deny"
-              # assertion was written. Reproduces identically on both Linux
-              # and macOS (#96), so it is not this job's environment either.
-              # Tolerate ONLY these two named cases -- any OTHER FAIL line in
-              # this suite still fails the build (e.g. a regression of the
-              # #98 mid-token $VAR fix this suite's case (k) also covers).
-              unexpected=$(printf '%s\n' "$out" | grep "FAIL" | grep -v "(i) #37" | grep -v "(j) #37" || true)
-              if [[ -n "$unexpected" ]]; then
-                echo "Unexpected failure(s) in $f:"
-                printf '%s\n' "$unexpected"
-                overall_fail=1
-              fi
-              continue
-            fi
-
+            # NOTE: the resolve-var suite used to be carved out here, with
+            # its cases (i)/(j) tolerated as a known pre-existing failure
+            # (#96). That carve-out is gone: #96 established that the ALLOW
+            # verdict comes from wt_write_mktemp_same_command_safe(), a
+            # deliberate safety feature that reached the vendored hook AFTER
+            # those assertions were written, so the suite's own assertions
+            # were updated to match and it now passes outright. Every suite
+            # is judged on its exit status alone again -- do not reintroduce
+            # a per-suite tolerance without a tracked issue, since a
+            # carve-out also suppresses that suite's rc entirely.
             if [[ "$rc" -ne 0 ]]; then
               echo "FAILED: $f (exit $rc)"
               overall_fail=1
