@@ -2,13 +2,22 @@
 # Test suite for guard-destructive-generic.sh's quote-aware resolve_var()
 # (issue #37).
 #
-# WHAT IS UNDER TEST IS A BACKPORT, NOT A LOCAL INVENTION: the resolve_var()
-# / dequote_expandable() / resolve_var_core() trio in the vendored guard is
-# copied verbatim from the canonical Repo Skills guard
+# SCOPE OF THE BACKPORT CLAIM BELOW (issue #119): it covers cases (a)-(j)
+# ONLY -- the quoted-$VAR fix. It does NOT cover cases (k)-(p) further down
+# this file (the MID-TOKEN embedded-variable fix, issue #93/#98): that fix is
+# LOCAL-ONLY, has no upstream counterpart, and a resync MUST NOT overwrite it.
+# See the banner above the (k)-(p) block for that fix's own provenance note.
+#
+# CASES (a)-(j) ARE A BACKPORT, NOT A LOCAL INVENTION: the resolve_var() /
+# dequote_expandable() / resolve_var_core() trio in the vendored guard
+# originates in the canonical Repo Skills guard
 # (rjwalters/repo -> hooks/repo/guard-destructive.sh), where this fix landed
-# as rjwalters/repo#297, closing rjwalters/repo#293. This suite is this
-# repo's local regression evidence for the behavior; the durable
-# implementation lives upstream and arrives here on the next Loom resync.
+# as rjwalters/repo#297, closing rjwalters/repo#293. This repo's own copy of
+# that fix is spelled differently (a local resolve_var_q() wrapper, not
+# dequote_expandable()) rather than copied verbatim, but it is the same
+# quoted-$VAR behavior. This suite is this repo's local regression evidence
+# for the behavior; upstream carries the canonical implementation for
+# (a)-(j) only.
 #
 # Background: extract_write_targets()'s same-command $VAR/${VAR} resolution
 # (#4881) already substitutes a BARE `$WORKTREE_ABS/rest` write target from a
@@ -205,6 +214,16 @@ result=$(run_hook 'cd '"$WT"'; tmp=$(mktemp -d); cp rtl/modexp.v "$tmp/"' "$TMPR
 assert_deny "(j) #37 evidence line 3: cd + cp into \"\$tmp/\" from \$(mktemp -d) -> still deny (out of scope)" "$result"
 
 echo "=== guard-destructive-generic.sh resolve_var() MID-TOKEN embedded-variable tests (issue #93) ==="
+#
+# PROVENANCE (issue #119): unlike (a)-(j) above, this MID-TOKEN fix is
+# LOCAL-ONLY -- it has no upstream counterpart. As of rjwalters/repo HEAD
+# checked 2026-09-16, upstream's resolve_var_core() still begins
+# `if (substr(tok, 1, 1) != "$") return tok`, i.e. it has no mid-token
+# substitution at all. A `chore: resync installed Loom surfaces` commit MUST
+# NOT overwrite this fix out of the installed guard -- it has already been
+# reverted this way three times (#71/#72 -> #98 -> #100 -> #112, and again by
+# 9118550, restored by #118). If this ever does land upstream, update this
+# note and fold it back into the (a)-(j) backport claim above.
 #
 # Root cause (#93): resolve_var()/resolve_var_q() above only ever substituted
 # a `$NAME`/`${NAME}` reference when it was the token's OWN first character
