@@ -22,6 +22,15 @@ PDK, designed and verified by AI agents. This is the program's first
   results in `verification/` are append-only evidence.
 - Spec changes go through `spec/` with a decision record; agents do not relax
   the ratified spec to make results pass.
+- **Review bar for RTL/testbench PRs**: apply
+  `2AMLogic/klayout-tools`'s `docs/guides/digital-review/` guides (ported,
+  with attribution, from booley) — `rtl-bugs.md`, `rtl-protocol-cdc.md`,
+  `rtl-code-style.md`, `rtl-security.md` (this block is the security-sensitive
+  canary that guide names explicitly), `cocotb-tb-review.md` for the
+  testbench itself. When a cocotb regression fails, diagnose it with `klt
+  wave build`/`klt wave query` against the run's own trace before reasoning
+  from RTL — see `docs/guides/waveform-first-debugging.md` in that repo for
+  a worked example (value-at-time, first-match, count-between, `stuck`).
 
 ## The overclaim trap — read before writing any number down
 
