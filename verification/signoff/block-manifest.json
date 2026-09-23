@@ -7,6 +7,17 @@
       "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
     },
     "4": "layout/lvs/modexp_lvs_report.json",
-    "7": "verification/records/gate-level-sim/artifacts/20260911-071039-ce2b24c/klt-functional-verification.json"
+    "7": "verification/records/gate-level-sim/artifacts/20260911-071039-ce2b24c/klt-functional-verification.json",
+    "11": [
+      {
+        "file": "layout/erc/modexp-erc-supply-report.json",
+        "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
+      },
+      "layout/lvs/modexp_lvs_report.json",
+      {
+        "file": "verification/records/place-and-route/artifacts/20260911-052542-d5e43d3/par-nominal-output.json",
+        "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486"
+      }
+    ]
   }
 }
