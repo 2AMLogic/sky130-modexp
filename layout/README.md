@@ -15,6 +15,8 @@ directory holds the layout artifacts, not the evidence record itself.
 - `modexp.gds` — the same layout merged with the resolved
   `sky130_fd_sc_hd` standard-cell GDS views (`klt`'s in-process
   `klayout.db`-based DEF→GDS merge — never a `klayout` subprocess).
+- `erc/` — the `klt erc` supply-spec run against `modexp.gds` (T1 item 11,
+  the structural power-delivery read; issue #129).
 
 ## Provenance
 
