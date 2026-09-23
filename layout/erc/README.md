@@ -122,6 +122,16 @@ power-connectivity re-run land, this directory establishes the
 supply-island read only — the strongest single structural-power statement
 this repo's pinned toolchain can compute.
 
+## Where the graded row lives
+
+This repo's gap-to-T1 verdict of record is `verification/signoff/`
+(issue #130's `klt signoff --manifest` report), which cites this
+directory's report — together with the LVS report and the P&R envelope —
+as item 11's compound evidence entry and renders the machine verdict
+there. The hand-maintained checklist that used to live in issue #12 was
+superseded by that mechanism on 2026-09-23; read the graded report, not
+either prose source, for the current per-item state.
+
 ## Layer-number provenance
 
 Every layer/datatype in the spec was resolved from the pinned sky130A
