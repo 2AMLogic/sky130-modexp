@@ -7,6 +7,10 @@
       "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
     },
     "4": "layout/lvs/modexp_lvs_report.json",
+    "5": {
+      "file": "verification/records/sta-corner-sweep/artifacts/20260923-093000-28a7c96/sta-corner-sweep-results.json",
+      "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+    },
     "7": "verification/records/gate-level-sim/artifacts/20260923-054800-e26f603/klt-functional-verification.json",
     "11": [
       {

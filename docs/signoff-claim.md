@@ -5,6 +5,15 @@ evidence establishes and does not establish**, per issue #8 (and re-verified
 by issue #55). It answers `spec/modexp.md`'s Signoff row — *"DRC + LVS clean
 on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 
+> **Also on this page, since it is about the same artifact and must not be
+> discoverable only elsewhere**: "Post-route gate-level simulation" (issue
+> #9) and **"Multi-corner timing (T1 item 5) — FAIL, disclosed, with its
+> number"** (issue #132: 100 MHz closes at 10 of 18 ratified corners,
+> binding corner `ss_n40C_1v28` at **22.80 MHz**). Neither changes the
+> Signoff row's DRC + LVS verdict; both are carried here so a reader asking
+> "what does this block's evidence establish?" gets the whole answer in one
+> place.
+
 ## Verdict (updated 2026-09-23, issue #131): **not met** — DRC is clean;
 LVS still mismatches, now 12 errors, all of them P&R cell insertions and
 resizes the pre-CTS reference cannot model
@@ -787,6 +796,67 @@ caveats:
 
 Full method and scope: `verification/gate-level/README.md`. Records:
 `verification/records/gate-level-sim/`.
+
+## Multi-corner timing (T1 item 5) — **FAIL, disclosed, with its number** (appended, issue #132)
+
+**This is an explicitly-carried exception, not a caveat, and not a pass.**
+It is recorded on this page because anything reading this page for "what
+does this block's evidence establish" must not have to discover the timing
+gap somewhere else.
+
+Against the same `layout/modexp.def`/`layout/modexp.gds` the DRC and LVS
+sections above concern (content_hash `sha256:a35b9567…` /
+`sha256:9fa0dbe1…`), an eighteen-corner `klt sta` characterization at the
+ratified 100 MHz Clock row reports:
+
+- **Setup: 100 MHz closes at 10 of 18 ratified corners.** The binding
+  corner is **`ss_n40C_1v28`**, achieved Fmax **22.80 MHz** — setup WNS
+  **−33.867 ns**, TNS −671.109 ns, 105 setup violations. That is roughly
+  **4.4x short** of the target. Per
+  `spec/decision-records/0002-…` Decision 1, no claim here may say this
+  block "closes 100 MHz" without naming the corner set: **it does not close
+  100 MHz across its own ratified operating conditions.**
+- **Hold: clean at all eighteen corners**, worst hold slack **+0.21354 ns**
+  (`ff_n40C_1v95`), +2.06884 ns at the binding corner, 0 violations
+  everywhere. The failure is purely setup.
+- **The critical path is named, not inferred.** Startpoint `_1205_` (DEF
+  net `mm_a[15]`) → endpoint `_1175_` (DEF net `mm_p[6]`), 20 combinational
+  gates, arrival **42.17 ns** against an 8.31 ns required time — the whole
+  single-cycle `S_MM_RUN` body of `rtl/modexp.v`.
+
+**What the exception is bounded by.** Issue #132 measured a seven-build
+lever matrix and found a configuration that **does** close all eighteen
+corners (+0.489 ns setup / 105.14 MHz at the binding corner). It is
+deliberately **not landed**, for two reasons stated here rather than
+buried: the standard-cell exclusion it depends on has no `klt synthesize`
+request field, so it is not re-runnable from a committed request; and that
+same build's in-flow, routing-estimated place-and-route STA reports
+**−1.105 ns / 90.05 MHz** at the same corner on the same database — two
+real numbers that disagree about closure. Its cost is **+522 cells** and
+≈**33x** the cycle count — against a 4.6x clock gain, a **net throughput
+loss of roughly 7x**.
+
+Consequently `spec/modexp.md`'s Clock row is **not** amended, the corner
+matrix of `spec/decision-records/0001-…` Decision 4 is **not** narrowed,
+and `verification/signoff/block-manifest.json` **cites the failing sweep**
+so `klt signoff` renders item 5 `unmet` from the evidence itself rather
+than from an absence of evidence. The ratified decision, the lever matrix,
+and the priced exit are in
+`spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`;
+the evidence is
+`verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`.
+
+### Friction filed upstream (issue #132)
+
+- **`klt synthesize` has no request-level standard-cell exclusion.** Its
+  `abc -dont_use` list is a hardcoded per-cell-library table, so a caller
+  cannot express a corner-driven exclusion (e.g. "exclude every cell whose
+  delay floor at the target corner exceeds a fraction of the clock period")
+  without bypassing `klt` and invoking Yosys directly — which makes the
+  resulting netlist non-reproducible from a committed request. Filed as
+  [klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382)
+  per `CLAUDE.md`'s friction protocol; the downstream re-spin it unblocks is
+  [sky130-modexp#141](https://github.com/2AMLogic/sky130-modexp/issues/141).
 
 ## Evidence record
 

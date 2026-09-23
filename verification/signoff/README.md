@@ -40,16 +40,16 @@ duplicating it.
 
 ## Current verdict (2026-09-23, this manifest)
 
-**1 of 11 T1 items met; `tier: null`.** This is the honest graded state —
+**2 of 11 T1 items met; `tier: null`.** This is the honest graded state —
 an all-`unmet` manifest would have been a correct result too (issue #130);
 nothing here inflates a row to green.
 
 | Item | Status | Why |
 |---|---|---|
 | 3 DRC clean | **met** | `layout/drc/modexp-drc-report.json`: `status: clean`, 0 violations, input pinned by `content_hash` (freshness verified by the grader). Coverage disclosure below. |
-| 4 LVS clean | unmet (`check_failed`) | `layout/lvs/modexp_lvs_report.json`: `status: mismatch` (17 mismatches, all physical-only/fixup cells). Tracked by #131. The envelope carries no `provenance.input` hash (klt 0.4.0 era), so no freshness pin is possible on this citation — see "Citation policy" below. |
-| 7 Post-layout verification | unmet (`not_post_layout`) | The cited gate-level `klt functional-verification` run (record `20260911-071039-ce2b24c`) passed, but with `environment.sdf: null` — a zero-delay run, not the SDF-annotated post-layout regression item 7 requires. Tracked by #133. |
-| 5 Corner verification | unmet (`no_evidence`) | A corner sweep exists (`verification/records/sta-corner-sweep/`, 18 corners, 100 MHz closes at 10/18 — binding corner `ss_n40C_1v28` at 22.80 MHz, tracked by #132), but it is committed as one aggregated results file, not a standalone `klt sta` envelope the grader can read; no citation is made rather than a misleading one. #132's envelope becomes the citation when it lands. |
+| 4 LVS clean | unmet (`check_failed`) | `layout/lvs/modexp_lvs_report.json`: `status: mismatch` (12 errors, all P&R cell insertions and resizes the pre-CTS reference cannot model; `power_connectivity: match`). Tracked by #131. The envelope carries no `provenance.input` hash, so no freshness pin is possible on this citation — see "Citation policy" below. |
+| 7 Post-layout verification | **met** | The cited gate-level `klt functional-verification` run (record `20260923-054800-e26f603`) passes **with** `environment.sdf.annotated: true` — the SDF-annotated post-layout regression item 7 requires (issue #138). Its own disclosure rides with it: the annotation is `partial`, because Icarus implements SDF `IOPATH`/`INTERCONNECT` but not `TIMINGCHECK`, so all 129 `TIMINGCHECK` sections are dropped and `$setup`/`$hold` run against the cell library's placeholder limits. **This is net-delay back-annotation, not timing-check verification** — the setup/hold question is item 5's, and item 5 is `unmet` below. |
+| 5 Corner verification | unmet (`check_failed`) | **Now cited, and failing on its own evidence rather than on an absence of it** (issue #132): `verification/records/sta-corner-sweep/artifacts/20260923-093000-28a7c96/sta-corner-sweep-results.json`, one `klt sta` envelope covering all 18 ratified corners of the committed layout, pinned by the analysed DEF's `content_hash`. The grader's rule is that every reported corner must be `timing_status: "constrained"` with non-negative setup **and** hold slack; **100 MHz closes at 10 of 18** — binding corner `ss_n40C_1v28` at **22.80 MHz**, setup WNS −33.867 ns. Hold is clean at all 18. This is a disclosed, bounded FAIL carried against an unamended ratified Clock row, ratified as `spec/decision-records/0004-…`; it is deliberately **not** closed by lowering the target, and the decision record prices the measured route to 18/18. |
 | 11 Power delivery (structural) | unmet (`check_failed`) | Cited as the compound entry the grader defines: `layout/erc/modexp-erc-supply-report.json` (issue #129's supply-island read — `erc_finding_count: 0`, `VPWR`/`VGND` one island each, input pinned to the current GDS) + the item-4 LVS report + the P&R envelope (`power.pdn: true`, `tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1`, straps met1/met4/met5 all inside the spec's stackup). The rendered reason is the LVS half: that report still mismatches (tracked by #131) and carries no `power_connectivity` verdict at all — and past it sit the spec's deliberately-undeclared `ties[]` (klayout-tools#2169, `erc.missing_tie` not computed) — so the item stays honestly unmet on the grader's own terms; the supply-island half is met and documented in `layout/erc/README.md`. |
 | 1, 2, 9, 10 | unmet (`no_evidence`) | Deliberately uncited — see "Citation policy". |
 | 6 Monte Carlo | unmet (`no_evidence`) | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. |
@@ -118,8 +118,27 @@ envelope's own `coverage` block:
 
 Item 7's `body_bias` disclosure does not apply to the current citation:
 that field rides a `klt pex` report, and item 7's citation here is a
-`functional-verification` envelope (the zero-delay caveat above is this
-item's honest disclosure instead).
+`functional-verification` envelope (the dropped-`TIMINGCHECK` caveat in the
+table above is this item's honest disclosure instead).
+
+## Item 5's timing disclosure (reported, not graded — read it here)
+
+The grader renders item 5 `unmet`/`check_failed` on the cited sweep's own
+per-corner verdicts. What the verdict does **not** carry, and what anything
+citing this row must:
+
+- The sweep is `klt sta` with `spef` **omitted**, so it times against
+  LEF/DEF-derived parasitics rather than an extracted or routing-estimated
+  basis. That makes the table **optimistic**: the same DEF reads
+  +4.367 ns / 177.53 MHz at `tt_025C_1v80` here against the
+  +3.736 ns / 159.63 MHz the P&R record reports for it. The gap at the
+  binding corner is understated, not overstated.
+- Ideal (not propagated) clock, and an extrapolated rather than bisected
+  `fmax_mhz` — documented limits of `klt sta` itself.
+- The failure is **purely setup**; hold is clean at all eighteen corners
+  (worst +0.21354 ns).
+
+Full record: `verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`.
 
 ## Running it
 

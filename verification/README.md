@@ -216,6 +216,20 @@ verification/records/
   for a cross-check record, the raw `klt synthesize` JSON envelope plus a
   mapped-netlist snapshot for a synthesis record, and (once the P&R issue
   lands) the equivalent for place-and-route / DRC / LVS records.
+- **`artifacts/<record-id>/candidates/`** (introduced by issue #132) is for
+  the one case where a record's evidence is *not* about the committed
+  design: measurements of **candidate** builds — a "what would it take?"
+  matrix produced in the gitignored `flow/build/` scratch tree against
+  copies of the sources. A `candidates/` subtree must (i) live under a
+  record whose main claim **is** about the committed design, so the two can
+  never be confused, (ii) carry its own `README.md` saying in its first
+  paragraph that nothing in it is landed and what the committed design's
+  number is instead, and (iii) clear the same `CLAUDE.md` correctness gate
+  as anything else reported here — a candidate whose cocotb suite does not
+  pass at every verified `WIDTH` is not reported at all. It exists so a
+  negative or deferred result ships with the measurement that justifies the
+  deferral, rather than as an unevidenced assertion that "we looked into
+  it".
 
 ## Record format
 

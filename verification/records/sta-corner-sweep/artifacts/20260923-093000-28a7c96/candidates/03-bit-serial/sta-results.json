@@ -1,0 +1,947 @@
+{
+ "schema_version": 1,
+ "engine": "openroad",
+ "engine_version": "26Q3-1260-g06a5a02279",
+ "hdl_toplevel": "modexp",
+ "status": "ok",
+ "def_path": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-132/flow/build/exp-serial/.klt/place-and-route/modexp.def",
+ "verilog_path": null,
+ "geometry_source": "routed",
+ "wire_load_model": null,
+ "wire_load_mode": null,
+ "spef_path": null,
+ "provenance": {
+  "klt_version": "0.6.0+gdac2b5daceb6",
+  "klayout_version": "0.30.12",
+  "pdk": {
+   "name": "sky130A",
+   "source": "PDK_ROOT environment variable",
+   "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  },
+  "deck": null,
+  "input": {
+   "content_hash": "sha256:43ff779e0ba6e59470ef83681556fab41abf460fb7730fcd729fe9510f24e0f7",
+   "role": "layout"
+  }
+ },
+ "corners": [
+  {
+   "corner": "ff_100C_1v65",
+   "engine_log": {
+    "invocation_id": "a5dba9e4b4e34565a94258391d321d52",
+    "script_name": "sta_modexp__ff_100C_1v65.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_100C_1v65.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "0b25d3b44b25573c21623e98c688594f66be162a54a850ea1bc48e9c8f472a77",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_100C_1v65_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a5dba9e4b4e34565a94258391d321d52",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a5dba9e4b4e34565a94258391d321d52/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a5dba9e4b4e34565a94258391d321d52/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a5dba9e4b4e34565a94258391d321d52/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 7.9695,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.37218,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 492.489,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00541,
+   "estimated_power_mw": 2.3525,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_100C_1v65",
+    "content_hash": "sha256:913e67fc551be7e4e97fc031f3e72e5ef3251438ceeb44753f73b68df58f5650",
+    "released": false
+   }
+  },
+  {
+   "corner": "ff_100C_1v95",
+   "engine_log": {
+    "invocation_id": "b5c360ca7de4473ea5d4568856237daf",
+    "script_name": "sta_modexp__ff_100C_1v95.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_100C_1v95.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "a24d3a2bc433522b05e8ca132c973fd41a8035ccbde04dc21b65e14f4def72c7",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_100C_1v95_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b5c360ca7de4473ea5d4568856237daf",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b5c360ca7de4473ea5d4568856237daf/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b5c360ca7de4473ea5d4568856237daf/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b5c360ca7de4473ea5d4568856237daf/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 8.37294,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.29663,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 614.605,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.0046,
+   "estimated_power_mw": 3.4504,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_100C_1v95",
+    "content_hash": "sha256:15c9ccefec536ff35d694314af5812e7c03b4e5a356ec8ea28f2e40bbeec04e7",
+    "released": false
+   }
+  },
+  {
+   "corner": "ff_n40C_1v56",
+   "engine_log": {
+    "invocation_id": "5bb97da3620343469f0f777d1d3bf9a6",
+    "script_name": "sta_modexp__ff_n40C_1v56.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_n40C_1v56.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "252fdfe0d4dc15199aa9ba9a9bcbf09db43fc49b53ae02ec28dc4635639462fa",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_n40C_1v56_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5bb97da3620343469f0f777d1d3bf9a6",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5bb97da3620343469f0f777d1d3bf9a6/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5bb97da3620343469f0f777d1d3bf9a6/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5bb97da3620343469f0f777d1d3bf9a6/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 7.38722,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.41572,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 382.734,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00651,
+   "estimated_power_mw": 1.9509,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_n40C_1v56",
+    "content_hash": "sha256:d64f38f3e67f8adab818531901385dbd29c6a4805e6166f7166bcc3e9370ef88",
+    "released": false
+   }
+  },
+  {
+   "corner": "ff_n40C_1v65",
+   "engine_log": {
+    "invocation_id": "54897be8f86b47e68a15caa35f2362be",
+    "script_name": "sta_modexp__ff_n40C_1v65.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_n40C_1v65.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "47722e9e94b758936de20ffa0a8338c95bcb6aac317a79761f2cccf3be933354",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_n40C_1v65_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/54897be8f86b47e68a15caa35f2362be",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/54897be8f86b47e68a15caa35f2362be/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/54897be8f86b47e68a15caa35f2362be/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/54897be8f86b47e68a15caa35f2362be/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 7.73888,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.36874,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 442.259,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00595,
+   "estimated_power_mw": 2.1984,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_n40C_1v65",
+    "content_hash": "sha256:dd777cb159bf2fc853773d74a3c3e8269b73869d25aae49d0f80f117df9631ee",
+    "released": false
+   }
+  },
+  {
+   "corner": "ff_n40C_1v76",
+   "engine_log": {
+    "invocation_id": "6cd43f087032473cadd50953da5ee40d",
+    "script_name": "sta_modexp__ff_n40C_1v76.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_n40C_1v76.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "56a5bc49de17eb5d91577224169444f853c8bf09177d146d0a2177fdae806b01",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_n40C_1v76_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6cd43f087032473cadd50953da5ee40d",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6cd43f087032473cadd50953da5ee40d/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6cd43f087032473cadd50953da5ee40d/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6cd43f087032473cadd50953da5ee40d/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 8.05116,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.32533,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 513.126,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.0054,
+   "estimated_power_mw": 2.5271,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_n40C_1v76",
+    "content_hash": "sha256:0f5b7ceef23114c3834870f86c2f90ea24d597622fcd5abd2916b1fb604e8a26",
+    "released": false
+   }
+  },
+  {
+   "corner": "ff_n40C_1v95",
+   "engine_log": {
+    "invocation_id": "a16a872f29224904a095da4dc50cf6c7",
+    "script_name": "sta_modexp__ff_n40C_1v95.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_n40C_1v95.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "a899dcda0a28f4f421a9f05b6476aebcae374cb4d25e082ecd0a7a82f7866364",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_n40C_1v95_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a16a872f29224904a095da4dc50cf6c7",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a16a872f29224904a095da4dc50cf6c7/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a16a872f29224904a095da4dc50cf6c7/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/a16a872f29224904a095da4dc50cf6c7/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 8.3986,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.27561,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 624.453,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00466,
+   "estimated_power_mw": 3.1655,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_n40C_1v95",
+    "content_hash": "sha256:fb61d91c55a7f85b1989e8149d040b13ba5e7f5478f5bf0c3c16c5da30720139",
+    "released": false
+   }
+  },
+  {
+   "corner": "ff_n40C_1v95_ccsnoise",
+   "engine_log": {
+    "invocation_id": "6370aeb22cf44d07ae3bd1c6c35f182a",
+    "script_name": "sta_modexp__ff_n40C_1v95_ccsnoise.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ff_n40C_1v95_ccsnoise.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "ed2bac7f1d2dc401487636e7f94ce5c757801c0e082dce335a91c83adf3d6179",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ff_n40C_1v95_ccsnoise_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6370aeb22cf44d07ae3bd1c6c35f182a",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6370aeb22cf44d07ae3bd1c6c35f182a/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6370aeb22cf44d07ae3bd1c6c35f182a/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/6370aeb22cf44d07ae3bd1c6c35f182a/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 8.3986,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.27561,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 624.453,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00466,
+   "estimated_power_mw": 3.1655,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ff_n40C_1v95_ccsnoise",
+    "content_hash": "sha256:425315ca7a49debcb1c715daf6e5e5a27bb78587cac6f3b358b1fe114c787132",
+    "released": false
+   }
+  },
+  {
+   "corner": "tt_025C_1v80",
+   "engine_log": {
+    "invocation_id": "2fea51f0221b4853a1a4d529b0e9e70d",
+    "script_name": "sta_modexp__tt_025C_1v80.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__tt_025C_1v80.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "5fc0e08732def0168cfdeb8e2a6fc5e64d31e0de7e90e3144275076fafa7a9a1",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__tt_025C_1v80_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/2fea51f0221b4853a1a4d529b0e9e70d",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/2fea51f0221b4853a1a4d529b0e9e70d/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/2fea51f0221b4853a1a4d529b0e9e70d/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/2fea51f0221b4853a1a4d529b0e9e70d/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 7.4519,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.44781,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 392.449,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00609,
+   "estimated_power_mw": 2.7386,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__tt_025C_1v80",
+    "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+    "released": false
+   }
+  },
+  {
+   "corner": "tt_100C_1v80",
+   "engine_log": {
+    "invocation_id": "dfd38758c7684ddc926eff1a4e3cf4b4",
+    "script_name": "sta_modexp__tt_100C_1v80.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__tt_100C_1v80.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "0ea6243b78d8d74eaf6f2ade7584704aa28ad7ca8f1d3ec0a82357f5e84238c4",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__tt_100C_1v80_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/dfd38758c7684ddc926eff1a4e3cf4b4",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/dfd38758c7684ddc926eff1a4e3cf4b4/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/dfd38758c7684ddc926eff1a4e3cf4b4/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/dfd38758c7684ddc926eff1a4e3cf4b4/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 7.48972,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.46241,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 398.363,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00603,
+   "estimated_power_mw": 2.8313,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__tt_100C_1v80",
+    "content_hash": "sha256:7c6b9fc62d7e83b8317cdca883d79107d8f2ff1061b04519fda7d3088560015b",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_100C_1v40",
+   "engine_log": {
+    "invocation_id": "fbfef5531fcf444f83f6ea87f469a659",
+    "script_name": "sta_modexp__ss_100C_1v40.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_100C_1v40.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "779b557dfe3e33452840cc474a28d028c93ccbbc4881633effbfb407bc64feee",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_100C_1v40_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/fbfef5531fcf444f83f6ea87f469a659",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/fbfef5531fcf444f83f6ea87f469a659/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/fbfef5531fcf444f83f6ea87f469a659/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/fbfef5531fcf444f83f6ea87f469a659/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 1.78953,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 1.30771,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 121.796,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.01257,
+   "estimated_power_mw": 1.6035,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_100C_1v40",
+    "content_hash": "sha256:88c8ce95b6a7f333bd9e618fc765c3005fbeccfca2727226bd821c0d16fcaac8",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_100C_1v60",
+   "engine_log": {
+    "invocation_id": "82aa416351194c0784376cd489a214a0",
+    "script_name": "sta_modexp__ss_100C_1v60.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_100C_1v60.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "fbd805d8d0cd59c5b51710f3309c9299b3626f09a4b29edac93ee1d9d3ea4de3",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_100C_1v60_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/82aa416351194c0784376cd489a214a0",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/82aa416351194c0784376cd489a214a0/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/82aa416351194c0784376cd489a214a0/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/82aa416351194c0784376cd489a214a0/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 4.54514,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.91159,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 183.323,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.0092,
+   "estimated_power_mw": 2.1842,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_100C_1v60",
+    "content_hash": "sha256:9b24f0db3967ac67b4cae1f74bb480fd47922d18d0ed577e3c121739b412c361",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v28",
+   "engine_log": {
+    "invocation_id": "d4e12d1fe0e847cb991bdcadd8e6eb0f",
+    "script_name": "sta_modexp__ss_n40C_1v28.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v28.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "89b8491cc0db106067c28c2b3fb70281be4b2ca10c0f6d2e90bd55923b682cb2",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v28_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/d4e12d1fe0e847cb991bdcadd8e6eb0f",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/d4e12d1fe0e847cb991bdcadd8e6eb0f/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/d4e12d1fe0e847cb991bdcadd8e6eb0f/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/d4e12d1fe0e847cb991bdcadd8e6eb0f/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": -10.2244,
+   "total_negative_slack_ns": -1215.03,
+   "worst_hold_slack_ns": 2.60071,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 49.4452,
+   "timing_status": "constrained",
+   "setup_violation_count": 229,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.03575,
+   "estimated_power_mw": 1.0541,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v28",
+    "content_hash": "sha256:afd8201328f73996b7c80bf13909674ba7b483ec413dea3fca74831cec712578",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v35",
+   "engine_log": {
+    "invocation_id": "e472f0b00f0247a2aa8908c88f1e7836",
+    "script_name": "sta_modexp__ss_n40C_1v35.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v35.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "fb35c889574e897f9c800bb75abb61a3ed8742b078f8493d9b331843822b8f17",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v35_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/e472f0b00f0247a2aa8908c88f1e7836",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/e472f0b00f0247a2aa8908c88f1e7836/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/e472f0b00f0247a2aa8908c88f1e7836/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/e472f0b00f0247a2aa8908c88f1e7836/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": -3.90974,
+   "total_negative_slack_ns": -245.946,
+   "worst_hold_slack_ns": 1.89157,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 71.892,
+   "timing_status": "constrained",
+   "setup_violation_count": 160,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.02598,
+   "estimated_power_mw": 1.2667,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v35",
+    "content_hash": "sha256:8fd5aefd2053feef0a9bd3a5a972680dd77ddb8dda744836611656f37f969855",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v40",
+   "engine_log": {
+    "invocation_id": "cd4f0be6cef94e968a38a21b589902c6",
+    "script_name": "sta_modexp__ss_n40C_1v40.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v40.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "8299e76771f8c317421ed7e9f612a80489d867bca48bf85855d22a6e1c415dba",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v40_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/cd4f0be6cef94e968a38a21b589902c6",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/cd4f0be6cef94e968a38a21b589902c6/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/cd4f0be6cef94e968a38a21b589902c6/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/cd4f0be6cef94e968a38a21b589902c6/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": -1.14206,
+   "total_negative_slack_ns": -25.5485,
+   "worst_hold_slack_ns": 1.56765,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 89.75,
+   "timing_status": "constrained",
+   "setup_violation_count": 37,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.02145,
+   "estimated_power_mw": 1.4405,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v40",
+    "content_hash": "sha256:2c6c61b165c313a6eb18d805431f981cebf9cf138cec39a67d01ea99f63a4717",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v44",
+   "engine_log": {
+    "invocation_id": "8ce8e913e1ca424f83eead8e38bac65d",
+    "script_name": "sta_modexp__ss_n40C_1v44.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v44.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "b32236423043a147d1c53b61c930022c908becb090322db85bb5b0016ed9ebbf",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v44_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/8ce8e913e1ca424f83eead8e38bac65d",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/8ce8e913e1ca424f83eead8e38bac65d/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/8ce8e913e1ca424f83eead8e38bac65d/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/8ce8e913e1ca424f83eead8e38bac65d/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 0.44528,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 1.38028,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 104.66,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.01868,
+   "estimated_power_mw": 1.5866,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v44",
+    "content_hash": "sha256:88814187f8226bb6e7ad394a1afef161eb1c4006ed1f095cc31ab0da7dae1f0f",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v60",
+   "engine_log": {
+    "invocation_id": "b24320398380452185962b3bd0796cee",
+    "script_name": "sta_modexp__ss_n40C_1v60.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v60.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "270f55a9886144d13ece291aea84e2399987ef4d5ff7f5dc4987c1c57bd6c277",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v60_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b24320398380452185962b3bd0796cee",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b24320398380452185962b3bd0796cee/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b24320398380452185962b3bd0796cee/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b24320398380452185962b3bd0796cee/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 3.99121,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.91062,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 166.423,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.01202,
+   "estimated_power_mw": 2.0757,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v60",
+    "content_hash": "sha256:23cba893b985a950a7951e3f29ae66ae6a639aaef75c1478e2306fb68d4a7ee5",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v60_ccsnoise",
+   "engine_log": {
+    "invocation_id": "b1a2c46f32664820b6f76e9cbb6ece47",
+    "script_name": "sta_modexp__ss_n40C_1v60_ccsnoise.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v60_ccsnoise.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "2253cb9a4c72958e097bf135fe946c2ae864dea7f89ec094fe8b66fbbe86ecb4",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v60_ccsnoise_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b1a2c46f32664820b6f76e9cbb6ece47",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b1a2c46f32664820b6f76e9cbb6ece47/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b1a2c46f32664820b6f76e9cbb6ece47/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/b1a2c46f32664820b6f76e9cbb6ece47/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 3.99121,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.91062,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 166.423,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.01202,
+   "estimated_power_mw": 2.0757,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v60_ccsnoise",
+    "content_hash": "sha256:699555a07af7b05393dd7cc2b3f5cfdbe4ddebc4efbf2b1a06ac68950c78c90f",
+    "released": false
+   }
+  },
+  {
+   "corner": "ss_n40C_1v76",
+   "engine_log": {
+    "invocation_id": "5e61691591964b468ab574a4ffdc1c73",
+    "script_name": "sta_modexp__ss_n40C_1v76.tcl",
+    "script_path": {
+     "path": "flow/build/exp-serial/.klt/sta/sta_modexp__ss_n40C_1v76.tcl",
+     "scope": "repo"
+    },
+    "script_sha256": "4c1108cabe425a436174ff67c951f53b5a64ac905d537b68809f9f49bdabd6ea",
+    "metrics_path": {
+     "path": "flow/build/exp-serial/.klt/sta/modexp__ss_n40C_1v76_metrics.json",
+     "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5e61691591964b468ab574a4ffdc1c73",
+     "scope": "repo"
+    },
+    "stdout_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5e61691591964b468ab574a4ffdc1c73/stdout.log",
+     "scope": "repo"
+    },
+    "stderr_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5e61691591964b468ab574a4ffdc1c73/stderr.log",
+     "scope": "repo"
+    },
+    "metadata_path": {
+     "path": "flow/build/exp-serial/.klt/sta/openroad-logs/5e61691591964b468ab574a4ffdc1c73/invocation.json",
+     "scope": "repo"
+    },
+    "retention_errors": []
+   },
+   "worst_slack_ns": 5.65686,
+   "total_negative_slack_ns": 0,
+   "worst_hold_slack_ns": 0.69023,
+   "total_negative_hold_slack_ns": 0,
+   "fmax_mhz": 230.248,
+   "timing_status": "constrained",
+   "setup_violation_count": 0,
+   "hold_violation_count": 0,
+   "clock_skew_ns": 0.00836,
+   "estimated_power_mw": 2.546,
+   "spef_annotation": null,
+   "deck": {
+    "name": "sky130_fd_sc_hd__ss_n40C_1v76",
+    "content_hash": "sha256:f4f16d4f7040623afb60d0480a035e4128c5c1212361ae3bd13c3a52d9692a84",
+    "released": false
+   }
+  }
+ ]
+}
