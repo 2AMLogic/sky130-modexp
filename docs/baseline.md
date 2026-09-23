@@ -420,6 +420,94 @@ table optimistic, not conservative. Full record, limitations, and raw
 per-corner envelopes:
 [`verification/records/sta-corner-sweep/records/20260915-111931-2c125f8.md`](../verification/records/sta-corner-sweep/records/20260915-111931-2c125f8.md).
 
+### Why the slow corner binds: a standard-cell family derate (issue #132)
+
+**Status: measured, 2026-09-23.** The sweep above was re-run in
+`klt sta`'s single-envelope form (`pdk.corners`, a list —
+[klayout-tools#1871](https://github.com/2AMLogic/klayout-tools/issues/1871))
+against the same byte-identical DEF. **Every figure in the table above
+reproduces bit-identically** across a `klt` pin bump (0.4.0 → 0.6.0), a
+change of request shape, and two different OpenROAD builds. The verdict is
+unchanged — 10/18, binding corner `ss_n40C_1v28` at **22.80 MHz** — and
+the newer pin adds the hold-side slack figures the 2026-09-15 run could not
+report (worst hold slack **+0.21354 ns**, at `ff_n40C_1v95`; +2.06884 ns at
+the binding corner). Record:
+[`verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`](../verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md)
+(supersedes the 2026-09-15 one).
+
+What is new is *why*. The critical path at `ss_n40C_1v28` — startpoint
+`_1205_` (DEF net `mm_a[15]`) → endpoint `_1175_` (DEF net `mm_p[6]`), 20
+gates, arrival **42.17 ns** against 8.31 ns required — spends **21.07 ns of
+its 42.17 ns in eight non-inverting compound cells** — and it propagates a
+*falling* edge through every one of them. Extracting every combinational
+cell's **per-polarity delay floor** from the installed liberty (the
+smallest value in any `cell_fall`, resp. `cell_rise`, table of any arc —
+what no path through the cell can beat on that edge, whichever pin
+switches, regardless of load or slew) shows where that matters:
+
+| Cell | fall floor @ `ss_n40C_1v28` | fall floor @ `tt_025C_1v80` | derate | rise floor @ ss |
+| --- | --- | --- | --- | --- |
+| `or4_1` | **4.4591 ns** | 0.3558 ns | 12.53x | 0.2394 ns |
+| `or3_1` | **3.0074 ns** | 0.2678 ns | 11.23x | 0.2331 ns |
+| `maj3_1` | **2.8753 ns** | 0.2916 ns | 9.86x | 0.4729 ns |
+| `mux2_1` | **2.6321 ns** | 0.2430 ns | 10.83x | 0.3607 ns |
+| `a311o_1` | 2.2119 ns | 0.2227 ns | 9.93x | 0.2727 ns |
+| `nand4_1` | 0.1553 ns | 0.0376 ns | 4.13x | 0.1933 ns |
+| `o41ai_1` | 0.0745 ns | 0.0298 ns | 2.50x | 0.1409 ns |
+| `nand2_1` | 0.0674 ns | 0.0206 ns | 3.27x | 0.1240 ns |
+| `nor2_1` | 0.0365 ns | 0.0076 ns | 4.80x | 0.2957 ns |
+| `inv_1` | 0.0357 ns | 0.0144 ns | 2.48x | 0.0911 ns |
+
+**The ratio is not the finding** — inverting cells derate 2.5–5x too, and
+more than that on their rising edge. **The absolute magnitude on the
+falling edge is**: at `ss_n40C_1v28`, non-inverting compound cells' falling
+floors run one to two orders of magnitude above the inverting family's for
+comparable fan-in (`or4_1` 4.4591 ns vs `nand4_1` 0.1553 ns), and a single
+`or4_1` falling arc is **45% of the whole 10.0 ns period** before any load
+or wire. At `tt_025C_1v80` the same pair is 0.3558 vs 0.0376 ns — the same
+ratio, both negligible. That is precisely why a mapping that is clean at
+the nominal corner does not survive the corner move. **209 of the 351
+combinational cells** have at least one pin that, on at least one edge,
+cannot switch in under 1.0 ns at `ss_n40C_1v28`.
+
+A seven-build lever matrix (frozen under that record's
+`artifacts/…/candidates/`) separates the levers. The numbers below are
+`klt sta` setup slack / Fmax at `ss_n40C_1v28`, and the corner count is how
+many of the eighteen close 100 MHz on setup **and** hold:
+
+| RTL | Synthesis | P&R corner | Cells | `ss_n40C_1v28` | Closed |
+| --- | --- | --- | --- | --- | --- |
+| single-cycle (**committed**) | unconstrained, `tt` | `tt` | 682 | −33.867 ns / 22.80 MHz | 10/18 |
+| single-cycle | 10 ns @ ss | `tt` | 717 | −31.855 ns / 23.89 MHz | 10/18 |
+| single-cycle | 10 ns @ ss + cell exclusion | `tt` | 865 | −18.307 ns / 35.33 MHz | 13/18 |
+| bit-serial | 10 ns @ ss | `tt` | 932 | −10.224 ns / 49.45 MHz | 15/18 |
+| bit-serial | 10 ns @ ss | `ss_n40C_1v28` | 932 | −8.039 ns / 55.44 MHz | 16/18 |
+| bit-serial | 10 ns @ ss + cell exclusion | `tt` | 1204 | −5.845 ns / 63.11 MHz | 16/18 |
+| bit-serial | 10 ns @ ss + cell exclusion | `ss_n40C_1v28` | 1204 | **+0.489 ns / 105.14 MHz** | **18/18** |
+
+Three readings, all of them load-bearing:
+
+- **The cheap experiment is a dead end, and now has a number.**
+  `spec/decision-records/0002-…` Decision 3 named a timing-constrained
+  synthesis pass as the first thing to try and left it untried. It is worth
+  **≈1.1 MHz of a ≈77 MHz gap** and closes no additional corner.
+- **100 MHz is reachable at all eighteen corners** for this block's
+  function in this PDK — which is why the ratified target is *not* lowered.
+- **The 18/18 row is not landed**, for two disclosed reasons: the cell
+  exclusion has no `klt synthesize` request field (it was produced by
+  invoking Yosys directly, so it is not re-runnable from a committed
+  request), and that row's own in-flow place-and-route STA —
+  routing-estimated parasitics rather than LEF/DEF-derived — reports
+  **−1.105 ns / 90.05 MHz** at the same corner on the same database. Both
+  numbers are real and they disagree about closure. Its cost is also not
+  small: **+522 cells** and ≈**33x** the cycle count — against a 4.6x
+  clock gain, a **net throughput loss of roughly 7x**. It is a *closure*
+  result, not a throughput result, and must never be quoted as one.
+
+The full decision, with the exception it ratifies and the priced exit from
+it, is
+[`spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`](../spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md).
+
 ### What this run does not claim
 
 Per `klt place-and-route`'s documented v1 scope, the GDS this section's

@@ -1,0 +1,86 @@
+# Critical path at ss_n40C_1v28 -- layout/modexp.def (issue #132)
+#
+# Record: 20260923-093000-28a7c96 (verification/records/sta-corner-sweep/)
+# Supplementary to that record's Claim A eighteen-corner klt sta sweep: a
+# `report_checks -path_delay max` on the SAME routed database, to name the
+# path behind the binding corner's -33.867 ns setup slack.
+#
+# Design under test: layout/modexp.def, content_hash
+#   sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a
+#   (byte-identical to the DEF issue #81 produced; unmodified by this record)
+# Liberty:  sky130_fd_sc_hd__ss_n40C_1v28.lib, content_hash
+#   sha256:afd8201328f73996b7c80bf13909674ba7b483ec413dea3fca74831cec712578
+# Clock:    create_clock -name clk -period 10.0 (100 MHz), ideal (not propagated)
+# Engine:   OpenROAD 26Q3-1260-g06a5a02279 (the pinned openroad/orfs image,
+#           via scripts/openroad-docker.sh); PDK sky130A open_pdks c6d73a35
+#           -- reproduced identically on a newer 26Q3-1510-g6cb3f2b704 build.
+# Command:  read_lef (tlef + cell lef); read_def; read_liberty; create_clock;
+#           report_checks -path_delay max -fields {slew capacitance fanout}
+#                         -group_path_count 1
+#
+# RTL correspondence, from the DEF's own net names (not inferred):
+#   _1205_/Q drives DEF net `mm_a[15]`  -- rtl/modexp.v's multiplier MSB,
+#                                          the bit selecting `mm_add`
+#   _1175_/D is driven onto DEF net `mm_p[6]` -- a bit of the running
+#                                          partial product
+# i.e. this is the whole single-cycle S_MM_RUN body:
+#   mm_add = mm_a[WIDTH-1] ? mm_b : 0
+#   mm_sum = mm_p2 + mm_add
+#   mm_red = (mm_sum >= mm_m2) ? mm_sum-mm_m2
+#          : (mm_sum >= mm_m1) ? mm_sum-mm_m1 : mm_sum
+#   mm_p  <= mm_red
+# -- the same structure spec/decision-records/0002-... Decision 3 identified
+# at 39.99 ns on the PRE-#81 layout; 42.17 ns here on the post-#81 one.
+#
+# The eight non-inverting compound cells on this path (and3_1, a211o_1,
+# a311o_1, a31o_1, maj3_1 x3, a32o_1) account for 21.07 ns of the 42.17 ns.
+# See candidates/cell-delay-floors.json for why: that family's delay FLOOR
+# derates 8-13x from tt_025C_1v80 to ss_n40C_1v28, against 2.5-4.5x for the
+# inverting families.
+#
+# ---------------------------------------------------------------------------
+Startpoint: _1205_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _1175_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                  0.00    0.00    0.00   clock clk (rise edge)
+                          0.00    0.00   clock network delay (ideal)
+                  0.00    0.00    0.00 ^ _1205_/CLK (sky130_fd_sc_hd__dfrtp_1)
+    30    0.05    2.44    3.54    3.54 ^ _1205_/Q (sky130_fd_sc_hd__dfrtp_1)
+     3    0.01    0.40    2.00    5.54 ^ _0638_/X (sky130_fd_sc_hd__and3_1)
+     3    0.01    0.14    0.35    5.88 v _0645_/Y (sky130_fd_sc_hd__nor2_1)
+     4    0.01    0.29    2.36    8.24 v _0647_/X (sky130_fd_sc_hd__a211o_1)
+     2    0.00    0.27    3.03   11.27 v _0650_/X (sky130_fd_sc_hd__a311o_1)
+     2    0.01    0.21    1.71   12.98 v _0652_/X (sky130_fd_sc_hd__a31o_1)
+     2    0.01    0.46    3.24   16.21 v _0653_/X (sky130_fd_sc_hd__maj3_1)
+     3    0.01    0.51    3.46   19.67 v _0654_/X (sky130_fd_sc_hd__maj3_1)
+     4    0.01    0.53    3.52   23.19 v _0655_/X (sky130_fd_sc_hd__maj3_1)
+     2    0.00    1.66    2.19   25.38 ^ _0657_/Y (sky130_fd_sc_hd__a211oi_1)
+     2    0.01    0.25    1.06   26.44 v _0659_/Y (sky130_fd_sc_hd__o31ai_1)
+     5    0.01    2.95    2.78   29.22 ^ _0666_/Y (sky130_fd_sc_hd__xnor2_1)
+     2    0.00    0.34    1.61   30.83 v _0780_/Y (sky130_fd_sc_hd__xnor2_1)
+     2    0.00    0.69    0.89   31.72 ^ _0781_/Y (sky130_fd_sc_hd__a21oi_1)
+     3    0.01    0.16    0.50   32.22 v _0782_/Y (sky130_fd_sc_hd__nor2_1)
+    25    0.06    4.96    4.33   36.55 ^ _0785_/Y (sky130_fd_sc_hd__o22ai_2)
+     1    0.00    0.77    3.35   39.91 ^ _0847_/Y (sky130_fd_sc_hd__mux2i_1)
+     1    0.00    0.13    0.52   40.43 v _0848_/Y (sky130_fd_sc_hd__nand2_1)
+     1    0.00    0.17    1.75   42.17 v _0852_/X (sky130_fd_sc_hd__a32o_1)
+                  0.17    0.00   42.17 v _1175_/D (sky130_fd_sc_hd__dfrtp_1)
+                                 42.17   data arrival time
+
+                  0.00   10.00   10.00   clock clk (rise edge)
+                          0.00   10.00   clock network delay (ideal)
+                          0.00   10.00   clock reconvergence pessimism
+                                 10.00 ^ _1175_/CLK (sky130_fd_sc_hd__dfrtp_1)
+                         -1.69    8.31   library setup time
+                                  8.31   data required time
+-----------------------------------------------------------------------------
+                                  8.31   data required time
+                                -42.17   data arrival time
+-----------------------------------------------------------------------------
+                                -33.87   slack (VIOLATED)
+
+

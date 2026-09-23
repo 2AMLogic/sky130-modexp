@@ -1,0 +1,383 @@
+diff --git a/rtl/modexp.v b/rtl/modexp.v
+index 9493bd3..2c91f57 100644
+--- a/rtl/modexp.v
++++ b/rtl/modexp.v
+@@ -17,6 +17,42 @@
+ //
+ // Handshake: assert `start` with base/exp/modulus valid for one cycle; `done`
+ // pulses high for one cycle when `result` is valid.
++//
++// ---------------------------------------------------------------------------
++// Inner-datapath structure (issue #132 / DR-0004): bit-serial Blakley step.
++// ---------------------------------------------------------------------------
++// The pre-#132 core computed each Blakley step combinationally in one cycle:
++//   mm_sum = 2*mm_p + (a_msb ? mm_b : 0)          -- (WIDTH+2)-bit add
++//   mm_p   = (mm_sum >= 2m) ? mm_sum - 2m
++//          : (mm_sum >= m)   ? mm_sum - m : mm_sum -- two serial compares
++// That single-cycle chain (18-bit add + two conditional subtracts) is the
++// 42.17 ns critical path at ss_n40C_1v28 (arrival vs 8.31 ns required) that
++// capped the all-corner Fmax at 22.80 MHz; splitting it any fixed number of
++// ways leaves >= 1 full adder depth per cycle, which cannot fit the ~4.8 ns
++// combinational budget 100 MHz allows at 1.28 V / -40 C in sky130_fd_sc_hd.
++//
++// This version keeps the algorithm and the interface bit-identical but
++// serializes each Blakley step LSB-first across 2*WIDTH+6 cycles of
++// one-gate-deep slices, so every cycle carries at most one full-adder /
++// full-subtractor slice of logic:
++//
++//   S_STEP_INIT (1 cycle)   parallel-load the step's operand slices:
++//                           ab_sr = a_msb ? b : 0 (the masked addend),
++//                           m1_sr = m, m2_sr = m<<1, carry/borrows cleared.
++//   S_P1      (WIDTH+2)     serial full adder: s = 2*p + ab, one bit per
++//                           cycle, carry registered; ~s is shifted LSB-first
++//                           into s_buf.
++//   S_P2      (WIDTH+2)     two independent serial subtractions in parallel:
++//                           d2 = s - 2m and d1 = s - m, borrows registered,
++//                           difference bits shifted into d2_buf / d1_buf and
++//                           ~s passed through into s2_buf.
++//   S_SEL     (1 cycle)     the final borrow flags decide the reduction:
++//                           p <= (s >= 2m) ? d2 : (s >= m) ? d1 : s.
++//
++// The arithmetic is unchanged -- red(s) = s - k*m with k = floor(s/m) in
++// {0,1,2}, exactly the original mm_red -- so the core stays bit-exact against
++// pow(base, exp, mod); only the cycle count per Blakley step changes (see
++// DR-0004 for the re-derived latency formula and its measured cross-check).
+ module modexp #(
+     parameter WIDTH = 16
+ ) (
+@@ -30,8 +66,8 @@ module modexp #(
+     output reg  [WIDTH-1:0] result
+ );
+ 
+-  // Counter width sufficient to hold WIDTH..1 (WIDTH up to 16 -> 5 bits, but
+-  // keep it general for larger WIDTH configs).
++  // Counter width sufficient to hold WIDTH..1 and WIDTH+2 (WIDTH up to 16
++  // needs to count to 18 -> 5 bits; keep it general for larger WIDTH).
+   localparam CW = (WIDTH <= 2)   ? 2 :
+                   (WIDTH <= 4)   ? 3 :
+                   (WIDTH <= 8)   ? 4 :
+@@ -39,17 +75,25 @@ module modexp #(
+                   (WIDTH <= 32)  ? 6 :
+                   (WIDTH <= 64)  ? 7 : 8;
+ 
+-  localparam [2:0] S_IDLE    = 3'd0,
+-                   S_MM_LOAD = 3'd1,
+-                   S_MM_RUN  = 3'd2,
+-                   S_AFTER   = 3'd3,
+-                   S_STEP    = 3'd4,
+-                   S_FINISH  = 3'd5;
++  localparam [3:0] S_IDLE      = 4'd0,
++                   S_MM_LOAD   = 4'd1,
++                   S_STEP_INIT = 4'd2,
++                   S_P1        = 4'd3,
++                   S_P2        = 4'd4,
++                   S_SEL       = 4'd5,
++                   S_AFTER     = 4'd6,
++                   S_STEP      = 4'd7,
++                   S_FINISH    = 4'd8;
+ 
+   localparam MM_SQUARE = 1'b0,
+-             MM_MUL     = 1'b1;
++              MM_MUL    = 1'b1;
++
++  // Serial-pass length, as a CW-wide constant (the same sizing idiom the
++  // original core used for WIDTH itself).
++  localparam integer FULL = WIDTH + 2;
++  localparam [CW-1:0] FULL_COUNT = FULL[CW-1:0];
+ 
+-  reg [2:0]        state;
++  reg [3:0]        state;
+   reg              mm_phase;      // which modular multiply is running
+ 
+   // Operand / accumulator registers.
+@@ -61,20 +105,49 @@ module modexp #(
+   // Interleaved modular-multiply working registers.
+   reg [WIDTH-1:0]  mm_a;          // multiplier operand, MSB-first scanned
+   reg [WIDTH-1:0]  mm_b;          // multiplicand operand (added when a-bit set)
+-  reg [WIDTH-1:0]  mm_p;          // running partial product, always < mod_r
+-  reg [CW-1:0]     j;             // inner bit counter (WIDTH..1)
+-
+-  // One interleaved step: p <- 2*p + (a_msb ? b : 0), then reduce mod m with
+-  // up to two conditional subtractions. Widened to WIDTH+2 bits: 2*p < 2m and
+-  // +b < m gives a pre-reduction sum < 3m < 3*2^WIDTH.
+-  wire [WIDTH+1:0] mm_p2  = {mm_p, 1'b0};
+-  wire [WIDTH+1:0] mm_add = mm_a[WIDTH-1] ? {2'b00, mm_b} : {(WIDTH+2){1'b0}};
+-  wire [WIDTH+1:0] mm_sum = mm_p2 + mm_add;
+-  wire [WIDTH+1:0] mm_m1  = {2'b00, mod_r};
+-  wire [WIDTH+1:0] mm_m2  = {1'b0, mod_r, 1'b0};
+-  wire [WIDTH+1:0] mm_red = (mm_sum >= mm_m2) ? (mm_sum - mm_m2)
+-                          : (mm_sum >= mm_m1) ? (mm_sum - mm_m1)
+-                          :  mm_sum;
++  reg [CW-1:0]     j;             // inner step counter (WIDTH..1)
++  reg [CW-1:0]     i;             // serial bit counter ((WIDTH+2)..1)
++
++  // Bit-slice shift registers (LSB-first streams; destructively consumed
++  // where the value is dead after the pass, parallel-loaded elsewhere).
++  reg [WIDTH-1:0]  p_sr;          // running partial product, always < mod_r
++  reg [WIDTH-1:0]  ab_sr;         // this step's masked addend (a_msb ? b : 0)
++  reg [WIDTH+1:0]  m1_sr;         // mod_r,        zero-extended to WIDTH+2
++  reg [WIDTH+1:0]  m2_sr;         // mod_r << 1,   zero-extended to WIDTH+2
++  reg [WIDTH+1:0]  s_buf;         // ~s,   shifted in during S_P1
++  reg [WIDTH+1:0]  s2_buf;        // ~s,   passed through during S_P2
++  reg [WIDTH+1:0]  d1_buf;        // s - m,   shifted in during S_P2
++  reg [WIDTH+1:0]  d2_buf;        // s - 2*m, shifted in during S_P2
++  reg               c;            // serial-adder carry
++  reg               p_d;          // one-slice delay flop: serializes 2*p as
++                                 // a leading zero followed by p's bits
++  reg               b1, b2;       // serial-subtractor borrows (s-m, s-2m)
++
++  // S_P1 slice: one full-adder bit of s = 2*p + ab.
++  wire fa_x    = p_d;
++  wire fa_y    = ab_sr[0];
++  wire sum_t   = fa_x ^ fa_y ^ c;                     // s bit (true form)
++  wire carry_n = (fa_x & fa_y) | (fa_x & c) | (fa_y & c);
++
++  // S_P2 slice: one bit each of d2 = s - 2m and d1 = s - m. s_buf[0] carries
++  // ~s, so the borrow maj3 reads it directly and each xor yields the true
++  // difference bit (~s ^ m ^ b == s ^ m ^ b).
++  wire nsb  = s_buf[0];
++  wire m1b  = m1_sr[0];
++  wire m2b  = m2_sr[0];
++  // Note: ~s ^ m ^ b == ~(s ^ m ^ b), so each xor-of-~s needs its own
++  // inversion to yield the true difference bit.
++  wire d1_t = ~(nsb ^ m1b ^ b1);
++  wire d2_t = ~(nsb ^ m2b ^ b2);
++  wire nb1  = (nsb & m1b) | (nsb & b1) | (m1b & b1);  // borrow, s - m
++  wire nb2  = (nsb & m2b) | (nsb & b2) | (m2b & b2);  // borrow, s - 2m
++
++  // S_SEL reduction: no final borrow <=> subtrahend fit, exactly the original
++  // (mm_sum >= mm_m2) ? ... : (mm_sum >= mm_m1) ? ... : mm_sum. The reduced
++  // value is always < mod_r < 2**WIDTH, so the low WIDTH bits suffice.
++  wire [WIDTH-1:0] p_next = (~b2) ? d2_buf[WIDTH-1:0]
++                        : (~b1) ? d1_buf[WIDTH-1:0]
++                        :         ~s2_buf[WIDTH-1:0];
+ 
+   always @(posedge clk or negedge rst_n) begin
+     if (!rst_n) begin
+@@ -88,8 +161,20 @@ module modexp #(
+       outer    <= {CW{1'b0}};
+       mm_a     <= {WIDTH{1'b0}};
+       mm_b     <= {WIDTH{1'b0}};
+-      mm_p     <= {WIDTH{1'b0}};
+       j        <= {CW{1'b0}};
++      i        <= {CW{1'b0}};
++      p_sr     <= {WIDTH{1'b0}};
++      ab_sr    <= {WIDTH{1'b0}};
++      m1_sr    <= {(WIDTH+2){1'b0}};
++      m2_sr    <= {(WIDTH+2){1'b0}};
++      s_buf    <= {(WIDTH+2){1'b0}};
++      s2_buf   <= {(WIDTH+2){1'b0}};
++      d1_buf   <= {(WIDTH+2){1'b0}};
++      d2_buf   <= {(WIDTH+2){1'b0}};
++      c        <= 1'b0;
++      p_d      <= 1'b0;
++      b1       <= 1'b0;
++      b2       <= 1'b0;
+     end else begin
+       done <= 1'b0;
+       case (state)
+@@ -110,26 +195,83 @@ module modexp #(
+         // SQUARE: result*result. MUL: result*base. `result` already holds the
+         // squared value by the time a MUL is loaded (see S_AFTER).
+         S_MM_LOAD: begin
+-          mm_p <= {WIDTH{1'b0}};
+-          mm_a <= result;
+-          mm_b <= (mm_phase == MM_SQUARE) ? result : base_r;
+-          j    <= WIDTH[CW-1:0];
+-          state <= S_MM_RUN;
++          p_sr    <= {WIDTH{1'b0}};
++          mm_a    <= result;
++          mm_b    <= (mm_phase == MM_SQUARE) ? result : base_r;
++          j       <= WIDTH[CW-1:0];
++          state   <= S_STEP_INIT;
++        end
++
++        // Parallel-load this step's operand slices. mm_a's MSB selects the
++        // addend for the whole step (it is constant across the step's
++        // slices), so the a-bit AND is folded into the load, not the slice.
++        // p_d is cleared so the p stream enters the adder one slice late
++        // (a leading zero then p's bits LSB-first) -- the serial form of
++        // the original core's mm_p2 = {mm_p, 1'b0}: s = 2*p + ab.
++        S_STEP_INIT: begin
++          ab_sr <= mm_a[WIDTH-1] ? mm_b : {WIDTH{1'b0}};
++          m1_sr <= {2'b00, mod_r};
++          m2_sr <= {1'b0, mod_r, 1'b0};
++          p_d   <= 1'b0;
++          c     <= 1'b0;
++          b1    <= 1'b0;
++          b2    <= 1'b0;
++          i     <= FULL_COUNT;
++          state <= S_P1;
++        end
++
++        // Serial add: s = 2*p + ab, LSB-first, one full-adder slice per
++        // cycle. p_sr and ab_sr are consumed destructively (they shift in
++        // zeroes, which is exactly the zero extension of 2*p + ab above the
++        // WIDTH boundary); ~s accumulates LSB-first into s_buf.
++        S_P1: begin
++          s_buf <= {~sum_t, s_buf[WIDTH+1:1]};
++          p_d   <= p_sr[0];
++          p_sr  <= {1'b0, p_sr[WIDTH-1:1]};
++          ab_sr <= {1'b0, ab_sr[WIDTH-1:1]};
++          c     <= carry_n;
++          if (i == {{(CW-1){1'b0}}, 1'b1}) begin
++            i     <= FULL_COUNT;
++            state <= S_P2;
++          end else begin
++            i <= i - 1'b1;
++          end
++        end
++
++        // Serial dual subtract: d2 = s - 2m and d1 = s - m, LSB-first,
++        // one full-subtractor slice each per cycle. The final borrow flags
++        // (available when the MSB slice completes) decide the reduction.
++        S_P2: begin
++          d2_buf <= {d2_t, d2_buf[WIDTH+1:1]};
++          d1_buf <= {d1_t, d1_buf[WIDTH+1:1]};
++          s2_buf <= {nsb,  s2_buf[WIDTH+1:1]};
++          s_buf  <= {1'b0, s_buf[WIDTH+1:1]};
++          m1_sr  <= {1'b0, m1_sr[WIDTH+1:1]};
++          m2_sr  <= {1'b0, m2_sr[WIDTH+1:1]};
++          b1     <= nb1;
++          b2     <= nb2;
++          if (i == {{(CW-1){1'b0}}, 1'b1}) begin
++            state <= S_SEL;
++          end else begin
++            i <= i - 1'b1;
++          end
+         end
+ 
+-        S_MM_RUN: begin
+-          mm_p <= mm_red[WIDTH-1:0];
+-          mm_a <= mm_a << 1;
++        // Commit the reduced partial product and advance the step counter.
++        S_SEL: begin
++          p_sr  <= p_next;
++          mm_a  <= mm_a << 1;
+           if (j == {{(CW-1){1'b0}}, 1'b1}) begin
+             state <= S_AFTER;
+           end else begin
+-            j <= j - 1'b1;
++            j     <= j - 1'b1;
++            state <= S_STEP_INIT;
+           end
+         end
+ 
+         // The modular multiply just finished; commit it to `result`.
+         S_AFTER: begin
+-          result <= mm_p;
++          result <= p_sr;
+           if (mm_phase == MM_SQUARE) begin
+             if (exp_r[WIDTH-1]) begin
+               // exponent bit set: follow the square with a multiply by base.
+diff --git a/verification/_dut.py b/verification/_dut.py
+index 15c68c8..58dae78 100644
+--- a/verification/_dut.py
++++ b/verification/_dut.py
+@@ -26,12 +26,13 @@ async def reset(dut):
+     await RisingEdge(dut.clk)
+ 
+ 
+-async def run_modexp(dut, base, exp, mod, timeout_cycles=20000):
++async def run_modexp(dut, base, exp, mod, timeout_cycles=50000):
+     """Drive one start/done handshake; return the core's result.
+ 
+-    The cycle budget is generous: the core is O(WIDTH^2) -- WIDTH exponent
+-    steps, each up to two WIDTH-bit interleaved modular multiplies -- so a
+-    16-bit operand needs a few hundred cycles worst case.
++    The cycle budget is generous: the bit-serial inner datapath (DR-0004)
++    needs WIDTH*(2*WIDTH+6)+2 cycles per modular multiply, so a 16-bit
++    worst-case (all-ones exponent) modexp runs ~14.7k cycles and future
++    WIDTH growth must not silently flake here.
+     """
+     await RisingEdge(dut.clk)
+     dut.base_in.value = base
+@@ -49,3 +50,31 @@ async def run_modexp(dut, base, exp, mod, timeout_cycles=20000):
+         f"modexp({base}, {exp}, {mod}) did not assert done within "
+         f"{timeout_cycles} cycles"
+     )
++
++
++async def run_modexp_counted(dut, base, exp, mod, timeout_cycles=50000):
++    """Same handshake as `run_modexp`, but also return the cycle count.
++
++    Counted inclusively from the clk edge at which `start` is sampled to the
++    clk edge at which `done` is observed high (the DR-0001/DR-0004 latency
++    convention), i.e. exactly the number of rising edges spanned by the
++    operation including both endpoints.
++    """
++    await RisingEdge(dut.clk)
++    dut.base_in.value = base
++    dut.exp_in.value = exp
++    dut.mod_in.value = mod
++    dut.start.value = 1
++    await RisingEdge(dut.clk)
++    dut.start.value = 0
++
++    cycles = 1  # the sampling edge itself
++    for _ in range(timeout_cycles):
++        await RisingEdge(dut.clk)
++        cycles += 1
++        if dut.done.value == 1:
++            return int(dut.result.value), cycles
++    raise RuntimeError(
++        f"modexp({base}, {exp}, {mod}) did not assert done within "
++        f"{timeout_cycles} cycles"
++    )
+diff --git a/verification/test_modexp.py b/verification/test_modexp.py
+index 5607d3b..fdecb08 100644
+--- a/verification/test_modexp.py
++++ b/verification/test_modexp.py
+@@ -30,7 +30,7 @@ import cocotb
+ from cocotb.clock import Clock
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+-from _dut import reset, run_modexp  # noqa: E402
++from _dut import reset, run_modexp, run_modexp_counted  # noqa: E402
+ 
+ 
+ def _width(dut):
+@@ -80,3 +80,43 @@ async def test_modexp_random(dut):
+         got = await run_modexp(dut, base, exp, mod)
+         want = pow(base, exp, mod)
+         assert got == want, f"modexp({base},{exp},{mod}): got {got}, want {want}"
++
++
++@cocotb.test()
++async def test_modexp_latency_formula(dut):
++    """Directed cycle-count cross-check against the DR-0004 latency formula.
++
++    The bit-serial inner datapath re-derives the exact latency contract
++    (superseding DR-0001 Decision 3's formula for the single-cycle core):
++
++        cycles(WIDTH, exp) = (WIDTH + popcount(exp)) * M + WIDTH + 2
++        where M = WIDTH * (2*WIDTH + 6) + 2
++
++    Each modular multiply costs M cycles (1 S_MM_LOAD + WIDTH steps of
++    [1 S_STEP_INIT + (WIDTH+2) S_P1 + (WIDTH+2) S_P2 + 1 S_SEL] + 1 S_AFTER);
++    WIDTH squares always run, popcount(exp) multiplies follow the exponent's
++    set bits, one S_STEP advances each of the WIDTH exponent bits, and the
++    start/finish bookkeeping adds 3. The counting convention is inclusive --
++    both the sampling edge and the done edge count -- which reads one cycle
++    higher than DR-0001 Decision 3's exclusive convention applied to the old
++    single-cycle core (its formula + 1 under this same counter).
++
++    Exponents chosen to span popcount 0 .. WIDTH, including both bounds.
++    """
++    cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
++    await reset(dut)
++
++    width = _width(dut)
++    m_per_mult = width * (2 * width + 6) + 2
++    exps = [0, 1, 5, 0b1011, (1 << width) - 1]
++    for exp in exps:
++        mod = (1 << width) - 1
++        base = mod - 2
++        want_cycles = (width + bin(exp).count("1")) * m_per_mult + width + 3
++        got, cycles = await run_modexp_counted(dut, base, exp, mod)
++        want = pow(base, exp, mod)
++        assert got == want, f"modexp({base},{exp},{mod}): got {got}, want {want}"
++        assert cycles == want_cycles, (
++            f"modexp({base},{exp},{mod}) @WIDTH={width}: took {cycles} cycles, "
++            f"formula says {want_cycles}"
++        )

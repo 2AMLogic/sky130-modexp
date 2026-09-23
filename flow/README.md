@@ -80,24 +80,41 @@ emulation on a macOS/arm64 host, see `docs/environment.md`).
 
 ## Multi-corner STA of the committed layout (`run-sta-corner-sweep.sh`)
 
-**Added by issue #86.** `flow/run-sta-corner-sweep.sh` answers a different
-question from `run-corner-sweep.sh` above, and is the one to reach for when
-you want per-corner timing **of the layout this repo actually ships**:
+**Added by issue #86; rewritten as a single `klt sta` envelope by issue
+#132.** `flow/run-sta-corner-sweep.sh` answers a different question from
+`run-corner-sweep.sh` above, and is the one to reach for when you want
+per-corner timing **of the layout this repo actually ships**:
 
 ```bash
-./flow/run-sta-corner-sweep.sh                     # all 18 ratified corners
-./flow/run-sta-corner-sweep.sh ss_n40C_1v28         # a named subset
+./flow/run-sta-corner-sweep.sh                  # all 18 ratified corners
+./flow/run-sta-corner-sweep.sh -o /tmp/out.json # write the envelope elsewhere
 ```
 
 It runs `klt sta` — a standalone OpenSTA analysis of an already-routed DEF
 (klayout-tools#1099, available at this repo's pinned `klt` revision; see
-`docs/cli/sta.md`) — against the committed `layout/modexp.def`, once per
-corner, varying only `pdk.corner`. It never places, routes, or runs CTS, so
-**the geometry is byte-identical across all eighteen runs**: the table it
-produces characterizes one design at eighteen corners, rather than
-measuring eighteen differently-optimized designs the way a per-corner
-rebuild necessarily does. It also needs no synthesis netlist and no P&R
-run, and completes in seconds per corner rather than minutes.
+`docs/cli/sta.md`) — against the committed `layout/modexp.def`. It never
+places, routes, or runs CTS, so **the geometry is byte-identical across all
+eighteen corners**: the table it produces characterizes one design at
+eighteen corners, rather than measuring eighteen differently-optimized
+designs the way a per-corner rebuild necessarily does. It also needs no
+synthesis netlist and no P&R run, and completes in seconds per corner
+rather than minutes.
+
+**One envelope, not eighteen (issue #132).** The script used to shell out
+to `klt sta` once per corner with the scalar `pdk.corner` and staple the
+eighteen responses into a hand-rolled JSON array. That array is not a
+`klt sta` envelope, so `klt signoff --manifest` could not read it as T1
+item-5 evidence — the gap `verification/signoff/README.md` named
+explicitly. The committed request `flow/sta-modexp.json` now carries
+`pdk.corners` (a list —
+[klayout-tools#1871](https://github.com/2AMLogic/klayout-tools/issues/1871)),
+which characterizes the same loaded geometry at N corners inside one
+request/response round trip and whose response **is** a signoff-readable
+envelope with a `corners[]` array. The script is now a thin wrapper around
+that single invocation, plus a pass/fail summary printed to stdout. Because
+the corner list lives in the committed request rather than in the script's
+argv, there is no longer a per-corner-subset CLI form; edit the request (or
+point `-o` somewhere scratch) if you want a subset.
 
 Both scripts are kept, deliberately: `run-corner-sweep.sh` is how issue
 #56's "how much of the slow-corner gap is mapping-attributable" question
@@ -111,8 +128,9 @@ has both a `~/.ciel` directory and a `~/.volare` PDK install, set
 `PDK_ROOT` explicitly (`PDK_ROOT=~/.volare`) so `scripts/openroad-docker.sh`
 bind-mounts the same root `klt pdk find` resolves — see issue #90.
 
-Per-corner scratch lands in `flow/sta-corners/<corner>/` and the aggregated
-summary in `flow/sta-corner-sweep-results.json`, both gitignored.
+The response lands in `flow/sta-corner-sweep-results.json` (gitignored;
+`verification/records/sta-corner-sweep/artifacts/` freezes the copy
+`verification/signoff/block-manifest.json` cites for T1 item 5).
 
 ## What this flow does *not* produce
 
