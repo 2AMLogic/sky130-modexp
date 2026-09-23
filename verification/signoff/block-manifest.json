@@ -1,0 +1,12 @@
+{
+  "block": "sky130-modexp",
+  "kind": "digital",
+  "evidence": {
+    "3": {
+      "file": "layout/drc/modexp-drc-report.json",
+      "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
+    },
+    "4": "layout/lvs/modexp_lvs_report.json",
+    "7": "verification/records/gate-level-sim/artifacts/20260911-071039-ce2b24c/klt-functional-verification.json"
+  }
+}
