@@ -54,6 +54,13 @@ need a concrete schema to be checkable rather than aspirational:
   fixture repo. A linter that silently stops catching a violation is worse
   than no linter, so the enforcement is itself tested.
 - `records/` — the append-only evidence records this convention produces.
+- `signoff/` — the `klt signoff --manifest` block manifest, the pinned
+  T1 tier checklist it grades against, the committed tier-verdict report,
+  and the runner/CI gate that keeps them from rotting. This is the
+  **machine-readable verdict of record for the block's gap to T1**
+  (issue #130) — see `signoff/README.md`. Not append-only like `records/`:
+  the manifest and report are living artifacts, regenerated in-step with
+  the evidence they cite.
 
 Run the klt-driven suite (default `WIDTH=16`, 2 directed + randomized tests)
 with:
@@ -312,6 +319,13 @@ CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
   (`verification/gate-level/test_spice_to_verilog.py`), which needs no PDK
   and no simulator — its synthetic fixture cases run anywhere, and its
   committed-artifact case is what catches a *stale* `modexp_post_route.v`;
+- the signoff manifest check (`verification/signoff/run-signoff.sh
+  --check`) — re-renders the T1 tier-verdict report from the committed
+  block manifest and byte-compares against the committed
+  `verification/signoff/tier-report.json`, so a manifest citing an artifact
+  that has since changed fails the build instead of rotting. It installs
+  its own pinned `klt` (newer than the PDK-heavy legs' pin — see
+  `docs/environment.md`) and reads committed envelopes only; no PDK;
 - basic Python syntax checks over the scripts in this directory, and
   `bash -n` over `scripts/setup-env.sh`.
 

@@ -1,8 +1,9 @@
 # CI for sky130-modexp.
 #
 # Scope is deliberate and documented, not accidental: this workflow runs the
-# **tool-light** legs only -- the multi-WIDTH Icarus cross-check and the
-# evidence-record linter. Neither needs a PDK.
+# **tool-light** legs only -- the multi-WIDTH Icarus cross-check, the
+# evidence-record linter, and the klt signoff manifest check. None needs a
+# PDK.
 #
 # The PDK-heavy legs (`klt synthesize`, `klt place-and-route`, `klt drc`)
 # are NOT run here: they need a fetched sky130A PDK and, for P&R, `openroad`.
@@ -103,6 +104,36 @@ jobs:
             cmp "/tmp/determinism-a/width-$w.jsonl" "/tmp/determinism-b/width-$w.jsonl"
             echo "WIDTH=$w: transcripts byte-identical across runs"
           done
+
+  signoff:
+    name: T1 tier report (klt signoff manifest check)
+    runs-on: ubuntu-latest
+    # The graded gap-to-T1 verdict of record (issue #130): re-renders
+    # `klt signoff --manifest verification/signoff/block-manifest.json`
+    # against the committed tier doc and byte-compares with the committed
+    # tier-report.json. A manifest citing an artifact that has since changed
+    # (its content_hash pin no longer matches the envelope) flips rows to
+    # stale_evidence, the diff goes non-empty, and CI fails instead of
+    # letting the committed verdict rot. Tool-light by construction -- the
+    # report leg only reads committed JSON envelopes, no PDK, no simulator
+    # -- so it installs its own klt pin (newer than the PDK-heavy legs'
+    # pin, which predates the digital-flow evidence kinds and item 11; see
+    # docs/environment.md -> "Pinned versions").
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install klt at the signoff-report pin
+        run: |
+          python3 -m pip install --disable-pip-version-check \
+            "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"
+
+      - name: Regenerate and compare the tier report
+        run: ./verification/signoff/run-signoff.sh --check
 
   guard-hooks:
     name: Loom guard-hook regression suites

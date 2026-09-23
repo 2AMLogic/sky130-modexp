@@ -34,6 +34,8 @@ source .venv/bin/activate
 | Component | Pinned to | Resolved via |
 |---|---|---|
 | `klayout-tools` (`klt`) | git revision [`f77036bff1eaf97b992e121acd702a98519142fb`](https://github.com/2AMLogic/klayout-tools/commit/f77036bff1eaf97b992e121acd702a98519142fb) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@f77036bff1eaf97b992e121acd702a98519142fb"` (what `scripts/setup-env.sh` runs) |
+| `klayout-tools` (`klt`, signoff-report leg) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"` (what the CI `signoff` job installs; NOT installed by `scripts/setup-env.sh`) |
+| T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
@@ -73,6 +75,25 @@ be a descendant of `ee10a54`
 
 `klt` in turn resolves `iverilog`/`yosys`/`openroad` and the PDK itself from
 the host — it does not vendor them. Those are:
+
+**Second klt pin, signoff-report leg only (issue #130, 2026-09-23).** The
+row above pins the klt that **produces evidence** (the PDK-heavy legs whose
+records cite the pin in their `provenance`). The `klt signoff --manifest`
+report leg (`verification/signoff/`) additionally carries its own, newer pin
+(`dac2b5da`, 2026-09-23, upstream `main` tip at pin time) because the report
+grader needs capabilities the evidence pin predates: `klt sta` /
+`klt functional-verification` envelope recognition in tier-verdict mode
+(klayout-tools#1959), the items-3/4 kind restrictions (#1987), and the
+eleventh T1 item (#2025 — the checklist itself is separately pinned via the
+committed tier doc, but the grader code needs to parse it). The report leg
+re-runs no PDK job — it only reads committed JSON envelopes — so bumping
+**its** pin does not invalidate any evidence record and requires only
+regenerating `verification/signoff/tier-report.json`
+(`./verification/signoff/run-signoff.sh`); the CI `signoff` job's `--check`
+fails until that regeneration is committed. The two pins intentionally
+remain separate: converging them means re-minting the DRC/LVS/P&R records
+against the newer tool (the "re-pin ⇒ mint fresh records" rule above), which
+is the evidence legs' own decision to make, not the report leg's.
 
 | Tool | Used for | Resolved version on the environment these records were produced on |
 |---|---|---|
