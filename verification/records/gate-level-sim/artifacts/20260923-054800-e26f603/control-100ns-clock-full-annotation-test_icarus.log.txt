@@ -1,0 +1,148 @@
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/usr/lib/x86_64-linux-gnu/libpython3.12.so.1.0'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:233  in gpi_load_users                  Running entry func 'initialize' from loaded library '/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-133/.venv/lib/python3.12/site-packages/cocotb/simulator.cpython-312-x86_64-linux-gnu.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:114  in initialize                      Using Python 3.12.12 interpreter at /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-133/.venv/bin/python3.12
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Seeding Python random module with 1
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-133/.venv/lib/python3.12/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running probe_tb.probe_flop (1/1)
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8029: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8050: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8071: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8092: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8113: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8134: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8155: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8176: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8197: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8218: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8239: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8260: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8281: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8302: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8323: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8344: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8365: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8386: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8407: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8428: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8449: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8470: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8491: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8512: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8533: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8554: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8575: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8596: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8617: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8638: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8659: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8680: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8701: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8722: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8743: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8764: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8785: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8806: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8827: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8848: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8869: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8890: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8911: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8932: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8953: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8974: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:8995: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9016: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9037: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9058: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9079: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9100: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9121: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9142: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9163: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9184: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9205: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9226: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9247: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9268: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9289: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9310: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9331: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9352: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9373: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9394: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9415: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9436: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9457: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9478: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9499: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9520: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9541: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9562: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9583: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9604: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9625: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9646: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9667: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9688: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9709: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9730: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9751: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9772: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9793: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9814: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9835: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9856: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9877: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9898: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9919: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9940: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9961: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:9982: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10003: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10024: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10045: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10066: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10087: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10108: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10129: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10150: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10171: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10192: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10213: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10234: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10255: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10276: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10297: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10318: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/k[g] no done in 600 cycles (100ns clock, FULL annotation)
+ 60400.00ns INFO     cocotb.regression                  probe_tb.probe_flop passed
+ 60400.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                        ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        **************************************************************************************
+                                                        ** probe_tb.probe_flop            PASS       60400.00           0.18     326593.48  **
+                                                        **************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0              60400.00           0.19     325917.71  **
+                                                        **************************************************************************************
+lt_sdf_safe.sdf:10339: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10360: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10381: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10402: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10423: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10444: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10465: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10486: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10507: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10528: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10549: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10570: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10591: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10612: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10633: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10654: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10675: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10696: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10717: TIMINGCHECK not supported.
+SDF WARNING: /tmp/issue133-diag/.klt/functional-verification/klt_sdf_safe.sdf:10738: TIMINGCHECK not supported.

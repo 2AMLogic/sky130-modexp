@@ -33,8 +33,8 @@ source .venv/bin/activate
 
 | Component | Pinned to | Resolved via |
 |---|---|---|
-| `klayout-tools` (`klt`) | git revision [`f77036bff1eaf97b992e121acd702a98519142fb`](https://github.com/2AMLogic/klayout-tools/commit/f77036bff1eaf97b992e121acd702a98519142fb) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@f77036bff1eaf97b992e121acd702a98519142fb"` (what `scripts/setup-env.sh` runs) |
-| `klayout-tools` (`klt`, signoff-report leg) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"` (what the CI `signoff` job installs; NOT installed by `scripts/setup-env.sh`) |
+| `klayout-tools` (`klt`) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"` (what `scripts/setup-env.sh` runs) |
+| `klayout-tools` (`klt`, signoff-report leg) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | installed directly by the CI `signoff` job (issue #136's pin, unified with the pin above by issue #133 — `scripts/setup-env.sh` now provisions the same revision, so the report leg and the PDK legs share one pin) |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
@@ -73,6 +73,32 @@ be a descendant of `ee10a54`
 (`gh api repos/2AMLogic/klayout-tools/compare/ee10a54...f77036b` →
 `{"status": "ahead", "ahead_by": 424}`) — i.e. it contains #1069's fix.
 
+**Pin rationale (issue #133, 2026-09-23)**: the previous pin
+(`f77036bff1eaf97b992e121acd702a98519142fb`, 2026-09-09) predated the two
+merged upstream fixes that close the SDF `INTERCONNECT` residuals Leg 2's
+2026-09-09 re-attempt failed on
+(`verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`,
+49 unresolved entries, filed as
+[klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619),
+closed 2026-09-15):
+[klayout-tools#1857](https://github.com/2AMLogic/klayout-tools/pull/1857)
+("fix(functional-verification): defer bit-selected top-level-port
+`INTERCONNECT` entries to a later `$sdf_annotate` call", merged at
+`53b024df53f6b83e689aeea16ea971d37d562da6`) and
+[klayout-tools#2304](https://github.com/2AMLogic/klayout-tools/pull/2304)
+("fix(functional-verification): drop zero-delay assign-alias port
+`INTERCONNECT`s", closing
+[klayout-tools#2285](https://github.com/2AMLogic/klayout-tools/issues/2285),
+merged at `c0bca3f5779e6860f2b6ab94db4c8c4d1355d9f0`). The new pin,
+`dac2b5daceb69a2068d9d2ee190d7afe37b29af7` (2026-09-23,
+`klayout-tools main`'s tip at implementation time), was re-verified live to
+be a descendant of both fix commits
+(`gh api repos/2AMLogic/klayout-tools/compare/<fix-sha>...dac2b5d` →
+`"status": "ahead"` for each), plus the doc attribution
+[klayout-tools#1888](https://github.com/2AMLogic/klayout-tools/pull/1888)
+(merged at `2c488d6b`) that names the all-tests-fail SDF shape a timing
+property, not an annotation failure.
+
 `klt` in turn resolves `iverilog`/`yosys`/`openroad` and the PDK itself from
 the host — it does not vendor them. Those are:
 
@@ -110,6 +136,24 @@ brew install icarus-verilog yosys
 # Debian/Ubuntu
 apt-get install iverilog yosys
 ```
+
+**Icarus >= 13 is a hard requirement for SDF-annotated runs** (`klt
+functional-verification` with `options.sdf` refuses an older Icarus with a
+request error: `-ginterconnect`, which a post-route SDF's `INTERCONNECT`
+delays require, does not exist before 13.0 —
+[klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004)).
+Ubuntu 24.04's `apt` still ships 12.0, so on such a host 13.0 must be built
+from source (issue #133's run host did exactly this):
+
+```bash
+git clone --depth 1 --branch v13_0 https://github.com/steveicarus/iverilog.git
+cd iverilog && ./autoconf.sh && ./configure --prefix="$PREFIX" \
+  && make -j"$(nproc)" && make install
+# -> $PREFIX/bin/iverilog reports "Icarus Verilog version 13.0 (stable)"
+```
+
+Zero-delay (RTL and Leg 1 gate-level) runs work on 12.0; only `options.sdf`
+needs 13.
 
 ## OpenROAD
 
