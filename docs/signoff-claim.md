@@ -5,7 +5,35 @@ evidence establishes and does not establish**, per issue #8 (and re-verified
 by issue #55). It answers `spec/modexp.md`'s Signoff row — *"DRC + LVS clean
 on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 
-## Verdict (updated 2026-09-11, issue #81): **not met** — DRC is now clean;
+## Verdict (updated 2026-09-23, issue #131): **not met** — DRC is clean;
+LVS still mismatches, now 12 errors, all of them P&R cell insertions and
+resizes the pre-CTS reference cannot model
+
+**LVS's residue is now one named cause, and two of its previously-open
+questions are answered** (issue #131). The comparison moved onto `klt
+lvs`'s `reference.form: "gate-level-verilog"` surface, which changes three
+things and leaves the headline verdict alone:
+
+- `status` is **still `"mismatch"`**, so the Signoff row is still not met
+  and T1 item 4 still renders `unmet`. `error_count` is **12** (was 17).
+- **`power_connectivity.status` is `"match"`**, over all 3074 placed
+  instances, zero findings — the first time this block has answered that
+  question at all (every other `reference.form` reports it `"unchecked"`).
+  It is a per-instance power/ground pin-to-net consistency verdict, **not**
+  geometric rail continuity and **not** an IR-drop result.
+- **The second-engine cross-check has been run** and concurs: netgen
+  1.5.133, same netlist pair, also `mismatch`. The line further down this
+  page recording it as "not run" no longer applies and is superseded.
+- The five physical-only masters (`tapvpwrvgnd_1`, `fill_{1,2,4,8}`) are
+  no longer mismatches: `klt lvs` removes them itself, before comparing,
+  and discloses each by name in a `topology.power_only_pruned` warning.
+
+See "LVS" below for the full statement, `layout/lvs/README.md` for the
+per-leg detail, and
+`verification/records/drc-lvs/records/20260923-062424-7d0dd52.md` for the
+evidence record.
+
+## Verdict (2026-09-11, issue #81): **not met** — DRC is now clean;
 LVS still mismatches
 
 **DRC is now clean, 0 violations** (issue #81): `flow/par-modexp.json`
@@ -282,8 +310,129 @@ the exact deck the committed clean verdict came from:
   of the re-enumeration is that the list is now current and complete *as a
   description of what ran*, which is what item 3 requires.
 
-## LVS — still `status: "mismatch"` against the regenerated,
-tapcell/PDN/filler-cell GDS (updated 2026-09-11, issue #81)
+## LVS — still `status: "mismatch"`, now 12 errors, all of them the P&R
+cell-insertion/resize transform; power connectivity `match`; cross-checked
+by a second engine (updated 2026-09-23, issue #131)
+
+**Current, authoritative LVS statement. The two subsections after this one
+are retained history.**
+
+`klt lvs` (engine `klayout`, `NetlistComparer`) against the committed
+`layout/lvs/modexp_layout_abstracted.spice` (extracted from the unchanged
+`layout/modexp.gds`) and a `reference.form: "gate-level-verilog"`
+reference derived from the same frozen, pre-CTS `klt synthesize` netlist
+every prior record used:
+
+- **`status: "mismatch"`**, `mismatch_count: 13`, `error_count: 12`,
+  `category_counts: {"topology": 12, "topology.power_only_pruned": 1}`.
+  The 13th entry is a `severity: "warning"` disclosure, not an error.
+- **`power_connectivity.status: "match"`** — `power_pins: ["VGND", "VPB",
+  "VPWR"]`, derived by klt's own `declared-by-every-instantiated-master`
+  rule over 47 masters with `corroborated: true`, `instance_count: 3074`,
+  `findings: []`.
+- **`body_verification.status: "unchecked"`** — the pre-extracted
+  `layout.netlist` request form carries no extraction deck, so nothing can
+  tell a drawn body tie from a synthesized one. Recorded as `"unchecked"`,
+  never read as `"verified"`.
+
+**The 12 errors are one cause, not a mixture.** All 12 are `"circuit could
+not be matched to a counterpart"`, and every one names a cell type the
+router inserted or resized: 10 `side: "layout"` (`BUF_4`, `BUFINV_16`,
+`CLKINV_2`, `CLKINV_4`, `INV_1`, `INV_6`, `NOR2_2` — CTS/timing fixups;
+`DIODE_2` — antenna fixup; `O21AI_2`, `O22AI_2` — post-resize drive
+strengths), 1 `side: "reference"` (`O22AI_1`, the pre-resize strength the
+routed layout no longer instantiates), 1 `side: "both"` (the top `MODEXP`
+circuit, cascading). Zero `net.split` / `net.merged` / `device.*`. The
+instance-by-instance DEF-vs-Verilog accounting below (680 identical
+name+type, 3 resized, 35 fixup insertions, 0 synthesis instances missing)
+still holds and is now the *whole* explanation rather than part of it.
+
+**The five physical-only masters are removed by the tool, with
+disclosure.** `klt lvs`'s `gate-level-verilog` form prunes every
+layout-side circuit whose every declared pin is a power/ground pin of the
+reference library — here `sky130_fd_sc_hd__tapvpwrvgnd_1` and
+`__fill_{1,2,4,8}` — before comparing, and names each one in a
+`topology.power_only_pruned` warning. That is klt's own rule, keyed off the
+PDK library's pin-order data, **not** a filter this repo applied to make a
+number look better. The prune stops where the evidence does: the
+antenna-fixup master `DIODE_2` declares a non-power `DIODE` pin and is not
+pruned, which is why it is still in the error list above.
+
+**What `power_connectivity: "match"` does and does not establish.** It is a
+per-instance pin-to-net consistency verdict: every master's
+`VGND`/`VPB`/`VPWR` pin reaches the same net every other instance's
+same-named pin reaches, across all 3074 placed instances. The check runs
+*before* the filler/tap prune by design, so the 2352 physical-only
+instances are **inside** this verdict — their power connectivity is the
+only thing about them any check can verify. It is **not** a statement that
+a rail is an unbroken island (that is `klt erc`'s question — see
+`layout/erc/` for this block's supply evidence) and **not** an IR-drop or
+current-capacity result. `VNB` is absent from the derived pin universe
+because the committed abstracted extraction resolved no `VNB` pin on any
+master; that is an extraction-coverage fact, disclosed rather than read as
+a clean verdict on a pin nothing checked.
+
+**Second-engine cross-check (T1 item 4): RUN, and it concurs.** netgen
+1.5.133 (the Ubuntu `netgen-lvs` build, unpatched), same request with
+`"engine": "netgen"`, committed as
+`layout/lvs/modexp_lvs_report_netgen.json`: also `status: "mismatch"`,
+also `power_connectivity: "match"`. netgen fails *differently* — where
+`NetlistComparer` stops at the circuit-type level, netgen proceeds to
+instance/net partitioning and reports `device.unmatched` +
+`net.unmatched`, whose raw side-by-side fragments show that every
+layout-side instance carries `VGND`/`VPB`/`VPWR` terminals the signal-only
+gate-level reference has no counterpart for, so its fanout-class
+refinement cannot converge. **The two engines agree on the verdict and
+disagree on the diagnosis.** That is the honest strength of this
+cross-check: it removes "one toolchain agreeing with itself" as an
+explanation, and independently confirms nothing here is silently passing.
+It does **not** upgrade the verdict — two engines reporting `mismatch` is
+still `mismatch`. The "not run" statement further down this page is
+superseded by this paragraph.
+
+**Two deviations from a bare `klt lvs` invocation, both disclosed, neither
+touching the design:**
+
+1. The reference netlist handed to `klt lvs` is
+   `layout/lvs/modexp_synth_expanded.v` — a mechanically rewritten copy of
+   the frozen `modexp_synth_tied.v` in which three Yosys concatenation
+   `assign` statements are expanded into 52 per-bit plain `assign`s,
+   because klt's Verilog reader rejects a concatenation right-hand side.
+   Every other line is copied byte for byte, and all three rewritten nets
+   are dead in the frozen netlist (no cell instance reads them), so the
+   compared connectivity is unchanged. The frozen evidence file itself is
+   not edited. Filed upstream, generically:
+   [klayout-tools#2372](https://github.com/2AMLogic/klayout-tools/issues/2372).
+2. The netgen leg reached its binary through a `PATH` shim, because klt
+   invokes the engine as the literal name `netgen` and Ubuntu's package
+   installs it as `netgen-lvs`. Filed upstream, generically:
+   [klayout-tools#2373](https://github.com/2AMLogic/klayout-tools/issues/2373).
+
+**What would make this `status: "match"`, and why it is not claimed here.**
+The reference would have to be the *as-built* post-route netlist. `klt
+place-and-route` wrote one for the run that produced the committed layout
+(`…/20260911-052542-d5e43d3/par-nominal-output.json` records a
+`verilog_path` beside the `def_path`/`gds_path`), but only the DEF and GDS
+were committed from that run, and issue #55 established that re-running
+P&R against the identical frozen inputs does not reproduce
+`layout/modexp.gds`. So no as-built netlist for *this* GDS exists in the
+tree and none can be regenerated. Deriving one from `layout/modexp.def` is
+possible but deliberately not done: the layout-side extraction already
+takes its net *names* from that same DEF, so the resulting `match` would
+sound materially stronger than the comparison is. Tracked as
+[sky130-modexp#139](https://github.com/2AMLogic/sky130-modexp/issues/139)
+rather than forced.
+
+Evidence record:
+`verification/records/drc-lvs/records/20260923-062424-7d0dd52.md` (which
+also carries the control leg — the superseded `plain-element` comparison,
+re-run unchanged on the current `klt` pin, reproducing **17** exactly, so
+the whole 17 → 12 change is the reference form and not tool drift).
+Per-leg narrative: `layout/lvs/README.md`.
+
+## LVS history: `status: "mismatch"` against the regenerated,
+tapcell/PDN/filler-cell GDS (2026-09-11, issue #81) — superseded for
+freshness by the section above
 
 Issue #81 regenerated `layout/modexp.gds`/`layout/modexp.def` (added
 `request.power`: tapcell + PDN + filler-cell insertion) to close the DRC
@@ -407,12 +556,18 @@ parser: `layout/lvs/README.md` and
 transistor-level.** Power-net (`VPWR`/`VGND`/`VPB`) correspondence is
 explicitly out of scope for this comparison — see below.
 
-**Second-engine cross-check (T1 item 4): not run.** `docs/cli/lvs.md`
-documents a `netgen`-backed engine alongside the default `NetlistComparer`
-one. `netgen` has no Homebrew formula and was not present on this build
-host; a from-source build was not attempted within this issue's scope. This
-LVS leg is therefore **one toolchain's own verdict**, not yet
-cross-checked by a second, independent engine.
+**Second-engine cross-check (T1 item 4): SUPERSEDED — it has since been
+run (issue #131, 2026-09-23); see the current LVS section at the top of
+this page.** What this paragraph recorded, retained as history: *"not run.
+`docs/cli/lvs.md` documents a `netgen`-backed engine alongside the default
+`NetlistComparer` one. `netgen` has no Homebrew formula and was not present
+on this build host; a from-source build was not attempted within this
+issue's scope. This LVS leg is therefore one toolchain's own verdict, not
+yet cross-checked by a second, independent engine."* The cross-check now
+exists (netgen 1.5.133, `layout/lvs/modexp_lvs_report_netgen.json`) and
+concurs with the `klayout` engine's `mismatch` verdict — it was run against
+the current comparison, not against this 2026-08-16 fresh-build one, which
+remains uncross-checked on its own terms.
 
 ## What this GDS has not been through (missing flow stages) — updated,
 issue #81
@@ -444,6 +599,20 @@ before it would attempt matching any individual net, power or otherwise.
 Power-net correspondence therefore remains untested, but for a *different*
 structural reason than before — worth stating precisely rather than
 carrying forward a now-stale rationale.
+
+**Partially superseded (issue #131, 2026-09-23).** The paragraph above is
+still exactly right about *net-by-net* power correspondence inside the
+compare: `NetlistComparer` still stops at the circuit-type level, so it
+still never attempts to match `VPWR`/`VGND`/`VPB` as individual nets. What
+has changed is that the question is no longer entirely unasked. `klt lvs`'s
+`power_connectivity` block — reachable only on the `gate-level-verilog`
+reference form the current LVS section uses — checks each placed
+instance's power/ground **pin-to-net** consistency independently of the
+signal compare, and reports `match` over all 3074 instances. That is a
+weaker and narrower statement than "power-net correspondence verified",
+and it is stated as such: pin-to-net consistency, not net matching, and
+not geometric rail continuity. The "untested" wording above should be read
+as scoped to the signal compare's own net-matching stage.
 
 ## Reading the spec's Signoff row (updated 2026-09-11, issue #81)
 

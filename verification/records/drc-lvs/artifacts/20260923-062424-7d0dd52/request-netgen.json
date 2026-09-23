@@ -1,0 +1,12 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "netgen",
+  "layout": { "netlist": "layout/lvs/modexp_layout_abstracted.spice", "top": "modexp" },
+  "reference": {
+    "netlist": "layout/lvs/modexp_synth_expanded.v",
+    "top": "modexp",
+    "form": "gate-level-verilog",
+    "library": "sky130_fd_sc_hd",
+    "pdk": "sky130A"
+  }
+}
