@@ -396,7 +396,7 @@ touching the design:**
 1. The reference netlist handed to `klt lvs` is
    `layout/lvs/modexp_synth_expanded.v` — a mechanically rewritten copy of
    the frozen `modexp_synth_tied.v` in which three Yosys concatenation
-   `assign` statements are expanded into 51 per-bit plain `assign`s,
+   `assign` statements are expanded into 52 per-bit plain `assign`s,
    because klt's Verilog reader rejects a concatenation right-hand side.
    Every other line is copied byte for byte, and all three rewritten nets
    are dead in the frozen netlist (no cell instance reads them), so the

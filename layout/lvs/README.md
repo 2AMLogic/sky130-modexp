@@ -140,7 +140,7 @@ silently passing.
    Verilog reader accepts only a plain `assign <net> = <net>;` and rejects
    a concatenation right-hand side. `modexp_synth_tied.v` carries exactly
    three, all Yosys's normal rendering of a vector assignment.
-   `expand_concat_assigns.py` expands those three into 51 per-bit plain
+   `expand_concat_assigns.py` expands those three into 52 per-bit plain
    `assign`s and copies every other line through byte for byte; the result
    is committed as `modexp_synth_expanded.v`. Verified: every non-`assign`
    line of the two files is identical, and all three rewritten nets
