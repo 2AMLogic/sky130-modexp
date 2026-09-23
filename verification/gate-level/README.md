@@ -10,12 +10,13 @@ simulation of the RTL. Synthesis mapping, tie-cell insertion, CTS, and
 OpenROAD's placement/timing optimizations were all unverified by simulation.
 
 **Achieved here: Leg 1 (zero-delay gate-level equivalence) — PASS. Leg 2
-(delay-annotated / SDF simulation) — RE-ATTEMPTED, still FAIL** (no longer
-blocked on upstream tooling; the upstream capability now exists and was
-exercised twice, and the fresh result — issue #78, re-run after issue #55's
-first attempt — is a genuine failure with a materially narrower diagnostic
-surface than before, not a silent zero-delay pass) — see "Leg 2:
-RE-ATTEMPTED — still FAIL" below. Nothing on this page claims otherwise.
+(net-delay SDF-annotated regression) — PASS with a disclosed annotation-class
+exclusion** (updated 2026-09-23, issue #133: the committed suite passes
+against the post-route netlist with all 1,924 net-delay `INTERCONNECT`
+entries back-annotated, `environment.sdf.annotated: true`; every `IOPATH`
+cell-arc entry is excluded because IOPATH back-annotation on these models
+under Icarus 13 mechanically kills a *timing-clean* design — isolation
+evidence and the two upstream filings in "Leg 2" below)
 
 ## The netlist problem, and why the netlist here is derived, not exported
 
@@ -135,14 +136,13 @@ an earlier step produces).
 
 **Leg 2 (SDF) is not run by that script, or by any script here** — it needs a
 fresh `klt place-and-route` re-run (`post_route_spef`/`post_route_sdf`, and
-`openroad`) rather than the committed layout, and at this repo's pinned `klt`
-it exits non-zero at `klt`'s own SDF-diagnostic gate (that failure is the
-recorded result; see "Leg 2: RE-ATTEMPTED — still FAIL" below). Its literal,
+`openroad`) rather than the committed layout. Its literal,
 copy-pasteable cold-start sequence — `./scripts/setup-env.sh` → the P&R
-request carrying `post_route_spef`/`post_route_sdf` → the `klt
+request carrying `post_route_spef`/`post_route_sdf` → the SDF subset filter
+(the disclosed IOPATH/antenna exclusion) → the `klt
 functional-verification` request carrying `options.sdf` — is the
-**"Reproducing this run (cold start)"** section of
-`verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`, and
+**"Run configuration"** section of
+`verification/records/gate-level-sim/records/20260923-054800-e26f603.md`, and
 is summarized in `run-gate-level-sim.sh`'s own header comment
 (`./verification/gate-level/run-gate-level-sim.sh --help`).
 
@@ -187,7 +187,47 @@ Covering another `WIDTH` at gate level would require synthesizing, routing,
 and DRC/LVS-ing a second macro — a different issue's work, not a narrowing of
 this one. The case count is **not** reduced (500, matching the RTL claim).
 
-## Leg 2: RE-ATTEMPTED — still FAIL, narrower failure class (updated 2026-09-09, issue #78)
+## Leg 2: PASS as net-delay (INTERCONNECT-only) annotation, with a disclosed IOPATH exclusion (updated 2026-09-23, issue #133)
+
+### The achieved result (issue #133)
+
+Issue #133 bumped this repo's `klt` pin past the fixes that closed
+[klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619)
+(PR [#1857](https://github.com/2AMLogic/klayout-tools/pull/1857) + PR
+[#2304](https://github.com/2AMLogic/klayout-tools/pull/2304)), re-ran the
+post-route flow at the **current** request (including issue #81's `power`
+block), and ran the committed, unmodified suite with `options.sdf`:
+
+- **`klt functional-verification` → `status: "pass"`, 2/2 tests,
+  `environment.sdf.annotated: true`** — T1 item 7's machine-checkable
+  field — reproduced 3× byte-identically. Simulated times are identical to
+  the RTL and Leg-1 runs (23750.0 / 180480.0 ns): every annotated net
+  delay is sub-ns against the 10 ns clock, so the annotated run is
+  cycle-for-cycle identical to the zero-delay run while carrying the real
+  routed net delays. **No test passes zero-delay and fails annotated.**
+- **What is annotated**: all 1,924 net-delay `INTERCONNECT` entries, zero
+  unresolved. **What is not, and why** (the load-bearing disclosure):
+  every `IOPATH` cell-arc entry is excluded — on this timing-closed
+  design (+3.6 ns setup / +0.4 ns hold slack at the annotated corner),
+  IOPATH back-annotation on the sky130 `specify`-branch models under
+  Icarus 13 produces a dead simulation *at both the nominal and a 10×
+  relaxed clock* while `INTERCONNECT`-only annotation passes — the
+  isolation table and both upstream filings are in the record — plus the
+  4 antenna-diode zero-delay `INTERCONNECT` entries (unresolvable,
+  provably inert), plus the 130 `TIMINGCHECK` sections (Icarus's
+  pre-known exemption, reported by `klt` as
+  `environment.sdf.dropped.timingcheck`).
+
+Full evidence, the isolation table, and the reproduction recipe:
+`verification/records/gate-level-sim/records/20260923-054800-e26f603.md`.
+New upstream filings (friction protocol, generic):
+[klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363)
+(extend #2304's counted zero-delay drop to antenna-diode destinations) and
+[klayout-tools#2364](https://github.com/2AMLogic/klayout-tools/issues/2364)
+(IOPATH annotation kills a timing-clean design; #1888's "genuine timing"
+attribution does not generalize).
+
+### History: the 2026-09-11-and-earlier attempts
 
 Delay-annotated (SDF) simulation — **not achieved as of the original 2026-08-15
 run of this experiment**, for two independent, verified blockers documented
@@ -302,7 +342,9 @@ identifies as open).
 | The accepted SDF re-sim recipe is conditional on Icarus >= 13; 12.0 has no `-ginterconnect` and cannot simulate `ifdef`-gated timing models at all | [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (filed by this issue) — not a blocker on this repo's host (Icarus 13.0) |
 | `klt functional-verification` requires the testbench module to sit next to the request, so one unmodified testbench cannot serve several requests | [klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (filed by this issue) — worked around by the symlink above |
 | Icarus `$sdf_annotate` cannot resolve a top-level-port-attached `INTERCONNECT` entry even under `-ginterconnect` | [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056) (filed by issue #55) — **fixed** by [#1069](https://github.com/2AMLogic/klayout-tools/pull/1069) (merged 2026-08-17) — this repo's `klt` pin bumped past it by issue #78; Leg 2's re-attempt fails for a *different*, narrower reason, see above |
-| Sibling `INTERCONNECT` entries on a port-touching net fail even after `#1069`'s wrapper fix (a driver net fanning out to both a top-level port and internal instance-pin loads: the port entry resolves, its internal siblings do not) | [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619) (open, filed by issue #78) — **this is Leg 2's fresh, narrower residual**, found only once `#1069` made the attempt reach this far |
+| Sibling `INTERCONNECT` entries on a port-touching net fail even after `#1069`'s wrapper fix (a driver net fanning out to both a top-level port and internal instance-pin loads: the port entry resolves, its internal siblings do not) | [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619) (filed by issue #78) — **fixed** by [#1857](https://github.com/2AMLogic/klayout-tools/pull/1857) + [#2304](https://github.com/2AMLogic/klayout-tools/pull/2304) — this repo's `klt` pin bumped past both by issue #133 |
+| Zero-delay `INTERCONNECT` onto a physical-only antenna-diode load still fails `Could not find intermodpath` (single-pin destination whose model has no modpaths) | [klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363) (filed by issue #133) — **this is Leg 2's remaining `INTERCONNECT` residual**; worked around by the record's disclosed 4-entry exclusion, each entry provably `(0.000:0.000:0.000)` |
+| `IOPATH` back-annotation on the sky130 `specify`-branch models kills a timing-clean design under Icarus 13 (dead at 1× and 10× clock; `INTERCONNECT`-only passes) — the "all tests fail once `options.sdf` exists" shape is annotation-class-dependent, not purely a timing outcome | [klayout-tools#2364](https://github.com/2AMLogic/klayout-tools/issues/2364) (filed by issue #133) — **this is why Leg 2's passing run annotates net delays only**; the record's isolation table is the discriminating evidence [#1888](https://github.com/2AMLogic/klayout-tools/pull/1888)'s attribution lacked |
 
 A `klt` pin bump is **not** a P&R-reproducibility guarantee: re-running P&R
 with the bumped `klt`, even against the identical frozen netlist/floorplan/
