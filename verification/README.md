@@ -53,6 +53,10 @@ need a concrete schema to be checkable rather than aspirational:
   negative case per violation class named below, run against a throwaway
   fixture repo. A linter that silently stops catching a violation is worse
   than no linter, so the enforcement is itself tested.
+- `check_pins.py` / `test_check_pins.py` — the pin-sync checker and its
+  self-test: asserts every pin constant in `scripts/setup-env.sh` appears in
+  `docs/environment.md`'s "Pinned versions" table, and that the table names
+  no stale pin (see "Enforcement").
 - `records/` — the append-only evidence records this convention produces.
 - `signoff/` — the `klt signoff --manifest` block manifest, the pinned
   T1 tier checklist it grades against, the committed tier-verdict report,
@@ -329,6 +333,9 @@ CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
 - the record linter (`verification/check_records.py`), including the
   append-only check against `origin/main`, and the linter's own self-test
   (`verification/test_check_records.py`);
+- the pin-sync checker (`verification/check_pins.py`) and its self-test
+  (`verification/test_check_pins.py`) — pure text comparison of
+  `scripts/setup-env.sh` against `docs/environment.md`, no tools;
 - the post-route netlist converter's self-test
   (`verification/gate-level/test_spice_to_verilog.py`), which needs no PDK
   and no simulator — its synthetic fixture cases run anywhere, and its
@@ -387,6 +394,21 @@ converter's own self-test — same rationale as the linter's: a converter that
 silently stops noticing that its output disagrees with the layout extraction
 would produce a *passing* gate-level run against the wrong netlist, with no
 test failure attached to it.
+
+`npm run lint` also runs `verification/check_pins.py`, which fails if a pin
+constant in `scripts/setup-env.sh`'s pinned-versions block (`KLT_REV`,
+`VOLARE_SKY130_VERSION`, `YOWASP_YOSYS_VERSION`, `YOWASP_YOSYS_WASM_SHA256`,
+...) is missing from `docs/environment.md`'s "Pinned versions" table, or if
+that table names a revision/digest/`yowasp-yosys==` version the script does
+not pin. `docs/environment.md`'s table is part of the pin's mechanism: a
+reader who trusts it while the script provisions something else is running
+an unidentified tool (issue #141). Frozen evidence artifacts that restate a
+pin (e.g. `rerun-pinned-synthesis.sh` under a record's `artifacts/`) are
+deliberately **not** checked — they are frozen at the build they measured
+and should diverge from the live pin after a re-pin. Its self-test,
+`verification/test_check_pins.py`, holds one negative case per drift class
+plus positive controls for a consistent re-pin and for the out-of-scope
+copies.
 
 `verification/test_check_records.py` (also run by `npm run lint`) holds one
 executable negative case per bullet above — plus positive controls that a

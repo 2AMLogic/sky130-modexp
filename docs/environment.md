@@ -48,6 +48,13 @@ source .venv/bin/activate
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
 
+`scripts/setup-env.sh`'s pin constants and this table are kept in sync by
+`verification/check_pins.py` (run by `npm run lint` and the CI `records`
+job): a re-pin must update both in the same change, or lint fails. The
+rationale paragraphs below name *previous* pins on purpose and are not
+checked; neither are frozen evidence artifacts under `verification/records/`
+that restate the pin they ran against.
+
 **Pin rationale (issue #55, 2026-08-16)**: the previous pin
 (`af5791b557fc7c669c3981335a294256ccf37e6f`, 2026-08-04) predated three merged
 upstream fixes this repo's DRC/LVS/post-layout evidence depends on —

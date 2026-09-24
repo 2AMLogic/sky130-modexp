@@ -53,6 +53,8 @@ jobs:
                                    verification/cross_check_tb.py \
                                    verification/check_records.py \
                                    verification/test_check_records.py \
+                                   verification/check_pins.py \
+                                   verification/test_check_pins.py \
                                    verification/test_modexp.py \
                                    verification/gate-level/spice_to_verilog.py \
                                    verification/gate-level/test_spice_to_verilog.py \
@@ -60,7 +62,7 @@ jobs:
           bash -n verification/gate-level/run-gate-level-sim.sh
           bash -n scripts/setup-env.sh
 
-      - name: Record linter + its self-test (npm run lint)
+      - name: Record linter, pin-sync checker, and their self-tests (npm run lint)
         run: npm run lint
 
       - name: Record linter, strict append-only against origin/main
