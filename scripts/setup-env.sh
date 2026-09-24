@@ -5,18 +5,23 @@
 #
 #   1. Creates a local .venv (Python) and installs `klayout-tools` (`klt`)
 #      into it at the pinned git revision below.
-#   2. Fetches the pinned `sky130A` PDK version via `volare` into
+#   2. Installs the pinned Yosys build (YoWASP wheel) into that .venv and
+#      verifies its WebAssembly module's sha256 -- the mapper identity that
+#      `yosys -V` does NOT report (issue #143) -- then exposes it as
+#      `.venv/bin/yosys`.
+#   3. Fetches the pinned `sky130A` PDK version via `volare` into
 #      `${PDK_ROOT:-$HOME/.volare}`.
-#   3. Reports -- with an actionable message, never a Python traceback --
-#      which of `iverilog`, `yosys`, `openroad` are missing from `$PATH`.
+#   4. Reports -- with an actionable message, never a Python traceback --
+#      which of `iverilog`, `openroad` are missing from `$PATH`.
 #
 # Exit codes:
-#   0  venv + klt + PDK provisioned. iverilog/yosys/openroad may still be
-#      individually reported missing (see step 3's summary) -- this is not
+#   0  venv + klt + yosys + PDK provisioned. iverilog/openroad may still be
+#      individually reported missing (see step 4's summary) -- this is not
 #      itself a failure, since PDK-heavy legs (synthesis, P&R) are
 #      documented as locally-run-and-recorded, not a CI/setup requirement.
 #      P&R specifically needs `openroad`; see docs/environment.md.
-#   1  venv creation, klt install, or PDK fetch failed.
+#   1  venv creation, klt install, pinned-yosys install/verification, or PDK
+#      fetch failed.
 #
 # Usage:
 #   ./scripts/setup-env.sh
@@ -35,6 +40,17 @@ KLT_REPO="https://github.com/2AMLogic/klayout-tools"
 KLT_REV="dac2b5daceb69a2068d9d2ee190d7afe37b29af7"
 VOLARE_PDK_FAMILY="sky130"
 VOLARE_SKY130_VERSION="c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+# Yosys is pinned as a YoWASP PyPI wheel, not as a host package. The wheel is
+# `py3-none-any` and ships a single WebAssembly module,
+# `yowasp_yosys/yosys.wasm`, which contains Yosys *and* the `abc` mapper
+# compiled into it -- so two hosts on the same pinned version execute a
+# byte-identical mapper. A host-built `yosys` does not have that property:
+# `yosys -V` names the Yosys version but says nothing about the embedded abc
+# build, and issue #141 measured two hosts at the same nominal `yosys -V`
+# mapping the same design to 1204 vs. 1105 instances. So the pin below is
+# checked by CONTENT (the wasm sha256), not by version string.
+YOWASP_YOSYS_VERSION="0.68.0.0.post1208"
+YOWASP_YOSYS_WASM_SHA256="e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c"
 # ----------------------------------------------------------------------------
 
 PDK_ROOT="${PDK_ROOT:-${HOME}/.volare}"
@@ -50,7 +66,7 @@ for arg in "$@"; do
       PDK_ROOT="${arg#--pdk-root=}"
       ;;
     -h|--help)
-      sed -n '2,26p' "${BASH_SOURCE[0]}"
+      sed -n '2,31p' "${BASH_SOURCE[0]}"
       exit 0
       ;;
     *)
@@ -62,7 +78,7 @@ done
 
 status=0
 
-echo "== 1/3 python venv =="
+echo "== 1/4 python venv =="
 # cocotb 2.0.1 (pinned by klt) refuses to build on Python > 3.13 with a
 # RuntimeError, not a graceful skip -- pick a compatible interpreter up
 # front so that failure surfaces here, as an actionable message, rather
@@ -117,7 +133,7 @@ if [ ! -x "${VENV_PY}" ]; then
 fi
 
 echo
-echo "== 2/3 klayout-tools (klt) @ ${KLT_REV:0:12} =="
+echo "== 2/4 klayout-tools (klt) @ ${KLT_REV:0:12} =="
 if ! "${VENV_PY}" -m pip --version >/dev/null 2>&1; then
   echo "FATAL: pip is not available inside ${VENV_DIR}."
   echo "  -> remove ${VENV_DIR} and re-run this script (venv bootstrap likely"
@@ -147,7 +163,94 @@ echo "installed: klt ${INSTALLED_KLT_VERSION:-(version unknown)} from ${KLT_REPO
 echo "activate with: source ${VENV_DIR}/bin/activate"
 
 echo
-echo "== 3/3 sky130A PDK (volare ${VOLARE_SKY130_VERSION:0:12}) =="
+echo "== 3/4 yosys (YoWASP ${YOWASP_YOSYS_VERSION}) =="
+# Why a wheel and not the host's `yosys`: see the pin block at the top of this
+# file. The check below is the load-bearing half -- it verifies the *content*
+# of the WebAssembly module (Yosys + its embedded `abc`), which is the mapper
+# identity `yosys -V` does not expose.
+if ! "${VENV_PIP}" install --quiet "yowasp-yosys==${YOWASP_YOSYS_VERSION}"; then
+  echo "FATAL: failed to install yowasp-yosys==${YOWASP_YOSYS_VERSION} into ${VENV_DIR}."
+  echo "  -> common causes: no network access to PyPI, or a proxy that"
+  echo "     rejects the ~40 MB wheel download."
+  echo "  -> re-run with the venv's own pip for a full traceback:"
+  echo "       ${VENV_PIP} install \"yowasp-yosys==${YOWASP_YOSYS_VERSION}\""
+  exit 1
+fi
+
+WASM_INFO="$("${VENV_PY}" - <<'PY'
+import hashlib
+import os
+import sys
+
+try:
+    import yowasp_yosys
+except Exception as exc:  # pragma: no cover - reported, never raised at user
+    print(f"ERROR\t{exc}")
+    sys.exit(0)
+
+path = os.path.join(os.path.dirname(yowasp_yosys.__file__), "yosys.wasm")
+if not os.path.isfile(path):
+    print(f"ERROR\tno yosys.wasm at {path}")
+    sys.exit(0)
+
+digest = hashlib.sha256()
+with open(path, "rb") as handle:
+    for chunk in iter(lambda: handle.read(1 << 20), b""):
+        digest.update(chunk)
+print(f"OK\t{path}\t{digest.hexdigest()}")
+PY
+)"
+
+case "${WASM_INFO}" in
+  OK*)
+    WASM_PATH="$(printf '%s' "${WASM_INFO}" | cut -f2)"
+    WASM_SHA="$(printf '%s' "${WASM_INFO}" | cut -f3)"
+    ;;
+  *)
+    echo "FATAL: could not locate the installed YoWASP Yosys WebAssembly module."
+    echo "  detail: $(printf '%s' "${WASM_INFO}" | cut -f2-)"
+    echo "  -> remove ${VENV_DIR} and re-run this script."
+    exit 1
+    ;;
+esac
+
+if [ "${WASM_SHA}" != "${YOWASP_YOSYS_WASM_SHA256}" ]; then
+  echo "FATAL: pinned Yosys/ABC build identity does NOT match."
+  echo "  module:   ${WASM_PATH}"
+  echo "  expected: sha256:${YOWASP_YOSYS_WASM_SHA256}"
+  echo "  actual:   sha256:${WASM_SHA}"
+  echo "  -> this is exactly the failure the pin exists to catch: a different"
+  echo "     mapper build maps the same RTL to a different instance count and"
+  echo "     can move a timing-closure verdict across the threshold (issue"
+  echo "     #141 measured 1.06 ns of setup slack at ss_n40C_1v28). Do NOT"
+  echo "     mint evidence records from this environment."
+  echo "  -> re-pin deliberately (update YOWASP_YOSYS_VERSION and"
+  echo "     YOWASP_YOSYS_WASM_SHA256 here and the matching row in"
+  echo "     docs/environment.md together), or remove ${VENV_DIR} and re-run."
+  exit 1
+fi
+echo "yosys.wasm: sha256:${WASM_SHA} (matches pin)"
+
+# Expose the pinned build under the plain name `yosys`: klt shells out to
+# `yosys` by name (klayout_tools/synthesize.py runs `["yosys", "-s", script]`),
+# so after `source .venv/bin/activate` the venv's bin/ leads $PATH and the
+# pinned build wins over any host install.
+if ! ln -sfn "yowasp-yosys" "${VENV_DIR}/bin/yosys"; then
+  echo "FATAL: could not link ${VENV_DIR}/bin/yosys -> yowasp-yosys."
+  exit 1
+fi
+echo "linked:     ${VENV_DIR}/bin/yosys -> yowasp-yosys"
+echo "reports:    $("${VENV_DIR}/bin/yosys" -V 2>&1 | head -1)"
+if command -v yosys >/dev/null 2>&1; then
+  echo "note: a host 'yosys' is also on \$PATH ($(command -v yosys)). It is NOT"
+  echo "  the pinned build unless it resolves to the link above -- activate the"
+  echo "  venv ('source ${VENV_DIR}/bin/activate') before running"
+  echo "  'klt synthesize', or the mapper that produced your numbers is"
+  echo "  unidentified."
+fi
+
+echo
+echo "== 4/4 sky130A PDK (volare ${VOLARE_SKY130_VERSION:0:12}) =="
 mkdir -p "${PDK_ROOT}"
 if "${VENV_DIR}/bin/volare" enable \
     --pdk-root "${PDK_ROOT}" --pdk "${VOLARE_PDK_FAMILY}" \
@@ -163,18 +266,18 @@ else
 fi
 
 echo
-echo "== toolchain check (iverilog / yosys / openroad) =="
+echo "== toolchain check (iverilog / openroad) =="
+# yosys is NOT probed here: step 3 provisions it into the venv at a pinned,
+# digest-verified build. A host `yosys` on $PATH is not that build (issue
+# #143), so "some yosys resolves" is not the property this check should
+# report.
+echo "  yosys:    ${VENV_DIR}/bin/yosys (pinned, verified in step 3)"
 missing=()
-for tool in iverilog yosys; do
-  if command -v "${tool}" >/dev/null 2>&1; then
-    case "${tool}" in
-      iverilog) echo "  iverilog: $(iverilog -V 2>&1 | head -1)" ;;
-      yosys)    echo "  yosys:    $(yosys -V 2>&1 | head -1)" ;;
-    esac
-  else
-    missing+=("${tool}")
-  fi
-done
+if command -v iverilog >/dev/null 2>&1; then
+  echo "  iverilog: $(iverilog -V 2>&1 | head -1)"
+else
+  missing+=("iverilog")
+fi
 
 # openroad: prefer a native install already on $PATH. Otherwise, openroad has
 # no Homebrew formula or common-distro package (see docs/environment.md), so
@@ -207,10 +310,6 @@ if [ "${#missing[@]}" -gt 0 ]; then
         echo "    or 'apt-get install iverilog' (Debian/Ubuntu). Required for"
         echo "    'klt functional-verification' and verification/cross_check.py."
         ;;
-      yosys)
-        echo "  - yosys: 'brew install yosys' (macOS) or 'apt-get install yosys'"
-        echo "    (Debian/Ubuntu). Required for 'klt synthesize'."
-        ;;
       openroad)
         echo "  - openroad: no package-manager formula on macOS or common Linux"
         echo "    distros as of this writing, and no 'docker' found on \$PATH"
@@ -226,17 +325,17 @@ if [ "${#missing[@]}" -gt 0 ]; then
   echo
   echo "This is expected and non-fatal for this script: the cross-check and"
   echo "record linter (npm run test / npm run lint) need only iverilog and"
-  echo "python3+git. synthesis needs yosys; place-and-route additionally"
-  echo "needs openroad -- see verification/README.md's CI-split section for"
-  echo "which legs run where."
+  echo "python3+git. synthesis needs the pinned yosys above (already"
+  echo "provisioned); place-and-route additionally needs openroad -- see"
+  echo "verification/README.md's CI-split section for which legs run where."
 else
-  echo "all of iverilog/yosys/openroad resolve (natively or, for openroad,"
-  echo "  via the pinned Docker route)."
+  echo "all of iverilog/yosys/openroad resolve (yosys from the pin above,"
+  echo "  iverilog natively, openroad natively or via the pinned Docker route)."
 fi
 
 echo
 if [ "${status}" -eq 0 ]; then
-  echo "RESULT: environment provisioned (venv + klt + sky130A)."
+  echo "RESULT: environment provisioned (venv + klt + pinned yosys + sky130A)."
 else
   echo "RESULT: environment provisioning incomplete -- see FATAL messages above."
 fi

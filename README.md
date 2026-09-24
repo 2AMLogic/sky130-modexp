@@ -85,8 +85,9 @@ verdict, and delay-annotated (SDF) gate-level simulation remain open** (see
 ## Reproducing it
 
 ```bash
-./scripts/setup-env.sh   # .venv + pinned klt + pinned sky130A, and a report
-                         # of any missing iverilog/yosys/openroad
+./scripts/setup-env.sh   # .venv + pinned klt + pinned Yosys/ABC build (verified
+                         # by content hash) + pinned sky130A, and a report of
+                         # any missing iverilog/openroad
 npm run test             # WIDTH = 4/6/8/16 bit-exact cross-check under Icarus
 npm run lint             # evidence-record linter (+ its own self-test)
 ```

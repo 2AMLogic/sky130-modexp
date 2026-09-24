@@ -1,0 +1,44 @@
+
+5. Executing ABC pass (technology mapping using ABC).
+
+5.1. Extracting gate netlist of module `\modexp' to `<abc-temp-dir>/input.blif'..
+
+5.1.1. Executed ABC.
+Extracted 572 gates and 867 wires to a netlist network with 295 inputs and 246 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+
+5.1.2. Re-integrating ABC results.
+ABC RESULTS:   sky130_fd_sc_hd__a21boi_0 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__a21o_1 cells:       13
+ABC RESULTS:   sky130_fd_sc_hd__a21oi_1 cells:       54
+ABC RESULTS:   sky130_fd_sc_hd__a22oi_1 cells:       31
+ABC RESULTS:   sky130_fd_sc_hd__a2bb2oi_1 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__a31oi_1 cells:       20
+ABC RESULTS:   sky130_fd_sc_hd__and2_1 cells:        2
+ABC RESULTS:   sky130_fd_sc_hd__buf_1 cells:       19
+ABC RESULTS:   sky130_fd_sc_hd__buf_2 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__clkbuf_1 cells:       43
+ABC RESULTS:   sky130_fd_sc_hd__clkinv_1 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__inv_1 cells:       50
+ABC RESULTS:   sky130_fd_sc_hd__mux2i_1 cells:       16
+ABC RESULTS:   sky130_fd_sc_hd__nand2_1 cells:      347
+ABC RESULTS:   sky130_fd_sc_hd__nand2b_1 cells:        3
+ABC RESULTS:   sky130_fd_sc_hd__nand3_1 cells:        3
+ABC RESULTS:   sky130_fd_sc_hd__nand3b_1 cells:        3
+ABC RESULTS:   sky130_fd_sc_hd__nand4b_1 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__nor2_1 cells:       86
+ABC RESULTS:   sky130_fd_sc_hd__nor2b_1 cells:        9
+ABC RESULTS:   sky130_fd_sc_hd__nor3_1 cells:       10
+ABC RESULTS:   sky130_fd_sc_hd__nor3b_1 cells:        3
+ABC RESULTS:   sky130_fd_sc_hd__o211ai_1 cells:        3
+ABC RESULTS:   sky130_fd_sc_hd__o21ai_0 cells:       83
+ABC RESULTS:   sky130_fd_sc_hd__o21ai_1 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__o221ai_1 cells:        7
+ABC RESULTS:   sky130_fd_sc_hd__o22ai_1 cells:       35
+ABC RESULTS:   sky130_fd_sc_hd__o2bb2ai_1 cells:        1
+ABC RESULTS:   sky130_fd_sc_hd__xnor2_1 cells:        8
+ABC RESULTS:        internal signals:      326
+ABC RESULTS:           input signals:      295
+ABC RESULTS:          output signals:      246
+Removing temp directory.
+Removing global temp directory.
