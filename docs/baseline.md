@@ -491,8 +491,10 @@ Three readings, all of them load-bearing:
   `spec/decision-records/0002-…` Decision 3 named a timing-constrained
   synthesis pass as the first thing to try and left it untried. It is worth
   **≈1.1 MHz of a ≈77 MHz gap** and closes no additional corner.
-- **100 MHz is reachable at all eighteen corners** for this block's
-  function in this PDK — which is why the ratified target is *not* lowered.
+- ~~**100 MHz is reachable at all eighteen corners**~~ — **withdrawn,
+  2026-09-24, see the subsection below.** The 18/18 row did not reproduce.
+  The ratified target is still *not* lowered, but that is now a decision
+  about the target rather than a claim backed by a reproducible 18/18.
 - **The 18/18 row is not landed**, for two disclosed reasons: the cell
   exclusion has no `klt synthesize` request field (it was produced by
   invoking Yosys directly, so it is not re-runnable from a committed
@@ -507,6 +509,45 @@ Three readings, all of them load-bearing:
 The full decision, with the exception it ratifies and the priced exit from
 it, is
 [`spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`](../spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md).
+
+### The 18/18 row did not reproduce (issue #141, 2026-09-24)
+
+The blocking dependency the row above names —
+[klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382),
+a request-level cell exclusion in `klt synthesize` — **landed upstream**
+([#2429](https://github.com/2AMLogic/klayout-tools/pull/2429),
+`constraints.dont_use`). Issue #141 ran the exit end-to-end through
+committed `klt` requests for the first time. Result, frozen as
+[`verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md`](../verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md):
+
+| | row 6 (frozen, 2026-09-23) | re-spin (2026-09-24) |
+| --- | --- | --- |
+| mapped instances | 1204 | **1105** |
+| `klt sta` @ `ss_n40C_1v28` | +0.489 ns / 105.14 MHz | **−0.574 ns / 94.57 MHz** |
+| in-flow P&R STA @ same corner | −1.105 ns / 90.05 MHz | **−1.160 ns / 89.60 MHz** |
+| corners closed | **18/18** | **17/18** |
+
+- **The reproducibility objection is discharged.** `klt synthesize` driven
+  by a committed `constraints.dont_use` request produces a netlist
+  **byte-identical** to the frozen hand-rolled Yosys script's, on the same
+  host, with a flag-for-flag identical `abc` line.
+- **Row 6's netlist is not reproducible across hosts by *any* route.** Both
+  the committed request and row 6's own frozen script give 1105 instances
+  here, identically under Yosys 0.67 and 0.68 — so the 1204 figure traces
+  to the **ABC build embedded in the Yosys binary**, not to the request
+  field and not to a Yosys version. That 8.2% mapping difference is worth
+  **1.06 ns** at the binding corner: the difference between closing and not.
+- **The two STA methodologies now agree, against closure.** The in-flow
+  number reproduced to within 0.06 ns; the optimistic `klt sta` number is
+  the one that moved.
+- **Nothing was landed.** `layout/`, `rtl/` and `flow/`'s requests are
+  unchanged; T1 item 5 remains the disclosed 10/18 at 22.80 MHz against the
+  committed layout. The re-spun (uncommitted) GDS is `klt drc` **clean, 0
+  violations**, which is recorded so the next attempt knows item 3 is not
+  automatically at risk.
+
+Re-priced bill, superseding record `0004` Decision 2's:
+[`spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`](../spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md).
 
 ### What this run does not claim
 
