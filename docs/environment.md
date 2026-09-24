@@ -14,14 +14,21 @@ append-only rule).
 ```
 
 This creates a local `.venv`, installs `klayout-tools` (`klt`) into it at
-the pinned revision below, fetches the pinned `sky130A` PDK version via
-`volare`, checks `iverilog` / `yosys` / `openroad`, and reports what's still
+the pinned revision below, installs the pinned **Yosys/ABC build** into it
+and verifies that build by content, fetches the pinned `sky130A` PDK version
+via `volare`, checks `iverilog` / `openroad`, and reports what's still
 missing with an actionable install pointer, never a traceback. For
 `openroad` specifically: if it's not already on `$PATH` and `docker` is
 available, it wires up `.venv/bin/openroad` as a symlink to the pinned
 Docker route automatically (see "OpenROAD" below) rather than reporting it
 missing. It is safe to re-run; it reuses an existing `.venv` and an
 already-fetched PDK version.
+
+`yosys` is deliberately **not** taken from `$PATH`: the script installs it
+into `.venv` and exposes it as `.venv/bin/yosys`, so activating the venv is
+what makes `klt synthesize` run the pinned mapper. A host `yosys` on `$PATH`
+is reported as a note, not accepted as the tool — see "Yosys and the
+embedded ABC build" below for why that distinction is load-bearing.
 
 Activate the venv for interactive use with:
 
@@ -36,6 +43,7 @@ source .venv/bin/activate
 | `klayout-tools` (`klt`) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"` (what `scripts/setup-env.sh` runs) |
 | `klayout-tools` (`klt`, signoff-report leg) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | installed directly by the CI `signoff` job (issue #136's pin, unified with the pin above by issue #133 — `scripts/setup-env.sh` now provisions the same revision, so the report leg and the PDK legs share one pin) |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
+| Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
 | `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
@@ -129,20 +137,18 @@ pip install --force-reinstall \
   "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@c66f18fd62250c5b71046e4e2a2b0288024eaff0"
 ```
 
-**Yosys/ABC build identity is not pinned, and issue #141 measured that this
-matters.** The table below records the `yosys` version each record's
-environment *resolved*; it is not a pin, and `yosys -V`'s version string
-does not identify the `abc` build embedded in the binary. Running the same
-mapping script at the same nominal Yosys version on two hosts produced
-netlists of **1204** and **1105** instances, moving the binding corner's
-`klt sta` setup slack by **1.06 ns** — across the 100 MHz closure
-threshold. See record `20260924-134500-1a8313b` and decision record `0005`
-Decision 3; pinning a Yosys/ABC build is named there as being on the
-critical path for any cell-exclusion-dependent timing claim, not as
-housekeeping.
+**Yosys/ABC build identity is pinned as of issue #143, and by content, not
+by version string.** `yosys -V` does not identify the `abc` build compiled
+into the binary, and issue #141 measured that this matters: the same mapping
+script at the same nominal version on two hosts produced netlists of
+**1204** and **1105** instances, moving the binding corner's `klt sta` setup
+slack by **1.06 ns** — across the 100 MHz closure threshold. The pin, its
+rationale, and the verdict on whether the 1204-instance netlist is
+reproducible are in "Yosys and the embedded ABC build" below.
 
-`klt` in turn resolves `iverilog`/`yosys`/`openroad` and the PDK itself from
-the host — it does not vendor them. Those are:
+`klt` in turn resolves `iverilog`/`openroad` and the PDK itself from the
+host — it does not vendor them (`yosys` is the exception: `scripts/setup-env.sh`
+now provisions it into `.venv` at the pin above). Those are:
 
 **Second klt pin, signoff-report leg only (issue #130, 2026-09-23).** The
 row above pins the klt that **produces evidence** (the PDK-heavy legs whose
@@ -166,17 +172,18 @@ is the evidence legs' own decision to make, not the report leg's.
 | Tool | Used for | Resolved version on the environment these records were produced on |
 |---|---|---|
 | Icarus Verilog (`iverilog`) | `klt functional-verification`, `verification/cross_check.py` | 13.0 (stable) (`iverilog -V`) |
-| Yosys (`yosys`) | `klt synthesize` | 0.68+post (`yosys -V`) |
+| Yosys (`yosys`) | `klt synthesize` | 0.68+post (`yosys -V`) — **a description of pre-#143 records' hosts, not a pin, and not a build identity**. From issue #143 forward the binding statement is the `yowasp-yosys` row in "Pinned versions" above; see "Yosys and the embedded ABC build" below |
 | OpenROAD (`openroad`) | `klt place-and-route` | `26Q3-1260-g06a5a02279` (`openroad -version`), via the pinned `openroad/orfs` Docker image — see "OpenROAD" below |
 
-Package-manager installs for the first two:
+Package-manager install for `iverilog` (`yosys` comes from the pin, not from
+a host package — see below; `openroad` has its own section):
 
 ```bash
 # macOS (Homebrew)
-brew install icarus-verilog yosys
+brew install icarus-verilog
 
 # Debian/Ubuntu
-apt-get install iverilog yosys
+apt-get install iverilog
 ```
 
 **Icarus >= 13 is a hard requirement for SDF-annotated runs** (`klt
@@ -196,6 +203,112 @@ cd iverilog && ./autoconf.sh && ./configure --prefix="$PREFIX" \
 
 Zero-delay (RTL and Leg 1 gate-level) runs work on 12.0; only `options.sdf`
 needs 13.
+
+## Yosys and the embedded ABC build
+
+`yosys` is the one engine this repo pins itself rather than resolving from
+the host, and it is pinned **by content**: `yowasp-yosys==0.68.0.0.post1208`,
+whose `yowasp_yosys/yosys.wasm` must hash to
+`sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c`.
+
+### Pin rationale (issue #143, 2026-09-24)
+
+Until this pin the Yosys/ABC build identity was not pinned at all, and issue
+#141 measured what that costs. Running the same mapping script at the same
+nominal `yosys -V` version on two hosts produced netlists of **1204** and
+**1105** instances, moving the binding corner's `klt sta` setup slack by
+**1.06 ns** — across the 100 MHz closure threshold, flipping an 18-of-18
+verdict to 17-of-18.
+`spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`
+Decision 3 put closing that gap on the critical path for any
+cell-exclusion-dependent timing claim, not on the housekeeping list.
+
+**The pin is by content because the version string is exactly what failed.**
+`yosys -V` names the Yosys version and says nothing about the `abc` build
+compiled into the binary — and `klt`'s own synthesis response carries the
+same blind spot: it reports `engine_version: "0.68"` for two builds that map
+the same design differently. So the pinned unit is the **artifact**. YoWASP
+publishes Yosys as a single `py3-none-any` PyPI wheel containing one
+WebAssembly module, `yowasp_yosys/yosys.wasm`, with `abc` compiled into it:
+there is no per-host rebuild step for a per-host `abc` to come from, every
+host that installs that version executes a byte-identical mapper, and the
+module's sha256 is a check anyone can run. `scripts/setup-env.sh` computes
+that digest after install and **aborts the whole provision** if it does not
+match, rather than warning and continuing — an environment whose mapper is
+unidentified must not mint evidence records.
+
+The two alternatives were rejected for concrete reasons rather than by
+preference. A **source build** reintroduces exactly the problem: pinning a
+Yosys git revision still yields a locally compiled binary, with a locally
+compiled `abc` inside it. A **container image** — the route
+`scripts/openroad-docker.sh` takes — is the right answer for `openroad`
+only because `openroad` has no package at all; Yosys does, and paying a
+~1.6 GB image plus a Docker dependency for reproducibility already available
+from a ~40 MB wheel is a worse trade. The wheel also drops straight into the
+`.venv` `scripts/setup-env.sh` already builds, so the pin adds no new
+provisioning mechanism.
+
+**Pinning the version series alone would not have been enough**, which is
+worth stating because it is the obvious cheaper alternative. Across the
+publicly installable wheels, `0.65`/`0.66` map this repo's frozen bit-serial
+request to **1139** instances and `0.67`/`0.68`/`0.69` to **1105**, each
+faithfully reporting its own `engine_version`. The instance count tracks the
+build, so the build is what gets pinned.
+
+### Is the frozen 1204-instance netlist reproducible? No.
+
+**The 1204-instance netlist is NOT reproducible at this pin, and is not
+reachable from any publicly installable Yosys build tried.** Record
+`verification/records/sta-corner-sweep/records/20260924-182806-3193e11.md`
+re-ran record `20260924-134500-1a8313b`'s committed `klt synthesize` request
+under five distinct mapper builds (five distinct `yosys.wasm` digests) on one
+host with everything else held fixed — same `klt`, same PDK, same frozen RTL,
+same request bytes:
+
+| Mapper build | instances |
+|---|---|
+| `yowasp-yosys==0.65.0.0.post1154` | 1139 |
+| `yowasp-yosys==0.66.0.0.post1165` | 1139 |
+| `yowasp-yosys==0.67.0.0.post1190` | 1105 |
+| **`yowasp-yosys==0.68.0.0.post1208` (the pin)** | **1105** |
+| `yowasp-yosys==0.69.0.0.post1233` | 1105 |
+
+At the pin the answer is **1105 instances / 10158.4928 µm²**, reproduced
+across four runs with a byte-identical netlist
+(`sha256:d0785125…`, committed with that record so future comparisons are
+diffs rather than digest mismatches).
+
+It follows — and this is the part to carry forward — that record
+`verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`'s
+**candidate rows 2, 5 and 6 cell counts are host-specific**. They were
+produced by a mapper build that nothing in that record identifies, that no
+publicly installable build reproduces, and that therefore cannot be
+re-obtained; any timing verdict derived from them — including row 6's
+18-of-18 closure at +0.489 ns / 105.14 MHz — inherits that property. Nobody
+should spend further effort trying to reproduce the 1204 figure.
+
+### How it's wired up, and one sharp edge
+
+`scripts/setup-env.sh` step 3 installs the pinned wheel into `.venv`,
+verifies the wasm digest, and links `.venv/bin/yosys -> yowasp-yosys`. `klt`
+shells out to `yosys` **by name**, so `source .venv/bin/activate` is what
+makes `klt synthesize` run the pinned mapper; the script prints a note if a
+host `yosys` is also on `$PATH`, because without activation that one wins and
+the mapper behind your numbers is unidentified again.
+
+The sharp edge: the pinned build is a WASI binary, and its sandbox mounts a
+private directory over `/tmp`. A `klt synthesize` run staged under the host
+temp directory therefore cannot read back its own generated script, and fails
+with a "could not read script file" error. Stage such runs under the repo
+(the gitignored `.klt/` is a good home) — record
+`20260924-182806-3193e11`'s `rerun-pinned-synthesis.sh` does exactly that and
+is the worked example.
+
+Re-pinning is a deliberate act: update `YOWASP_YOSYS_VERSION` **and**
+`YOWASP_YOSYS_WASM_SHA256` in `scripts/setup-env.sh` together with the
+"Pinned versions" row above, and mint fresh records — the same
+"re-pin ⇒ mint fresh records" rule the `klt` pin carries, and with more force
+here, since the instance-count table above shows a bump can move the mapping.
 
 ## OpenROAD
 

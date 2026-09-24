@@ -1,0 +1,66 @@
+{
+  "description": "Mapped-instance count for the SAME committed klt synthesize request (../20260924-134500-1a8313b/synth-request.json) on the SAME frozen RTL (../20260923-093000-28a7c96/candidates/rtl/modexp-bit-serial.v), across every publicly installable Yosys build tried. Each row's `wasm_sha256` is the sha256 of yowasp_yosys/yosys.wasm -- the single WebAssembly module that contains Yosys and its embedded abc -- which is the mapper build identity `yosys -V` does not report. Same klt (0.6.0+gc66f18fd6225), same PDK, same host, same request: the only variable is the mapper build.",
+  "klt_version": "0.6.0+gc66f18fd6225",
+  "pdk": "sky130A / open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b",
+  "request": "verification/records/sta-corner-sweep/artifacts/20260924-134500-1a8313b/synth-request.json",
+  "request_sha256": "fa8ed0e9b5dbd7283f49c9214726db4bd2bc7afd0ac9244b0877b9124fb7565c",
+  "rtl": "verification/records/sta-corner-sweep/artifacts/20260923-093000-28a7c96/candidates/rtl/modexp-bit-serial.v",
+  "rtl_sha256": "b6ca7b2f4464e573d47e459ec8a1befa2068211593c0ead70c2922e65075aa85",
+  "target": {
+    "frozen_row_6_instance_count": 1204,
+    "question": "is 1204 reachable from any publicly installable Yosys build?",
+    "answer": "not from any build tried here -- see `builds` below"
+  },
+  "builds": [
+    {
+      "source": "PyPI yowasp-yosys==0.65.0.0.post1154",
+      "engine_version_reported": "0.65",
+      "wasm_sha256": "27996f8c71c61230a85a5813ba25998a4fb4e2f9dd23a732b9cbd9cd2f1a307e",
+      "instance_count": 1139,
+      "area_um2": 10160.9952,
+      "response": "synth-report-yowasp-0.65.0.0.post1154.json"
+    },
+    {
+      "source": "PyPI yowasp-yosys==0.66.0.0.post1165",
+      "engine_version_reported": "0.66",
+      "wasm_sha256": "975361dadbf28759e5866e5cc243260fde0c353257e6d444e9d206f10536808e",
+      "instance_count": 1139,
+      "area_um2": 10160.9952,
+      "response": "synth-report-yowasp-0.66.0.0.post1165.json"
+    },
+    {
+      "source": "PyPI yowasp-yosys==0.67.0.0.post1190",
+      "engine_version_reported": "0.67",
+      "wasm_sha256": "dfad61b9fe520aea08a881876f9c627b6d8abca6d5ca56a95074c5bf8ec16890",
+      "instance_count": 1105,
+      "area_um2": 10158.4928,
+      "response": "synth-report-yowasp-0.67.0.0.post1190.json"
+    },
+    {
+      "source": "PyPI yowasp-yosys==0.68.0.0.post1208",
+      "engine_version_reported": "0.68",
+      "wasm_sha256": "e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c",
+      "instance_count": 1105,
+      "area_um2": 10158.4928,
+      "response": "synth-report-pinned-run1.json",
+      "note": "THE PIN (scripts/setup-env.sh). Run twice here and twice more by rerun-pinned-synthesis.sh; all four runs identical, netlist sha256 d0785125176bc27c95adaffd25cb82dbb46da9038dfb63d5df39d7f3fb5404f7."
+    },
+    {
+      "source": "PyPI yowasp-yosys==0.69.0.0.post1233",
+      "engine_version_reported": "0.69",
+      "wasm_sha256": "77fe957bef892d75f74a0ce2165d7b328b6cda462a0e0051509df0c5a55ece49",
+      "instance_count": 1105,
+      "area_um2": 10158.4928,
+      "response": "synth-report-yowasp-0.69.0.0.post1233.json"
+    }
+  ],
+  "not_re_derived_here": [
+    {
+      "source": "Homebrew Yosys 0.69+post (git sha1 143eb14f9cc55d6f8927e68523b0c9d2166ed02c), macOS arm64, native",
+      "instance_count": 1105,
+      "area_um2": 10158.4928,
+      "note": "Reported in a comment on issue #143 by the issue #141 Builder pass, run against the frozen yosys-cell-exclusion.ys directly rather than through klt. Cited as a sixth, differently-built data point; it is an issue comment, not an artifact of this record, and this record does not stand on it."
+    }
+  ],
+  "conclusion": "Five distinct publicly installable mapper builds (five distinct wasm digests) produce 1139 or 1105 instances. None produces 1204. The frozen row 5/6 figure of 1204 is therefore not reachable from any publicly installable Yosys build tried, and is treated as an artifact of the build on the host that produced record 20260923-093000-28a7c96's candidate rows."
+}
