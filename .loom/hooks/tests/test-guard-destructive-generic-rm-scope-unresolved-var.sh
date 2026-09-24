@@ -5,23 +5,26 @@
 # `rm_scope_mktemp_same_command_safe()` in the vendored
 # `.loom/hooks/guard-destructive-generic.sh`.
 #
-# SCOPE (read this before "fixing" anything here): issue #151 is a telemetry
-# REPORT, not an implementation request -- its own text is explicit that it
-# is "not a request to hand-edit guard-destructive-generic.sh in this repo"
-# and "not proposing a specific patch". `guard-destructive-generic.sh`'s own
-# header likewise says generic pattern behavior must be fixed upstream (Repo
-# Skills' canonical `hooks/repo/guard-destructive.sh`), not hand-edited here.
-# This suite therefore does NOT attempt the refinements #151 floats for
-# instances 1 and 3 -- it only pins down TODAY's (correct, fail-closed)
-# behavior for all three reported instances as regression evidence, so:
-#   - a future resync/refinement that silently starts ALLOWing instance 2
-#     (the genuinely-dynamic $PWD case, which #151 says must stay denied) is
-#     caught immediately; and
-#   - instances 1 and 3 (the "REFINABLE" / "POSSIBLY REFINABLE" candidates
-#     #151 flags for Architect/Champion to evaluate upstream) have a named,
-#     literal repro on record, so a future upstream-refinement pass has an
-#     exact shape to validate against and this suite gets updated -- not
-#     re-surprised -- if/when that lands.
+# DISPOSITION of #151's three reported instances (this suite covers all three,
+# and the safety boundary around the one that changed):
+#   - Instance 1 (one-hop literal var chain) -- REFINED. The guard now
+#     resolves `NAME2="$NAME1<literal-suffix>"` one hop when NAME1 is itself
+#     same-command-pure-literal-resolvable, then applies the ORDINARY scope
+#     rules to the result. Asserted ALLOW below, together with the negative
+#     cases that prove the hop is a false-positive refinement and not a
+#     relaxation (out-of-scope resolution still denies, ambiguous/dynamic/
+#     single-quoted/self-referential/too-deep chains all still deny).
+#   - Instance 2 ($PWD chain) -- UNCHANGED, denied. Genuinely dynamic: the
+#     value depends on runtime cwd the guard cannot observe from command text.
+#     #151 explicitly proposes no refinement. This must NEVER start passing.
+#   - Instance 3 (/tmp-rooted literal prefix + unresolved suffix,
+#     `D=/tmp/x-$C`) -- UNCHANGED, denied, and deliberately NOT refined.
+#     #151 floated it on the grounds that a `/tmp`-rooted prefix is always in
+#     scope, but that does not hold: an unresolved suffix can contain `..`
+#     (`C=../../etc` => `/tmp/x-../../etc` => `/etc`), and unlike a literal
+#     suffix the guard cannot see the text to normalize it. Allowing it would
+#     be a relaxation of the scope rule, not a false-positive refinement.
+#     Asserted DENY below, with the traversal case that shows why.
 #
 # Usage: ./.loom/hooks/tests/test-guard-destructive-generic-rm-scope-unresolved-var.sh
 # Exit 0 = all pass, 1 = fail.
@@ -92,6 +95,23 @@ assert_deny_unresolved_var() {
     fi
 }
 
+# Denied, but deliberately NOT via rm-scope-unresolved-var -- used for the
+# cases that must be caught by the ORDINARY scope check after a successful
+# resolution, which is what distinguishes a refinement from a relaxation.
+assert_deny() {
+    local desc="$1" result="$2"
+    if [[ "${result%%|*}" != "deny" ]]; then
+        fail "$desc (expected deny, got: $result)"
+        return
+    fi
+    local reason="${result#*|}"
+    if [[ "$reason" == *"unexpanded shell variable"* ]]; then
+        fail "$desc (denied as UNRESOLVED rather than by the scope check: $reason)"
+    else
+        pass "$desc"
+    fi
+}
+
 assert_allow() {
     local desc="$1" result="$2"
     if [[ "${result%%|*}" == "allow" ]]; then
@@ -103,17 +123,84 @@ assert_allow() {
 
 echo "=== guard-destructive-generic.sh rm-scope-unresolved-var telemetry (issue #151) ==="
 
-# --- Instance 1 (issue #151) -- "REFINABLE": a one-hop literal variable
-# chain. REPO is itself a same-command pure-literal assignment, and WORK's
-# RHS embeds "$REPO" rather than being a pure literal, so
-# rm_scope_literal_same_command_resolve()'s point-2 pure-literal test
-# rejects it BY DESIGN (guard-destructive-generic.sh's own doc comment).
-# #151 flags this as a narrow, provably-static extension candidate for the
-# UPSTREAM guard -- not implemented here. Today's (correct, fail-closed)
-# behavior is pinned as DENY so a silent change either direction is caught.
+# --- Instance 1 (issue #151) -- REFINED: a one-hop literal variable chain.
+# REPO is itself a same-command pure-literal assignment; WORK's RHS embeds
+# "$REPO" rather than being a pure literal, which the original #6676 point-2
+# test rejected. rm_scope_literal_same_command_resolve() now takes exactly one
+# extra hop, resolves this to <WT>/.scratch-issue78, and hands THAT to the
+# ordinary scope check (which admits it: it is inside a managed worktree).
 result=$(run_hook 'REPO="'"$WT"'"; WORK="$REPO/.scratch-issue78"; rm -rf "$WORK"' "$TMPROOT")
+assert_allow \
+    "(1) #151 instance 1: one-hop literal var chain (REPO -> WORK=\"\$REPO/lit\") -> resolves, in scope, allow" \
+    "$result"
+
+# The live second sighting of the same shape, from this repo's own
+# .loom/logs/guard-decisions.log on 2026-09-24 (an evidence-staging script:
+# W=<worktree literal>; S="$W/.klt/..."; rm -rf "$S"), with the ${NAME} brace
+# spelling and an unquoted target to cover the other quoting paths.
+result=$(run_hook 'W='"$WT"'
+S="$W/.klt/issue143-synth"
+rm -rf ${S}' "$TMPROOT")
+assert_allow \
+    "(1b) #151 instance 1, live repro: newline-separated chain, \${S} brace spelling, unquoted target -> allow" \
+    "$result"
+
+# --- The hop is a FALSE-POSITIVE refinement, not a relaxation: a chain that
+# resolves OUTSIDE the repo/worktree/tmp scope is still denied, by the ordinary
+# out-of-scope check rather than by fail-closed unresolvability. This is the
+# single most important assertion in this suite -- it is what proves the hop
+# only ever moves a target from "cannot resolve" to "judged normally".
+result=$(run_hook 'R=/etc; W="$R/nginx"; rm -rf "$W"' "$TMPROOT")
+assert_deny \
+    "(1c) chain resolving out of scope (R=/etc; W=\"\$R/nginx\") -> still denied by the ordinary scope check" \
+    "$result"
+
+# ...and `..` inside the literal suffix is COLLAPSED by the caller's
+# normalize_abs_path() before that scope check, so the suffix cannot be used to
+# dress an out-of-scope destination up as an in-scope-looking path. Anchored at
+# a fixed absolute path rather than at $WT on purpose: the hermetic test repo
+# lives under /tmp, which is itself in scope (the ephemeral allowlist), so a
+# traversal test rooted there would depend on mktemp's directory depth.
+result=$(run_hook 'R=/etc/nginx/conf.d; W="$R/../../sites-enabled"; rm -rf "$W"' "$TMPROOT")
+assert_deny \
+    "(1d) .. in the literal suffix is normalized (/etc/nginx/sites-enabled), then denied by the scope check" \
+    "$result"
+
+# --- Fail-closed conditions on the hop (block-comment conditions (a)-(d)).
+# (a) depth cap: three assignments deep is one hop too many.
+result=$(run_hook 'A="'"$WT"'"; B="$A/x"; C="$B/y"; rm -rf "$C"' "$TMPROOT")
 assert_deny_unresolved_var \
-    "(1) #151 instance 1: one-hop literal var chain (REPO -> WORK=\"\$REPO/lit\") -> still deny (upstream refinement candidate, not implemented here)" \
+    "(1e) three-deep chain exceeds the one-hop cap -> still deny (fail closed)" \
+    "$result"
+
+# (b) ambiguity: a second assignment to the INNER name poisons the resolution
+# even though each individual value would be admissible on its own.
+result=$(run_hook 'R="'"$WT"'"; R=/etc; W="$R/x"; rm -rf "$W"' "$TMPROOT")
+assert_deny_unresolved_var \
+    "(1f) two assignments to the inner var -> ambiguous, still deny (fail closed)" \
+    "$result"
+
+# (c) the outer RHS single-quoted as a whole: `$R` is literal text there, so
+# the shell deletes a RELATIVE path named "\$R/x" -- following it as a variable
+# would be a mis-resolution, so the hop declines.
+result=$(run_hook 'R="'"$WT"'"; W='"'"'$R/x'"'"'; rm -rf "$W"' "$TMPROOT")
+assert_deny_unresolved_var \
+    "(1g) outer RHS wholly single-quoted (W='\$R/x') -> not an expansion, still deny (fail closed)" \
+    "$result"
+
+# (d) self-referential append: the exactly-one rule makes this the only
+# assignment to W, so the \$W on its own RHS is inherited from OUTSIDE the
+# command -- precisely the unresolvable case this deny exists for.
+result=$(run_hook 'W="$W/.scratch"; rm -rf "$W"' "$TMPROOT")
+assert_deny_unresolved_var \
+    "(1h) self-referential chain (W=\"\$W/.scratch\") -> inherited value, still deny (fail closed)" \
+    "$result"
+
+# The inner hop must resolve to a LITERAL absolute path -- a command
+# substitution one hop in is not static text and must not be followed.
+result=$(run_hook 'R=$(cat /tmp/where); W="$R/x"; rm -rf "$W"' "$TMPROOT")
+assert_deny_unresolved_var \
+    "(1i) inner hop is a command substitution -> not provably static, still deny (fail closed)" \
     "$result"
 
 # --- Instance 2 (issue #151) -- "CORRECTLY KEPT FLAGGED": W=\$PWD is not a
@@ -126,17 +213,26 @@ assert_deny_unresolved_var \
     "(2) #151 instance 2: \$W=\$PWD chain -> still deny (genuinely dynamic, no refinement proposed, must never change)" \
     "$result"
 
-# --- Instance 3 (issue #151) -- "POSSIBLY REFINABLE": a literal prefix
-# unconditionally rooted at /tmp (already an always-in-scope directory for
-# the mktemp fast path's own reasoning) with a trailing unresolved
-# expansion. rm_scope_literal_same_command_resolve() rejects it because the
-# RHS contains "$" at all (point 2's pure-literal test has no "literal
-# prefix, opaque suffix" case, unlike the reattachment logic for the mirror
-# shape "$NAME<literal-suffix>"). #151 flags this as a candidate for a
-# narrow upstream fast path -- not implemented here.
+# --- Instance 3 (issue #151) -- reported as "POSSIBLY REFINABLE" on the
+# grounds that the literal prefix is unconditionally /tmp-rooted and /tmp is
+# always in scope. DELIBERATELY NOT REFINED: that reasoning does not hold,
+# because the UNRESOLVED suffix can traverse back out of /tmp and the guard
+# cannot see the text to normalize it (see the next case). Note the target
+# here is `$D` from the path root down but the ASSIGNMENT's RHS carries the
+# unresolved expansion -- so neither the pure-literal test nor the one-hop
+# chain admits it, and it correctly stays fail-closed.
 result=$(run_hook 'for C in 5b7f282 9118550; do D=/tmp/gbisect-$C; rm -rf $D; done' "$TMPROOT")
 assert_deny_unresolved_var \
-    "(3) #151 instance 3: /tmp-rooted literal prefix + unresolved suffix (/tmp/gbisect-\$C) -> still deny (upstream refinement candidate, not implemented here)" \
+    "(3) #151 instance 3: /tmp-rooted literal prefix + unresolved suffix (/tmp/gbisect-\$C) -> still deny (refinement rejected as a relaxation)" \
+    "$result"
+
+# Why instance 3 must stay denied, made concrete: the very same shape with a
+# traversing value escapes /tmp entirely. The guard cannot distinguish this
+# command's text from the benign one above, which is exactly why "the prefix
+# is /tmp-rooted" proves nothing about where the rm lands.
+result=$(run_hook 'C=../../etc; D=/tmp/gbisect-$C; rm -rf $D' "$TMPROOT")
+assert_deny_unresolved_var \
+    "(3b) same shape, traversing suffix (C=../../etc => /etc) -> deny; demonstrates why /tmp-rootedness is not sufficient" \
     "$result"
 
 # --- Contrast/control: the single-hop literal shape the guard ALREADY
