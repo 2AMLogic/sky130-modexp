@@ -7,7 +7,10 @@
 #   resolution + mkdir-as-write-idiom recognition (originally sky130-modexp
 #   #116/#123), plus the `.loom/sweep-checkpoint/` carve-out from the base
 #   worktree-write-confinement check (sky130-modexp #146 -- the guard denied
-#   the sweep orchestrator's own main-clean baseline snapshot).
+#   the sweep orchestrator's own main-clean baseline snapshot), plus the
+#   one-hop literal variable chain in rm_scope_literal_same_command_resolve()
+#   (sky130-modexp #151 -- `R=<literal>; W="$R/lit"; rm -rf "$W"` denied at
+#   the catastrophic tier despite both hops being static same-command text).
 #   Upstream PR: TBD (see 2am#869).
 hooks/guard-destructive-generic.sh
 

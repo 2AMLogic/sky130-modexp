@@ -6017,9 +6017,59 @@ wt_write_mktemp_same_command_safe() {
 #      the shell sees at the `rm` word.
 #   2. The (quote-stripped) RHS is a PURE LITERAL absolute path: starts with
 #      `/`, and contains neither `$` nor a backtick anywhere — so a RHS that
-#      itself still carries an unresolved expansion (`NAME="$OTHER/sub"`,
-#      `NAME=$(cmd)`, `` NAME=`cmd` ``) is rejected rather than trusted as a
-#      literal (fail closed).
+#      itself still carries an unresolved expansion (`NAME=$(cmd)`,
+#      `` NAME=`cmd` ``) is rejected rather than trusted as a literal (fail
+#      closed). The ONE exception is the single-hop variable chain below.
+#
+# ONE-HOP LITERAL CHAIN (sky130-modexp #151): a RHS that is itself a variable
+# reference with a literal suffix — `NAME2="$NAME1<literal-suffix>"` where
+# `NAME1` is INDEPENDENTLY same-command-pure-literal-resolvable by rule 1+2
+# above — is resolved with exactly ONE extra hop, then the suffixes are
+# reattached innermost-first. The reported shape was
+# `REPO=<literal>; WORK="$REPO/.scratch-issueNN"; rm -rf "$WORK"`, denied at
+# the catastrophic tier even though both hops are static text in the same
+# command; a second live instance of it
+# (`W=<literal>; S="$W/.klt/issue143-synth"; rm -rf "$S"`) was captured in
+# `.loom/logs/guard-decisions.log` on 2026-09-24.
+#
+# The hop is a FALSE-POSITIVE refinement on exactly the same terms as the
+# suffix reattachment below, and for the same reason: it only ever turns
+# "cannot resolve → deny" into "resolved → judged by the ordinary scope
+# rules". It never widens what a RESOLVED path is allowed to be —
+# `R=/etc; W="$R/foo"; rm -rf "$W"` resolves to `/etc/foo` and is still
+# denied by the out-of-scope check, and any `..` is collapsed by the caller's
+# normalize_abs_path() first. Its fail-closed conditions:
+#
+#   a. Depth is capped at ONE extra hop (two assignments total). A three-deep
+#      chain still denies — the cap is deliberate, not incidental: each hop is
+#      a place for the ambiguity rules to be re-checked, and no observed
+#      real-world shape needs more.
+#   b. BOTH assignments must independently satisfy rule 1's exactly-one-
+#      assignment ambiguity test, each judged over the whole command text.
+#   c. The outer RHS must not be SINGLE-QUOTED as a whole (`W='$R/x'`): inside
+#      single quotes `$R` is literal text, not an expansion, so the shell
+#      deletes a *relative* path named `$R/x` and resolving it as a variable
+#      would be a mis-resolution. The quote style that was stripped is
+#      therefore carried out of the awk pass and checked. (An *embedded*
+#      single-quoted `$` — `W='$R'/x` — is already handled correctly by
+#      mark_expandable_dollars(), which marks it literal and fails the split.)
+#   d. The hop must not be self-referential (`W="$W/x"`): the exactly-one rule
+#      makes that assignment the only one in the command, so the `$W` on its
+#      RHS is inherited from outside the command and is exactly the
+#      unresolvable case this deny exists for.
+#   e. The inner suffix obeys the same rules as the outer one (pure literal,
+#      empty or `/`-rooted) — it goes through the same
+#      _rm_scope_var_ref_split().
+#
+# NOT extended to a literal PREFIX with an unresolved SUFFIX (`D=/tmp/x-$C`),
+# the other shape #151 floated as "possibly refinable" on the grounds that a
+# `/tmp`-rooted prefix is always in scope. That reasoning does not hold and
+# the shape stays denied: an *unresolved* suffix can contain `..`
+# (`C=../../etc` ⇒ `/tmp/x-../../etc` ⇒ `/etc`), and unlike the literal
+# suffixes handled here the guard cannot see the text to normalize it, so
+# `/tmp`-rootedness proves nothing about where the `rm` lands. That is a
+# relaxation, not a false-positive refinement, and is the exact escape the
+# fail-closed rule exists to stop.
 #
 # LITERAL SUFFIX AFTER THE VARIABLE (#6805): the target does NOT have to be a
 # bare `$NAME`. The overwhelmingly common real-world shapes in the guard
@@ -6091,16 +6141,28 @@ _rm_scope_var_ref_split() {
     printf '%s\t%s' "$name" "$rest"
 }
 
-rm_scope_literal_same_command_resolve() {
-    local target="$1" cmdtext="$2" split varname suffix resolved
-    split=$(_rm_scope_var_ref_split "$target") || return 1
-    varname="${split%%$'\t'*}"
-    suffix="${split#*$'\t'}"
-    [[ -n "$varname" ]] || return 1
-    resolved=$(printf '%s' "$cmdtext" | awk -v varname="$varname" "$_QSPLIT_AWK"'
+# _rm_scope_same_command_assign_value() — resolve a same-command
+# `NAME=<value>` assignment to its quote-stripped RHS, printing
+# "<qflag><TAB><value>" on stdout and returning 0. Returns 1 (printing
+# nothing) unless EXACTLY ONE assignment to NAME exists anywhere in the
+# command text — rule 1's ambiguity test, applied identically at every hop.
+#
+# <qflag> reports which quote style was stripped from around the WHOLE value,
+# because that determines whether a `$` surviving in the value is an
+# expansion the chain hop may follow or literal text it must not:
+#   D — one layer of surrounding DOUBLE quotes was stripped (`$` expands)
+#   S — one layer of surrounding SINGLE quotes was stripped (`$` is literal)
+#   N — nothing was stripped
+# The quote-stripping itself mirrors record_assign()'s (#4881/#6152); only the
+# reporting of which style it was is new (sky130-modexp #151, condition (c) in
+# the block comment above).
+_rm_scope_same_command_assign_value() {
+    local varname="$1" cmdtext="$2" out
+    out=$(printf '%s' "$cmdtext" | awk -v varname="$varname" "$_QSPLIT_AWK"'
     BEGIN {
         DQ = sprintf("%c", 34)
         SQ = sprintf("%c", 39)
+        TAB = sprintf("%c", 9)
     }
     {
         $0 = qsplit($0)
@@ -6118,20 +6180,61 @@ rm_scope_literal_same_command_resolve() {
         }
     }
     END {
-        if (total == 1) {
-            vlen = length(val)
-            if (vlen >= 2) {
-                c1 = substr(val, 1, 1)
-                c2 = substr(val, vlen, 1)
-                if ((c1 == DQ && c2 == DQ) || (c1 == SQ && c2 == SQ)) {
-                    val = substr(val, 2, vlen - 2)
-                }
+        if (total != 1) exit
+        qflag = "N"
+        vlen = length(val)
+        if (vlen >= 2) {
+            c1 = substr(val, 1, 1)
+            c2 = substr(val, vlen, 1)
+            if (c1 == DQ && c2 == DQ) {
+                qflag = "D"
+                val = substr(val, 2, vlen - 2)
+            } else if (c1 == SQ && c2 == SQ) {
+                qflag = "S"
+                val = substr(val, 2, vlen - 2)
             }
-            if (val ~ /^\// && val !~ /[$`]/) print val
         }
+        print qflag TAB val
     }')
-    [[ -n "$resolved" ]] || return 1
-    printf '%s' "${resolved}${suffix}"
+    [[ -n "$out" ]] || return 1
+    printf '%s' "$out"
+}
+
+# _rm_scope_is_literal_abs_path() — rule 2's pure-literal test: an absolute
+# path carrying no unresolved expansion of any kind.
+_rm_scope_is_literal_abs_path() {
+    [[ "$1" == /* && "$1" != *'$'* && "$1" != *'`'* ]]
+}
+
+rm_scope_literal_same_command_resolve() {
+    local target="$1" cmdtext="$2" split varname suffix
+    local assign qflag value hopsplit hopname hopsuffix hopassign hopvalue
+    split=$(_rm_scope_var_ref_split "$target") || return 1
+    varname="${split%%$'\t'*}"
+    suffix="${split#*$'\t'}"
+    [[ -n "$varname" ]] || return 1
+
+    assign=$(_rm_scope_same_command_assign_value "$varname" "$cmdtext") || return 1
+    qflag="${assign%%$'\t'*}"
+    value="${assign#*$'\t'}"
+
+    if _rm_scope_is_literal_abs_path "$value"; then
+        printf '%s' "${value}${suffix}"
+        return 0
+    fi
+
+    # ONE-HOP LITERAL CHAIN (sky130-modexp #151) — see conditions (a)-(e) in
+    # this block's header comment. Depth is capped here, structurally, by
+    # there being exactly one extra hop written out rather than a loop.
+    [[ "$qflag" != "S" ]] || return 1
+    hopsplit=$(_rm_scope_var_ref_split "$value") || return 1
+    hopname="${hopsplit%%$'\t'*}"
+    hopsuffix="${hopsplit#*$'\t'}"
+    [[ -n "$hopname" && "$hopname" != "$varname" ]] || return 1
+    hopassign=$(_rm_scope_same_command_assign_value "$hopname" "$cmdtext") || return 1
+    hopvalue="${hopassign#*$'\t'}"
+    _rm_scope_is_literal_abs_path "$hopvalue" || return 1
+    printf '%s' "${hopvalue}${hopsuffix}${suffix}"
 }
 
 # =============================================================================
@@ -7241,7 +7344,9 @@ if echo "$COMMAND_ASK_SCAN" | grep -qE 'rm[[:space:]]+-[a-zA-Z]*[rf]'; then
                     fi
 
                     # Same-command LITERAL-path fast path (#6676, widened to
-                    # `$NAME<literal-suffix>` targets by #6805): unlike the
+                    # `$NAME<literal-suffix>` targets by #6805, and to a
+                    # single-hop `NAME2="$NAME1<literal-suffix>"` variable
+                    # chain by sky130-modexp #151): unlike the
                     # mktemp form above, a resolved literal is NOT skipped
                     # past the scope check — ABS_PATH is replaced with the
                     # proven literal (variable value + literal suffix) and
