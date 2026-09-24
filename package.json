@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "worktree:return": "./.loom/scripts/worktree-return.sh",
-    "lint": "python3 verification/check_records.py && python3 verification/test_check_records.py && python3 verification/gate-level/test_spice_to_verilog.py",
+    "lint": "python3 verification/check_records.py && python3 verification/test_check_records.py && python3 verification/check_pins.py && python3 verification/test_check_pins.py && python3 verification/gate-level/test_spice_to_verilog.py",
     "test": "python3 verification/cross_check.py",
     "signoff": "./verification/signoff/run-signoff.sh",
     "check:ci": "npm run lint && npm run test",

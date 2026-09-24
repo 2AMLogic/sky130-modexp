@@ -36,6 +36,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${REPO_ROOT}" || exit 1
 
 # --- pinned versions -- keep in sync with docs/environment.md -------------
+# Enforced by verification/check_pins.py (npm run lint / CI `records` job):
+# every constant in this block must appear in that doc's "Pinned versions"
+# table. Keep assignments in plain NAME="value" form so it can parse them.
 KLT_REPO="https://github.com/2AMLogic/klayout-tools"
 KLT_REV="dac2b5daceb69a2068d9d2ee190d7afe37b29af7"
 VOLARE_PDK_FAMILY="sky130"
