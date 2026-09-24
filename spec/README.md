@@ -31,4 +31,16 @@ Ratified specification and decision records.
     bounded FAIL** carried against an unamended 100 MHz Clock row (10 of 18
     corners; binding corner `ss_n40C_1v28` at 22.80 MHz), and prices the
     measured route to 18/18 rather than lowering the target. Closes
-    issue #132.
+    issue #132. **Its 18/18 claim is withdrawn by `0005`** — see below.
+  - [`0005-the-priced-exit-was-run-and-does-not-reproduce.md`](decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md)
+    — runs `0004` Decision 2's priced exit now that its blocking dependency
+    (klayout-tools#2382) has landed. The reproducibility objection is
+    discharged (`constraints.dont_use` reproduces the frozen script's
+    netlist byte for byte), but the 18/18 does **not** reproduce: 17 of 18
+    corners, `ss_n40C_1v28` at −0.574 ns / 94.57 MHz, with both STA
+    methodologies now agreeing against closure. Withdraws `0004`'s
+    reachability claim, **declines** to supersede `0001` Decision 3's
+    latency formula (the shipped RTL is unchanged), re-prices the exit, and
+    names unpinned Yosys/ABC build identity as a newly-visible obstacle.
+    Lands no layout, RTL, or flow change; no T1 row changes state.
+    Issue #141.

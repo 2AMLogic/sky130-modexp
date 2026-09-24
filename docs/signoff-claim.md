@@ -825,16 +825,38 @@ ratified 100 MHz Clock row reports:
   single-cycle `S_MM_RUN` body of `rtl/modexp.v`.
 
 **What the exception is bounded by.** Issue #132 measured a seven-build
-lever matrix and found a configuration that **does** close all eighteen
-corners (+0.489 ns setup / 105.14 MHz at the binding corner). It is
+lever matrix and found a configuration that **did** close all eighteen
+corners (+0.489 ns setup / 105.14 MHz at the binding corner). It was
 deliberately **not landed**, for two reasons stated here rather than
-buried: the standard-cell exclusion it depends on has no `klt synthesize`
-request field, so it is not re-runnable from a committed request; and that
+buried: the standard-cell exclusion it depends on had no `klt synthesize`
+request field, so it was not re-runnable from a committed request; and that
 same build's in-flow, routing-estimated place-and-route STA reports
 **−1.105 ns / 90.05 MHz** at the same corner on the same database — two
 real numbers that disagree about closure. Its cost is **+522 cells** and
 ≈**33x** the cycle count — against a 4.6x clock gain, a **net throughput
 loss of roughly 7x**.
+
+> **Update (issue #141, 2026-09-24): that bound no longer holds, and the
+> exception is now *less* bounded than this section originally said.** The
+> missing request field landed upstream
+> ([klayout-tools#2429](https://github.com/2AMLogic/klayout-tools/pull/2429)
+> closing
+> [klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382)),
+> the re-spin was run end-to-end through committed `klt` requests, and it
+> closes at **17 of 18** corners, not eighteen: `ss_n40C_1v28` at
+> **−0.574 ns / 94.57 MHz**. The reproducibility objection is discharged
+> (the committed request reproduces the frozen script's netlist byte for
+> byte), but the 18/18 itself did not reproduce — the mapped netlist is
+> 1105 instances here against the frozen 1204, a difference that traces to
+> the ABC build embedded in the Yosys binary and is worth 1.06 ns at the
+> binding corner. **Both STA methodologies now agree the binding corner
+> does not close** (−0.574 ns and −1.160 ns). Nothing in this document's
+> verdicts changes — no layout, RTL, or flow request was modified — but the
+> "measured route out" this section pointed at is no longer demonstrated.
+> See
+> `spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`
+> and
+> `verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md`.
 
 Consequently `spec/modexp.md`'s Clock row is **not** amended, the corner
 matrix of `spec/decision-records/0001-…` Decision 4 is **not** narrowed,
@@ -857,6 +879,10 @@ the evidence is
   [klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382)
   per `CLAUDE.md`'s friction protocol; the downstream re-spin it unblocks is
   [sky130-modexp#141](https://github.com/2AMLogic/sky130-modexp/issues/141).
+  **Fixed upstream** by
+  [klayout-tools#2429](https://github.com/2AMLogic/klayout-tools/pull/2429)
+  (`constraints.dont_use`), verified working by issue #141 — see the update
+  block above for what the re-spin then measured.
 
 ## Evidence record
 

@@ -99,6 +99,48 @@ be a descendant of both fix commits
 (merged at `2c488d6b`) that names the all-tests-fail SDF shape a timing
 property, not an annotation failure.
 
+**Pin NOT bumped, deliberately (issue #141, 2026-09-24).** The capability
+issue #141 needed —
+[klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382),
+request-level standard-cell exclusion (`constraints.dont_use`), closed by
+[klayout-tools#2429](https://github.com/2AMLogic/klayout-tools/pull/2429) at
+merge commit `9cabec7b02d095e3cabd2194eabfc1d8b8aa8c23` — landed upstream
+**after** the `dac2b5da` pin above, which
+`gh api repos/2AMLogic/klayout-tools/compare/9cabec7b...dac2b5da` (verified
+2026-09-24) shows is a strict ancestor of it (`"status": "behind"`,
+`behind_by: 35`). Issue #141's re-spin was therefore run against
+`c66f18fd62250c5b71046e4e2a2b0288024eaff0` (11 commits ahead of `9cabec7b`)
+in a throwaway venv, **without moving this file's pin**, because the
+"re-pin ⇒ mint fresh records" rule above obliges re-minting the DRC/LVS/P&R
+records against the newer tool — work that issue #141 deliberately did not
+do, since
+`spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`
+Decision 1 lands no layout change. **The bump is owned by whichever PR
+lands the bit-serial re-spin**, which re-mints those records anyway and so
+discharges the rule in one move.
+
+To reproduce record
+`verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md`
+without moving the pin:
+
+```bash
+./scripts/setup-env.sh && source .venv/bin/activate
+pip install --force-reinstall \
+  "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@c66f18fd62250c5b71046e4e2a2b0288024eaff0"
+```
+
+**Yosys/ABC build identity is not pinned, and issue #141 measured that this
+matters.** The table below records the `yosys` version each record's
+environment *resolved*; it is not a pin, and `yosys -V`'s version string
+does not identify the `abc` build embedded in the binary. Running the same
+mapping script at the same nominal Yosys version on two hosts produced
+netlists of **1204** and **1105** instances, moving the binding corner's
+`klt sta` setup slack by **1.06 ns** — across the 100 MHz closure
+threshold. See record `20260924-134500-1a8313b` and decision record `0005`
+Decision 3; pinning a Yosys/ABC build is named there as being on the
+critical path for any cell-exclusion-dependent timing claim, not as
+housekeeping.
+
 `klt` in turn resolves `iverilog`/`yosys`/`openroad` and the PDK itself from
 the host — it does not vendor them. Those are:
 
