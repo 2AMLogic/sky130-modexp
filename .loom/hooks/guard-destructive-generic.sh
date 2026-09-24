@@ -7371,6 +7371,36 @@ fi
 #      specifically — a small, already-`.gitignore`d, well-known scratch
 #      directory this repo's own release pipeline already treats as a
 #      build-artifact staging area, NOT "anywhere outside the worktree."
+#
+# CARVE-OUT: sweep-internal bookkeeping in `.loom/sweep-checkpoint/` (#146).
+# The sweep orchestrator/dispatcher session is never inside a worktree and is
+# *supposed* to write its own run bookkeeping into the main checkout — most
+# visibly the main-clean baseline snapshot
+# `.loom/sweep-checkpoint/main-clean-baseline-<RUN_ID>.txt` that
+# `check-main-clean.sh --snapshot` captures from the main checkout before
+# wave 1 (documented in `.claude/commands/loom/sweep-wave-lifecycle.md`
+# step 0), plus the per-issue phase checkpoints
+# `.loom/sweep-checkpoint/issue-<N>.json` written by
+# `.loom/scripts/sweep-checkpoint.sh`. Before this carve-out the base
+# confinement check denied that snapshot outright as soon as any managed
+# worktree existed anywhere in the repo — a real `deny` captured in
+# `.loom/logs/guard-decisions.log` on 2026-09-24 — i.e. the guard blocked
+# the very mechanism that detects main-checkout contamination.
+#
+# This narrows the deny on the PATH axis only, and deliberately carries no
+# role gate (unlike the `dist/` carve-out above):
+#   * `.loom/sweep-checkpoint/` is `.gitignore`d outright and additionally
+#     excluded internally by `check-main-clean.sh` (#3778). It is run-scoped
+#     transient state, never repo content — so a write there cannot land the
+#     kind of edit #4178 exists to stop (a Builder's source/guard-hook edit
+#     escaping its worktree into main). Everything else in the main
+#     checkout, `.loom/` included, still denies.
+#   * A LOOM_ROLE gate would not actually narrow anything here: a
+#     daemon-dispatched sweep exports `LOOM_ROLE=sweep-lifecycle` for the
+#     whole process tree, so the orchestrator that needs this exemption and
+#     the Builder subagents it dispatches share one identical value. Gating
+#     on it would grant the same exemption while pretending to withhold it,
+#     which is worse than stating the real boundary (the path) plainly.
 # =============================================================================
 _WT_READONLY_ROLES=" architect auditor champion curator guide hermit judge "
 
@@ -7397,6 +7427,30 @@ _wt_dist_scratch_path() {
     if [[ -n "$_WT_MAIN_ROOT_LOGICAL" ]]; then
         case "$_p" in
             "$_WT_MAIN_ROOT_LOGICAL/dist"|"$_WT_MAIN_ROOT_LOGICAL/dist"/*) return 0 ;;
+        esac
+    fi
+    return 1
+}
+
+# True if $1 (an absolute, normalized path) sits inside the sweep's own
+# `.loom/sweep-checkpoint/` bookkeeping directory at the main-checkout root
+# (either root spelling) — see the "CARVE-OUT: sweep-internal bookkeeping"
+# paragraph in this block's header comment for the full safety argument
+# (#146). Nothing outside that one directory matches: the `.loom/` prefix
+# alone is NOT enough (a write to `.loom/hooks/`, `.loom/roles/`, or any
+# other installed Loom surface in the main checkout is exactly the #4178
+# escape and still denies).
+_wt_sweep_bookkeeping_path() {
+    local _p="$1"
+    [[ -n "$_p" ]] || return 1
+    if [[ -n "$_WT_MAIN_ROOT" ]]; then
+        case "$_p" in
+            "$_WT_MAIN_ROOT/.loom/sweep-checkpoint"|"$_WT_MAIN_ROOT/.loom/sweep-checkpoint"/*) return 0 ;;
+        esac
+    fi
+    if [[ -n "$_WT_MAIN_ROOT_LOGICAL" ]]; then
+        case "$_p" in
+            "$_WT_MAIN_ROOT_LOGICAL/.loom/sweep-checkpoint"|"$_WT_MAIN_ROOT_LOGICAL/.loom/sweep-checkpoint"/*) return 0 ;;
         esac
     fi
     return 1
@@ -7966,6 +8020,22 @@ if worktree_isolation_guard_enabled && \
         # apply to any other path in the main checkout, and does not apply
         # at all unless LOOM_ROLE affirmatively names a Write/Edit-free role.
         if _wt_dist_scratch_path "$_wabs" && _wt_readonly_role_active; then
+            continue
+        fi
+
+        # CARVE-OUT (#146): the sweep run's own bookkeeping directory,
+        # `<main-checkout>/.loom/sweep-checkpoint/` — gitignored, run-scoped
+        # transient state that the orchestrator session (never inside a
+        # worktree) is documented to write from the main checkout, most
+        # visibly `check-main-clean.sh --snapshot
+        # .loom/sweep-checkpoint/main-clean-baseline-<RUN_ID>.txt` before
+        # wave 1. See the "CARVE-OUT: sweep-internal bookkeeping" paragraph
+        # in this block's header for why this is path-scoped with no role
+        # gate. Checked BEFORE the deny below so it never reaches the
+        # worktree-isolation-bypass message; scoped to that one directory, so
+        # every other path in the main checkout (including the rest of
+        # `.loom/`) still denies exactly as before.
+        if _wt_sweep_bookkeeping_path "$_wabs"; then
             continue
         fi
 
