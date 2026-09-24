@@ -5,7 +5,10 @@
 #
 # hooks/guard-destructive-generic.sh: mkdir write-target physical_abs_path()
 #   resolution + mkdir-as-write-idiom recognition (originally sky130-modexp
-#   #116/#123). Upstream PR: TBD (see 2am#869).
+#   #116/#123), plus the `.loom/sweep-checkpoint/` carve-out from the base
+#   worktree-write-confinement check (sky130-modexp #146 -- the guard denied
+#   the sweep orchestrator's own main-clean baseline snapshot).
+#   Upstream PR: TBD (see 2am#869).
 hooks/guard-destructive-generic.sh
 
 # scripts/resync-installed.sh: sync_one() local-fix detection guard --
