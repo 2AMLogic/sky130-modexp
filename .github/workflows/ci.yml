@@ -207,6 +207,20 @@ jobs:
     # suites are present in this repo and already listed in ci-wired.txt
     # (see .loom/scripts/tests/ci-wired.txt lines ~143-164); wiring the rest
     # of that manifest is tracked separately.
+    #
+    # Daemon-backed suites are skipped via ci-excluded.txt (#156). Upstream
+    # has ported many merge-pr.sh internals to `loom-daemon` subcommands, and
+    # those suites source lib/require-daemon-bin.sh, which deliberately FAILS
+    # (never skips) when no binary resolves. This runner has no Rust
+    # toolchain and no loom-daemon, so it cannot run them; upstream runs them
+    # in a separate "Native Port Suites" job that downloads a built binary.
+    # Upstream's own manifest of those suites, with one reason per suite, is
+    # .loom/scripts/tests/ci-excluded.txt -- it is what upstream's
+    # run-ci-suites.sh job uses to leave them out, and each resync keeps it
+    # current. This job reads the same file with the same parsing idiom as
+    # check-ci-suite-manifest.sh (strip `#` comments, first token = suite
+    # name) and prints every skipped suite with its reason, so the gap shows
+    # up in the log. Nothing in require-daemon-bin.sh is changed.
     steps:
       - uses: actions/checkout@v4
 
@@ -215,8 +229,33 @@ jobs:
           # See the "Deliberately NOT set -e" rationale in the guard-hooks
           # job above -- same reasoning applies here.
           set +e -u -o pipefail
+
+          excluded_manifest=.loom/scripts/tests/ci-excluded.txt
+          if [[ ! -f "$excluded_manifest" ]]; then
+            # Fail loudly rather than fall back to "run everything": without
+            # the manifest there's no record of which suites need a binary.
+            echo "::error::missing $excluded_manifest -- cannot tell which suites need a built loom-daemon"
+            exit 1
+          fi
+          # Same parse as check-ci-suite-manifest.sh's manifest_names().
+          excluded_names=$(sed -E 's/#.*$//' "$excluded_manifest" | awk 'NF { print $1 }')
+
           overall_fail=0
+          ran=()
+          skipped=()
           for f in .loom/scripts/tests/test-merge-pr-*.sh; do
+            name=${f##*/}
+            if grep -qxF -- "$name" <<<"$excluded_names"; then
+              # Print the reason verbatim from the manifest, with the
+              # suite name removed (reasons may contain `#NNNN`, so take
+              # the raw line, not the comment-stripped one).
+              reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$excluded_manifest")
+              echo "SKIPPED (listed in $excluded_manifest): $name -- ${reason:-<no reason given>}"
+              skipped+=("$name")
+              continue
+            fi
+
+            ran+=("$name")
             echo "::group::$f"
             out=$(bash "$f" 2>&1)
             rc=$?
@@ -228,4 +267,16 @@ jobs:
               overall_fail=1
             fi
           done
+
+          echo
+          echo "Summary: ran ${#ran[@]} suite(s), skipped ${#skipped[@]} daemon-backed suite(s) listed in $excluded_manifest"
+          for s in ${skipped[@]+"${skipped[@]}"}; do
+            echo "  not run (needs a built loom-daemon): $s"
+          done
+          # Don't let the job go green having run nothing (e.g. a resync
+          # that moves every merge-pr suite into the manifest).
+          if [[ "${#ran[@]}" -eq 0 ]]; then
+            echo "::error::no test-merge-pr-*.sh suite was run -- every one is listed in $excluded_manifest"
+            exit 1
+          fi
           exit "$overall_fail"
