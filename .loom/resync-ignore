@@ -23,3 +23,47 @@ scripts/resync-installed.sh
 # scripts/tests/test-resync-installed.sh: companion test coverage for the
 # guard above. Pinned alongside it.
 scripts/tests/test-resync-installed.sh
+
+# ---------------------------------------------------------------------------
+# sky130-modexp #154: the Curator heartbeat-idempotency fix. Root-caused live
+# on this repo's issue #12, which collected 44 `curator:operator-premise-
+# recheck` comments in a month (27 of 43 gaps under the 24h window, minimum 23
+# minutes). `dep-recheck-fingerprint.sh decide` was NOT wrong -- the prior
+# marker handed to it was. 19 of the 22 post-2026-09-11 spam comments name the
+# same predecessor, "2026-09-10 12:46 UTC", which is exactly that thread's 30th
+# comment: page one of `GET /issues/{n}/comments` at its default per_page=30.
+#
+# The fix is two things, both of which live in the installed copies because the
+# arithmetic they feed is upstream Rust (`loom-daemon/src/dep_recheck/`):
+#   1. a pagination-safe, fail-closed prior-marker reader, and
+#   2. a confirm-under-claim re-decide in curator.md's two idempotency paths,
+#      so two concurrent passes cannot both conclude "reportable".
+# Upstream PR: TBD (see 2am#869) -- the reader belongs in defaults/scripts/ and
+# the prompt change in defaults/commands/loom/curator.md.
+
+# scripts/dep-recheck-prior-marker.sh: the new reader (no upstream counterpart
+#   yet, so an unpinned resync would ORPHAN/remove it, not merely revert it).
+scripts/dep-recheck-prior-marker.sh
+
+# scripts/tests/test-dep-recheck-prior-marker.sh: the hermetic regression suite
+#   (replays #12's page-boundary shape; wired into this repo's own CI).
+# scripts/tests/test-dep-recheck-heartbeat-race.sh: the two-concurrent-passes
+#   scenario, driving the real `decide` (needs a built loom-daemon).
+scripts/tests/test-dep-recheck-prior-marker.sh
+scripts/tests/test-dep-recheck-heartbeat-race.sh
+
+# scripts/tests/ci-wired.txt / ci-excluded.txt: pinned ONLY because the two
+#   suites above must stay listed in exactly one of them
+#   (check-ci-suite-manifest.sh enforces that partition). Without the pin a
+#   resync reverts the manifests while the pinned suites survive, leaving that
+#   checker failing on files it cannot classify. Retire these two pins in the
+#   same change that retires the suites' own pins.
+scripts/tests/ci-wired.txt
+scripts/tests/ci-excluded.txt
+
+# roles/curator.md + commands/loom/curator.md: the same file, installed twice.
+#   Both carry the "prior-marker read must be COMPLETE" and "Confirm under the
+#   claim" rules; pinning only one would leave the other reverted and the two
+#   copies silently disagreeing about the claim protocol.
+roles/curator.md
+commands/loom/curator.md

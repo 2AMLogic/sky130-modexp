@@ -1515,12 +1515,38 @@ below decides whether to claim at all:
   claim again, and repeated that churn on every re-check pass with zero work
   performed. The new shape never claims in the first place.
 - **Comment, heartbeat, or escalate** (anything that posts or changes a
-  label) → claim `loom:curating` immediately before that action, exactly as
-  "Claiming Work" describes for ordinary curation, then release it again
-  once the comment is posted — unless the same pass also transitions the
-  issue to `loom:curated` (its own label edit already drops `loom:curating`
-  in the same command, so there is nothing extra to release). This is
-  unchanged from today: a pass that does real work still claims normally.
+  label) → claim `loom:curating`, then **re-read the prior marker and
+  re-decide under that claim** ("Confirm under the claim" below), and post
+  only if the answer still holds. Release the claim again once the comment is
+  posted — unless the same pass also transitions the issue to `loom:curated`
+  (its own label edit already drops `loom:curating` in the same command, so
+  there is nothing extra to release). A pass that does real work still claims
+  normally; what #154 added is the re-decide between claiming and posting.
+
+**Confirm under the claim (#154): the decision that authorizes a post must be
+re-taken after the claim, never before it.** The read-decide-post sequence is
+otherwise a textbook check-then-act race: this path deliberately holds no
+claim while it reads (that is #7617, and it is correct), so two passes — an
+autonomous role-runner tick, a `/loom:sweep`, a second host's daemon — can
+both read the same prior state, both conclude "reportable", and both post
+before either comment exists. The claim alone does not close it: `gh issue
+edit --add-label` is not a compare-and-swap, so both passes can believe they
+hold `loom:curating`. Two steps together do:
+
+1. **Stand down if `loom:curating` is already held** by a live claim (run the
+   "Stale `loom:curating` Claim Check" above to tell live from dead). A
+   suppressed heartbeat is never urgent — there is no case where this pass
+   must post *now*.
+2. **Re-read the prior marker and re-run `decide` while holding the claim**,
+   and post only while it still says `CLAIM=true`. The loser of the race now
+   sees the winner's comment, gets `ACTION=skip`, and posts nothing. Post as
+   the *very next* action after that confirmation — anything inserted between
+   them widens the window again.
+
+A changed conclusion is unaffected: the loser's re-decide compares a
+*different* hash and still returns `comment`, so a real state transition is
+never swallowed (regression-tested in
+`.loom/scripts/tests/test-dep-recheck-heartbeat-race.sh`, cases C and F).
 
 **Conclusion fingerprint** — what the re-check concluded, not how it was worded:
 
@@ -1557,7 +1583,6 @@ unit-tested script instead
 
 ```bash
 ISSUE_NUMBER=<number>
-ISSUE_JSON=$(gh issue view "$ISSUE_NUMBER" --json comments)
 
 # Mechanical half: fetches the issue's own closedByPullRequestsReferences PRs
 # and computes VERDICT/BLOCKERS itself — including the #7281 fix that fails
@@ -1572,22 +1597,22 @@ eval "$(./.loom/scripts/dep-recheck-fingerprint.sh dep-recheck --number "$ISSUE_
 #     --verdict blocked --block-reason "doctor cycle exhausted")"
 RECHECK_MARKER="<!-- curator:dep-recheck:$CONCLUSION_HASH -->"
 
-# Most recent prior Curator re-check comment, of ANY conclusion.
-# NOTE: `printf '%s\n' "$VAR" | jq`, never `echo "$VAR" | jq` — zsh's `echo`
-# builtin reinterprets `\n`/`\t` escapes by default, corrupting captured
-# `gh --json` output (a literal `\n` inside a body/comment string becomes a
-# raw newline) before jq ever parses it (#5094).
-PRIOR=$(printf '%s\n' "$ISSUE_JSON" | jq -c '[.comments[] | select(.body | test("<!-- curator:dep-recheck:"))] | last // {}')
-PRIOR_HASH=$(printf '%s\n' "$PRIOR" | jq -r '.body // ""' \
-  | sed -n 's|.*<!-- curator:dep-recheck:\([0-9a-f]\{1,\}\) -->.*|\1|p' | tail -n 1)
-PRIOR_AT=$(printf '%s\n' "$PRIOR" | jq -r '.createdAt // empty')
+# Most recent prior Curator re-check comment, of ANY conclusion. Driven by the
+# shared script for the same reason CONCLUSION_HASH is (#154) — see "The
+# prior-marker read must be COMPLETE" below. It emits PRIOR_HASH / PRIOR_AT /
+# PRIOR_AGE_H plus READ_OK, and fails CLOSED rather than reporting "no prior
+# marker" from a read it could not prove complete.
+PRIOR_OUT=$(./.loom/scripts/dep-recheck-prior-marker.sh \
+  --marker curator:dep-recheck --issue "$ISSUE_NUMBER") || true
+eval "$PRIOR_OUT"
 
-# Age in hours (portable: BSD `date -j -f` on macOS, GNU `date -d` elsewhere).
-_epoch() { date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$1" +%s 2>/dev/null || date -d "$1" +%s; }
-if [ -n "$PRIOR_AT" ]; then
-  PRIOR_AGE_H=$(( ( $(date +%s) - $(_epoch "$PRIOR_AT") ) / 3600 ))
-else
-  PRIOR_AGE_H=""   # no prior re-check comment at all
+# FAIL CLOSED. Branch on READ_OK, never on the absence of PRIOR_HASH: an
+# unreadable or truncated thread produces the same empty PRIOR_HASH a genuine
+# first-ever check does, and that shape is what tells `decide` to post.
+if [ "${READ_OK:-false}" != "true" ]; then
+  # Post nothing, claim nothing, change no label. The next pass re-reads.
+  echo "prior-marker read failed (${READ_ERROR:-unknown}) — skipping $ISSUE_NUMBER this pass"
+  return 2>/dev/null || exit 0
 fi
 
 # The "Four-way decision" itself (#7617) — still entirely read-only, no claim
@@ -1612,6 +1637,54 @@ fail-safe by hand — never let a PR's `mergeable`/`mergeStateStatus` reading
 compare `$CONCLUSION_HASH`/`$PRIOR_HASH`/`$PRIOR_AGE_H` by hand using the table
 below, but the claim-discipline rule it encodes does not change.
 
+#### The prior-marker read must be COMPLETE (#154)
+
+**`decide` is only as good as the prior marker you hand it, and the obvious
+read of "the most recent marker comment" is wrong on any thread longer than 30
+comments.** This is not a hypothetical: it is the entire cause of
+sky130-modexp #12, where 44 `curator:operator-premise-recheck` heartbeats
+landed over a month with 27 of the 43 gaps under the 24h window and a minimum
+gap of 23 minutes — every one of them reporting the *same* conclusion hash
+`decide` would have skipped.
+
+The mechanism: `GET /repos/{owner}/{repo}/issues/{n}/comments` defaults to
+`per_page=30` and returns the **oldest** 30 comments, with nothing in the
+response to say more exist. 19 of the 22 spam comments on #12 name the same
+predecessor — "2026-09-10 12:46 UTC" — which is precisely that thread's 30th
+comment. The pass sees a marker ~400h old, `decide` correctly answers
+`heartbeat` on wrong inputs, and it posts. Note what this rules out: **no lock
+can fix it**, because a second pass running strictly *after* the first still
+cannot see the first's comment — it is on page 2.
+
+It is an easy trap to fall into precisely *because* the surrounding advice is
+right: `.loom/CLAUDE.md` § "REST vs GraphQL for forge queries" tells you to
+route around GraphQL exhaustion via REST, and the naive REST substitute for
+`gh issue view --json comments` is a single unpaginated page. So:
+
+- **Always drive `./.loom/scripts/dep-recheck-prior-marker.sh`.** It answers
+  only from a read it can *prove* contains the freshest marker — either the
+  whole thread, or the newest window with a marker inside it (anything outside
+  a newest-N window is necessarily older) — and fails closed otherwise. **Both
+  forge paths live inside it**: GraphQL (`comments(last: 100)`, which returns
+  `totalCount` alongside the newest window in one request) with REST
+  `--paginate` as the fallback, so one exhausted budget degrades to the other
+  instead of to a wrong answer. `READ_VIA` reports which one answered. There is
+  no correct hand-rolled substitute for either path.
+- **Never hand-roll the read**, in either direction: not `gh api
+  .../issues/N/comments` (page 1 only), and not `gh issue view --json comments
+  | jq '... | last'` (correct today, but it re-derives per pass the exact
+  computation #7281 already established must be shared).
+- **Branch on `READ_OK`, not on an empty `PRIOR_HASH`.** A failed read and a
+  genuine first-ever check both produce an empty hash, and the second of those
+  is the "always post" row of the table below. `READ_OK=false` is the one
+  outcome that must never reach `decide`.
+- **Selection is by `max(createdAt)`**, not by array position, so neither API
+  ordering nor a page boundary can pick a stale marker.
+
+Regression-tested hermetically in
+`.loom/scripts/tests/test-dep-recheck-prior-marker.sh` (case 1 replays #12's
+page-boundary shape; case 2 pins the fail-closed contract).
+
 **Four-way decision** — `$ACTION`/`$CLAIM` above already computed this; the
 table just names each row. Nothing above this point has claimed anything:
 
@@ -1632,13 +1705,54 @@ That one-time re-post is expected; do not try to parse legacy prose to avoid it.
 exists so a genuinely long-stalled issue still shows periodic proof-of-life
 rather than going silent forever; it is *not* a licence to re-confirm hourly.
 
-**When `$CLAIM=true`** (every row except silent skip): claim immediately
-before posting, exactly as "Claiming Work" describes —
-`gh issue edit "$ISSUE_NUMBER" --add-label "loom:curating"` — post the
-comment (and any label change), then `gh issue edit "$ISSUE_NUMBER"
---remove-label "loom:curating"` afterward **unless** this same pass also adds
-`loom:curated` (that label edit already removes `loom:curating` in the same
-command — do not issue a second, redundant remove).
+**When `$CLAIM=true`** (every row except silent skip): claim, **re-decide under
+the claim**, post, release. The re-decide is not optional — it is what makes
+two concurrent passes post once rather than twice (#154, "Confirm under the
+claim" above):
+
+```bash
+# 1. Stand down rather than pile on: another live pass is already posting.
+LABELS=$(gh issue view "$ISSUE_NUMBER" --json labels --jq '[.labels[].name] | join(",")')
+case ",$LABELS," in
+  *,loom:curating,*)
+    # Run the "Stale loom:curating Claim Check" above to tell live from dead.
+    # A LIVE claim means this pass is DONE with this issue: no comment, no
+    # label edit, and no retry loop waiting for the other pass to finish.
+    echo "loom:curating already held — standing down on $ISSUE_NUMBER"
+    return 2>/dev/null || exit 0
+    ;;
+esac
+
+# 2. Claim, exactly as "Claiming Work" describes.
+gh issue edit "$ISSUE_NUMBER" --add-label "loom:curating"
+
+# 3. RE-READ and RE-DECIDE while holding it. Same two commands as above; the
+#    point is that they run again, now, after the claim.
+PRIOR_OUT=$(./.loom/scripts/dep-recheck-prior-marker.sh \
+  --marker curator:dep-recheck --issue "$ISSUE_NUMBER") || true
+eval "$PRIOR_OUT"
+if [ "${READ_OK:-false}" != "true" ]; then
+  gh issue edit "$ISSUE_NUMBER" --remove-label "loom:curating"   # fail closed
+else
+  if [ -n "$PRIOR_HASH" ]; then
+    eval "$(./.loom/scripts/dep-recheck-fingerprint.sh decide --hash "$CONCLUSION_HASH" \
+      --prior-hash "$PRIOR_HASH" --prior-age-hours "$PRIOR_AGE_H")"
+  else
+    eval "$(./.loom/scripts/dep-recheck-fingerprint.sh decide --hash "$CONCLUSION_HASH")"
+  fi
+  # 4. Post ONLY if it still says so — and as the very next action.
+  if [ "$CLAIM" = "true" ]; then
+    gh issue comment "$ISSUE_NUMBER" --body "...$RECHECK_MARKER"
+  fi
+  gh issue edit "$ISSUE_NUMBER" --remove-label "loom:curating"
+fi
+```
+
+Release afterward **unless** this same pass also adds `loom:curated` (that
+label edit already removes `loom:curating` in the same command — do not issue a
+second, redundant remove). Note that a confirm-read saying `skip` still
+releases the claim: standing down is a complete outcome, never a state to leave
+the issue parked in.
 
 **When `$CLAIM=false`** (silent skip, or `$ACTION=none` when there was
 nothing to report at all): take no `gh issue edit` action whatsoever. A silent
@@ -1785,17 +1899,26 @@ auto-releases the issue — see the note above the Priority 2 query in "Finding
 Work" for the "doing the work" vs. "re-checking the premise" distinction this
 rests on.
 
-**Claim discipline (#7617): same rule as "Checking Dependencies" above.**
+**Claim discipline (#7617, #154): same rule as "Checking Dependencies" above.**
 `loom:operator-only` is likewise excluded from Priority 1/2 discovery, so this
 is never "starting enhancement work" either — extracting the reference and
-computing the fingerprint (below) is a read, no claim needed. Only claim
-`loom:curating` immediately before the one action this section ever takes
-(posting the "premise possibly stale" comment in "Reporting a closed
-reference" below), and release it again right after — this section never
-adds `loom:curated`, so unlike "Checking Dependencies" there is no
-label-edit-that-already-removes-it shortcut here; the release is always its
-own explicit step. When there is nothing to report (no reference found, or
-every reference still open), never claim at all.
+computing the fingerprint (below) is a read, no claim needed. Claim
+`loom:curating` when (and only when) `decide` says to post the one action this
+section ever takes (the "premise possibly stale" comment in "Reporting a closed
+reference" below), **re-read the prior marker and re-decide while holding that
+claim**, post only if the answer still holds, and release it right after — this
+section never adds `loom:curated`, so unlike "Checking Dependencies" there is
+no label-edit-that-already-removes-it shortcut here; the release is always its
+own explicit step. When there is nothing to report (no reference found, every
+reference still open, or the confirm-read now says skip), never claim at all —
+or release immediately without posting.
+
+**This section is where the #154 spam actually happened**, so both halves of
+that fix are mandatory here, not advisory: the complete prior-marker read ("The
+prior-marker read must be COMPLETE" above) and the confirm-under-claim
+re-decide ("Confirm under the claim" above). Issue #12 in this repo took 44
+heartbeats in a month — 27 of 43 gaps under the window, minimum 23 minutes —
+from a prior read that could only see the oldest 30 comments of the thread.
 
 ### Finding candidates
 
@@ -1873,7 +1996,10 @@ this step at all when it says `$CLAIM=true` (i.e. `$ACTION` is `comment` or
 exactly as "Claim discipline" above describes:
 
 ```bash
+# Stand down if loom:curating is already held by a live pass (#154).
 gh issue edit "$ISSUE_NUMBER" --add-label "loom:curating"
+# --- RE-READ + RE-DECIDE HERE, under the claim (#154). Only continue while
+# --- CLAIM is still true; otherwise release and post nothing.
 gh issue comment "$ISSUE_NUMBER" --body "**Operator-parked, premise possibly stale**: the reference this issue is parked on, #<ref>, is now **closed**. Worth an operator taking another look — not auto-releasing; \`loom:operator-only\` and its sub-kind label are left untouched. <!-- curator:operator-premise-recheck:$CONCLUSION_HASH -->"
 gh issue edit "$ISSUE_NUMBER" --remove-label "loom:curating"
 ```
@@ -1906,16 +2032,19 @@ nothing to compare against a prior marker either — feed that empty hash into
 without even needing `PRIOR_HASH`, matching "no comment this pass" above.
 
 ```bash
-PRIOR=$(gh issue view "$ISSUE_NUMBER" --json comments \
-  --jq '[.comments[] | select(.body | test("<!-- curator:operator-premise-recheck:"))] | last // {}')
-PRIOR_HASH=$(printf '%s\n' "$PRIOR" | jq -r '.body // ""' \
-  | sed -n 's|.*<!-- curator:operator-premise-recheck:\([0-9a-f]\{1,\}\) -->.*|\1|p' | tail -n 1)
-PRIOR_AT=$(printf '%s\n' "$PRIOR" | jq -r '.createdAt // empty')
-_epoch() { date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$1" +%s 2>/dev/null || date -d "$1" +%s; }
-if [ -n "$PRIOR_AT" ]; then
-  PRIOR_AGE_H=$(( ( $(date +%s) - $(_epoch "$PRIOR_AT") ) / 3600 ))
-else
-  PRIOR_AGE_H=""
+# The prior-marker read. Driven by the shared script, never hand-rolled and
+# never a bare `gh api .../issues/N/comments` (page 1 = the OLDEST 30 comments,
+# which is exactly how #12 spammed for a month — see "The prior-marker read
+# must be COMPLETE (#154)" above).
+PRIOR_OUT=$(./.loom/scripts/dep-recheck-prior-marker.sh \
+  --marker curator:operator-premise-recheck --issue "$ISSUE_NUMBER") || true
+eval "$PRIOR_OUT"
+
+# FAIL CLOSED on READ_OK — never on an empty PRIOR_HASH, which a truncated read
+# and a genuine first-ever check produce identically.
+if [ "${READ_OK:-false}" != "true" ]; then
+  echo "prior-marker read failed (${READ_ERROR:-unknown}) — skipping $ISSUE_NUMBER this pass"
+  return 2>/dev/null || exit 0
 fi
 
 if [ -n "$PRIOR_HASH" ]; then
@@ -1925,8 +2054,20 @@ else
   eval "$(./.loom/scripts/dep-recheck-fingerprint.sh decide --hash "$CONCLUSION_HASH")"
 fi
 # ACTION=none|skip|comment|heartbeat, CLAIM=true|false — same rule as
-# "Checking Dependencies" above: only claim loom:curating when CLAIM=true.
+# "Checking Dependencies" above: only claim loom:curating when CLAIM=true, and
+# then RE-RUN the two blocks above under that claim and post only if CLAIM is
+# still true (#154 "Confirm under the claim"). The comment in "Reporting a
+# closed reference" above is the very next action after that confirmation.
 ```
+
+**Do not cite an age in the comment body without having read it from
+`PRIOR_AGE_H`.** Every one of #12's spam comments narrated its own overdue-ness
+("~401h since the 2026-09-10 12:46 UTC check") from a truncated read — the
+prose was a faithful report of a wrong input, which is precisely why it read as
+plausible for a month. If the age you are about to write down implies the
+previous heartbeat was days ago, and this thread is long, that is the signature
+of an incomplete read: re-check `COMMENTS_READ` against `COMMENTS_TOTAL` before
+posting anything.
 
 ### What this section never does
 
@@ -2340,6 +2481,18 @@ would be 24.8h old — past the window. That pass posts **exactly one** heartbea
 ("still blocked on #4743, no change since <date>") carrying the same hash, and
 the 24h window restarts from it. The passes in between still skip.
 
+Variant — the truncated read (#154, what actually went wrong on #12): suppose
+Pass 2 reads the comment thread with a bare `gh api
+repos/:owner/:repo/issues/4736/comments`. That is page 1 — the **oldest 30**
+comments — and on a long thread Pass 1's marker is not in it. Pass 2 therefore
+sees either no marker at all ("first-ever check → comment") or a much older
+one ("401h overdue → heartbeat"), and posts. `decide` was right both times; its
+*input* was wrong. Every pass repeats it, every 20 minutes, forever, each
+comment narrating the same stale predecessor date. **The tell is a heartbeat
+whose cited "hours since the last check" is much larger than the interval this
+role actually runs at.** Drive
+`./.loom/scripts/dep-recheck-prior-marker.sh` and branch on `READ_OK`.
+
 Why this pattern matters:
 - Re-verification still happens every pass; only the redundant *comment* is suppressed
 - Real state changes are never suppressed — a changed conclusion always comments
@@ -2348,6 +2501,10 @@ Why this pattern matters:
   (both `$CLAIM=true` from `decide`) claim, act, and release (#7617). The old
   shape claimed on every pass, including Pass 2, and released again once the
   fingerprint came back unchanged — pure churn with no work performed.
+- Pass 1 and Pass 3 each re-read the prior marker and re-run `decide` *after*
+  claiming, and post only if the answer survives (#154). Had a second pass been
+  running concurrently with Pass 1, its confirm-read would have found Pass 1's
+  comment and skipped instead of posting a near-duplicate.
 
 ### Verified Corrections Survive Re-Curation → Append, Never Overwrite
 
