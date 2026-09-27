@@ -717,12 +717,19 @@ By verifying issue closure, you keep the backlog clean and prevent confusion abo
 
 **Run every 15-30 minutes** to check if blocked issues can be unblocked when their dependencies resolve.
 
-### Problem: Stuck Blocked Issues
+### Problem: Stuck Blocked Issues (and PRs, #8925)
 
-When an issue is marked `loom:blocked` due to dependencies, it may stay blocked indefinitely even after the blocking issues are resolved. This creates:
-- ❌ Ready-to-implement issues stuck in blocked state
+When an issue OR pull request is marked `loom:blocked` due to a dependency, it
+may stay blocked indefinitely even after the dependency resolves. This
+creates:
+- ❌ Ready-to-implement issues (or ready-to-land PRs) stuck in blocked state
 - ❌ Manual intervention required to unblock
 - ❌ Delays in the development pipeline
+
+`gh issue list` never returns a pull request, so `check_and_unblock` runs a
+second enumeration, `check_and_unblock_prs` (below), rather than folding PRs
+into the issue query; a PR clears to a review-lane label, never to
+`loom:issue` (#8925).
 
 ### Check Blocked Issues
 
@@ -738,6 +745,14 @@ For each `loom:blocked` issue, check if all dependencies have resolved:
 # 3. If all resolved, unblock the issue
 ```
 
+**A dependency stated only in a comment cannot be read here (#8925's other
+defect)** — this routine reads the BODY only. A role applying `loom:blocked`
+must record the blocker in the body as a **park record**
+(`loom-daemon park-record render`; grammar: `.loom/docs/park-record.md`),
+not as prose in a comment — its rendered `Blocked by: #N`
+line already matches `parse_dependencies` below, so no parser change is
+needed once a role writes one.
+
 ### Dependency Parsing
 
 Recognize these patterns in issue bodies. The phrase forms tolerate markdown
@@ -750,18 +765,15 @@ matched line is captured, not just the first (#4508):
 | Explicit blocker | `Blocked by #123`, `**Blocked by:** #123` |
 | Depends on | `Depends on #123`, `_Depends on_ #123` |
 | Requires | `Requires #123` |
-| Task list | `- [ ] #123: Description` |
+| Task list (unchecked only) | `- [ ] #123: Description` — a checked `- [x] #123` records done work, not a gate (#7973) |
 
 ```bash
 parse_dependencies() {
   local body="$1"
-  # Two-stage parse (#4508): stage 1 selects lines that declare a dependency
-  # phrase, tolerant of markdown emphasis/colon between the phrase and the
-  # first #N (e.g. "**Blocked by:** #1"); stage 2 extracts every #N on those
-  # lines, so comma-separated lists ("#1 (reason), #3 (reason)") capture all
-  # refs, not just the first.
+  # Two-stage parse (#4508): stage 1 selects whole lines declaring a dependency
+  # (forms above; checkbox is UNCHECKED-only, #7973); stage 2 extracts every #N.
   echo "$body" \
-    | grep -E '(Blocked by|Depends on|Requires|\- \[.\])[*_:[:space:]]*#[0-9]+' \
+    | grep -E '(Blocked by|Depends on|Requires|\- \[ \])[*_:[:space:]]*#[0-9]+' \
     | grep -oE '#[0-9]+' | tr -d '#' | sort -u
 }
 ```
@@ -929,8 +941,22 @@ check_and_unblock() {
       fi
     fi
   done
+
+  # Pull requests (#8925): a parked PR is a SEPARATE enumeration, not a filter
+  # on the loop above — see "Problem: Stuck Blocked Issues" for why
+  # `gh issue list` can never surface one.
+  check_and_unblock_prs
 }
 ```
+
+### Unblocking Pull Requests (#8925)
+
+A parked PR clears to a review-lane label, never `loom:issue` (a PR was never
+curated), and its superseding check reads the PR's OWN state, not a linked
+PR's. `check_and_unblock_prs`, `pr_has_superseding_block` and
+`previous_review_label` are defined in full, with a worked example, in
+`.loom/docs/park-record.md#the-unblock-sweeps-pr-side-functions`
+— read on demand, not inlined here.
 
 ### Example Unblocking Flow
 
@@ -971,6 +997,10 @@ gh issue comment 963 --body "🔓 **Unblocked**: Dependencies resolved (#962). R
 # loom:operator label check AND the merge-state check independently trigger
 # here) → stay blocked, do NOT strip loom:blocked or post an "Unblocked"
 # comment.
+
+# A PR-side worked example (#8925's own #8314 shape) is in park-record.md's
+# "The unblock sweep's PR-side functions" section, alongside the three
+# functions it exercises.
 ```
 
 ### PR Dependencies
@@ -997,6 +1027,10 @@ pr_state=$(gh pr view "$pr_number" --json state,mergedAt --jq '.state')
   blocked**, regardless of its labels (`has_superseding_block`, #7267) — a PR
   in that state cannot currently land no matter what
 - If issue was blocked for non-dependency reasons → Check comments for context
+- **PR-side (#8925)**: `pr_has_superseding_block` true → keep blocked, even if
+  every declared blocker closed; a `loom:blocked` that is a policy hold, not a
+  dependency wait (an operator/quarantine call) → leave it, do not write a
+  park record for it
 
 ## Epic Progress Tracking
 
@@ -1232,14 +1266,13 @@ Each tick performs the smallest possible edit to it, in this order:
      single-holder case above, just applied to the whole group at once.
    - If an incumbent's issue number is for any reason unreadable from the
      step-1 listing, this tick makes **no** `loom:urgent` writes rather than
-     guess which one to evict — fail closed, the same stance
-     `urgent-flip-guard.sh` takes on an unreadable label-event history below.
+     guess which one to evict — fail closed.
 
 ### `urgency_rank()` — the deterministic ladder
 
 Two independent ticks reading the **same** forge state MUST compute the same
-number here. That reproducibility, not the ladder's sophistication, is what stops
-the flap. Never rank on anything the next tick cannot re-derive mechanically.
+number here. That reproducibility is what stops the flap. Never rank on
+anything the next tick cannot re-derive mechanically.
 
 ```bash
 urgency_rank() {
@@ -1253,7 +1286,8 @@ urgency_rank() {
     echo 1; return
   fi
   # 2 — the delivery pipeline itself is down (nothing ships until it is fixed).
-  if printf '%s\n' "$title" | grep -Eqi 'broken main|main is red|CI is red|pipeline (is )?(stalled|halted|wedged)|outage'; then
+  #     Bare `outage` alone is a component name (#8649/#8769) — it needs a pipeline/CI/build noun.
+  if printf '%s\n' "$title" | grep -Eqi 'broken main|main is red|CI is red|pipeline (is )?(stalled|halted|wedged)|(pipeline|CI|build) outage'; then
     echo 2; return
   fi
   # 3-5 — tier labels (see "Tier-Aware Prioritization" above).

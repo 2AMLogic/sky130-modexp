@@ -270,7 +270,7 @@ Local verification:
 - [ ] Commits are signed off if required (`commit.signoff: true` in `.loom/config.json`, or a DCO/`sign-off` requirement — `git commit --signoff`; see "DCO sign-off" above)
 - [ ] Relevant tests pass
 - [ ] Each criterion has explicit verification (not "I think it works")
-- [ ] Ran the "defaults/ Version-Bearing-Files Gate" command block below (not just read it) — exited 0. It fails if this PR hand-edits any version-bearing file's value (`package.json`, `mcp-loom/package.json`, `Cargo.toml`, `CLAUDE.md`, `VERSION`) — those are now bumped automatically at merge time (#7743), never by hand in a feature PR.
+- [ ] Ran the "defaults/ Version-Bearing-Files Gate" command block below (not just read it) — exited 0. It fails if this PR hand-edits any version-bearing file's value (`package.json`, `mcp-loom/package.json`, `Cargo.toml`, `VERSION`) — those are now bumped automatically at merge time (#7743), never by hand in a feature PR.
 ```
 
 **Run the defaults/ Version-Bearing-Files Gate locally — an actual command, not a checklist bullet to read (#6675, recurring Judge rejection: #6598, #6599, #6610, #6611, #6630, #6668 all hit this in CI because it was never run pre-PR). A single automated workflow (`.github/workflows/version-bump-on-merge.yml`, #7743) now owns bumping `VERSION` and the other version-bearing files, once, right after any merge that touched `defaults/` — a feature PR must not carry its own edit to any of them. `./.loom/scripts/create-pr.sh` also runs a version-bearing-file consistency check (`version-check-gate.sh`, #6730) before creating the PR, so running the block below by hand is defense-in-depth, not the only line of defense; still run it locally to catch a hand-edit before pushing rather than at CI time:**
@@ -288,7 +288,7 @@ MERGE_BASE="$(git merge-base origin/main HEAD)"
 
 # Exit 0 = no version-bearing file's VALUE changed anywhere in your diff;
 # exit 1 = your PR hand-edits one of package.json/mcp-loom/package.json/
-# Cargo.toml/CLAUDE.md/VERSION. Do NOT "fix" a failure here by running
+# Cargo.toml/VERSION. Do NOT "fix" a failure here by running
 # ./scripts/version.sh bump patch -- that command is now exclusively the
 # post-merge workflow's job; a Builder should never run it. Revert the
 # edit(s) to the flagged file(s) instead.
@@ -588,7 +588,7 @@ Before creating a PR, verify your title:
 
 ## Commit Messages: Same Rules as PR Titles
 
-Commit messages follow the **exact same rules** as PR titles above. Since this repo uses squash merge, the PR title becomes the final commit on main — but individual commit messages still matter for worktree history and debugging.
+Commit messages follow the **exact same rules** as PR titles above. This repo merges with merge commits (#9105), so each commit message survives onto main verbatim — write each one as durable history.
 
 ### How to Write Commit Messages
 
@@ -745,7 +745,22 @@ Contributes to #123
 
 `Part of #N` references the issue (keeping the PR discoverable) but does NOT trigger auto-close, so the family/epic issue survives the merge. Only the **final increment** that completes the family uses `Closes #N`.
 
-**Both the PR body and the commit message must carry the same reference.** This repo squash-merges, and GitHub harvests closing keywords from the squash commit message as well as the PR body — a stray `Closes #N` in the commit body will auto-close the family issue even when the PR body says `Part of #N`. When in doubt on a `loom:epic` issue, prefer `Part of #N`.
+**Write the trailer as PLAIN TEXT — never in backticks (#8796).** A trailer inside an inline
+code span (or a fenced block) is **silently ignored**: merge-pr.sh's partial-increment parser
+blanks code spans before matching, deliberately (#5234 — so a hypothetical mid-sentence mention
+is not read as a declaration). The PR then looks correct to a reviewer and to Judge while the
+`loom:building` → `loom:issue` reset (#3667) never fires and the family issue is stranded at
+`loom:building` with nothing logged anywhere — the rjwalters/kicad-tools PR #5686 / #5240 incident.
+
+```markdown
+Part of #123              <- declaration: parsed, the label reset fires on merge
+`Part of #123`            <- code span: NOT a declaration, reset silently skipped
+```
+
+merge-pr.sh warns (non-blocking) on a whole-line backticked trailer, but that warning reaches
+only whoever runs the merge — get it right in the body.
+
+**Both the PR body and the commit messages must carry the same reference.** GitHub harvests closing keywords from the PR body and the merge commit's subject (this repo merges with merge commits, #9105) — individual commit bodies are not parsed, but keep the reference consistent in them anyway. When in doubt on a `loom:epic` issue, prefer `Part of #N`.
 
 #### A stray closing keyword ANYWHERE in the body defeats `Part of #N` (#4569)
 
@@ -779,10 +794,10 @@ the cause — Loom's `feature/issue-N` convention does not create a Development-
   grep -inE '\b(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#N\b' <<<"$PR_BODY"
   ```
 
-- **The same rule applies to every commit message on the branch** (#4595). The squash message
-  GitHub composes from your commits is parsed for closing keywords too, so a stray
-  `close #N` in a commit body closes the issue even when the PR body is spotless. Scan them
-  before pushing — and amend/reword (`git commit --amend`, `git rebase -i`) if one is there:
+- **The same rule applies to every commit message on the branch** (#4595 — consistency
+  now, not an auto-close hazard): GitHub parses only the PR body and the merge commit's
+  subject, so a stray `close #N` in a commit body no longer auto-closes the issue.
+  Scan before pushing — and amend/reword if one is there:
 
   ```bash
   # Must print nothing for the tracked issue N:
@@ -841,13 +856,12 @@ after a review round-trip:**
    (repeat until the rebase completes).
 2. Re-run the project's check command (`buildGate.command`, e.g. `pnpm check:ci`)
    — a rebase can silently change behavior even when it resolves cleanly.
-3. **Version-bearing-file sync gate (#7168)**: a rebase can absorb a `VERSION`
-   bump from `main` without your own edits raising a conflict, leaving
-   `.loom/install-metadata.json` or another version-bearing file stale. Run
-   the gate before proceeding:
+3. **Version-bearing-file sync gate (#7168; moot after #7743)**: a clean rebase
+   lands `origin/main`'s exact version values, so it never fires unless your
+   branch carries its own version-bearing edit — revert it, never `version.sh bump`:
    ```bash
    if [ -x ./.loom/scripts/version-check-gate.sh ] && ! ./.loom/scripts/version-check-gate.sh --fix-hint "before push."; then
-     echo "Aborting: version-bearing files are out of sync after rebase (see BLOCKER:/Fix: above)." >&2
+     echo "Aborting: version-bearing files out of sync after rebase (see BLOCKER: above) -- revert, never bump." >&2
      exit 1
    fi
    ```

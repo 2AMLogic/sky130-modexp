@@ -49,8 +49,8 @@
 #     --forbid-bump   Inverted mode (#7743): FAIL if this PR's own commits
 #                     change the extracted version VALUE of any version-bearing file
 #                     (package.json, mcp-loom/package.json, Cargo.toml,
-#                     CLAUDE.md, VERSION -- the same set scripts/version.sh
-#                     manages); PASS otherwise, regardless of --paths /
+#                     VERSION -- the same set scripts/version.sh manages);
+#                     PASS otherwise, regardless of --paths /
 #                     VERSION_BUMP_WATCH_PATHS (this mode does not gate on a
 #                     watched path at all -- it gates on the version value
 #                     itself, which is a property of the diff alone). Off by
@@ -79,8 +79,8 @@
 # version value between merge-base(--base, --head) and --head (not "did the
 # raw file change", and NOT against --base directly: see the BASE_REF block
 # in that code path for why base-branch drift would otherwise false-FAIL),
-# so an unrelated CLAUDE.md prose edit that never touches the
-# `**Loom Version**:` line still passes even though CLAUDE.md itself is in
+# so an unrelated Cargo.toml edit (a dependency bump, say) that never touches
+# the `version = "..."` line still passes even though Cargo.toml itself is in
 # the diff. This mirrors scripts/version.sh's own get_version_from_file()
 # extraction rules per file type rather than importing that script, so this
 # file stays a single self-contained script (its own #6480 header contract
@@ -143,11 +143,17 @@ MARKER='<!-- loom:no-surface-change -->'
 # (#7743) -- kept as a literal duplicate here, not sourced from that script,
 # so this file remains a single self-contained script per its own #6480
 # consumer-reuse header contract.
+#
+# CLAUDE.md was dropped from this set in #8147, in lockstep with
+# scripts/version.sh's own VERSION_FILES: it no longer carries a
+# `**Loom Version**:` header at all, because it is injected into every agent
+# session's prompt prefix and a per-bump token there invalidates the whole
+# cached prefix downstream of it. Keep the two lists identical — a file listed
+# here but not stamped by version.sh can only ever produce false FAILs.
 FORBID_BUMP_VALUE_FILES=(
   "package.json"
   "mcp-loom/package.json"
   "Cargo.toml"
-  "CLAUDE.md"
   "VERSION"
 )
 
@@ -256,9 +262,6 @@ if $FORBID_BUMP; then
       *.toml)
         grep -m1 '^version' <<<"$content" | sed 's/version = "\(.*\)"/\1/' || true
         ;;
-      CLAUDE.md)
-        grep -o 'Loom Version\*\*: [0-9]*\.[0-9]*\.[0-9]*' <<<"$content" | grep -o '[0-9]*\.[0-9]*\.[0-9]*' || true
-        ;;
       VERSION)
         tr -d '[:space:]' <<<"$content"
         ;;
@@ -347,8 +350,19 @@ echo "Every file under defaults/ is copied into consumers' installed" >&2
 echo ".loom/{scripts,hooks,roles,docs,bin}/ + .claude/commands/loom/ surfaces at" >&2
 echo "install time -- NOT refreshed by a git pull (#3777). VERSION is the only" >&2
 echo "mechanical signal consumers have that those copies are stale, so a" >&2
-echo "watched-path change must bump it (at minimum the patch component):" >&2
+echo "watched-path change must eventually be paired with a bump (at minimum" >&2
+echo "the patch component):" >&2
 echo "    ./scripts/version.sh bump patch" >&2
+echo "" >&2
+echo "If you are a Builder on a feature PR: do NOT run that command yourself." >&2
+echo ".github/workflows/version-bump-on-merge.yml (#7743) bumps VERSION exactly" >&2
+echo "once, automatically, right after this PR merges -- and the separate" >&2
+echo "--forbid-bump invocation of this same script (the one CI's PR gate job" >&2
+echo "actually runs, #7823) FAILS if your diff hand-edits VERSION or any other" >&2
+echo "version-bearing file. This default-mode FAIL is the merge-time /" >&2
+echo "repo-maintainer gate (e.g. a #6480 consumer repo bumping its own VERSION" >&2
+echo "directly on its own main), not per-PR guidance -- the two modes" >&2
+echo "intentionally disagree about who should touch VERSION and when." >&2
 echo "" >&2
 echo "If this change genuinely does not alter installed behavior (e.g. a" >&2
 echo "comment, a test-only edit, a typo fix), declare that explicitly instead" >&2

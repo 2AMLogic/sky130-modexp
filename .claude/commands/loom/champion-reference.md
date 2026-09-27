@@ -292,7 +292,8 @@ gh issue edit <number> --add-label "loom:evaluating"
 | A prior Champion verdict comment already carries `VERDICT_MARKER` for the issue's **current** title+body hash | **Unrevised since last review — skip** | No comment, no claim, no label change. A genuine title/body edit changes the hash and always produces a fresh marker and a fresh evaluation; comments and label churn do not. |
 | Issue already carries `loom:evaluating` and the claim is younger than `LOOM_STALE_EVALUATING_MINUTES` | **Concurrent evaluation in progress** | Skip, do not stomp the claim; continue the batch. |
 | Issue already carries `loom:evaluating` and the claim is older than `LOOM_STALE_EVALUATING_MINUTES` | **Stale claim — a prior Champion pass likely died mid-evaluation** | Reclaim (`--add-label "loom:evaluating"` again) then evaluate normally. |
-| ≥2 prior "NEEDS REVISION" comments exist, the issue is not already `loom:operator-only`, and the recurring findings are **not** dependency-only | **N=2 threshold reached** | Escalate instead of posting a third+ near-identical rejection: comment with `<!-- champion:proposal-escalated -->` and add `loom:operator-only` (Champion routes, a human decides — the proposal label stays, nothing is closed). |
+| ≥2 prior "NEEDS REVISION" comments exist, the issue is not already `loom:operator-only`, and the recurring findings are **not** dependency-only and **not** all `premise-false` | **N=2 threshold reached** | Escalate instead of posting a third+ near-identical rejection: comment with `<!-- champion:proposal-escalated -->` and add `loom:operator-only` (Champion routes, a human decides — the proposal label stays, nothing is closed). |
+| ≥2 prior "NEEDS REVISION" comments, and **every** recurring finding is tagged `premise-false` (a cited path/line-range/repo-state claim, re-verified false against `origin/main` — on the **resolved** path and with **positive** evidence; an inconclusive re-run escalates instead, #8593) | **N=2 threshold reached, but no human decision is needed (#7657)** | **Close, do not escalate.** Comment with `<!-- champion:premise-false-closed:<main-sha> -->` naming the re-run check(s), then `gh issue close --reason "not planned"`. No `loom:operator-only`. A mixed finding set still escalates via the row above. |
 | ≥2 prior rejections but **every** recurring finding names a dependency *and* cites an open, non-cycle issue/PR | **Timing finding, not a merits finding (#5664)** | **Defer — do not escalate.** `classify-dependency-block.sh --check-defer` returns `DEFER`; no label, no new comment, only a `<!-- champion:dep-defer:<fingerprint> -->` marker PATCHed onto the existing verdict comment. The condition ends when the blocker closes, an event a later pass detects for free. |
 | Same, but every recorded blocker has since **closed** | **Stale verdict (#5664)** | `--check-defer` returns `REEVALUATE`; re-run the 8 criteria instead of escalating on a finding that no longer holds. |
 | Already `loom:operator-only`, escalation was Champion's own and dependency-only, every recorded blocker now closed | **Self-healing un-escalation (#5664)** | `classify-dependency-block.sh --check-unescalate --apply` removes `loom:operator-only` (and its `loom:operator-blocked` sub-kind label, #5671, if present — never required, since a pre-#5679 escalation carries no sub-label at all) and posts one `<!-- champion:proposal-unescalated:<fingerprint> -->` comment; the proposal rejoins normal evaluation in the same pass. A merits escalation, a `<!-- champion:dep-cycle:` escalation, or a human-applied label is never un-escalated. |
@@ -360,28 +361,20 @@ CAP_RC=0
 
 **Scenario**: PR body contains "Closes #123, Closes #456, Fixes #789".
 
-**Handling**:
-```bash
-# Extract all linked issues using GitHub's own parser (closingIssuesReferences).
-# Note: `Updates #N` is intentionally excluded — it does not close the issue
-# (see issue #3267). The forge_pr_close_targets helper handles this correctly.
-source "$(git rev-parse --show-toplevel)/.loom/scripts/lib/forge-helpers.sh"
-forge_detect
-LINKED_ISSUES=$(forge_pr_close_targets "$PR_NUMBER")
-
-# Verify each issue closed after merge
-for issue in $LINKED_ISSUES; do
-  STATE=$(gh issue view "$issue" --json state --jq '.state')
-  if [ "$STATE" != "CLOSED" ]; then
-    echo "Warning: Issue #$issue not auto-closed, closing manually"
-    gh issue close "$issue" --comment "Closed by PR #$PR_NUMBER (auto-merged by Champion)"
-  fi
-done
-```
+**Handling**: this is exactly `champion-pr-merge.md`'s own Step 4 ("Verify
+Issue Auto-Close") — extract `LINKED_ISSUES` via `forge_pr_close_targets`,
+then for each candidate run the `has-unnegated-closing-ref` cross-check
+**before** closing (#1057: `does not fix #N` reads as a closing keyword to
+GitHub's parser too, so an unguarded `gh issue close` here closes an issue
+the author explicitly said to leave open). Do not re-implement the loop here
+— follow Step 4 in `champion-pr-merge.md` so this edge case and Step 4 cannot
+drift apart into two different close policies.
 
 **Decision**: **Allow merge, verify all linked issues** - standard practice.
 
-**Rationale**: GitHub auto-closes multiple issues, but verify and manually close if needed. The helper uses GitHub's `closingIssuesReferences` so `Updates #N` (and similar non-closing references) are correctly excluded.
+**Rationale**: GitHub auto-closes multiple issues, but verify and manually
+close if needed — through the same negation-aware check Step 4 uses, not a
+second, unguarded copy of the close call.
 
 ---
 
@@ -669,11 +662,7 @@ EXISTING=$(gh issue list --search "Follow-on from PR #$PR_NUMBER" --limit 500)
 
 ## Complete Auto-Merge Workflow Script
 
-**The auto-merge workflow lives in a single source of truth: [`champion-pr-merge.md`](champion-pr-merge.md).**
-
-This file previously carried a second, full copy of the end-to-end merge script. That duplicate diverged from `champion-pr-merge.md` over time (it lacked Step 5.5 Follow-on Issue Creation and repeated the same bugs — invalid `gh pr checks --json` fields, etc.), forcing every fix to be applied twice. It has been removed to eliminate the drift (issue #3781).
-
-For the authoritative, end-to-end implementation — the Verdict-State Janitor (run before all else, resolves a contradictory `loom:pr` + `loom:changes-requested`/`loom:review-requested` state fail-safe, #4570/#7018), the 6 safety criteria, the pre-merge comment, the squash merge via `merge-pr.sh`, linked-issue closure verification, dependent-issue unblocking, and Step 5.5 Follow-on Issue Creation — see **`champion-pr-merge.md`**. The edge cases and decision matrix above remain here as the reference for non-standard situations; they describe *behavior*, and defer to `champion-pr-merge.md` for the *script*.
+**The auto-merge workflow lives in a single source of truth: [`champion-pr-merge.md`](champion-pr-merge.md)** — the Verdict-State Janitor, the 6 safety criteria, the pre-merge comment, the merge, linked-issue closure verification, dependent-issue unblocking, and Step 5.5 Follow-on Issue Creation. The edge cases and decision matrix above are the reference for non-standard situations; they describe *behavior* and defer to `champion-pr-merge.md` for the *script* (why there are two files rather than one, and not a duplicate copy of the script: [`.loom/docs/champion-file-split-history.md`](../../../.loom/docs/champion-file-split-history.md)).
 
 ---
 

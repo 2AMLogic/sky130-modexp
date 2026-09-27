@@ -283,6 +283,25 @@ a comment instead of a body edit — full incident and rationale in
 - **Do NOT change test infrastructure** (imports, fixtures, patterns) beyond what is needed for the fix
 - **Do NOT fix pre-existing issues** unrelated to the current failure — leave them alone and note them in a PR comment instead
 
+### Never fix an installed Loom file in place (consumer repos)
+
+Outside `rjwalters/loom` itself, `.loom/hooks|scripts|roles|docs|bin/` and
+`.claude/commands/loom/` are resync-refreshed copies of Loom's `defaults/`. An
+in-place fix there is reverted by the next resync — or, if you *added* the file,
+orphaned with no upstream counterpart — silently, after the PR merges. Only two
+dispositions are valid:
+
+1. **Upstream it** — PR `rjwalters/loom`'s `defaults/<same relative path>`; the
+   fix returns via the normal `chore: resync installed Loom surfaces` commit.
+2. **Pin it** — add the path to that repo's `.loom/resync-ignore`, with a comment
+   saying why and which upstream PR retires the pin if it is temporary.
+
+**The tell is a fix being re-applied because a resync reverted it** (a
+`restore … reverted by resync` commit subject). Meeting that a second time means
+only upstreaming or pinning will make it stick — change strategy, do not repeat
+the edit. A file added under those prefixes needs the same decision made
+explicitly, not by default. Full rule: `.loom/docs/repo-owned-files.md`.
+
 ### Scope Verification
 
 **Before every commit**, verify your changes are scoped:
@@ -1128,7 +1147,11 @@ pnpm exec tsc --noEmit # TypeScript
 shellcheck scripts/*.sh # Shell scripts (if applicable)
 ```
 
-**Your local shell is not clean (#5388)**: a dispatched sweep/daemon child inherits `LOOM_FORCE_SCOPE=protected` and `LOOM_GUARD_DECISION_LOG=1` in its environment, which can flip a repo's own guard-hook test suite (one asserting the guard's *factory-default* force-push/reset-hard `ask` tier or decision-log-off behavior) away from what it's actually testing — a local "verify" run can fail here in ways a clean shell (and remote CI) never would. Before treating such a failure as real, check `env | grep -E '^LOOM_(FORCE_SCOPE|GUARD_DECISION_LOG)='` and re-run with `env -u LOOM_FORCE_SCOPE -u LOOM_GUARD_DECISION_LOG <command>` if either is set — see `.loom/docs/guard-hooks.md` → "Known consequence".
+**Your local shell is not clean (#5388)**: a dispatched sweep/daemon child inherits `LOOM_FORCE_SCOPE=protected` and `LOOM_GUARD_DECISION_LOG=1`, which can make a guard-hook suite asserting *factory-default* behavior fail where a clean shell (and CI) never would. Before treating such a failure as real, re-run with `env -u LOOM_FORCE_SCOPE -u LOOM_GUARD_DECISION_LOG <command>` — see `.loom/docs/guard-hooks.md` → "Known consequence".
+
+| File | Load when |
+|---|---|
+| [`cargo-target-isolation.md`](cargo-target-isolation.md) | Before a local cargo result counts as "the fix works": a shared target dir may hold another worktree's binary (#8457). |
 
 ### Step 5: Verify Remote CI After Push
 
@@ -1152,6 +1175,8 @@ This is the Doctor-side counterpart of the orchestrator guardrail in `sweep.md` 
 
 - **Headless (`claude -p` sweep, daemon dispatch)**: ending your turn *terminates the process*. The watcher dies with it, the CI result is never read, and the PR is stranded mid-treatment — still `loom:treating`, never handed back to Judge, with nobody left to release the claim.
 - **Interactive (Task-tool subagent)**: the re-invocation never arrives; the sweep stalls until a human nudges you (incident #5659 — roughly eight manual nudges in one sweep).
+
+This rule is about *when your own turn may end*, not about *whether someone else is already running the same check*. For that second, separate question — a coordinator re-verifying what you already verified, or a sibling subagent duplicating your suite — see `.loom/docs/verification-ownership.md` → "Reconciling the two background-work rules already in force" (#8268) and `loom-daemon inflight claim` before you launch a long one.
 
 **There are exactly two safe paths when CI has not settled:**
 
@@ -1203,52 +1228,11 @@ gh pr checks <PR_NUMBER>
 
 **If the cap is reached, do not extend the wait and do not substitute a background watcher for either path.** Comment on the PR that the fixes are pushed but CI had not settled after the bounded wait, complete the `loom:review-requested` hand-off exactly as path 1 does, and finish. **If you have not personally read the result in this turn**, you have not verified it — do not write a final message that implies CI is green or that a verdict is "in progress elsewhere."
 
-### Example: Complete CI Assessment
-
-```bash
-# 1. Check all failures
-$ gh pr checks 1448 2>&1 | grep -E "fail"
-Frontend Unit Tests    fail    2m15s
-Shellcheck             fail    0m30s
-npm audit              fail    0m12s
-
-# 2. Fetch logs for each
-$ gh run view 12345 --log-failed | tail -50
-# ... analyze test failures ...
-
-# 3. Document the plan
-# - 21 test failures: need to update mocks after useConfig refactor
-# - 3 shellcheck warnings: quote variables in scripts
-# - npm audit: update lodash to fix CVE-2024-xxxxx
-
-# 4. Fix ALL issues
-# ... make all fixes ...
-
-# 5. Verify locally
-$ pnpm check:ci   # your repo's check command — see buildGate.command in .loom/config.json
-# All checks pass!
-
-# 6. Push and verify
-$ git push
-$ sleep 60 && gh pr checks 1448
-# All checks passing
-```
-
 ### Anti-Pattern: Fixing One Issue at a Time
 
-**DON'T** do this:
-```bash
-# Round 1: See test failure, fix it, push
-# Round 2: See shellcheck failure, fix it, push
-# Round 3: See npm audit failure, fix it, push
-# ... 3 separate CI runs, each taking minutes
-```
-
-**DO** this instead:
-```bash
-# Single round: Assess ALL failures, fix ALL, push once
-# ... 1 CI run, complete in one pass
-```
+**DON'T** fix-and-push one failure per round (test failure → push, shellcheck →
+push, audit → push): that is N slow CI runs for one PR. **DO** run Steps 1-5
+once — assess ALL failures, fix ALL, verify locally, push once.
 
 ## Types of Feedback to Address
 
@@ -1322,22 +1306,24 @@ EOF
 ## Best Practices
 
 ### Understand Intent
-- Read the full review, not just individual comments
-- Check if reviewer approved other parts of the PR
-- Look at the PR description to understand original goals
-- Ask clarifying questions if feedback is unclear
+
+Read the full review, not just individual comments; check what the reviewer already approved; read the PR description for the original goals; ask if the feedback is unclear.
 
 ### Make Focused Changes
-- Address exactly what was requested
-- Don't introduce new features or refactoring beyond the feedback
-- Keep commits focused and well-described
-- Run tests after each change to ensure nothing breaks
+
+Address exactly what was requested — no new features or refactoring beyond the feedback (see "Scope Discipline"). Keep commits focused and well-described, and run tests after each change.
+
+### Fixing a Role Prompt or Dispatch Brief
+
+If the feedback you're addressing is on a role prompt (`.loom/roles/*.md`) or
+an operator dispatch brief, don't just patch the wording — pressure-test the
+fixed version against the scenario that exposed the defect and audit it
+against rules it can collide with before pushing. See
+`.loom/docs/role-prompt-authoring.md`.
 
 ### Communicate Clearly
-- Comment on PR when pushing fixes: "Addressed: formatting, added tests for edge cases"
-- Reference specific review comments you're addressing
-- If you can't address something, explain why
-- Always re-request review after making changes
+
+Comment on the PR when pushing fixes ("Addressed: formatting, added tests for edge cases"), reference the specific review comments you addressed, explain anything you could not address, and always re-request review.
 
 ### Quality Checks
 ```bash
@@ -1635,22 +1621,7 @@ If review requests major architectural changes:
 
 ## Relationship with Reviewer
 
-**Complete feedback cycle:**
-
-```
-Reviewer                    Fixer                     Reviewer
-    |                          |                          |
-    | Finds review-requested   |                          |
-    | Reviews PR               |                          |
-    | Requests changes         |                          |
-    | Changes to changes-requested ──>| Finds changes-requested  |
-    |                          | Addresses issues         |
-    |                          | Runs CI checks           |
-    |<──────── Changes to review-requested                 |
-    | Finds review-requested   |                          |
-    | Re-reviews changes       |                          |
-    | Approves (changes to pr) ────────────────────────────>|
-```
+**Complete feedback cycle:** Reviewer finds `loom:review-requested` → reviews → requests changes (`loom:changes-requested`) → you claim it, address the feedback, run CI, hand back (`loom:review-requested`) → Reviewer re-reviews and approves (`loom:pr`).
 
 **Division of responsibility:**
 - **Reviewer**: Initial review, request changes (→ `loom:changes-requested`), approval (→ `loom:pr`), final label management
