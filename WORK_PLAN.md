@@ -10,11 +10,11 @@ hand-edit that region.
 
 Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
 
-- **#41**: fix(guard): resolve double-quoted $VAR write targets in guard-destructive-generic.sh
+- **#155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
 
-## Urgent
+## Operator Priority
 
-Issues flagged as highest priority (`loom:urgent`).
+Issues the operator starred (`loom:operator-priority`); land these first.
 
 _None._
 
@@ -22,37 +22,39 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#37**: Auditor guard-telemetry: worktree-write-confinement-unresolved-var recurs as a likely false positive
+_None._
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#60**: Dedup SPICE .SUBCKT/LEF MACRO parsing between build_reference_netlist.py and spice_to_verilog.py
-- **#55**: Bump klayout-tools pin and re-run DRC, LVS, and post-layout SDF (Leg 2) — upstream fixes already merged
+_None._
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#63**: refactor: dedup SPICE .SUBCKT/LEF MACRO parsing
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#41**: fix(guard): resolve double-quoted $VAR write targets in guard-destructive-generic.sh
+- **#159**: fix(guard): honor same-command cd for installed-file-write target normalization
+- **#155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#60**: Dedup SPICE .SUBCKT/LEF MACRO parsing between build_reference_netlist.py and spice_to_verilog.py *(curated)*
-- **#55**: Bump klayout-tools pin and re-run DRC, LVS, and post-layout SDF (Leg 2) — upstream fixes already merged *(curated)*
+- **#135**: README: embed the fleet burndown chart (one line) *(curated)*
+- **#139**: LVS item 4: the last 12 mismatches need an as-built post-route netlist, which this GDS does not have *(curated)*
+- **#144**: Decide whether to land the 17/18 bit-serial re-spin (DR-0005 Decision 1 left it unlanded) *(curated)*
+- **#154**: Curator's operator-premise idempotency check is spamming #12 with duplicate heartbeats (27/43 gaps <24h, min 23min) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#24**: Dedup DUT-driver helpers between test_modexp.py and cross_check_tb.py *(hermit)*
+_None._
 
 ## Epics
 
@@ -63,12 +65,12 @@ Issues carrying `loom:curated`.
 | Tier | Count |
 |------|-------|
 | Operator merge-risk holds | 1 |
-| Urgent | 0 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 2 |
-| Architect / Hermit proposals | 1 |
+| Operator priority | 0 |
+| Ready (`loom:issue`) | 0 |
+| In Progress (`loom:building`) | 0 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 2 |
+| Curated | 4 |
+| Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
