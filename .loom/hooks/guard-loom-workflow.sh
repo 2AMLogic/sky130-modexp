@@ -1871,11 +1871,18 @@ if declare -F loom_installed_write_denied >/dev/null 2>&1 \
     # sky130-modexp #158: a relative write target must resolve against the
     # directory the command has `cd`-ed into, not the hook's $CWD, or a fixture
     # built in a `mktemp -d` scratch tree is falsely denied. Deliberately
-    # conservative -- honored only for exactly ONE plain `cd <arg>` (not in a
-    # subshell) that precedes every write idiom in the command, where <arg> is
-    # a path or a variable assigned from `mktemp -d` in the same command.
-    # Anything else keeps $CWD (the pre-#158 behavior), so a real write into
-    # the installed tree stays denied.
+    # conservative -- honored only for exactly ONE plain `cd $VAR` (not in a
+    # subshell) that precedes every write idiom in the command, where VAR is
+    # assigned EXACTLY `$(mktemp -d)` (no `-p DIR`/`--tmpdir=DIR`/template --
+    # those can point the created dir back inside the repo, PR #159 review
+    # bypass #2) with no other assignment to VAR anywhere in the command (a
+    # reassignment before the cd would silently retarget it, bypass #1).
+    # Literal cd paths are NOT honored (dropped entirely, PR #159 review
+    # bypasses #3/#4): a `cd /nonexistent` or `cd ... || true` that fails
+    # leaves the shell in the real $CWD, but the pre-#159 code assumed the cd
+    # always took effect, letting a write land in the real installed tree
+    # undetected. Anything else keeps $CWD (the pre-#158 behavior), so a real
+    # write into the installed tree stays denied.
     IFW_EFF_CWD="$CWD"
     IFW_CD_RE='(^|[^[:alnum:]_./$-])cd[[:space:]]+("[^"]*"|'"'"'[^'"'"']*'"'"'|[^;&|[:space:])]+)'
     IFW_CD_COUNT=$(printf '%s' "$IFW_SCAN_TEXT" | grep -oE '(^|[^[:alnum:]_./$-])cd[[:space:]]' | wc -l | tr -d '[:space:]')
@@ -1889,12 +1896,11 @@ if declare -F loom_installed_write_denied >/dev/null 2>&1 \
               && ! "$IFW_CD_PREFIX" =~ (tee|sed|cp|mv|install|rsync)[[:space:]] ]]; then
             if [[ "$IFW_CD_ARG" =~ ^\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?$ ]]; then
                 IFW_CD_VAR="${BASH_REMATCH[1]}"
-                if [[ "$IFW_CD_PREFIX" =~ (^|[^[:alnum:]_])${IFW_CD_VAR}=(\$\(|\`)[[:space:]]*mktemp[[:space:]]+-d ]]; then
+                IFW_CD_VAR_ASSIGNS=$(printf '%s' "$IFW_SCAN_TEXT" | grep -oE "(^|[^[:alnum:]_])${IFW_CD_VAR}=" | wc -l | tr -d '[:space:]')
+                if [[ "$IFW_CD_VAR_ASSIGNS" == "1" \
+                      && "$IFW_CD_PREFIX" =~ (^|[^[:alnum:]_])${IFW_CD_VAR}=(\$\(|\`)[[:space:]]*mktemp[[:space:]]+-d[[:space:]]*(\)|\`) ]]; then
                     IFW_EFF_CWD="/nonexistent-loom-mktemp-scratch/${IFW_CD_VAR}"
                 fi
-            elif [[ "$IFW_CD_ARG" != *'$'* && "$IFW_CD_ARG" != *'`'* && "$IFW_CD_ARG" != '~'* && "$IFW_CD_ARG" != '-' ]]; then
-                IFW_EFF_CWD=$(loom_ifw_normalize_abs "$IFW_CD_ARG" "$CWD") || IFW_EFF_CWD="$CWD"
-                [[ -n "$IFW_EFF_CWD" ]] || IFW_EFF_CWD="$CWD"
             fi
         fi
     fi
