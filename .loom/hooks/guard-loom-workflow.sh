@@ -1868,10 +1868,41 @@ if declare -F loom_installed_write_denied >/dev/null 2>&1 \
         IFW_HEREDOC_NOTE=" If this matched inside a heredoc BODY being written to a file rather than an actual write to the named path (e.g. documenting this rule), write that file with the Write tool instead -- a file-bound heredoc is deliberately left visible to this check (#7773)."
     fi
 
+    # sky130-modexp #158: a relative write target must resolve against the
+    # directory the command has `cd`-ed into, not the hook's $CWD, or a fixture
+    # built in a `mktemp -d` scratch tree is falsely denied. Deliberately
+    # conservative -- honored only for exactly ONE plain `cd <arg>` (not in a
+    # subshell) that precedes every write idiom in the command, where <arg> is
+    # a path or a variable assigned from `mktemp -d` in the same command.
+    # Anything else keeps $CWD (the pre-#158 behavior), so a real write into
+    # the installed tree stays denied.
+    IFW_EFF_CWD="$CWD"
+    IFW_CD_RE='(^|[^[:alnum:]_./$-])cd[[:space:]]+("[^"]*"|'"'"'[^'"'"']*'"'"'|[^;&|[:space:])]+)'
+    IFW_CD_COUNT=$(printf '%s' "$IFW_SCAN_TEXT" | grep -oE '(^|[^[:alnum:]_./$-])cd[[:space:]]' | wc -l | tr -d '[:space:]')
+    if [[ "$IFW_CD_COUNT" == "1" && "$IFW_SCAN_TEXT" =~ $IFW_CD_RE ]]; then
+        IFW_CD_ARG="${BASH_REMATCH[2]}"
+        IFW_CD_LEAD="${BASH_REMATCH[1]}"
+        IFW_CD_PREFIX="${IFW_SCAN_TEXT%%"${BASH_REMATCH[0]}"*}"
+        IFW_CD_ARG="${IFW_CD_ARG#[\"\']}"; IFW_CD_ARG="${IFW_CD_ARG%[\"\']}"
+        if [[ "$IFW_CD_PREFIX" != *'>'* && "$IFW_CD_LEAD" != '(' \
+              && "$(printf '%s' "$IFW_CD_PREFIX" | tr -cd '(' | wc -c)" == "$(printf '%s' "$IFW_CD_PREFIX" | tr -cd ')' | wc -c)" \
+              && ! "$IFW_CD_PREFIX" =~ (tee|sed|cp|mv|install|rsync)[[:space:]] ]]; then
+            if [[ "$IFW_CD_ARG" =~ ^\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?$ ]]; then
+                IFW_CD_VAR="${BASH_REMATCH[1]}"
+                if [[ "$IFW_CD_PREFIX" =~ (^|[^[:alnum:]_])${IFW_CD_VAR}=(\$\(|\`)[[:space:]]*mktemp[[:space:]]+-d ]]; then
+                    IFW_EFF_CWD="/nonexistent-loom-mktemp-scratch/${IFW_CD_VAR}"
+                fi
+            elif [[ "$IFW_CD_ARG" != *'$'* && "$IFW_CD_ARG" != *'`'* && "$IFW_CD_ARG" != '~'* && "$IFW_CD_ARG" != '-' ]]; then
+                IFW_EFF_CWD=$(loom_ifw_normalize_abs "$IFW_CD_ARG" "$CWD") || IFW_EFF_CWD="$CWD"
+                [[ -n "$IFW_EFF_CWD" ]] || IFW_EFF_CWD="$CWD"
+            fi
+        fi
+    fi
+
     if loom_installed_guard_enabled "$REPO_ROOT"; then
         while IFS= read -r IFW_TARGET; do
             [[ -n "$IFW_TARGET" ]] || continue
-            IFW_ABS=$(loom_ifw_normalize_abs "$IFW_TARGET" "$CWD") || continue
+            IFW_ABS=$(loom_ifw_normalize_abs "$IFW_TARGET" "$IFW_EFF_CWD") || continue
             [[ -n "$IFW_ABS" ]] || continue
             if loom_installed_write_denied "$IFW_ABS"; then
                 deny "$(loom_installed_deny_reason "$IFW_ABS" "Bash-tool write")${IFW_HEREDOC_NOTE}" "loom:installed-file-write"

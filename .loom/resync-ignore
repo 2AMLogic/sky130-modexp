@@ -23,3 +23,10 @@ scripts/resync-installed.sh
 # scripts/tests/test-resync-installed.sh: companion test coverage for the
 # guard above. Pinned alongside it.
 scripts/tests/test-resync-installed.sh
+
+# hooks/guard-loom-workflow.sh: installed-file-write target normalization
+# honors a single preceding same-command `cd` (mktemp scratch var or path),
+# so fixtures built in a scratch tree's own .loom/ subtree are not falsely
+# denied (sky130-modexp #158). Upstream PR: TBD (see 2am#869).
+hooks/guard-loom-workflow.sh
+hooks/tests/test-guard-installed-write-cd-tracking.sh
