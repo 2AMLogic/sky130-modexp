@@ -11,6 +11,7 @@ hand-edit that region.
 Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
 
 - **#155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
+- **#159**: fix(guard): honor same-command cd for installed-file-write target normalization
 
 ## Operator Priority
 
@@ -40,8 +41,8 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#159**: fix(guard): honor same-command cd for installed-file-write target normalization
 - **#155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
+- **#159**: fix(guard): honor same-command cd for installed-file-write target normalization
 
 ## Proposed
 
@@ -64,7 +65,7 @@ _None._
 
 | Tier | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 2 |
 | Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
