@@ -1869,51 +1869,104 @@ if declare -F loom_installed_write_denied >/dev/null 2>&1 \
     fi
 
     # sky130-modexp #158: a relative write target must resolve against the
-    # directory the command has `cd`-ed into, not the hook's $CWD, or a fixture
-    # built in a `mktemp -d` scratch tree is falsely denied. Deliberately
-    # conservative -- honored only for exactly ONE plain `cd $VAR` (not in a
-    # subshell) that precedes every write idiom in the command, where VAR is
-    # assigned EXACTLY `$(mktemp -d)` (no `-p DIR`/`--tmpdir=DIR`/template --
-    # those can point the created dir back inside the repo, PR #159 review
-    # bypass #2) with no other assignment to VAR anywhere in the command (a
-    # reassignment before the cd would silently retarget it, bypass #1).
-    # Literal cd paths are NOT honored (dropped entirely, PR #159 review
-    # bypasses #3/#4): a `cd /nonexistent` or `cd ... || true` that fails
-    # leaves the shell in the real $CWD, but the pre-#159 code assumed the cd
-    # always took effect, letting a write land in the real installed tree
-    # undetected. Anything else keeps $CWD (the pre-#158 behavior), so a real
-    # write into the installed tree stays denied.
+    # scratch directory the command has `cd`-ed into, not the hook's $CWD, or
+    # a fixture built in a `mktemp -d` scratch tree's own .loom/ subtree is
+    # falsely denied. FAIL-CLOSED: the cd is honored only when ALL of these
+    # hold, otherwise every target resolves against $CWD (pre-#158 behavior):
+    #   - exactly one `cd` in the command, of the form `cd $VAR` / `cd "$VAR"`
+    #     / `cd ${VAR}` (no literal paths -- a literal cd can fail and fall
+    #     through, and its target can be a symlink into the repo), not in a
+    #     subshell or command substitution;
+    #   - VAR is assigned by the bare idiom `VAR=$(mktemp -d)` (no mktemp
+    #     arguments, so no -p/--tmpdir/template aimed at the repo) at the start
+    #     of a list element, and VAR is never otherwise named bare in the
+    #     command (no reassignment, `read VAR`, `export VAR=`, `unset VAR`...);
+    #   - assignment -> cd -> rest of the command is a pure `&&` chain (no `;`,
+    #     `||`, lone `&`, newline, or grouping between assignment and cd), so
+    #     a failed mktemp or failed cd aborts every later write;
+    #   - no symlink/relocation/indirection tool (`ln`, `mv`, `cp -<opt>`,
+    #     `rsync`, `tar`, `eval`, `pushd`...) anywhere in the command.
+    # Only targets textually AFTER the cd are re-based, and a re-based target
+    # containing a `..` segment still resolves against $CWD.
     IFW_EFF_CWD="$CWD"
-    IFW_CD_RE='(^|[^[:alnum:]_./$-])cd[[:space:]]+("[^"]*"|'"'"'[^'"'"']*'"'"'|[^;&|[:space:])]+)'
-    IFW_CD_COUNT=$(printf '%s' "$IFW_SCAN_TEXT" | grep -oE '(^|[^[:alnum:]_./$-])cd[[:space:]]' | wc -l | tr -d '[:space:]')
+    IFW_PRE_TEXT="$IFW_SCAN_TEXT"
+    IFW_POST_TEXT=""
+    IFW_CD_RE='(^|[^[:alnum:]_./$-])cd[[:space:]]+("[^"]*"|[^;&|[:space:])"]+)'
+    IFW_CD_COUNT=$(printf '%s' "$IFW_SCAN_TEXT" | grep -oE '(^|[^[:alnum:]_./$-])cd([[:space:]]|$)' | wc -l | tr -d '[:space:]')
     if [[ "$IFW_CD_COUNT" == "1" && "$IFW_SCAN_TEXT" =~ $IFW_CD_RE ]]; then
-        IFW_CD_ARG="${BASH_REMATCH[2]}"
+        IFW_CD_MATCH="${BASH_REMATCH[0]}"
         IFW_CD_LEAD="${BASH_REMATCH[1]}"
-        IFW_CD_PREFIX="${IFW_SCAN_TEXT%%"${BASH_REMATCH[0]}"*}"
-        IFW_CD_ARG="${IFW_CD_ARG#[\"\']}"; IFW_CD_ARG="${IFW_CD_ARG%[\"\']}"
-        if [[ "$IFW_CD_PREFIX" != *'>'* && "$IFW_CD_LEAD" != '(' \
-              && "$(printf '%s' "$IFW_CD_PREFIX" | tr -cd '(' | wc -c)" == "$(printf '%s' "$IFW_CD_PREFIX" | tr -cd ')' | wc -c)" \
-              && ! "$IFW_CD_PREFIX" =~ (tee|sed|cp|mv|install|rsync)[[:space:]] ]]; then
-            if [[ "$IFW_CD_ARG" =~ ^\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?$ ]]; then
-                IFW_CD_VAR="${BASH_REMATCH[1]}"
-                IFW_CD_VAR_ASSIGNS=$(printf '%s' "$IFW_SCAN_TEXT" | grep -oE "(^|[^[:alnum:]_])${IFW_CD_VAR}=" | wc -l | tr -d '[:space:]')
-                if [[ "$IFW_CD_VAR_ASSIGNS" == "1" \
-                      && "$IFW_CD_PREFIX" =~ (^|[^[:alnum:]_])${IFW_CD_VAR}=(\$\(|\`)[[:space:]]*mktemp[[:space:]]+-d[[:space:]]*(\)|\`) ]]; then
-                    IFW_EFF_CWD="/nonexistent-loom-mktemp-scratch/${IFW_CD_VAR}"
-                fi
+        IFW_CD_ARG="${BASH_REMATCH[2]}"
+        IFW_CD_PREFIX="${IFW_SCAN_TEXT%%"$IFW_CD_MATCH"*}${IFW_CD_LEAD}"
+        IFW_CD_REST="${IFW_SCAN_TEXT#*"$IFW_CD_MATCH"}"
+        if [[ "$IFW_CD_ARG" == \"*\" ]]; then IFW_CD_ARG="${IFW_CD_ARG:1:${#IFW_CD_ARG}-2}"; fi
+        IFW_CD_OK=0
+        if [[ "$IFW_CD_ARG" =~ ^\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?$ ]]; then
+            IFW_CD_VAR="${BASH_REMATCH[1]}"
+            IFW_CD_ASSIGN="${IFW_CD_VAR}=\$(mktemp -d)"
+            IFW_CD_OK=1
+        fi
+        # Assignment present in the text before the cd, at a list-element start.
+        if (( IFW_CD_OK )); then
+            if [[ "$IFW_CD_PREFIX" == *"$IFW_CD_ASSIGN"* ]]; then
+                IFW_CD_PRE_ASSIGN="${IFW_CD_PREFIX%%"$IFW_CD_ASSIGN"*}"
+                IFW_CD_BETWEEN="${IFW_CD_PREFIX#*"$IFW_CD_ASSIGN"}"
+                IFW_CD_PRE_ASSIGN="${IFW_CD_PRE_ASSIGN%"${IFW_CD_PRE_ASSIGN##*[![:space:]]}"}"
+                [[ -z "$IFW_CD_PRE_ASSIGN" || "$IFW_CD_PRE_ASSIGN" == *'&&' \
+                   || "$IFW_CD_PRE_ASSIGN" == *';' ]] || IFW_CD_OK=0
+            else
+                IFW_CD_OK=0
             fi
+        fi
+        # assignment && ... && cd $VAR && <rest>: pure && chain, no grouping.
+        if (( IFW_CD_OK )); then
+            [[ "$IFW_CD_BETWEEN" =~ ^[[:space:]]*'&&' ]] || IFW_CD_OK=0
+            [[ "$IFW_CD_BETWEEN" =~ '&&'[[:space:]]*$ ]] || IFW_CD_OK=0
+            IFW_CD_TMP="${IFW_CD_BETWEEN//&&/}"
+            [[ "$IFW_CD_TMP" == *[\;\&\|\(\)\{\}\`$'\n']* ]] && IFW_CD_OK=0
+            [[ "$IFW_CD_REST" =~ ^[[:space:]]*'&&' ]] || IFW_CD_OK=0
+            [[ "$IFW_CD_REST" == *'||'* ]] && IFW_CD_OK=0
+            IFW_CD_TMP="${IFW_CD_REST//&&/}"
+            [[ "$IFW_CD_TMP" == *[\;\&$'\n']* ]] && IFW_CD_OK=0
+        fi
+        # VAR must not be named bare anywhere except the one assignment.
+        if (( IFW_CD_OK )); then
+            IFW_CD_TMP="${IFW_SCAN_TEXT/"$IFW_CD_ASSIGN"/}"
+            IFW_CD_TMP=$(printf '%s' "$IFW_CD_TMP" | sed -E "s/\\\$\\{?${IFW_CD_VAR}([^[:alnum:]_]|\$)/\\1/g")
+            [[ "$IFW_CD_TMP" =~ (^|[^[:alnum:]_])${IFW_CD_VAR}([^[:alnum:]_]|$) ]] && IFW_CD_OK=0
+            [[ "$IFW_CD_TMP" == *"$IFW_CD_ASSIGN"* ]] && IFW_CD_OK=0
+        fi
+        # No subshell cd, and no symlink/relocation/indirection tool anywhere.
+        if (( IFW_CD_OK )); then
+            [[ "$IFW_CD_LEAD" == '(' || "$IFW_CD_LEAD" == '`' ]] && IFW_CD_OK=0
+            [[ "$(printf '%s' "$IFW_CD_PREFIX" | tr -cd '(' | wc -c)" == "$(printf '%s' "$IFW_CD_PREFIX" | tr -cd ')' | wc -c)" ]] || IFW_CD_OK=0
+            [[ "$IFW_SCAN_TEXT" =~ (^|[^[:alnum:]_./-])(ln|link|mv|rsync|tar|bsdtar|unzip|cpio|ditto|eval|source|pushd|popd|builtin|command)([[:space:]]|$) ]] && IFW_CD_OK=0
+            [[ "$IFW_SCAN_TEXT" =~ (^|[^[:alnum:]_./-])cp[[:space:]]+- ]] && IFW_CD_OK=0
+        fi
+        if (( IFW_CD_OK )); then
+            IFW_EFF_CWD="/nonexistent-loom-mktemp-scratch/${IFW_CD_VAR}"
+            IFW_PRE_TEXT="$IFW_CD_PREFIX"
+            IFW_POST_TEXT="$IFW_CD_REST"
         fi
     fi
 
     if loom_installed_guard_enabled "$REPO_ROOT"; then
-        while IFS= read -r IFW_TARGET; do
+        while IFS=$'\t' read -r IFW_BASE IFW_TARGET; do
             [[ -n "$IFW_TARGET" ]] || continue
-            IFW_ABS=$(loom_ifw_normalize_abs "$IFW_TARGET" "$IFW_EFF_CWD") || continue
+            if [[ "$IFW_BASE" == post && "$IFW_TARGET" != /* \
+                  && ! "$IFW_TARGET" =~ (^|/)\.\.(/|$) ]]; then
+                IFW_ABS=$(loom_ifw_normalize_abs "$IFW_TARGET" "$IFW_EFF_CWD") || continue
+            else
+                IFW_ABS=$(loom_ifw_normalize_abs "$IFW_TARGET" "$CWD") || continue
+            fi
             [[ -n "$IFW_ABS" ]] || continue
             if loom_installed_write_denied "$IFW_ABS"; then
                 deny "$(loom_installed_deny_reason "$IFW_ABS" "Bash-tool write")${IFW_HEREDOC_NOTE}" "loom:installed-file-write"
             fi
-        done < <(loom_bash_write_targets "$IFW_SCAN_TEXT")
+        done < <(
+            loom_bash_write_targets "$IFW_PRE_TEXT" | awk '{print "pre\t" $0}'
+            [[ -z "$IFW_POST_TEXT" ]] || loom_bash_write_targets "$IFW_POST_TEXT" | awk '{print "post\t" $0}'
+        )
     fi
 fi
 

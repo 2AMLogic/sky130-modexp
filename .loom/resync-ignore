@@ -25,12 +25,12 @@ scripts/resync-installed.sh
 scripts/tests/test-resync-installed.sh
 
 # hooks/guard-loom-workflow.sh: installed-file-write target normalization
-# honors a single preceding same-command `cd $VAR`, where VAR is assigned
-# EXACTLY `$(mktemp -d)` with no other assignment in the command, so fixtures
-# built in a scratch tree's own .loom/ subtree are not falsely denied
-# (sky130-modexp #158). Literal cd paths are deliberately NOT honored -- a
-# failed cd can silently no-op and leave a write in the real installed tree
-# (sky130-modexp #159 review). Upstream issue: rjwalters/loom#9154 (see
-# 2am#869); no upstream PR filed yet.
+# honors a single same-command `cd` into a scratch dir, fail-closed: only the
+# exact `VAR=$(mktemp -d) && ... && cd $VAR && <writes>` chain, VAR never
+# otherwise assigned, no symlink/relocation tools -- so fixtures built in a
+# scratch tree's own .loom/ subtree are not falsely denied while real writes
+# to the installed tree stay denied. Tracking: 2AMLogic/sky130-modexp#158;
+# upstream report rjwalters/loom#9154 (see 2am#869). No upstream PR yet --
+# remove this pin once the fix lands in defaults/.
 hooks/guard-loom-workflow.sh
 hooks/tests/test-guard-installed-write-cd-tracking.sh
