@@ -67,3 +67,14 @@ scripts/tests/ci-excluded.txt
 #   copies silently disagreeing about the claim protocol.
 roles/curator.md
 commands/loom/curator.md
+
+# hooks/guard-loom-workflow.sh: installed-file-write target normalization
+# honors a single same-command `cd` into a scratch dir, fail-closed: only the
+# exact `VAR=$(mktemp -d) && ... && cd $VAR && <writes>` chain, VAR never
+# otherwise assigned, no symlink/relocation tools -- so fixtures built in a
+# scratch tree's own .loom/ subtree are not falsely denied while real writes
+# to the installed tree stay denied. Tracking: 2AMLogic/sky130-modexp#158;
+# upstream report rjwalters/loom#9154 (see 2am#869). No upstream PR yet --
+# remove this pin once the fix lands in defaults/.
+hooks/guard-loom-workflow.sh
+hooks/tests/test-guard-installed-write-cd-tracking.sh
