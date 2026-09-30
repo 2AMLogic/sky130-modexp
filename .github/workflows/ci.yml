@@ -280,3 +280,43 @@ jobs:
             exit 1
           fi
           exit "$overall_fail"
+
+  curator-idempotency-suites:
+    name: Loom Curator heartbeat-idempotency regression suite
+    runs-on: ubuntu-latest
+    # Regression protection for #154: the Curator's re-check heartbeat spammed
+    # issue #12 with 44 marker comments in a month (27 of 43 gaps under the 24h
+    # idempotency window, minimum 23 minutes) because its prior-marker read was
+    # a single unpaginated REST page -- the OLDEST 30 comments -- so the marker
+    # it compared against was the thread's 30th comment, ~400h old, for weeks.
+    # `dep-recheck-prior-marker.sh` is the fail-closed replacement and this job
+    # is what stops a future `chore: resync installed Loom surfaces` commit from
+    # reverting it silently (the same failure mode as #107 and #126, which the
+    # guard-hooks and merge-pr-suites jobs above exist for).
+    #
+    # Scoped to the ONE hermetic suite: test-dep-recheck-prior-marker.sh drives
+    # the reader through --stdin fixtures with no forge, no network and no
+    # loom-daemon. Its companion test-dep-recheck-heartbeat-race.sh is
+    # deliberately NOT here -- it drives the real `dep-recheck-fingerprint.sh
+    # decide` stub, which needs a built loom-daemon this runner has no way to
+    # obtain (it is listed in ci-excluded.txt for exactly that reason, and runs
+    # on any fleet host, where the binary is present).
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run the prior-marker read suite
+        run: |
+          # See the "Deliberately NOT set -e" rationale in the guard-hooks
+          # job above -- same reasoning applies here.
+          set +e -u -o pipefail
+          f=.loom/scripts/tests/test-dep-recheck-prior-marker.sh
+          if [[ ! -f "$f" ]]; then
+            echo "FAILED: $f is missing -- a resync removed the suite."
+            exit 1
+          fi
+          bash "$f"
+          rc=$?
+          if [[ "$rc" -ne 0 ]]; then
+            echo "FAILED: $f (exit $rc)"
+          fi
+          exit "$rc"
