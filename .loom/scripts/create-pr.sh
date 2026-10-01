@@ -375,6 +375,9 @@ fi
 
 # --- Create -----------------------------------------------------------------
 
+# #9548: open the PR only on a repo this installation manages and can write,
+# and name it: with no --repo, gh would pick an `upstream` remote over origin.
+REPO_NWO="$(loom_write_repo "${REPO_NWO:-${LOOM_REPO:-}}")" || { echo "create-pr.sh: not opening a PR for $HEAD_BRANCH: loom-daemon forge may-write refused the repo (#9548)" >&2; exit 1; }
 CREATE_ARGS=(pr create --head "$HEAD_BRANCH" --title "$TITLE" --body "$BODY")
 if [[ -n "$BASE_BRANCH" ]]; then
   CREATE_ARGS+=(--base "$BASE_BRANCH")
@@ -389,9 +392,25 @@ for _label in "${LABELS[@]+"${LABELS[@]}"}"; do
   CREATE_ARGS+=(--label "$_label")
 done
 
-if ! forge_gh_perm_safe "${CREATE_ARGS[@]}"; then
+PR_URL="$(forge_gh_perm_safe "${CREATE_ARGS[@]}")" || {
   echo "create-pr.sh: could not open a PR for $HEAD_BRANCH. If the commits are \
 pushed, do NOT rebuild — re-run this script (it adopts an existing PR) or open \
 the PR by hand from that branch." >&2
   exit 1
+}
+# The URL is the script's stdout contract (identical to `gh pr create`'s, so a
+# caller parsing the URL needs no change) — echoed before the best-effort
+# footer step below, which only ever adds stderr.
+echo "$PR_URL"
+
+# --- #9774: the opened PR's body ends with the dashboard footer -------------
+# Best-effort, via the daemon's --patch-created (fetch, footer, PATCH — the
+# number exists only inside the URL after the create). A daemon that cannot
+# (absent, or pre-#9818) leaves the body unfootered; it never un-opens the PR.
+# requires-daemon: forge optional   absent or pre-#9818 binary → the footer is skipped with a stderr note; the PR itself is already open (#9774)
+self_bin="$(command -v loom-daemon 2>/dev/null || true)"
+if [[ -n "$self_bin" ]]; then
+  if ! "$self_bin" forge comment --patch-created "$PR_URL" >/dev/null 2>&1; then
+    echo "create-pr.sh: note: could not append the dashboard footer to the PR body (best-effort; the PR itself is open)" >&2
+  fi
 fi

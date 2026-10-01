@@ -63,6 +63,8 @@ source "$SCRIPT_DIR/lib/require-daemon-bin.sh"
 # audit-comment BODIES are `merge-pr partial-comment` (#8191 slices), so the
 # same binary must carry all three verbs too.
 loom_test_require_daemon_bin "$HELPERS_DIR" merge-pr-refs "merge-pr partial-reset" "merge-pr partial-conflict" "merge-pr partial-comment"
+# shellcheck source=lib/write-scope-fixture.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/write-scope-fixture.sh"
 
 # Colors
 RED='\033[0;31m'
@@ -242,6 +244,16 @@ if [[ "$1" == "api" ]]; then
       if [[ -f "$canned" ]]; then cat "$canned"; else echo '[]'; fi
       exit 0
       ;;
+    */comments)
+      # #9774: a POST to the comments endpoint is the daemon chokepoint's
+      # shape (forge comment -> gh api --input -). This suite's subject is
+      # the partial-increment flow over the gh ladder, and LOOM_DAEMON_SELF_BIN
+      # is pinned to the real binary above — so fail the daemon's POST here
+      # and let forge_gh_comment_rl_safe fall back to the recorded `issue
+      # comment` shape. A silent exit 0 would succeed without recording
+      # anything, which is exactly what the assertions below must not allow.
+      exit 1
+      ;;
   esac
 
   num="${path##*/}"
@@ -262,6 +274,11 @@ STUB
 chmod +x "$STUB_DIR/gh"
 export LOOM_TEST_STUB_DIR="$STUB_DIR"
 export PATH="$STUB_DIR:$PATH"
+# #9548: merge-pr.sh vets its write target through the write scope before it
+# writes. It runs from a checkout registered as owner/repo (origin, .loom/, push
+# reported to the permission probe), so the real decision admits it.
+write_scope_register "$STUB_DIR/checkout" owner/repo
+cd "$STUB_DIR/checkout"
 
 # --- Shared globals the functions read (consumed indirectly by the sourced
 # functions; see the file-level SC2034 disable at the top). ---
