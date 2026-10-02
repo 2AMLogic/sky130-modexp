@@ -15,6 +15,13 @@ met.** What changed is that three things the previous comparison could not
 answer are now answered, and the residue is smaller and entirely one
 named cause.
 
+**Decision (issue #139, 2026-10-01):** item 4 stays formally `unmet` for the
+current pin; the 12 residual errors cannot be resolved without an as-built
+post-route netlist for this GDS, which was never committed. A genuine match
+is deferred to the next re-pin. See
+`spec/decision-records/0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md`
+and `docs/signoff-claim.md`.
+
 ### What changed
 
 `klt lvs` grew a `reference.form: "gate-level-verilog"` surface
