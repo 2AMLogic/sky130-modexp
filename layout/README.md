@@ -15,6 +15,13 @@ directory holds the layout artifacts, not the evidence record itself.
 - `modexp.gds` — the same layout merged with the resolved
   `sky130_fd_sc_hd` standard-cell GDS views (`klt`'s in-process
   `klayout.db`-based DEF→GDS merge — never a `klayout` subprocess).
+- **No `modexp.v` (as-built post-route netlist) is committed for this GDS.**
+  The run that produced it wrote one (`verilog_path`) but it was never
+  committed and the run cannot be reproduced (issue #55), so LVS for this
+  pin stays formally unmet — see
+  `spec/decision-records/0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md`.
+  Any future re-pin must commit `modexp.v` next to the DEF and GDS
+  (`flow/run-par.sh`).
 - `erc/` — the `klt erc` supply-spec run against `modexp.gds` (T1 item 11,
   the structural power-delivery read; issue #129).
 

@@ -27,9 +27,20 @@ python3 flow/tie_constants.py \
   flow/.klt/synthesize/modexp_synth.v \
   flow/.klt/synthesize/modexp_synth_tied.v
 
-# 3. Place and route (nominal corner, 100 MHz, seed pinned in the request)
-PDK=sky130A klt place-and-route flow/par-modexp.json --format json
+# 3. Place and route (nominal corner, 100 MHz, seed pinned in the request).
+#    Use the wrapper, not bare `klt place-and-route`: it captures the DEF,
+#    the GDS AND the as-built post-route netlist (`verilog_path`) into one
+#    directory and fails if any of the three is missing.
+flow/run-par.sh <out_dir>
 ```
+
+**Commit the as-built netlist (issue #139, decision record 0006).** Every
+P&R run whose DEF/GDS may be committed must commit its `verilog_path`
+netlist (`modexp.v`) and the raw `par-output.json` envelope alongside them.
+The run behind the current `layout/modexp.gds` wrote such a netlist but it
+was left in scratch and lost, and the run cannot be reproduced (issue #55),
+so that GDS has no LVS-able reference. `flow/run-par.sh` makes the capture
+mechanical; do not bypass it for a run you intend to pin.
 
 Step 3's artifacts land in `flow/.klt/place-and-route/` (gitignored scratch,
 like every other `klt` working directory — see `.gitignore`'s `.klt/`
@@ -228,9 +239,12 @@ re-running the bit-exact suite against a gate-level netlist of the routed
 layout (`verification/gate-level/`). Unlike the two above, these are **not**
 yet fixed upstream:
 
-- **`klt place-and-route` has no post-route netlist or SDF export.** Its
-  response contract carries `def_path` and `gds_path` only — verified
-  directly against the pinned install. The netlist half is
+- **`klt place-and-route` SDF export is missing; the netlist half is
+  closed at the current pin (corrected by issue #139).** *Originally written
+  as "no post-route netlist export: the response carries `def_path` and
+  `gds_path` only" — that is stale: the envelope also carries `verilog_path`
+  (see `verification/records/place-and-route/artifacts/20260911-052542-d5e43d3/par-nominal-output.json`),
+  and `flow/run-par.sh` now commits it on every run.* The netlist half is
   [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996)
   (filed by #8, **fixed** by
   [#997](https://github.com/2AMLogic/klayout-tools/pull/997), merged

@@ -18,6 +18,16 @@ on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 LVS still mismatches, now 12 errors, all of them P&R cell insertions and
 resizes the pre-CTS reference cannot model
 
+**Decision (issue #139, 2026-10-01, record
+`spec/decision-records/0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md`):
+T1 item 4 stays formally `unmet` for the current pin.** The 12 mismatches
+are all router-inserted or resized cells (680 identical, 3 resized, 35
+fixups, 0 missing) and cannot be resolved against a GDS whose as-built
+post-route netlist was never committed. A genuine match (re-pin with the
+as-built netlist committed) is deferred to the next natural re-pin; a
+DEF-derived reference was rejected as too close to circular. From now on
+every P&R run commits its as-built netlist (`flow/run-par.sh`).
+
 **LVS's residue is now one named cause, and two of its previously-open
 questions are answered** (issue #131). The comparison moved onto `klt
 lvs`'s `reference.form: "gate-level-verilog"` surface, which changes three
@@ -430,7 +440,8 @@ possible but deliberately not done: the layout-side extraction already
 takes its net *names* from that same DEF, so the resulting `match` would
 sound materially stronger than the comparison is. Tracked as
 [sky130-modexp#139](https://github.com/2AMLogic/sky130-modexp/issues/139)
-rather than forced.
+rather than forced. **Resolved by issue #139 as Option 3** (decision record
+0006): item 4 stays `unmet`; the match is deferred to the next re-pin.
 
 Evidence record:
 `verification/records/drc-lvs/records/20260923-062424-7d0dd52.md` (which
