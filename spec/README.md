@@ -44,3 +44,10 @@ Ratified specification and decision records.
     names unpinned Yosys/ABC build identity as a newly-visible obstacle.
     Lands no layout, RTL, or flow change; no T1 row changes state.
     Issue #141.
+  - [`0007-the-17-of-18-bit-serial-re-spin-is-declined-not-planned.md`](decision-records/0007-the-17-of-18-bit-serial-re-spin-is-declined-not-planned.md)
+    — records the operator ruling on issue #144: the bit-serial 17/18
+    re-spin (about 8x net throughput loss, still failing `ss_n40C_1v28`) is
+    **not planned**. `0001` Decision 3 stays unamended; the 100 MHz target
+    and eighteen-corner matrix are not relaxed; the search for an
+    all-corner design without the throughput loss stays open. Status
+    `proposed`, pending two-key ratification. Issue #144.
