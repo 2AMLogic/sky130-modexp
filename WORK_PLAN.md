@@ -10,8 +10,7 @@ hand-edit that region.
 
 Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
 
-- **#155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
-- **#159**: fix(guard): honor same-command cd for installed-file-write target normalization
+_None._
 
 ## Operator Priority
 
@@ -41,17 +40,14 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
-- **#159**: fix(guard): honor same-command cd for installed-file-write target normalization
+- **#166**: signoff: re-evaluate T1 items 1,2,6,8,9,10 (#165); no new citations
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
 - **#135**: README: embed the fleet burndown chart (one line) *(curated)*
-- **#139**: LVS item 4: the last 12 mismatches need an as-built post-route netlist, which this GDS does not have *(curated)*
-- **#144**: Decide whether to land the 17/18 bit-serial re-spin (DR-0005 Decision 1 left it unlanded) *(curated)*
-- **#154**: Curator's operator-premise idempotency check is spamming #12 with duplicate heartbeats (27/43 gaps <24h, min 23min) *(curated)*
+- **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -65,13 +61,13 @@ _None._
 
 | Tier | Count |
 |------|-------|
-| Operator merge-risk holds | 2 |
+| Operator merge-risk holds | 0 |
 | Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 2 |
-| Curated | 4 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 2 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
