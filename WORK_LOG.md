@@ -3,6 +3,33 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-07
+
+- **Issue #167** (closed): Build/runtime failure on main: 3 daemon-backed merge-pr suites missing from ci-excluded.txt (CI red since resync)
+- **PR #168**: fix: exclude 3 daemon-backed merge-pr suites from CI job (#167)
+
+### 2026-10-03
+
+- **Issue #144** (closed): Decide whether to land the 17/18 bit-serial re-spin (DR-0005 Decision 1 left it unlanded)
+- **PR #164**: docs(spec): record 0007 declining the 17/18 bit-serial re-spin (not planned)
+
+### 2026-10-02
+
+- **Issue #139** (closed): LVS item 4: the last 12 mismatches need an as-built post-route netlist, which this GDS does not have
+- **PR #163**: LVS item 4 stays unmet (DR-0006); P&R runs commit as-built netlist
+
+### 2026-10-01
+
+- **Issue #162** (closed): PR #155 head SHA not updating on GitHub despite branch ref correctly moving (persistent forge-sync anomaly)
+
+### 2026-09-30
+
+- **Issue #158** (closed): Auditor guard-telemetry: loom:installed-file-write denies writes into a mktemp scratch dir's own .loom/ subtree
+- **Issue #154** (closed): Curator's operator-premise idempotency check is spamming #12 with duplicate heartbeats (27/43 gaps <24h, min 23min)
+- **PR #159**: fix(guard): honor same-command cd for installed-file-write target normalization
+- **PR #155**: fix(curator): read the prior heartbeat marker completely, confirm under the claim (#154)
+- **PR #88**: docs: point CLAUDE.md's review bar at klt wave's debugging guide
+
 ### 2026-09-27
 
 - **Issue #156** (closed): CI: 'Loom merge-pr.sh regression suites' job red on main since resync 31aa731 (daemon-backed suites have no loom-daemon)
@@ -51,6 +78,27 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 - **PR #122**: fix(docs): scope resolve_var backport claim to cases (a)-(j) only
 
 ### 2026-09-15
+
+- **Issue #114** (closed): merge-pr.sh: champion:hold-state grep pipeline silently kills the script under pipefail when no hold marker exists
+- **Issue #109** (closed): test-guard-loom-workspace.sh / test-methodology-inject.sh / test-guard-worktree-paths.sh / test-skill-router.sh: '.loom/ hook byte-identical to defaults/' check is now a tautological self-diff
+- **Issue #107** (closed): chore: resync installed Loom surfaces silently reverts merged guard-hook fixes (#71/#72, #98, #100)
+- **Issue #104** (closed): merge-pr.sh: _check_champion_hold_state_staleness() silently crashes the whole script under set -euo pipefail (no champion:hold-state comment = merge fails)
+- **Issue #103** (closed): 5 vendored .loom/hooks/tests/*.sh files reference a defaults/hooks/ dir that doesn't exist in this (consumer) repo
+- **Issue #102** (closed): guard-destructive-generic.sh: cp/mv continuation-line dest false-DENY when preceded by a leading mkdir/other-command line
+- **Issue #101** (closed): guard-destructive-generic.sh: cp into "$tmp/" (mktemp -d) now ALLOWS, was denied -- confinement bypass regression from #98
+- **Issue #99** (closed): guard-destructive-generic.sh: continuation-line cp/mv into in-worktree dest incorrectly DENIES (cross-platform, not macOS-specific)
+- **Issue #95** (closed): guard-destructive-generic.sh: mkdir is never scanned for worktree-write-confinement (full confinement bypass)
+- **Issue #93** (closed): Auditor guard-telemetry: worktree-write-confinement-unresolved-var denied a same-command-declared, relative-path $REC write
+- **Issue #92** (closed): LVS report's counts.pins.matched (333) exceeds both sides' pin counts (70/68) — likely klt field mix-up
+- **Issue #90** (closed): scripts/openroad-docker.sh re-implements PDK-root discovery instead of asking `klt pdk find`, and mounts the wrong root
+- **PR #112**: fix(guard): restore #98/#100 guard-hook fixes, wire regression suites into CI
+- **PR #111**: fix(hooks): gate defaults/-sync subtests on defaults/ existing
+- **PR #110**: fix(scripts): merge-pr.sh champion:hold-state check no longer crashes with no hold markers
+- **PR #108**: fix(hooks): resolve vendored hook tests against .loom/hooks, not defaults/hooks
+- **PR #106**: fix(guard): restore qsplit() backslash-newline line-continuation join
+- **PR #105**: fix: resolve PDK root via klt pdk find in openroad-docker.sh
+- **PR #100**: fix(guard): recognize mkdir as a write idiom in worktree-write-confinement
+- **PR #98**: fix(guard): resolve_var() now substitutes a mid-token embedded $VAR reference
 
 - **Issue #113** (closed): chore: harden resync-installed.sh (or upstream) so guard-hook fixes survive future resyncs
 - **PR #117**: fix(scripts): harden resync-installed.sh against silently reverting a locally-fixed installed file
