@@ -91,6 +91,24 @@ verb's verdict depends on no PDK and no deck), so no pin is possible there
 either — pinning it is documented upstream to always render
 `stale_evidence`.
 
+**Issue #165 re-evaluation (2026-10-07): no new citations, `t1_met_count`
+stays 2.** Each of items 1, 2, 6, 8, 9, 10 was trialled against the pinned
+signoff-leg klt (`dac2b5da`) with the closest candidate artifact on `main`:
+
+| Item | Candidate cited in the trial | Grader's result | Decision |
+|---|---|---|---|
+| 1 Design sources | `klt synthesize` envelope (`synthesis-baseline` record) | `unmet` / `unrecognized_envelope` | Not cited: the grader has no kind for synthesis output. Stays `no_evidence`. |
+| 2 Layout | `klt place-and-route` envelope (`par-nominal-output.json`) | `unmet` / `wrong_kind` (that kind is item-11-only) | Not cited, same reason. |
+| 6 Monte Carlo | none (no statistical spec row; needs a `klt yield` report, which would be fabricated) | `no_evidence` | Stays unmet; the not-applicable statement is the row above. |
+| 8 Characterization | none: no aggregated Fmax/area/power-across-corners artifact exists (`docs/signoff-claim.md` is a claim page, not an aggregation) | `no_evidence` | Stays unmet until an aggregate is produced. |
+| 9 Testbenches shipped | the item-7 gate-level `functional-verification` envelope | would render `met` | Not cited: that single envelope does not testify to "every claimed measurement's testbench", a documented cold-start, or the PDK pin; the green would be the grader's any-passing-envelope rule, not evidence. |
+| 10 Repo hygiene | same envelope | would render `met` | Not cited: no `klt` envelope bears on README/LICENSE/CI; this is the borrowed-citation case the policy above forbids. |
+
+README, LICENSE and `.github/workflows/ci.yml` do exist; the grader just
+cannot read them. The tool-side gap (items 1/2/9/10 grade on any passing
+envelope and reject `generic`) is already tracked upstream as
+2AMLogic/klayout-tools#2718, so no new issue was filed.
+
 **Manifest key gotcha:** for a non-`mixed-signal` manifest, per-kind item
 keys must be the **bare** item id (`"7"`), not the partition-qualified
 `"7.digital"` the upstream manifest docs describe — a partition-qualified
