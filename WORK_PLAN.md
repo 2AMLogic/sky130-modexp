@@ -40,7 +40,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#174**: chore: audit .loom/resync-ignore pins; retire resync-installed pins (#172)
+_None._
 
 ## Proposed
 
@@ -48,7 +48,6 @@ Issues carrying `loom:curated`.
 
 - **#135**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence) *(curated)*
-- **#172**: Audit .loom/resync-ignore pins (12 files): drop what is upstream, upstream or keep the rest *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -67,8 +66,8 @@ _None._
 | Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 3 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 2 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
