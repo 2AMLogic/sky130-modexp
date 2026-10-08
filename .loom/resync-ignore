@@ -1,28 +1,32 @@
-# 2am#869: local guard-hook/resync-safety fixes pending upstream PRs to
-# rjwalters/loom. Pinned here (not silently reverted) until the PRs listed
-# below merge and land in defaults/ via a normal resync; remove each entry
-# once its fix arrives upstream and this file resyncs cleanly.
+# Local pins on resync-refreshed Loom surfaces. Audited per file in
+# 2AMLogic/sky130-modexp#172 (2026-10-08) against rjwalters/loom defaults/ at
+# v0.19.897+5 (the local source clone's HEAD afa02a655). Every entry below
+# is either awaiting an upstream PR to rjwalters/loom or deliberately
+# local-only; drop an entry in the same change that lands its fix upstream.
 #
-# hooks/guard-destructive-generic.sh: mkdir write-target physical_abs_path()
-#   resolution + mkdir-as-write-idiom recognition (originally sky130-modexp
-#   #116/#123), plus the `.loom/sweep-checkpoint/` carve-out from the base
-#   worktree-write-confinement check (sky130-modexp #146 -- the guard denied
-#   the sweep orchestrator's own main-clean baseline snapshot), plus the
-#   one-hop literal variable chain in rm_scope_literal_same_command_resolve()
-#   (sky130-modexp #151 -- `R=<literal>; W="$R/lit"; rm -rf "$W"` denied at
-#   the catastrophic tier despite both hops being static same-command text).
-#   Upstream PR: TBD (see 2am#869).
+# Retired by the #172 audit (upstream now carries an equivalent, with its own
+# tests): scripts/resync-installed.sh (local-fix detection guard, loom#7870 /
+# loom#9141) and scripts/tests/test-resync-installed.sh.
+#
+# hooks/guard-destructive-generic.sh: STILL pinned, for two fixes upstream
+# does not carry (verified: the local sweep-checkpoint and one-hop-chain
+# suites FAIL against the upstream guard, 8 of 9 resp. 4 of 13 cases):
+#   - the `.loom/sweep-checkpoint/` carve-out from the base
+#     worktree-write-confinement check (sky130-modexp #146 -- the guard denied
+#     the sweep orchestrator's own main-clean baseline snapshot), and
+#   - the one-hop literal variable chain in rm_scope_literal_same_command_
+#     resolve() (sky130-modexp #151 -- `R=<literal>; W="$R/lit"; rm -rf "$W"`
+#     denied at the catastrophic tier despite both hops being static text).
+# The mkdir write-target physical_abs_path() resolution and mkdir-as-write-
+# idiom recognition (originally #116/#123) ARE upstream (loom#7978; the local
+# mkdir-confinement, resolve-var and cp-mv-continuation suites pass against
+# the upstream guard), so they no longer justify the pin.
+# Upstream PR: none yet -- needs a rjwalters/loom PR against
+# defaults/hooks/guard-destructive-generic.sh carrying only the two items
+# above (tracked in sky130-modexp#172). The installed copy is also months
+# behind upstream, so the pin is currently masking unrelated upstream guard
+# changes too; rebasing the two patches onto current upstream is the way out.
 hooks/guard-destructive-generic.sh
-
-# scripts/resync-installed.sh: sync_one() local-fix detection guard --
-# blocks (rather than silently reverting) an update that would remove lines
-# unique to the installed copy when the copy's last commit was not a routine
-# resync (originally sky130-modexp #117). Upstream PR: TBD (see 2am#869).
-scripts/resync-installed.sh
-
-# scripts/tests/test-resync-installed.sh: companion test coverage for the
-# guard above. Pinned alongside it.
-scripts/tests/test-resync-installed.sh
 
 # ---------------------------------------------------------------------------
 # sky130-modexp #154: the Curator heartbeat-idempotency fix. Root-caused live
@@ -38,8 +42,13 @@ scripts/tests/test-resync-installed.sh
 #   1. a pagination-safe, fail-closed prior-marker reader, and
 #   2. a confirm-under-claim re-decide in curator.md's two idempotency paths,
 #      so two concurrent passes cannot both conclude "reportable".
-# Upstream PR: TBD (see 2am#869) -- the reader belongs in defaults/scripts/ and
-# the prompt change in defaults/commands/loom/curator.md.
+# #172 audit: upstream curator.md now reads the prior marker with
+# `gh api --paginate`, which covers the page-boundary shape, but it has no
+# fail-closed reader (dep-recheck-prior-marker.sh has no upstream counterpart)
+# and no confirm-under-claim re-decide, so item 2 and the fail-closed read are
+# still local. Upstream PR: none yet -- the reader belongs in
+# defaults/scripts/ and the prompt change in defaults/commands/loom/curator.md
+# (tracked in sky130-modexp#172).
 
 # scripts/dep-recheck-prior-marker.sh: the new reader (no upstream counterpart
 #   yet, so an unpinned resync would ORPHAN/remove it, not merely revert it).
@@ -74,7 +83,7 @@ commands/loom/curator.md
 # otherwise assigned, no symlink/relocation tools -- so fixtures built in a
 # scratch tree's own .loom/ subtree are not falsely denied while real writes
 # to the installed tree stay denied. Tracking: 2AMLogic/sky130-modexp#158;
-# upstream report rjwalters/loom#9154 (see 2am#869). No upstream PR yet --
-# remove this pin once the fix lands in defaults/.
+# upstream report rjwalters/loom#9154 (still open, no fix in defaults/ as of
+# the #172 audit). No upstream PR yet -- remove this pin once the fix lands.
 hooks/guard-loom-workflow.sh
 hooks/tests/test-guard-installed-write-cd-tracking.sh
