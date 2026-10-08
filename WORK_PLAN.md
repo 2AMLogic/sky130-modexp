@@ -23,7 +23,6 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence)
-- **#172**: Audit .loom/resync-ignore pins (12 files): drop what is upstream, upstream or keep the rest
 
 ## In Progress
 
@@ -41,7 +40,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#174**: chore: audit .loom/resync-ignore pins; retire resync-installed pins (#172)
 
 ## Proposed
 
@@ -65,10 +64,10 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Operator priority | 0 |
-| Ready (`loom:issue`) | 2 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 1 |
