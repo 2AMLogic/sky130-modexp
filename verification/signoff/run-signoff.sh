@@ -16,13 +16,11 @@
 #
 # Toolchain: this is a tool-light, read-only report leg -- it re-runs no PDK
 # job, it only reads committed JSON envelopes. It therefore pins its OWN klt
-# revision (see docs/environment.md -> "Pinned versions", the signoff-report
-# row), newer than the PDK-heavy legs' pin, because the report leg needs the
-# digital-flow evidence kinds (`klt sta` / `klt functional-verification`
-# recognition, item 11 in the tier doc) that the older pin predates. Locally
-# the runner prefers `.venv/bin/klt` (what scripts/setup-env.sh provisions)
-# and falls back to whatever `klt` is on PATH; CI installs the pinned
-# revision directly.
+# release (see docs/environment.md -> "Pinned versions", the signoff-report
+# row), newer than the PDK-heavy legs' pin: 0.7.0 on PyPI, whose grader binds
+# T1 items 1/2/9/10 to artifact-anchored evidence (klayout-tools#2718).
+# Locally the runner uses $KLT, else `klt` on PATH, and refuses any other
+# version; CI installs `klayout-tools==0.7.0` directly.
 #
 # Exit codes: `klt signoff --manifest` exits 3 when the report rendered fine
 # but at least one T1 item is unmet -- which is this block's honest current
@@ -51,12 +49,29 @@ MANIFEST="verification/signoff/block-manifest.json"
 TIERS_DOC="verification/signoff/design-evidence-tiers.md"
 REPORT="verification/signoff/tier-report.json"
 
-if [[ -x ".venv/bin/klt" ]]; then
-  KLT=".venv/bin/klt"
+# The signoff-report leg pins its OWN klt release (issue #165): 0.7.0, the
+# first release whose grader can bind T1 items 1/2/9/10 to audited artifacts
+# (klayout-tools#2718). The PDK-heavy legs' `.venv` klt is an older pin, so
+# this script does NOT silently fall back to it: set KLT to a 0.7.0 `klt`
+# (e.g. `uv venv /tmp/v && uv pip install --python /tmp/v/bin/python
+# "klayout-tools==0.7.0"`, then `KLT=/tmp/v/bin/klt`), or have one on PATH.
+SIGNOFF_KLT_VERSION="0.7.0"
+
+if [[ -n "${KLT:-}" ]]; then
+  :
 else
-  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and no .venv/bin/klt" >&2; exit 1; }
+  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and KLT unset (need klayout-tools==${SIGNOFF_KLT_VERSION})" >&2; exit 1; }
 fi
-echo "klt: $KLT ($("$KLT" --version 2>/dev/null || echo 'version unknown'))" >&2
+KLT_VERSION_LINE="$("$KLT" --version 2>/dev/null || echo 'version unknown')"
+echo "klt: $KLT ($KLT_VERSION_LINE)" >&2
+case "$KLT_VERSION_LINE" in
+  "klt ${SIGNOFF_KLT_VERSION}"|"klt ${SIGNOFF_KLT_VERSION}+"*) ;;
+  *)
+    echo "FATAL: signoff leg is pinned to klayout-tools==${SIGNOFF_KLT_VERSION}; got '${KLT_VERSION_LINE}'." >&2
+    echo "  Point KLT at a ${SIGNOFF_KLT_VERSION} install (see the comment above)." >&2
+    exit 1
+    ;;
+esac
 
 run_report() { # $1 = output file
   set +e

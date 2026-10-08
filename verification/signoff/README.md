@@ -34,13 +34,17 @@ duplicating it.
   doc; the CI `--check` leg fails until the report is regenerated.
 - `tier-report.json` — the committed output of `klt signoff --manifest
   block-manifest.json --tiers-doc design-evidence-tiers.md --format json`
-  on the signoff-leg klt pin. Regenerate with `./run-signoff.sh`.
-- `run-signoff.sh` — the runner (and the `--check` gate CI runs). Prefers
-  `.venv/bin/klt`, falls back to `PATH`.
+  on the signoff-leg klt pin (`klayout-tools==0.7.0`). Regenerate with
+  `KLT=<path to a 0.7.0 klt> ./run-signoff.sh`.
+- `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 9,
+  10 and the audit records they are bound to.
+- `run-signoff.sh` — the runner (and the `--check` gate CI runs). Uses `$KLT`,
+  else `klt` on `PATH`, and refuses any version other than 0.7.0 (the
+  PDK-heavy legs' `.venv` klt is an older pin).
 
-## Current verdict (2026-09-23, this manifest)
+## Current verdict (2026-10-08, this manifest)
 
-**2 of 11 T1 items met; `tier: null`.** This is the honest graded state —
+**6 of 11 T1 items met; `tier: null`** (was 2 of 11 before issue #165). This is the honest graded state —
 an all-`unmet` manifest would have been a correct result too (issue #130);
 nothing here inflates a row to green.
 
@@ -51,31 +55,39 @@ nothing here inflates a row to green.
 | 7 Post-layout verification | **met** | The cited gate-level `klt functional-verification` run (record `20260923-054800-e26f603`) passes **with** `environment.sdf.annotated: true` — the SDF-annotated post-layout regression item 7 requires (issue #138). Its own disclosure rides with it: the annotation is `partial`, because Icarus implements SDF `IOPATH`/`INTERCONNECT` but not `TIMINGCHECK`, so all 129 `TIMINGCHECK` sections are dropped and `$setup`/`$hold` run against the cell library's placeholder limits. **This is net-delay back-annotation, not timing-check verification** — the setup/hold question is item 5's, and item 5 is `unmet` below. |
 | 5 Corner verification | unmet (`check_failed`) | **Now cited, and failing on its own evidence rather than on an absence of it** (issue #132): `verification/records/sta-corner-sweep/artifacts/20260923-093000-28a7c96/sta-corner-sweep-results.json`, one `klt sta` envelope covering all 18 ratified corners of the committed layout, pinned by the analysed DEF's `content_hash`. The grader's rule is that every reported corner must be `timing_status: "constrained"` with non-negative setup **and** hold slack; **100 MHz closes at 10 of 18** — binding corner `ss_n40C_1v28` at **22.80 MHz**, setup WNS −33.867 ns. Hold is clean at all 18. This is a disclosed, bounded FAIL carried against an unamended ratified Clock row, ratified as `spec/decision-records/0004-…`; it is deliberately **not** closed by lowering the target, and the decision record prices the measured route to 18/18. **Update (issue #141):** that route was run through committed `klt` requests and reaches **17 of 18** (`ss_n40C_1v28` at −0.574 ns / 94.57 MHz), not eighteen — `spec/decision-records/0005-…` and record `20260924-134500-1a8313b`. This row's cited evidence and verdict are unchanged: no layout, RTL or flow request moved. |
 | 11 Power delivery (structural) | unmet (`check_failed`) | Cited as the compound entry the grader defines: `layout/erc/modexp-erc-supply-report.json` (issue #129's supply-island read — `erc_finding_count: 0`, `VPWR`/`VGND` one island each, input pinned to the current GDS) + the item-4 LVS report + the P&R envelope (`power.pdn: true`, `tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1`, straps met1/met4/met5 all inside the spec's stackup). The rendered reason is the LVS half: that report still mismatches (tracked by #131) and carries no `power_connectivity` verdict at all — and past it sit the spec's deliberately-undeclared `ties[]` (klayout-tools#2169, `erc.missing_tie` not computed) — so the item stays honestly unmet on the grader's own terms; the supply-island half is met and documented in `layout/erc/README.md`. |
-| 1, 2, 9, 10 | unmet (`no_evidence`) | Deliberately uncited — see "Citation policy". |
-| 6 Monte Carlo | unmet (`no_evidence`) | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. |
-| 8 Characterization | unmet (`no_evidence`) | No aggregated characterization artifact (Fmax/area/power across corners) exists yet. |
+| 1 Design sources | **met** | Artifact-anchored `generic` envelope `evidence/item-1-design-sources.json`, bound to the committed inventory `evidence/design-sources.md` (RTL + the synthesized netlist derived from it + regeneration steps). Added by issue #165 on klt 0.7.0. |
+| 2 Layout | **met** | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). **Disclosure:** the committed P&R flow exists, but the exact run behind this GDS is not bit-reproducible (`layout/README.md`, issue #55) and no as-built netlist was captured (decision record 0006); the envelope's `summary` says so. The item text asks for "reproducibly generated"; the grader reads the attestation, not that clause. |
+| 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `evidence/testbenches.md` (each claimed functional measurement, its testbench, its cold-start invocation, and the PDK pin). Tool-run checks (DRC/LVS/STA) are stated to be outside the claim. |
+| 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `evidence/repo-hygiene.md` (README, spec table, LICENSE, CI, pins). |
+| 6 Monte Carlo | unmet (`no_evidence`) — unchanged by 0.7.0 | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. |
+| 8 Characterization | unmet (`no_evidence`) — unchanged by 0.7.0 | No aggregated characterization artifact (Fmax/area/power across corners) exists yet. |
 
 ## Citation policy (what is cited, and why the rest is deliberately not)
 
-`klt signoff` grades items 1, 2, 9 and 10 on *"some passing envelope was
-cited"*, not on topical relevance — the tool cannot check that a cited
-artifact is about the claim. Citing them honestly is this repo's
-responsibility (the grader's own docs say the same), so this manifest cites
-**only** items whose cited envelope actually backs the claim, and leaves
-items with no machine-checkable evidence visibly `unmet`/`no_evidence`:
+Before klt 0.7.0, `klt signoff` graded items 1, 2, 9 and 10 on *"some passing
+envelope was cited"*, not on topical relevance, and rejected `generic`
+evidence for them; the only way to turn them green was to borrow an unrelated
+passing envelope, which this manifest refused to do (issue #165's first
+attempt, PR #166, concluded "no honest citations" on that basis).
+klayout-tools 0.7.0 (klayout-tools#2718) accepts an **artifact-anchored
+`generic` envelope** for these four: it declares `t1_item`, names the audited
+artifact in `provenance.input.path` with its `content_hash`, and the manifest
+pins the same hash; the grader re-hashes the artifact (`input_verified`), so
+editing the audited bytes turns the row `stale_evidence` and the CI `--check`
+fails.
 
-- **Item 1 / 2** (design sources, layout): the real artifacts exist
-  (`rtl/modexp.v`, the synthesized netlist, `layout/modexp.gds` + `modexp.def`
-  from the committed P&R flow), but no recognized `klt` envelope testifies
-  to them (`klt synthesize`/`klt place-and-route` responses are not
-  signoff-recognized envelope kinds), and borrowing a passing DRC report to
-  green these rows would be exactly the dishonest citation the issue
-  forbids.
-- **Item 9** (testbenches shipped): the cocotb suites are committed and CI
-  runs them, but again no envelope-shaped check exists for "a third party
-  can cold-start this testbench" — uncited.
-- **Item 10** (repo hygiene): README/LICENSE/CI all exist; uncited for the
-  same reason.
+- **Item 1 / 9 / 10** are bound to committed, human-readable audit records
+  under `evidence/` (`design-sources.md`, `testbenches.md`,
+  `repo-hygiene.md`). The envelope's `status: pass` is this repo's own
+  assertion — the grader does not re-audit the inventory — so each record
+  states what it does and does not cover. Editing a record means re-reading it
+  against the repo and re-hashing (envelope + manifest pin) in the same change.
+- **Item 2** is bound to the committed routed GDS itself; see the
+  reproducibility disclosure in the table above.
+- `status: pass` on these is the attestation of the audit, not a tool
+  measurement. A borrowed native envelope is never used for them.
+- **Items 6 and 8** are unaffected by 0.7.0 and stay `unmet`/`no_evidence`
+  (reasons in the table). **Items 4, 5, 11** are as before.
 
 Freshness pins (`content_hash`) are set on every citation whose envelope
 carries a checkable input hash. Item 3 pins the DRC report's input layout
@@ -143,8 +155,10 @@ Full record: `verification/records/sta-corner-sweep/records/20260923-093000-28a7
 ## Running it
 
 ```bash
-./verification/signoff/run-signoff.sh          # regenerate tier-report.json
-./verification/signoff/run-signoff.sh --check  # what CI runs
+# needs klayout-tools==0.7.0, e.g. a throwaway venv:
+#   uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools==0.7.0"
+KLT=/tmp/v/bin/klt ./verification/signoff/run-signoff.sh          # regenerate tier-report.json
+KLT=/tmp/v/bin/klt ./verification/signoff/run-signoff.sh --check  # what CI runs
 ```
 
 CI (`.github/workflows/ci.yml`, `signoff` job) installs the signoff-leg

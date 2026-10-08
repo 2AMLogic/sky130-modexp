@@ -130,9 +130,9 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
         "VOLARE_SKY130_VERSION=",
     ),
     (
-        "KLT_REV left stale in one table row (signoff-report leg)",
+        "KLT_REV left stale in one table row (evidence leg)",
         _mut_doc(
-            lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff", lambda ln: ln.replace(KLT_REV, FAKE_REV))
+            lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, FAKE_REV))
         ),
         1,
         "stale or unsynced pin",
