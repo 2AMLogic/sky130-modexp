@@ -22,7 +22,8 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence)
+- **#172**: Audit .loom/resync-ignore pins (12 files): drop what is upstream, upstream or keep the rest
 
 ## In Progress
 
@@ -40,7 +41,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#166**: signoff: re-evaluate T1 items 1,2,6,8,9,10 (#165); no new citations
+_None._
 
 ## Proposed
 
@@ -48,6 +49,7 @@ Issues carrying `loom:curated`.
 
 - **#135**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence) *(curated)*
+- **#172**: Audit .loom/resync-ignore pins (12 files): drop what is upstream, upstream or keep the rest *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -63,11 +65,11 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Operator priority | 0 |
-| Ready (`loom:issue`) | 0 |
+| Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 2 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->

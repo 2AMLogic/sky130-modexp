@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-08
+
+- **Issue #170** (closed): Main CI red: test-merge-pr-help.sh and test-merge-pr-merge-method.sh need loom-daemon but are not in ci-excluded.txt
+- **PR #171**: fix: exclude test-merge-pr-help/-merge-method from toolchain-free CI (#170)
+
 ### 2026-10-07
 
 - **Issue #167** (closed): Build/runtime failure on main: 3 daemon-backed merge-pr suites missing from ci-excluded.txt (CI red since resync)
