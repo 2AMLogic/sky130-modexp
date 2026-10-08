@@ -88,16 +88,6 @@
 #   --output leaves no staging worktree or dangling worktree registration
 #   behind, LOOM_RESYNC_OUTPUT=<dir> is equivalent to the flag, and --output
 #   with no value exits 1.
-# Local-divergence protection (#113): an update that would REMOVE a
-# non-blank line unique to the installed copy, on a file whose most recent
-# commit was NOT routine install/resync tooling output, is BLOCKED (not
-# silently applied) -- reproduces the #98/#100 incident shape directly and
-# exits 1 (or 2 under --dry-run) with the offending file named; --force
-# applies it anyway; an ordinary update with no local divergence (the
-# make_fixture() baseline lineage) keeps applying automatically with no
-# behavior change; a pure-addition update never gates even on a diverged
-# file; and a .loom/resync-ignore pin still short-circuits before the gate,
-# reported as skipped rather than blocked.
 # Plus contract checks:
 #   - --help prints usage (documenting --allow-worktree and --output), exit 0
 #   - unknown arg exits 1
@@ -228,14 +218,16 @@ make_fixture() {
     printf '{\n  "loom_version": "0.0.0",\n  "loom_commit": "old",\n  "install_date": "2020-01-01",\n  "loom_source": "%s",\n  "installed_files": []\n}\n' \
         "$repo" > "$repo/.loom/install-metadata.json"
 
-    # A real commit so loom_commit re-stamps to an actual short sha. #113:
+    # A real commit so loom_commit re-stamps to an actual short sha. #7864:
     # the message deliberately matches the local-divergence protection's
     # "safe lineage" pattern (RESYNC_COMMIT_SUBJECT_RE) -- every file this
     # fixture drifts is meant to model ordinary, never-individually-patched
     # installed content (the ubiquitous common case throughout this suite),
     # not a local fix. Tests that specifically want the OTHER shape (a direct
-    # fix landed on the installed copy, #98/#100) layer an additional commit
-    # with a non-matching message on top -- see "Test group 29" below.
+    # fix landed on the installed copy) layer an additional commit with a
+    # non-matching message on top -- those live in the sibling suite
+    # test-resync-installed-local-fix-guard.sh, NOT below in this file
+    # (#8165: this pointer said "below" from the start and was never right).
     git -C "$repo" add -A >/dev/null 2>&1
     git -C "$repo" commit -qm "chore: install Loom v0.0.0" >/dev/null 2>&1
 
@@ -706,7 +698,7 @@ if grep -q '"loom_version": *"9.9.9"' "$META"; then
 else
     fail "(n) loom_version not re-stamped"
 fi
-if grep -q "\"last_resync\": *\"$(date +%Y-%m-%d)\"" "$META"; then
+if grep -q "\"last_resync\": *\"$(date -u +%Y-%m-%d)\"" "$META"; then
     pass "(n) last_resync stamped with today's date"
 else
     fail "(n) last_resync not stamped"
@@ -1118,11 +1110,19 @@ printf 'NEW-TEST\n' > "$REPO/defaults/scripts/check-defaults-version-bump.sh"   
 git -C "$REPO" add defaults/scripts/check-defaults-version-bump.sh >/dev/null 2>&1
 git -C "$REPO" commit -qm "add new shipped defaults/ file" >/dev/null 2>&1
 OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
-commit_line="$(grep -m1 '^ *git add ' <<<"$OUT")"
-if [[ -n "$commit_line" ]]; then
-    pass "(#7336) fixture precondition: the dirty-tree commit hint fired"
+# #6646: the actionable recommendation is now land-resync-commit.sh (which
+# commits AND lands, never rebasing/bypass-pushing on its own) rather than a
+# raw 'git add && git commit' -- but the note line still embeds the resolved
+# resync_paths list ("would be: git add <paths>") so this test can keep
+# verifying suggest_commit_if_resync_only_dirt()'s CLASSIFICATION logic
+# (retired-vs-shipped, #7336) independently of how the commit is landed. The
+# precondition below asserts both halves (this file is frozen by the
+# file-size ratchet, #7711, so the #6646 check shares the existing assertion).
+commit_line="$(grep -m1 'would be: git add ' <<<"$OUT")"
+if [[ -n "$commit_line" ]] && grep -q './.loom/scripts/land-resync-commit\.sh' <<<"$OUT"; then
+    pass "(#7336/#6646) fixture precondition: the dirty-tree commit hint fired and recommends land-resync-commit.sh"
 else
-    fail "(#7336) fixture precondition: the dirty-tree commit hint did not fire, cannot test its content"
+    fail "(#7336/#6646) fixture precondition: the dirty-tree commit hint did not fire / does not recommend land-resync-commit.sh, cannot test its content"
 fi
 if grep -q 'some-retired-tool\.sh' <<<"$commit_line"; then
     fail "(#7336) retired-but-unlisted path was incorrectly included in the 'git add' commit suggestion"
@@ -1406,23 +1406,29 @@ else
     fail "(#6532) the non-colliding '.loom/package.json' pin was not reported dead (rc check: $?)"
 fi
 
-# --- (#5559) targeted field edit: .loom/CLAUDE.md version-header restamp ----
-echo "Test group 12j: .loom/CLAUDE.md version header restamp (#5559)"
+# --- (#5559 -> #8147) targeted field REMOVAL: .loom/CLAUDE.md version header ----
+#
+# #5559 re-stamped this header to the source version on every resync. #8147
+# deleted the stamp from the template instead (the guide is injected into
+# every agent session's prompt prefix, so a per-release token in it dropped
+# every warm prefix in the fleet on each bump) and turned this step into a
+# one-time migration for repos installed before that change.
+echo "Test group 12j: .loom/CLAUDE.md legacy version header is removed (#8147)"
 REPO="$(make_fixture)"
 printf '# Loom Orchestration - Repository Guide\n\n**Loom Version**: 0.16.0\n**Installation Date**: 2020-01-01\n\nBody text unaffected.\n\n**Generated by Loom Installation Process**\nLast updated: 2026-07-29\n' \
     > "$REPO/.loom/CLAUDE.md"
 OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
 RC=$?
-if [[ $RC -eq 0 ]]; then pass "(#5559) apply with a stale .loom/CLAUDE.md header exits 0"; else fail "(#5559) apply exits 0 (got $RC)"; fi
-if grep -q '\*\*Loom Version\*\*: 9.9.9' "$REPO/.loom/CLAUDE.md"; then
-    pass "(#5559) .loom/CLAUDE.md Loom Version header restamped to source version"
+if [[ $RC -eq 0 ]]; then pass "(#8147) apply with a legacy .loom/CLAUDE.md header exits 0"; else fail "(#8147) apply exits 0 (got $RC)"; fi
+if grep -q '^\*\*Loom Version\*\*:' "$REPO/.loom/CLAUDE.md"; then
+    fail "(#8147) .loom/CLAUDE.md still carries a **Loom Version** header"
 else
-    fail "(#5559) .loom/CLAUDE.md Loom Version header NOT restamped"
+    pass "(#8147) .loom/CLAUDE.md legacy **Loom Version** header removed"
 fi
-if grep -q "^Last updated: $(date +%Y-%m-%d)\$" "$REPO/.loom/CLAUDE.md"; then
-    pass "(#5559) .loom/CLAUDE.md Last updated footer restamped to today"
+if grep -q "^Last updated: 2026-07-29\$" "$REPO/.loom/CLAUDE.md"; then
+    pass "(#8147) .loom/CLAUDE.md Last updated footer left alone (restamping it would be another per-resync token)"
 else
-    fail "(#5559) .loom/CLAUDE.md Last updated footer NOT restamped"
+    fail "(#8147) .loom/CLAUDE.md Last updated footer was rewritten"
 fi
 if grep -q '\*\*Installation Date\*\*: 2020-01-01' "$REPO/.loom/CLAUDE.md"; then
     pass "(#5559) .loom/CLAUDE.md Installation Date header left untouched (original install date, not a resync stamp)"
@@ -1434,17 +1440,19 @@ if grep -q "Body text unaffected." "$REPO/.loom/CLAUDE.md"; then
 else
     fail "(#5559) .loom/CLAUDE.md body content was altered"
 fi
-if grep -q "CLAUDE.md.*restamped version header" <<<"$OUT"; then
-    pass "(#5559) apply reports the .loom/CLAUDE.md version-header restamp"
+if grep -q "CLAUDE.md.*removed stale version header" <<<"$OUT"; then
+    pass "(#8147) apply reports the .loom/CLAUDE.md version-header removal"
 else
-    fail "(#5559) apply did not report the .loom/CLAUDE.md restamp"
+    fail "(#8147) apply did not report the .loom/CLAUDE.md removal"
 fi
-# Idempotent rerun: second apply is a clean no-op for the header.
+# Idempotent rerun: the migration is one-time -- a second apply leaves the
+# already-migrated file byte-identical and reports nothing about it.
+BEFORE_SUM="$(shasum "$REPO/.loom/CLAUDE.md")"
 OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
-if grep -q "CLAUDE.md (version header already" <<<"$OUT"; then
-    pass "(#5559) second run reports .loom/CLAUDE.md version header unchanged (idempotent)"
+if [[ "$BEFORE_SUM" == "$(shasum "$REPO/.loom/CLAUDE.md")" ]] && ! grep -q "CLAUDE.md.*version header" <<<"$OUT"; then
+    pass "(#8147) second run leaves the migrated .loom/CLAUDE.md byte-identical and silent"
 else
-    fail "(#5559) second run did not report .loom/CLAUDE.md as unchanged"
+    fail "(#8147) second run rewrote or re-reported the migrated .loom/CLAUDE.md"
 fi
 
 echo "Test group 12k: .loom/CLAUDE.md missing (pre-#4239 layout) is not created by resync"
@@ -1489,45 +1497,44 @@ else
     fail "(#5559) pinned .loom/CLAUDE.md not reported skipped"
 fi
 
-# --- (#6612) targeted field edit: root CLAUDE.md version-header restamp ----
-echo "Test group 12s: root CLAUDE.md version header restamp (#6612)"
+# --- (#6612 -> #8147) targeted field REMOVAL: root CLAUDE.md version header ----
+echo "Test group 12s: root CLAUDE.md legacy version header is removed (#8147)"
 REPO="$(make_fixture)"
 printf '# Loom Orchestration - Repository Guide\n\n**Loom Version**: 0.16.0\n**Installation Date**: 2020-01-01\n\nBody text unaffected.\n\n**Generated by Loom Installation Process**\nLast updated: 2026-07-29\n' \
     > "$REPO/CLAUDE.md"
 OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
 RC=$?
-if [[ $RC -eq 0 ]]; then pass "(#6612) apply with a stale root CLAUDE.md header exits 0"; else fail "(#6612) apply exits 0 (got $RC)"; fi
-if grep -q '\*\*Loom Version\*\*: 9.9.9' "$REPO/CLAUDE.md"; then
-    pass "(#6612) root CLAUDE.md Loom Version header restamped to source version"
+if [[ $RC -eq 0 ]]; then pass "(#8147) apply with a legacy root CLAUDE.md header exits 0"; else fail "(#8147) apply exits 0 (got $RC)"; fi
+if grep -q '^\*\*Loom Version\*\*:' "$REPO/CLAUDE.md"; then
+    fail "(#8147) root CLAUDE.md still carries a **Loom Version** header"
 else
-    fail "(#6612) root CLAUDE.md Loom Version header NOT restamped"
+    pass "(#8147) root CLAUDE.md legacy **Loom Version** header removed"
 fi
-if grep -q "^Last updated: $(date +%Y-%m-%d)\$" "$REPO/CLAUDE.md"; then
-    pass "(#6612) root CLAUDE.md Last updated footer restamped to today"
+if grep -q "^Last updated: 2026-07-29\$" "$REPO/CLAUDE.md"; then
+    pass "(#8147) root CLAUDE.md Last updated footer left alone (no per-resync token reintroduced)"
 else
-    fail "(#6612) root CLAUDE.md Last updated footer NOT restamped"
+    fail "(#8147) root CLAUDE.md Last updated footer was rewritten"
 fi
-if grep -q '\*\*Installation Date\*\*: 2020-01-01' "$REPO/CLAUDE.md"; then
-    pass "(#6612) root CLAUDE.md Installation Date header left untouched (original install date, not a resync stamp)"
-else
-    fail "(#6612) root CLAUDE.md Installation Date header was altered"
-fi
+# (The "**Installation Date** left untouched" assertion is not repeated here:
+# since #8147 both paths share one strip_claude_md_version_header() helper, so
+# group 12j's copy covers it.)
 if grep -q "Body text unaffected." "$REPO/CLAUDE.md"; then
     pass "(#6612) root CLAUDE.md body content untouched (targeted field edit, not a regenerate)"
 else
     fail "(#6612) root CLAUDE.md body content was altered"
 fi
-if grep -q "CLAUDE.md.*restamped version header.*#6612" <<<"$OUT"; then
-    pass "(#6612) apply reports the root CLAUDE.md version-header restamp"
+if grep -q "CLAUDE.md.*removed stale version header.*#6612" <<<"$OUT"; then
+    pass "(#8147) apply reports the root CLAUDE.md version-header removal"
 else
-    fail "(#6612) apply did not report the root CLAUDE.md restamp"
+    fail "(#8147) apply did not report the root CLAUDE.md removal"
 fi
-# Idempotent rerun: second apply is a clean no-op for the header.
+# Idempotent rerun: the migration is one-time (see group 12j).
+BEFORE_SUM="$(shasum "$REPO/CLAUDE.md")"
 OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
-if grep -q "CLAUDE.md (version header already" <<<"$OUT"; then
-    pass "(#6612) second run reports root CLAUDE.md version header unchanged (idempotent)"
+if [[ "$BEFORE_SUM" == "$(shasum "$REPO/CLAUDE.md")" ]] && ! grep -q "CLAUDE.md.*version header" <<<"$OUT"; then
+    pass "(#8147) second run leaves the migrated root CLAUDE.md byte-identical and silent"
 else
-    fail "(#6612) second run did not report root CLAUDE.md as unchanged"
+    fail "(#8147) second run rewrote or re-reported the migrated root CLAUDE.md"
 fi
 
 echo "Test group 12t: root CLAUDE.md missing is not created by resync"
@@ -2355,10 +2362,10 @@ if grep -qi "primary checkout" <<<"$OUT" || grep -qi "never touched" <<<"$OUT"; 
 else
     fail "(#6106) apply did not confirm the primary checkout was untouched"
 fi
-if grep -q "git add -A" <<<"$OUT" && grep -q "git commit" <<<"$OUT" && grep -q "worktree remove" <<<"$OUT"; then
-    pass "(#6106) apply prints the commit + cleanup next-steps"
+if grep -q "git add -- " <<<"$OUT" && ! grep -q "git add -A" <<<"$OUT" && grep -q "git commit" <<<"$OUT" && grep -q "worktree remove" <<<"$OUT"; then
+    pass "(#6106/#9141) apply prints allowlist-staging commit + cleanup next-steps, never 'git add -A'"
 else
-    fail "(#6106) apply did not print the expected next-steps"
+    fail "(#6106/#9141) apply did not print the expected next-steps (or still prints 'git add -A')"
 fi
 git -C "$REPO" worktree remove --force "$STAGE" >/dev/null 2>&1 || true
 
@@ -2765,16 +2772,40 @@ else
     fail "(#6716) a failed label fix was not reported as a soft warning (rc=$RC); out=$OUT"
 fi
 
-echo "Test group 28e: forge label check -- the check itself errors -> loud warning, not a resync failure (#6716)"
+echo "Test group 28e: forge label check -- unreachable forge (rc=4) -> soft warning, exit 0 (#6716, #7745)"
 REPO="$(make_fixture)"
 add_labels_stub "$REPO"
 STUB_LOG="$WORKDIR/stub28e.log"; : > "$STUB_LOG"
-OUT="$(cd "$REPO" && STUB_LOG="$STUB_LOG" LOOM_TEST_LABELS_CHECK_RC=1 bash "$SCRIPT" 2>&1)"
+# rc=4 is "could not reach the forge" since #7745 -- benign, because resync
+# must keep working offline. Exit stays 0.
+OUT="$(cd "$REPO" && STUB_LOG="$STUB_LOG" LOOM_TEST_LABELS_CHECK_RC=4 bash "$SCRIPT" 2>&1)"
 RC=$?
-if [[ $RC -eq 0 ]] && grep -qi "skipped forge label" <<<"$OUT"; then
-    pass "(#6716) a --check lookup error is a loud warning, not a resync-wide failure"
+if [[ $RC -eq 0 ]] && grep -qi "could not reach the forge" <<<"$OUT"; then
+    pass "(#7745) an unreachable forge is a soft warning, not a resync-wide failure"
 else
-    fail "(#6716) a --check lookup error was not reported as a soft warning (rc=$RC); out=$OUT"
+    fail "(#7745) an unreachable forge was not reported as a soft warning (rc=$RC); out=$OUT"
+fi
+
+echo "Test group 28e2: forge label check -- the checker itself is BROKEN -> loud, and carried into the exit code (#7745)"
+REPO="$(make_fixture)"
+add_labels_stub "$REPO"
+STUB_LOG="$WORKDIR/stub28e2.log"; : > "$STUB_LOG"
+# Any rc that is not 0/3/4 means sync-labels.sh failed to run -- a crash, a
+# bash incompatibility, a typo. Before #7745 this was absorbed into exit 0,
+# indistinguishable from a clean check, which is how a checker broken by
+# #7717 went unnoticed on every macOS resync for weeks.
+OUT="$(cd "$REPO" && STUB_LOG="$STUB_LOG" LOOM_TEST_LABELS_CHECK_RC=127 bash "$SCRIPT" 2>&1)"
+RC=$?
+if [[ $RC -eq 75 ]] && grep -qi "FAILED to run" <<<"$OUT"; then
+    pass "(#7745) a broken checker exits 75 and says the labels were NOT verified"
+else
+    fail "(#7745) a broken checker did not surface as a defect (rc=$RC, want 75); out=$OUT"
+fi
+
+if grep -qi "label check FAILED TO RUN" <<<"$OUT"; then
+    pass "(#7745) the end-of-run summary states that the check did not run"
+else
+    fail "(#7745) the summary line did not mention the unverified check; out=$OUT"
 fi
 
 echo "Test group 28f: forge label check -- no .github/labels.yml -> silently skipped (#6716)"
@@ -2787,142 +2818,9 @@ else
     fail "(#6716) a repo with no labels.yml unexpectedly mentioned forge labels (rc=$RC); out=$OUT"
 fi
 
-# --- (#113) local-divergence protection --------------------------------------
-#
-# Reproduces the #98/#100 incident shape directly: an installed hook contains
-# a fix that was landed with a commit DIRECTLY on the installed copy (not via
-# a resync commit), and defaults/ has not caught up yet (still the pre-fix
-# content). A resync that would silently overwrite the fix must instead be
-# blocked, not applied.
-echo "Test group 29: local-divergence protection blocks a resync that would revert a direct fix (#113)"
-REPO="$(make_fixture)"
-# Simulate #98/#100: a fix landed directly on the INSTALLED copy, adding a
-# line defaults/ does not have yet (defaults/hooks/guard.sh stays at "A",
-# unaware of the fix -- exactly "upstream's defaults/ has not caught up").
-printf 'A\nGUARD-FIX-LINE\n' > "$REPO/.loom/hooks/guard.sh"
-git -C "$REPO" add .loom/hooks/guard.sh >/dev/null 2>&1
-git -C "$REPO" commit -qm "fix(guard): resolve_var() now substitutes a mid-token embedded \$VAR reference (#98)" >/dev/null 2>&1
-OUT="$(cd "$REPO" && bash "$SCRIPT" 2>&1)"
-RC=$?
-if [[ $RC -eq 1 ]]; then
-    pass "(#113) a resync that would revert a direct fix exits 1"
-else
-    fail "(#113) expected exit 1 when a direct fix would be reverted (got $RC)"
-fi
-if grep -q "BLOCKED" <<<"$OUT" && grep -q "hooks/guard.sh" <<<"$OUT"; then
-    pass "(#113) the blocked file is named in the summary"
-else
-    fail "(#113) the blocked file was not named in the summary; out=$OUT"
-fi
-if [[ "$(cat "$REPO/.loom/hooks/guard.sh")" == $'A\nGUARD-FIX-LINE' ]]; then
-    pass "(#113) the direct fix was NOT reverted"
-else
-    fail "(#113) the direct fix was silently reverted despite the protection"
-fi
-
-echo "Test group 29b: --dry-run previews the block without writing (#113)"
-REPO2="$(make_fixture)"
-printf 'A\nGUARD-FIX-LINE\n' > "$REPO2/.loom/hooks/guard.sh"
-git -C "$REPO2" add .loom/hooks/guard.sh >/dev/null 2>&1
-git -C "$REPO2" commit -qm "fix(guard): direct hotfix (#98)" >/dev/null 2>&1
-OUT="$(cd "$REPO2" && bash "$SCRIPT" --dry-run 2>&1)"
-RC=$?
-if [[ $RC -eq 2 ]]; then
-    pass "(#113) --dry-run with a would-be-blocked file exits 2"
-else
-    fail "(#113) --dry-run with a would-be-blocked file exits 2 (got $RC)"
-fi
-if grep -q "blocked" <<<"$OUT" && [[ "$(cat "$REPO2/.loom/hooks/guard.sh")" == $'A\nGUARD-FIX-LINE' ]]; then
-    pass "(#113) --dry-run reports the block and writes nothing"
-else
-    fail "(#113) --dry-run either did not report the block or modified the file"
-fi
-
-echo "Test group 29c: --force applies the update anyway (#113)"
-OUT="$(cd "$REPO" && bash "$SCRIPT" --force 2>&1)"
-RC=$?
-if [[ $RC -eq 0 ]]; then
-    pass "(#113) --force exits 0"
-else
-    fail "(#113) --force exits 0 (got $RC)"
-fi
-if [[ "$(cat "$REPO/.loom/hooks/guard.sh")" == "A" ]]; then
-    pass "(#113) --force applies the update despite the local divergence"
-else
-    fail "(#113) --force did not apply the update"
-fi
-if grep -qi "forcing" <<<"$OUT"; then
-    pass "(#113) --force logs that it overrode the protection"
-else
-    fail "(#113) --force gave no indication it overrode the protection"
-fi
-
-# --- (#113) regression: no local divergence still resyncs silently -----------
-#
-# The overwhelmingly common case -- an installed file whose only history is
-# ordinary install/resync lineage -- must keep applying automatically even
-# when the update removes/replaces existing lines (test group 1's hooks/guard.sh
-# "OLD" -> "A" drift already exercises this implicitly; this test makes the
-# #113 acceptance criterion explicit and independent of that fixture detail).
-echo "Test group 29d: no local divergence -- an ordinary line-replacing update still applies automatically (#113)"
-REPO3="$(make_fixture)"
-if [[ "$(cat "$REPO3/.loom/hooks/guard.sh")" == "OLD" ]]; then
-    pass "(#113) fixture precondition: hooks/guard.sh has no local-fix commit (lineage is install-only)"
-else
-    fail "(#113) fixture precondition unmet for the no-divergence regression test"
-fi
-OUT="$(cd "$REPO3" && bash "$SCRIPT" 2>&1)"
-RC=$?
-if [[ $RC -eq 0 ]] && [[ "$(cat "$REPO3/.loom/hooks/guard.sh")" == "A" ]] && ! grep -q "BLOCKED" <<<"$OUT"; then
-    pass "(#113) an ordinary update with no local divergence applies without --force"
-else
-    fail "(#113) an ordinary update with no local divergence was unexpectedly blocked (rc=$RC)"
-fi
-
-# --- (#113) a pure-addition update never gates, even when diverged ----------
-echo "Test group 29e: a pure-addition update never gates, even on a diverged file (#113)"
-REPO4="$(make_fixture)"
-printf 'A\nLOCAL-FIX-LINE\n' > "$REPO4/.loom/hooks/guard.sh"
-git -C "$REPO4" add .loom/hooks/guard.sh >/dev/null 2>&1
-git -C "$REPO4" commit -qm "fix(guard): a direct local fix (#9998)" >/dev/null 2>&1
-# defaults/ now adds a NEW line on top of "A" without removing anything the
-# installed copy already has (LOCAL-FIX-LINE survives the naive line-set
-# check as well, since it's still present in dst after the update... but the
-# point here is defaults/ removes NOTHING dst has -- everything dst has is a
-# subset of the new src).
-printf 'A\nLOCAL-FIX-LINE\nNEW-UPSTREAM-LINE\n' > "$REPO4/defaults/hooks/guard.sh"
-OUT="$(cd "$REPO4" && bash "$SCRIPT" 2>&1)"
-RC=$?
-if [[ $RC -eq 0 ]] && ! grep -q "BLOCKED" <<<"$OUT"; then
-    pass "(#113) a pure-addition update applies automatically even on a diverged file"
-else
-    fail "(#113) a pure-addition update was unexpectedly blocked on a diverged file (rc=$RC); out=$OUT"
-fi
-if [[ "$(cat "$REPO4/.loom/hooks/guard.sh")" == $'A\nLOCAL-FIX-LINE\nNEW-UPSTREAM-LINE' ]]; then
-    pass "(#113) the pure-addition update was applied"
-else
-    fail "(#113) the pure-addition update was not applied"
-fi
-
-# --- (#113) .loom/resync-ignore is unaffected by the new gate ----------------
-echo "Test group 29f: .loom/resync-ignore still short-circuits before the local-divergence gate (#113)"
-REPO5="$(make_fixture)"
-printf 'A\nLOCAL-FIX-LINE\n' > "$REPO5/.loom/hooks/guard.sh"
-git -C "$REPO5" add .loom/hooks/guard.sh >/dev/null 2>&1
-git -C "$REPO5" commit -qm "fix(guard): a direct local fix (#9999)" >/dev/null 2>&1
-printf 'hooks/guard.sh  # keep my local fix\n' > "$REPO5/.loom/resync-ignore"
-OUT="$(cd "$REPO5" && bash "$SCRIPT" 2>&1)"
-RC=$?
-if [[ $RC -eq 0 ]] && grep -q "skipped" <<<"$OUT" && ! grep -q "BLOCKED" <<<"$OUT"; then
-    pass "(#113) a resync-ignore pin reports skipped, not blocked, and exits 0"
-else
-    fail "(#113) a resync-ignore-pinned diverged file was reported incorrectly (rc=$RC); out=$OUT"
-fi
-if [[ "$(cat "$REPO5/.loom/hooks/guard.sh")" == $'A\nLOCAL-FIX-LINE' ]]; then
-    pass "(#113) the resync-ignore-pinned local fix was preserved"
-else
-    fail "(#113) the resync-ignore-pinned local fix was overwritten"
-fi
+# The guard-hook install check's wiring (#7761) is covered by the sibling
+# test-resync-installed-guard-check.sh, split out to respect this file's
+# file-size ratchet (.loom/docs/file-size-policy.md).
 
 # --- summary -----------------------------------------------------------------
 echo ""
