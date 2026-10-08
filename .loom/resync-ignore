@@ -10,7 +10,7 @@
 #
 # hooks/guard-destructive-generic.sh: STILL pinned, for two fixes upstream
 # does not carry (verified: the local sweep-checkpoint and one-hop-chain
-# suites FAIL against the upstream guard, 8 of 9 resp. 4 of 13 cases):
+# suites FAIL against the upstream guard, 13 of 23 resp. 9 of 13 cases pass):
 #   - the `.loom/sweep-checkpoint/` carve-out from the base
 #     worktree-write-confinement check (sky130-modexp #146 -- the guard denied
 #     the sweep orchestrator's own main-clean baseline snapshot), and
