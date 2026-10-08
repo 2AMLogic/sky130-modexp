@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 1,
+  "summary": "committed RTL (rtl/modexp.v) and the synthesized gate-level netlist derived from it (klt synthesize + flow/tie_constants.py), inventoried with regeneration steps; RTL unchanged since the netlist was derived",
+  "source": "verification/signoff/evidence/design-sources.md",
+  "provenance": {
+    "klt_version": "0.7.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:3daae39c6b878d852f35b323189ef22d4de37ba9f05e7689ccab37d593bd0fdc",
+      "path": "design-sources.md"
+    }
+  }
+}

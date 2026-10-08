@@ -41,7 +41,7 @@ source .venv/bin/activate
 | Component | Pinned to | Resolved via |
 |---|---|---|
 | `klayout-tools` (`klt`) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"` (what `scripts/setup-env.sh` runs) |
-| `klayout-tools` (`klt`, signoff-report leg) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | installed directly by the CI `signoff` job (issue #136's pin, unified with the pin above by issue #133 — `scripts/setup-env.sh` now provisions the same revision, so the report leg and the PDK legs share one pin) |
+| `klayout-tools` (`klt`, signoff-report leg) | PyPI release `klayout-tools==0.7.0` (2026-10-08, tag `v0.7.0`) | `pip install "klayout-tools==0.7.0"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any other version (issue #165). This is deliberately **not** the pin above: the evidence legs stay on the older revision, see "Second klt pin" below |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
 | `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
@@ -157,22 +157,24 @@ reproducible are in "Yosys and the embedded ABC build" below.
 host — it does not vendor them (`yosys` is the exception: `scripts/setup-env.sh`
 now provisions it into `.venv` at the pin above). Those are:
 
-**Second klt pin, signoff-report leg only (issue #130, 2026-09-23).** The
+**Second klt pin, signoff-report leg only (issue #130; moved to 0.7.0 by issue #165, 2026-10-08).** The
 row above pins the klt that **produces evidence** (the PDK-heavy legs whose
 records cite the pin in their `provenance`). The `klt signoff --manifest`
-report leg (`verification/signoff/`) additionally carries its own, newer pin
-(`dac2b5da`, 2026-09-23, upstream `main` tip at pin time) because the report
-grader needs capabilities the evidence pin predates: `klt sta` /
+report leg (`verification/signoff/`) carries its own, newer pin: PyPI
+`klayout-tools==0.7.0`. History: `dac2b5da` (2026-09-23) added `klt sta` /
 `klt functional-verification` envelope recognition in tier-verdict mode
-(klayout-tools#1959), the items-3/4 kind restrictions (#1987), and the
-eleventh T1 item (#2025 — the checklist itself is separately pinned via the
-committed tier doc, but the grader code needs to parse it). The report leg
-re-runs no PDK job — it only reads committed JSON envelopes — so bumping
-**its** pin does not invalidate any evidence record and requires only
-regenerating `verification/signoff/tier-report.json`
-(`./verification/signoff/run-signoff.sh`); the CI `signoff` job's `--check`
-fails until that regeneration is committed. The two pins intentionally
-remain separate: converging them means re-minting the DRC/LVS/P&R records
+(klayout-tools#1959), the items-3/4 kind restrictions (#1987) and the eleventh
+T1 item (#2025). 0.7.0 adds artifact-anchored `generic` evidence for T1 items
+1, 2, 9 and 10 ([klayout-tools#2718](https://github.com/2AMLogic/klayout-tools/issues/2718)):
+an envelope that names the audited artifact and its `content_hash`, pinned by
+the manifest, which the grader re-hashes. The pinned `dac2b5da` grader cannot
+bind those four items to anything topical. The report leg re-runs no PDK job
+— it only reads committed JSON envelopes — so bumping **its** pin does not
+invalidate any evidence record and requires only regenerating
+`verification/signoff/tier-report.json`
+(`KLT=<a 0.7.0 klt> ./verification/signoff/run-signoff.sh`); the CI `signoff`
+job's `--check` fails until that regeneration is committed. The two pins
+intentionally remain separate: converging them means re-minting the DRC/LVS/P&R records
 against the newer tool (the "re-pin ⇒ mint fresh records" rule above), which
 is the evidence legs' own decision to make, not the report leg's.
 

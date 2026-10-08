@@ -2,6 +2,14 @@
   "block": "sky130-modexp",
   "kind": "digital",
   "evidence": {
+    "1": {
+      "file": "verification/signoff/evidence/item-1-design-sources.json",
+      "content_hash": "sha256:3daae39c6b878d852f35b323189ef22d4de37ba9f05e7689ccab37d593bd0fdc"
+    },
+    "2": {
+      "file": "verification/signoff/evidence/item-2-layout.json",
+      "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
+    },
     "3": {
       "file": "layout/drc/modexp-drc-report.json",
       "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
@@ -12,6 +20,14 @@
       "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
     },
     "7": "verification/records/gate-level-sim/artifacts/20260923-054800-e26f603/klt-functional-verification.json",
+    "9": {
+      "file": "verification/signoff/evidence/item-9-testbenches.json",
+      "content_hash": "sha256:049dfbf15c47cc477ec158ff1bd268f4793306291400158891c2055799832020"
+    },
+    "10": {
+      "file": "verification/signoff/evidence/item-10-repo-hygiene.json",
+      "content_hash": "sha256:4bac12687f3b2f00f5a577f9996f216b1f0232bab78dd82fe6a180028397382c"
+    },
     "11": [
       {
         "file": "layout/erc/modexp-erc-supply-report.json",

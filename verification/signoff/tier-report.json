@@ -5,17 +5,17 @@
   "tier": null,
   "t1_item_count": 11,
   "build_t1_item_count": 11,
-  "t1_met_count": 2,
+  "t1_met_count": 6,
   "source_doc": "verification/signoff/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:63eeec72e3d849761cf32dcf091af5728b069b1515e32bb3138e9454303671e5",
   "build": {
-    "version": "0.6.0+gdac2b5daceb6",
-    "package_version": "0.6.0",
-    "git_commit": "dac2b5daceb69a2068d9d2ee190d7afe37b29af7",
-    "git_tag": null,
+    "version": "0.7.0",
+    "package_version": "0.7.0",
+    "git_commit": "0e2362bda7309829398a35d54efaa989d5806065",
+    "git_tag": "v0.7.0",
     "dirty": false,
-    "is_release": false,
-    "grading_ruleset_id": "sha256:18cb5af1c92ff16adc7ce9700a548bec4df0fdd7b8c74398b85675a19cda026e"
+    "is_release": true,
+    "grading_ruleset_id": "sha256:eb8d2ba54d1700c78f1139ac111aee598fd7bc48688ab9654fca22995b6ac25e"
   },
   "items": [
     {
@@ -25,10 +25,26 @@
       "partition": null,
       "text": "committed RTL sources plus the synthesized gate-level netlist derived from them, regenerated on design change. For a hand-captured full-custom digital partition (no RTL, no synthesis step \u2014 see \"Full-custom digital sub-case\" above), this item is satisfied instead by the Analog column's artifact: committed schematic sources (or generator) plus the netlist derived from them, regenerated on design change, with every logic gate captured as a schematic exactly like an analog partition's.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "verification/signoff/evidence/item-1-design-sources.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:3daae39c6b878d852f35b323189ef22d4de37ba9f05e7689ccab37d593bd0fdc",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 1,
+          "path": "design-sources.md",
+          "content_hash": "sha256:3daae39c6b878d852f35b323189ef22d4de37ba9f05e7689ccab37d593bd0fdc",
+          "input_verified": true,
+          "summary": "committed RTL (rtl/modexp.v) and the synthesized gate-level netlist derived from it (klt synthesize + flow/tie_constants.py), inventoried with regeneration steps; RTL unchanged since the netlist was derived",
+          "source": "verification/signoff/evidence/design-sources.md"
+        }
+      }
     },
     {
       "tier": "T1",
@@ -37,10 +53,29 @@
       "partition": null,
       "text": "committed routed GDS/OASIS from place-and-route, reproducibly generated from the gate-level netlist (P&R script/flow committed, not a one-off hand edit). For the same full-custom sub-case, this item is satisfied instead by the Analog column's artifact: committed GDS/OASIS, reproducibly generated or with documented provenance \u2014 hand-drawn layout, not P&R output.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "verification/signoff/evidence/item-2-layout.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 2,
+          "path": {
+            "path": "layout/modexp.gds",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79",
+          "input_verified": true,
+          "summary": "committed routed GDS produced by the committed klt place-and-route flow (flow/par-modexp.json, flow/run-par.sh); DISCLOSURE: the exact run behind this GDS is not bit-reproducible (layout/README.md, issue #55) and its as-built netlist was not captured (decision record 0006)",
+          "source": "layout/modexp.gds"
+        }
+      }
     },
     {
       "tier": "T1",
@@ -199,10 +234,26 @@
       "partition": null,
       "text": "every claimed measurement's testbench committed, with a documented cold-start invocation a third party can run; pinned PDK revision.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "verification/signoff/evidence/item-9-testbenches.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:049dfbf15c47cc477ec158ff1bd268f4793306291400158891c2055799832020",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 9,
+          "path": "testbenches.md",
+          "content_hash": "sha256:049dfbf15c47cc477ec158ff1bd268f4793306291400158891c2055799832020",
+          "input_verified": true,
+          "summary": "every claimed functional measurement has a committed cocotb testbench with a cold-start invocation (verification/test_modexp.py, cross_check_tb.py, gate-level suite); tool-run checks (DRC/LVS/STA) are outside the claim",
+          "source": "verification/signoff/evidence/testbenches.md"
+        }
+      }
     },
     {
       "tier": "T1",
@@ -211,10 +262,26 @@
       "partition": null,
       "text": "a README stating what the block is, its spec table, and how to reproduce every result; a license; CI that at minimum keeps the harness and evidence formats valid.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "verification/signoff/evidence/item-10-repo-hygiene.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:4bac12687f3b2f00f5a577f9996f216b1f0232bab78dd82fe6a180028397382c",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 10,
+          "path": "repo-hygiene.md",
+          "content_hash": "sha256:4bac12687f3b2f00f5a577f9996f216b1f0232bab78dd82fe6a180028397382c",
+          "input_verified": true,
+          "summary": "README, spec table, LICENSE and CI workflow present and covering the stated content, per the committed checklist",
+          "source": "verification/signoff/evidence/repo-hygiene.md"
+        }
+      }
     },
     {
       "tier": "T1",
