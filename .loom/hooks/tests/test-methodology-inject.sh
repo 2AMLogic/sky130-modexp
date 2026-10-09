@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Test suite for .loom/hooks/methodology-inject.sh (issue #3758)
+# Test suite for defaults/hooks/methodology-inject.sh (issue #3758)
 #
-# Usage: ./.loom/hooks/tests/test-methodology-inject.sh
+# Usage: ./defaults/hooks/tests/test-methodology-inject.sh
 #
 # Covers the #3758 rework of the UserPromptSubmit methodology-injection hook:
 #   - opt-in gate: .loom/context/ absent -> silent exit 0, no output
@@ -12,17 +12,23 @@
 #   - role and topic injection are UNCHANGED (still fire every matching turn)
 #   - the hook never exits non-zero and never emits invalid JSON
 #
-# The hook under test is the installed copy at .loom/hooks/ (the version-
-# controlled source of truth for a consumer repo), copied into an isolated
-# temp git tree so the hook's MAIN_ROOT resolves there (git-common-dir pins
-# MAIN_ROOT to the temp root, and .loom/logs/ markers are written there).
-# Exit 0 = all pass, 1 = fail.
+# The hook under test is the canonical source at defaults/ (the version-
+# controlled source of truth), copied into an isolated temp git tree so the
+# hook's MAIN_ROOT resolves there (git-common-dir pins MAIN_ROOT to the temp
+# root, and .loom/logs/ markers are written there). Exit 0 = all pass, 1 = fail.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+# Prefer the installed hook (a Loom-installed consumer repo has no defaults/
+# directory at all); fall back to defaults/ for Loom's own source tree. See
+# issue #6496. DEFAULTS_HOOK stays strictly the defaults/ path -- it is the
+# source-of-truth side of the "defaults/ vs .loom/ sync" check below, which
+# must remain a real cross-copy diff, not a self-diff.
 SRC_HOOK="$REPO_ROOT/.loom/hooks/methodology-inject.sh"
+[[ -r "$SRC_HOOK" ]] || SRC_HOOK="$REPO_ROOT/defaults/hooks/methodology-inject.sh"
+DEFAULTS_HOOK="$REPO_ROOT/defaults/hooks/methodology-inject.sh"
 
 PASS=0
 FAIL=0
@@ -38,10 +44,10 @@ NC='\033[0m'
 TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 git init -q "$TMPROOT"
-mkdir -p "$TMPROOT/.loom/hooks"
-cp "$SRC_HOOK" "$TMPROOT/.loom/hooks/methodology-inject.sh"
-chmod +x "$TMPROOT/.loom/hooks/methodology-inject.sh"
-HOOK="$TMPROOT/.loom/hooks/methodology-inject.sh"
+mkdir -p "$TMPROOT/defaults/hooks"
+cp "$SRC_HOOK" "$TMPROOT/defaults/hooks/methodology-inject.sh"
+chmod +x "$TMPROOT/defaults/hooks/methodology-inject.sh"
+HOOK="$TMPROOT/defaults/hooks/methodology-inject.sh"
 
 CONTEXT_DIR="$TMPROOT/.loom/context"
 
@@ -88,9 +94,6 @@ context_of() {
 
 pass() { PASS=$((PASS + 1)); TOTAL=$((TOTAL + 1)); printf "${GREEN}PASS${NC} %s\n" "$1"; }
 fail() { FAIL=$((FAIL + 1)); TOTAL=$((TOTAL + 1)); printf "${RED}FAIL${NC} %s\n" "$1"; }
-# Not counted toward pass/fail: used when a subtest's precondition (e.g. a
-# defaults/ tree this repo does not have) is unavailable in this environment.
-skip() { echo "  SKIP: $1"; }
 
 assert_no_output() {
     local desc="$1" out="$2"
@@ -298,14 +301,12 @@ fi
 
 # --- defaults/ vs .loom/ sync -----------------------------------------------
 DEPLOY_HOOK="$REPO_ROOT/.loom/hooks/methodology-inject.sh"
-if [[ -d "$REPO_ROOT/defaults" ]]; then
-    if [[ -f "$DEPLOY_HOOK" ]] && diff -q "$SRC_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
-        pass ".loom/ hook byte-identical to defaults/"
-    else
-        fail ".loom/ hook byte-identical to defaults/"
-    fi
+if [[ ! -f "$DEFAULTS_HOOK" ]]; then
+    echo "SKIP: defaults/hooks/methodology-inject.sh not present (bare consumer layout) -- sync check not applicable"
+elif [[ -f "$DEPLOY_HOOK" ]] && diff -q "$DEFAULTS_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
+    pass ".loom/ hook byte-identical to defaults/"
 else
-    skip ".loom/ hook byte-identical to defaults/ (no defaults/ tree in this repo)"
+    fail ".loom/ hook byte-identical to defaults/"
 fi
 
 echo "=== $PASS/$TOTAL passed ==="
