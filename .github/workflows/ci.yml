@@ -164,8 +164,32 @@ jobs:
           # job exists to close. `set +e` overrides the runner default so
           # every suite runs and each rc is classified explicitly.
           set +e -u -o pipefail
+
+          # Native-only suites are left out via the same manifest the
+          # merge-pr-suites job reads. Upstream lists hook suites under
+          # `defaults/hooks/tests/`; the installed copies here live in
+          # `.loom/hooks/tests/`, so manifest entries are normalized before
+          # comparison. Every exclusion is logged with its original reason.
+          # This does NOT give consumer coverage of those suites: they need a
+          # built loom-daemon, which upstream's "Native Port Suites" job
+          # provides. A missing manifest is an error, never "run/skip all".
+          excluded_manifest=.loom/scripts/tests/ci-excluded.txt
+          if [[ ! -f "$excluded_manifest" ]]; then
+            echo "::error::missing $excluded_manifest -- cannot tell which hook suites need a built loom-daemon"
+            exit 1
+          fi
+          excluded_names=$(sed -E 's/#.*$//' "$excluded_manifest" \
+            | awk 'NF { print $1 }' \
+            | sed -E 's#^defaults/hooks/tests/#.loom/hooks/tests/#')
+
           overall_fail=0
           for f in .loom/hooks/tests/*.sh; do
+            if grep -qxF -- "$f" <<<"$excluded_names"; then
+              orig="defaults/hooks/tests/${f##*/}"
+              reason=$(awk -v n="$orig" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$excluded_manifest")
+              echo "SKIPPED (listed in $excluded_manifest as $orig): $f -- ${reason:-<no reason given>}"
+              continue
+            fi
             echo "::group::$f"
             out=$(bash "$f" 2>&1)
             rc=$?
