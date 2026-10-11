@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "generic",
-  "status": "pass",
+  "status": "fail",
   "t1_item": 2,
   "summary": "committed routed GDS produced by the committed klt place-and-route flow (flow/par-modexp.json, flow/run-par.sh); DISCLOSURE: the exact run behind this GDS is not bit-reproducible (layout/README.md, issue #55) and its as-built netlist was not captured (decision record 0006)",
   "source": "layout/modexp.gds",
