@@ -1788,8 +1788,6 @@ fi
 
 # =============================================================================
 # LOOM: Block pip install -e inside worktrees (issue #2495, hardened by #4079)
-# =============================================================================
-# LOOM: Block pip install -e inside worktrees (issue #2495, hardened by #4079)
 #
 # Editable pip installs overwrite a global .pth file in site-packages.
 # When multiple builders run in parallel worktrees, each 'pip install -e .'
