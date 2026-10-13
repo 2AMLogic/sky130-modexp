@@ -44,7 +44,7 @@ duplicating it.
 
 ## Current verdict (2026-10-08, this manifest)
 
-**6 of 11 T1 items met; `tier: null`** (was 2 of 11 before issue #165). This is the honest graded state —
+**5 of 11 T1 items met; `tier: null`** (was 2 of 11 before issue #165). This is the honest graded state —
 an all-`unmet` manifest would have been a correct result too (issue #130);
 nothing here inflates a row to green.
 
@@ -56,7 +56,7 @@ nothing here inflates a row to green.
 | 5 Corner verification | unmet (`check_failed`) | **Now cited, and failing on its own evidence rather than on an absence of it** (issue #132): `verification/records/sta-corner-sweep/artifacts/20260923-093000-28a7c96/sta-corner-sweep-results.json`, one `klt sta` envelope covering all 18 ratified corners of the committed layout, pinned by the analysed DEF's `content_hash`. The grader's rule is that every reported corner must be `timing_status: "constrained"` with non-negative setup **and** hold slack; **100 MHz closes at 10 of 18** — binding corner `ss_n40C_1v28` at **22.80 MHz**, setup WNS −33.867 ns. Hold is clean at all 18. This is a disclosed, bounded FAIL carried against an unamended ratified Clock row, ratified as `spec/decision-records/0004-…`; it is deliberately **not** closed by lowering the target, and the decision record prices the measured route to 18/18. **Update (issue #141):** that route was run through committed `klt` requests and reaches **17 of 18** (`ss_n40C_1v28` at −0.574 ns / 94.57 MHz), not eighteen — `spec/decision-records/0005-…` and record `20260924-134500-1a8313b`. This row's cited evidence and verdict are unchanged: no layout, RTL or flow request moved. |
 | 11 Power delivery (structural) | unmet (`check_failed`) | Cited as the compound entry the grader defines: `layout/erc/modexp-erc-supply-report.json` (issue #129's supply-island read — `erc_finding_count: 0`, `VPWR`/`VGND` one island each, input pinned to the current GDS) + the item-4 LVS report + the P&R envelope (`power.pdn: true`, `tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1`, straps met1/met4/met5 all inside the spec's stackup). The rendered reason is the LVS half: that report still mismatches (tracked by #131) and carries no `power_connectivity` verdict at all — and past it sit the spec's deliberately-undeclared `ties[]` (klayout-tools#2169, `erc.missing_tie` not computed) — so the item stays honestly unmet on the grader's own terms; the supply-island half is met and documented in `layout/erc/README.md`. |
 | 1 Design sources | **met** | Artifact-anchored `generic` envelope `evidence/item-1-design-sources.json`, bound to the committed inventory `evidence/design-sources.md` (RTL + the synthesized netlist derived from it + regeneration steps). Added by issue #165 on klt 0.7.0. |
-| 2 Layout | **met** | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). **Disclosure:** the committed P&R flow exists, but the exact run behind this GDS is not bit-reproducible (`layout/README.md`, issue #55) and no as-built netlist was captured (decision record 0006); the envelope's `summary` says so. The item text asks for "reproducibly generated"; the grader reads the attestation, not that clause. |
+| 2 Layout | unmet (`check_failed`) | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). **Disclosure:** the committed P&R flow exists, but the exact run behind this GDS is not bit-reproducible (`layout/README.md`, issue #55) and no as-built netlist was captured (decision record 0006); the envelope's `summary` says so. The item text asks for "reproducibly generated"; that requirement is not satisfied, so the envelope attests `status: fail` on its own evidence and the grader renders the row `unmet`/`check_failed`. |
 | 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `evidence/testbenches.md` (each claimed functional measurement, its testbench, its cold-start invocation, and the PDK pin). Tool-run checks (DRC/LVS/STA) are stated to be outside the claim. |
 | 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `evidence/repo-hygiene.md` (README, spec table, LICENSE, CI, pins). |
 | 6 Monte Carlo | unmet (`no_evidence`) — unchanged by 0.7.0 | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. |
@@ -82,8 +82,11 @@ fails.
   assertion — the grader does not re-audit the inventory — so each record
   states what it does and does not cover. Editing a record means re-reading it
   against the repo and re-hashing (envelope + manifest pin) in the same change.
-- **Item 2** is bound to the committed routed GDS itself; see the
-  reproducibility disclosure in the table above.
+- **Item 2** is bound to the committed routed GDS itself. Its envelope
+  attests `status: fail` — the run behind the GDS is not bit-reproducible
+  (issue #55, decision record 0006), which fails the item's "reproducibly
+  generated" requirement — so the row is `unmet`/`check_failed`, not green;
+  see the reproducibility disclosure in the table above.
 - `status: pass` on these is the attestation of the audit, not a tool
   measurement. A borrowed native envelope is never used for them.
 - **Items 6 and 8** are unaffected by 0.7.0 and stay `unmet`/`no_evidence`
