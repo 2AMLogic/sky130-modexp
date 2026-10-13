@@ -1,0 +1,23 @@
+# Consumer-repo CI suite carve-out supplement (#185, decision landed via PR
+# #183's review). Upstream Loom's own manifests partition ITS suites:
+#   - .loom/scripts/tests/ci-wired.txt   -- hermetic on upstream's layout
+#   - .loom/scripts/tests/ci-excluded.txt -- needs a built loom-daemon, etc.
+# A resync refreshes both, so both are self-maintaining -- but neither can
+# express "cannot pass in THIS consumer repo's CI", which is what this file
+# is for. The two Loom jobs in .github/workflows/ci.yml consult it with the
+# same parsing idiom as check-ci-suite-manifest.sh (strip `#` comments, first
+# token = suite basename, rest = reason) and print every skip with its
+# reason, so the gap shows up in the log.
+#
+# Rules (mirroring the guard-hooks job's own carve-out note):
+#   - every entry needs a tracked issue reference in its reason;
+#   - every entry needs a retire condition -- drop the line when met;
+#   - this file is repo-owned (.github/), never touched by a resync; do NOT
+#     add these entries to .loom/scripts/tests/ci-excluded.txt instead, that
+#     copy is resync-refreshed and a consumer edit there is reverted.
+#
+# Format: <suite-basename>  <reason + retire condition>
+
+test-guard-installed-file-writes.sh  Consumer-layout skew (#185, symptom #180): 74/75 assertions pass here; the one failure requires an rjwalters/loom checkout to classify as 'upstream' (this repo is a consumer, upstream lists the suite in ci-wired.txt). Retire when upstream makes that assertion layout-aware; the suite then runs here again.
+test-hook-wiring.sh  Consumer-layout skew (#185, symptom #180): 37/67 pass here; the 30 failures assert .claude/settings.json wires hooks exactly as upstream's own checkout does (e.g. roll-pause.sh), which this consumer repo's settings legitimately do not. Retire when upstream splits the upstream-checkout assertions out of the suite.
+test-merge-pr-workflow-scope-preflight.sh  Daemon-backed (#185, symptom #177): sources lib/require-daemon-bin.sh and calls loom_test_require_daemon_bin, which deliberately FAILS (never skips) with no binary; missing from upstream ci-excluded.txt at the v0.19.1050 resync vintage. Retire when a resync's ci-excluded.txt lists it -- the merge-pr job already skips by that manifest, so this line then becomes redundant.
