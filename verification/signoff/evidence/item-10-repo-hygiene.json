@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 10,
+  "summary": "README, spec table, LICENSE and CI workflow present and covering the stated content, per the committed checklist",
+  "source": "verification/signoff/evidence/repo-hygiene.md",
+  "provenance": {
+    "klt_version": "0.7.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:4bac12687f3b2f00f5a577f9996f216b1f0232bab78dd82fe6a180028397382c",
+      "path": "repo-hygiene.md"
+    }
+  }
+}
