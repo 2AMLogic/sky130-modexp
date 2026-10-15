@@ -468,8 +468,8 @@ the pin. `klt lvs` itself (the comparison step, which needs nothing from
     /tmp/modexp_reference.spice   # or overwrite the committed copy
   ```
 
-  (resolve the LEF path per `klt pdk find`/`docs/environment.md`'s volare
-  install; on the environment this evidence was produced on it is
+  (resolve the LEF path per `klt pdk find`/`docs/environment.md`'s ciel
+  install; on the environment this evidence was produced on it was
   `~/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef`).
 - `modexp_lvs_report.json` — `klt lvs`'s `--format json` response, engine
   `"klayout"` (`NetlistComparer`). **Since issue #131 this is the

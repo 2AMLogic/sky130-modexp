@@ -16,7 +16,7 @@ append-only rule).
 This creates a local `.venv`, installs `klayout-tools` (`klt`) into it at
 the pinned revision below, installs the pinned **Yosys/ABC build** into it
 and verifies that build by content, fetches the pinned `sky130A` PDK version
-via `volare`, checks `iverilog` / `openroad`, and reports what's still
+via `ciel` (into `~/.ciel`), checks `iverilog` / `openroad`, and reports what's still
 missing with an actionable install pointer, never a traceback. For
 `openroad` specifically: if it's not already on `$PATH` and `docker` is
 available, it wires up `.venv/bin/openroad` as a symlink to the pinned
@@ -44,7 +44,7 @@ source .venv/bin/activate
 | `klayout-tools` (`klt`, signoff-report leg) | PyPI release `klayout-tools==0.7.0` (2026-10-08, tag `v0.7.0`) | `pip install "klayout-tools==0.7.0"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any other version (issue #165). This is deliberately **not** the pin above: the evidence legs stay on the older revision, see "Second klt pin" below |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
-| `sky130A` PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` | `volare enable --pdk-root ~/.volare --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
+| `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision) |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
 

@@ -45,7 +45,7 @@ structurally cannot reach.
 
 Our correct implementation synthesizes to **682 cells** at `WIDTH=16`
 (`klt synthesize`, Yosys against `sky130_fd_sc_hd`/`tt_025C_1v80`, sky130A
-via volare). That number is recorded in
+via ciel). That number is recorded in
 [`docs/baseline.md`](docs/baseline.md) with the exact reproduction recipe.
 
 The task was chosen after Alibaba's Qwen3.8-Max post
