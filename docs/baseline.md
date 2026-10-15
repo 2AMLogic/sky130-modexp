@@ -18,6 +18,20 @@ travels with them.
 | `modexp.v` — square-and-multiply over one shared Blakley modular multiplier | 16 | **682** |
 | `gcd.v` — minimal iterative-subtractor GCD (a separate, much smaller design) | 16 | 384 |
 
+> **Reproducibility note (2026-10-15, issue #195).** The 682 figure above was
+> measured with klt 0.2.0 and is reproduced by that klt version. The pinned
+> toolchain (`scripts/setup-env.sh`, klt `0.6.0+gdac2b5daceb6`) gives **717**
+> instances / 7144.352 µm² for the same `rtl/modexp.v`, request and
+> `sky130_fd_sc_hd` liberty. The cause is the Yosys script klt generates, not
+> the PDK revision and not the Yosys build: klt 0.6.0 adds `abc -constr`
+> (driving cell and load), `abc -dont_use` for `lpflow_*`/`probe*` cells, and
+> `hilomap` tie cells. With `-constr` and `-dont_use` removed the 0.6.0 script
+> yields 686 = 682 + 4 `conb_1` tie cells. Evidence:
+> [`verification/records/synthesis-baseline/records/20261015-210722-a4653a5.md`](../verification/records/synthesis-baseline/records/20261015-210722-a4653a5.md)
+> (with `20261015-205100-4d8d397`). The 682/718 figures elsewhere on this page
+> are historical and left as measured; the 718 post-CTS figure was built on the
+> 682-cell netlist. Neither number is comparable to any other lab's.
+
 A behavioral naive variant (unrolled multiply with a runtime-modulus divider
 per step) was also measured and did not finish `abc` mapping within 120 s —
 a different regime entirely, and the one that reaches thousands of cells.
@@ -31,7 +45,7 @@ harness.
 ## Reproducing it
 
 ```bash
-# 682 cells for modexp, 384 for gcd
+# 682 cells for modexp under klt 0.2.0 (717 under the pinned klt), 384 for gcd
 for src in gcd modexp; do
   tmp=$(mktemp -d); cp rtl/$src.v "$tmp/"
   cat > "$tmp/req.json" <<JSON

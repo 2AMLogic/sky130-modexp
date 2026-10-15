@@ -4,7 +4,10 @@ Synthesis and place-and-route recipes (Yosys, OpenROAD), driven through
 `klt`. Two committed request documents, run in sequence:
 
 1. `synthesize-modexp.json` — `klt synthesize` (Yosys), unconstrained,
-   reproducing `docs/baseline.md`'s 682-cell figure byte-for-byte.
+   giving **717** instances under the pinned toolchain. `docs/baseline.md`'s
+   682-cell figure was measured with klt 0.2.0 and is *not* reproduced by the
+   pinned klt (see `docs/baseline.md#the-measurement` and record
+   `20261015-210722-a4653a5`).
 2. `par-modexp.json` — `klt place-and-route` (OpenROAD), the nominal-corner
    (`tt_025C_1v80`), 100 MHz-constrained floorplan → place → cts → route run
    whose artifacts land in `layout/` and whose measurements are recorded
@@ -16,7 +19,8 @@ Synthesis and place-and-route recipes (Yosys, OpenROAD), driven through
 ./scripts/setup-env.sh          # provisions klt, sky130A (ciel), openroad
 source .venv/bin/activate
 
-# 1. Synthesize (unconstrained, reproduces docs/baseline.md's 682 cells)
+# 1. Synthesize (unconstrained; 717 instances under the pinned klt --
+#    docs/baseline.md's 682 is the klt 0.2.0 figure)
 PDK=sky130A klt synthesize flow/synthesize-modexp.json --format json
 
 # 2. Work around klayout-tools#854 (see "Known upstream gaps" below) --
