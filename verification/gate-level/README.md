@@ -87,7 +87,7 @@ needs no PDK and no simulator, so it runs in CI alongside
 | Library | `<sky130A>/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v` (+ `primitives.v` for the UDPs) |
 | Defines | `` `define FUNCTIONAL ``, `` `define UNIT_DELAY #1 `` (see `sky130_fd_sc_hd_sim_defines.v`) |
 | `USE_POWER_PINS` | **not** defined |
-| PDK | sky130A, `open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b` (the pin in `docs/environment.md`) |
+| PDK | sky130A, `open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` (the pin in `docs/environment.md`) |
 
 - **`FUNCTIONAL` is required, not preferred.** The `` `ifndef FUNCTIONAL ``
   branch is the `specify`-block *timing* model, and Icarus does not implement

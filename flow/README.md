@@ -13,7 +13,7 @@ Synthesis and place-and-route recipes (Yosys, OpenROAD), driven through
 ## Cold start
 
 ```bash
-./scripts/setup-env.sh          # provisions klt, sky130A (volare), openroad
+./scripts/setup-env.sh          # provisions klt, sky130A (ciel), openroad
 source .venv/bin/activate
 
 # 1. Synthesize (unconstrained, reproduces docs/baseline.md's 682 cells)
@@ -135,9 +135,12 @@ evidence record stays live and unedited. Results:
 and `docs/baseline.md`.
 
 Requires an `openroad` on `$PATH` and a resolvable `sky130A`. On a host that
-has both a `~/.ciel` directory and a `~/.volare` PDK install, set
-`PDK_ROOT` explicitly (`PDK_ROOT=~/.volare`) so `scripts/openroad-docker.sh`
-bind-mounts the same root `klt pdk find` resolves — see issue #90.
+has both a `~/.ciel` directory and a legacy `~/.volare` PDK install, set
+`PDK_ROOT` explicitly (`PDK_ROOT=~/.ciel`) so `scripts/openroad-docker.sh`
+bind-mounts the same root `klt pdk find` resolves — see issue #90. The
+wrapper also checks that root's `sky130A/SOURCES` against the pin in
+`scripts/setup-env.sh` and refuses to run on a mismatch (a stray `~/.volare` at the
+previous pin is never silently used).
 
 The response lands in `flow/sta-corner-sweep-results.json` (gitignored;
 `verification/records/sta-corner-sweep/artifacts/` freezes the copy
@@ -224,7 +227,7 @@ container-internal `/workspace`, which works for a relative-path-only
 script but silently breaks any `klt place-and-route` run, since every stage
 script `klt` generates bakes in **absolute host paths** (the netlist, the
 LEF/liberty deck — which for the PDK lives *outside* the repo entirely at
-`~/.volare` — and every stage's `write_db`/`write_def`/`-metrics` output
+`~/.ciel` — and every stage's `write_db`/`write_def`/`-metrics` output
 path). This issue's PR fixes the wrapper to bind-mount both the repo tree
 and the resolved PDK root at their own identical absolute paths, so those
 paths resolve the same way inside the container as they do on the host; see

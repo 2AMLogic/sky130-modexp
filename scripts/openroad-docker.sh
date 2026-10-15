@@ -101,6 +101,27 @@ if [ -z "${PDK_MOUNT_DIR}" ]; then
   fi
 fi
 
+# Check the resolved PDK tree is the pinned open_pdks revision (its
+# sky130A/SOURCES file names the revision it was built from) before mounting
+# it, so a stray tree -- e.g. a leftover ~/.volare at a previous pin -- cannot
+# be used silently. The pin is read from scripts/setup-env.sh, its one home.
+PIN_REV="$(sed -n 's/^CIEL_SKY130_VERSION="\([0-9a-f]*\)".*/\1/p' \
+  "$(dirname "${BASH_SOURCE[0]}")/setup-env.sh" 2>/dev/null | head -1)"
+if [ -n "${PDK_MOUNT_DIR}" ] && [ -n "${PIN_REV}" ]; then
+  SOURCES_FILE="${PDK_MOUNT_DIR}/${PDK:-sky130A}/SOURCES"
+  if [ ! -f "${SOURCES_FILE}" ]; then
+    echo "WARNING: ${SOURCES_FILE} not found; cannot verify the PDK revision" \
+         "against the pin ${PIN_REV}." >&2
+  elif ! grep -q "${PIN_REV}" "${SOURCES_FILE}"; then
+    echo "FATAL: PDK revision mismatch: the resolved PDK root ${PDK_MOUNT_DIR}" >&2
+    echo "  is not open_pdks ${PIN_REV} (the pin in scripts/setup-env.sh)." >&2
+    echo "  Its SOURCES says:" >&2
+    sed 's/^/    /' "${SOURCES_FILE}" >&2
+    echo "  Set PDK_ROOT to a ciel tree at the pinned revision (~/.ciel)." >&2
+    exit 1
+  fi
+fi
+
 VOLUME_ARGS=(-v "${MOUNT_DIR}:${MOUNT_DIR}")
 if [ -n "${PDK_MOUNT_DIR}" ] && [ "${PDK_MOUNT_DIR}" != "${MOUNT_DIR}" ]; then
   VOLUME_ARGS+=(-v "${PDK_MOUNT_DIR}:${PDK_MOUNT_DIR}")

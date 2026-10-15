@@ -9,8 +9,9 @@
 #      verifies its WebAssembly module's sha256 -- the mapper identity that
 #      `yosys -V` does NOT report (issue #143) -- then exposes it as
 #      `.venv/bin/yosys`.
-#   3. Fetches the pinned `sky130A` PDK version via `volare` into
-#      `${PDK_ROOT:-$HOME/.volare}`.
+#   3. Fetches the pinned `sky130A` PDK version via `ciel` into
+#      `${PDK_ROOT:-$HOME/.ciel}` and verifies the installed tree's open_pdks
+#      revision (its `SOURCES` file) matches the pin.
 #   4. Reports -- with an actionable message, never a Python traceback --
 #      which of `iverilog`, `openroad` are missing from `$PATH`.
 #
@@ -41,8 +42,9 @@ cd "${REPO_ROOT}" || exit 1
 # table. Keep assignments in plain NAME="value" form so it can parse them.
 KLT_REPO="https://github.com/2AMLogic/klayout-tools"
 KLT_REV="dac2b5daceb69a2068d9d2ee190d7afe37b29af7"
-VOLARE_PDK_FAMILY="sky130"
-VOLARE_SKY130_VERSION="c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+CIEL_VERSION="2.6.1"
+CIEL_PDK_FAMILY="sky130"
+CIEL_SKY130_VERSION="f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
 # Yosys is pinned as a YoWASP PyPI wheel, not as a host package. The wheel is
 # `py3-none-any` and ships a single WebAssembly module,
 # `yowasp_yosys/yosys.wasm`, which contains Yosys *and* the `abc` mapper
@@ -56,7 +58,7 @@ YOWASP_YOSYS_VERSION="0.68.0.0.post1208"
 YOWASP_YOSYS_WASM_SHA256="e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c"
 # ----------------------------------------------------------------------------
 
-PDK_ROOT="${PDK_ROOT:-${HOME}/.volare}"
+PDK_ROOT="${PDK_ROOT:-${HOME}/.ciel}"
 VENV_DIR="${REPO_ROOT}/.venv"
 
 for arg in "$@"; do
@@ -150,14 +152,14 @@ if ! "${VENV_PIP}" install --quiet --upgrade pip; then
 fi
 
 if ! "${VENV_PIP}" install --quiet \
-    "klayout-tools @ git+${KLT_REPO}@${KLT_REV}" cocotb volare; then
-  echo "FATAL: failed to install klayout-tools/cocotb/volare into ${VENV_DIR}."
+    "klayout-tools @ git+${KLT_REPO}@${KLT_REV}" cocotb "ciel==${CIEL_VERSION}"; then
+  echo "FATAL: failed to install klayout-tools/cocotb/ciel into ${VENV_DIR}."
   echo "  -> common causes: no network access to ${KLT_REPO}, or no C/C++"
   echo "     toolchain for a dependency's native build (install Xcode CLI"
   echo "     tools on macOS: 'xcode-select --install'; build-essential on"
   echo "     Debian/Ubuntu)."
   echo "  -> re-run with the venv's own pip for a full traceback:"
-  echo "       ${VENV_PIP} install \"klayout-tools @ git+${KLT_REPO}@${KLT_REV}\" cocotb volare"
+  echo "       ${VENV_PIP} install \"klayout-tools @ git+${KLT_REPO}@${KLT_REV}\" cocotb ciel==${CIEL_VERSION}"
   exit 1
 fi
 INSTALLED_KLT_VERSION="$("${VENV_PY}" -m klayout_tools.cli --version 2>/dev/null || true)"
@@ -253,18 +255,33 @@ if command -v yosys >/dev/null 2>&1; then
 fi
 
 echo
-echo "== 4/4 sky130A PDK (volare ${VOLARE_SKY130_VERSION:0:12}) =="
+echo "== 4/4 sky130A PDK (ciel ${CIEL_VERSION}, open_pdks ${CIEL_SKY130_VERSION:0:12}) =="
 mkdir -p "${PDK_ROOT}"
-if "${VENV_DIR}/bin/volare" enable \
-    --pdk-root "${PDK_ROOT}" --pdk "${VOLARE_PDK_FAMILY}" \
-    "${VOLARE_SKY130_VERSION}"; then
-  echo "sky130A ready under ${PDK_ROOT}"
+if "${VENV_DIR}/bin/ciel" enable \
+    --pdk-root "${PDK_ROOT}" --pdk-family "${CIEL_PDK_FAMILY}" \
+    -l sky130_fd_pr "${CIEL_SKY130_VERSION}"; then
+  # Verify the tree we will actually use IS the pinned open_pdks revision: its
+  # SOURCES file names the revision it was built from. A missing or different
+  # revision is a hard failure, never a silent pass -- a stray tree (e.g. a
+  # leftover ~/.volare at the previous pin) must not stand in for the pin.
+  SOURCES_FILE="${PDK_ROOT}/sky130A/SOURCES"
+  if [ ! -f "${SOURCES_FILE}" ]; then
+    echo "FATAL: ${SOURCES_FILE} not found; cannot verify the open_pdks revision."
+    status=1
+  elif ! grep -q "${CIEL_SKY130_VERSION}" "${SOURCES_FILE}"; then
+    echo "FATAL: PDK revision mismatch under ${PDK_ROOT}: ${SOURCES_FILE} does not"
+    echo "  name the pinned open_pdks ${CIEL_SKY130_VERSION}. It says:"
+    sed 's/^/    /' "${SOURCES_FILE}"
+    status=1
+  else
+    echo "sky130A ready under ${PDK_ROOT} (open_pdks ${CIEL_SKY130_VERSION:0:12} verified via SOURCES)"
+  fi
 else
-  echo "FATAL: 'volare enable' failed to fetch sky130 ${VOLARE_SKY130_VERSION:0:12}."
+  echo "FATAL: 'ciel enable' failed to fetch sky130 ${CIEL_SKY130_VERSION:0:12}."
   echo "  -> common causes: no network access to GitHub releases, or a rate"
   echo "     limit on unauthenticated GitHub API requests -- set GITHUB_TOKEN"
   echo "     and re-run, or run manually:"
-  echo "       ${VENV_DIR}/bin/volare enable --pdk-root ${PDK_ROOT} --pdk ${VOLARE_PDK_FAMILY} ${VOLARE_SKY130_VERSION}"
+  echo "       ${VENV_DIR}/bin/ciel enable --pdk-root ${PDK_ROOT} --pdk-family ${CIEL_PDK_FAMILY} -l sky130_fd_pr ${CIEL_SKY130_VERSION}"
   status=1
 fi
 

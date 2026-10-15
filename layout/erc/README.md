@@ -136,7 +136,7 @@ either prose source, for the current per-item state.
 
 Every layer/datatype in the spec was resolved from the pinned sky130A
 PDK's own `libs.tech/klayout/tech/sky130A.lyp` (open_pdks
-`c6d73a35f524070e85faff4a6a9eef49553ebc2b`, the `docs/environment.md`
+`f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`, the `docs/environment.md`
 pin) and cross-checked against klayout-tools' curated sky130 deck layer
 table (`decks/sky130.py`): `poly.drawing 66/20`, `diff.drawing 65/20`,
 `li1.drawing 67/20`, `met1..met5.drawing 68..72/20`, `licon1 66/44`,

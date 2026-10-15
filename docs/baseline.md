@@ -10,7 +10,7 @@ travels with them.
 ## The measurement
 
 `klt synthesize` (Yosys 0.67+post) against
-`sky130_fd_sc_hd` / `tt_025C_1v80`, with `sky130A` fetched via `volare`.
+`sky130_fd_sc_hd` / `tt_025C_1v80`, with `sky130A` fetched via `ciel`.
 `instance_count` is the post-`abc` mapped standard-cell count.
 
 | Design | `WIDTH` | sky130 cells |
