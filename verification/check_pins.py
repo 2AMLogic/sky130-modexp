@@ -2,7 +2,7 @@
 """Check that `scripts/setup-env.sh`'s pin constants match `docs/environment.md`.
 
 `scripts/setup-env.sh` provisions the environment from a block of pin
-constants (`KLT_REV`, `VOLARE_SKY130_VERSION`, `YOWASP_YOSYS_VERSION`,
+constants (`KLT_REV`, `CIEL_SKY130_VERSION`, `YOWASP_YOSYS_VERSION`,
 `YOWASP_YOSYS_WASM_SHA256`, ...). `docs/environment.md`'s "## Pinned
 versions" table restates those values for readers. The table is part of the
 pin's mechanism, not a description of it: a reader who trusts the table
@@ -54,7 +54,8 @@ DOC_REL = Path("docs/environment.md")
 
 REQUIRED_PINS = (
     "KLT_REV",
-    "VOLARE_SKY130_VERSION",
+    "CIEL_VERSION",
+    "CIEL_SKY130_VERSION",
     "YOWASP_YOSYS_VERSION",
     "YOWASP_YOSYS_WASM_SHA256",
 )

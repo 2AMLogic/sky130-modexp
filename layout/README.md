@@ -32,7 +32,7 @@ directory holds the layout artifacts, not the evidence record itself.
 | `klt` version | 0.4.0 |
 | `klt` git revision | [`f77036bff1eaf97b992e121acd702a98519142fb`](https://github.com/2AMLogic/klayout-tools/commit/f77036bff1eaf97b992e121acd702a98519142fb) (`docs/environment.md`) |
 | OpenROAD build | `26Q3-1260-g06a5a02279` (`openroad -version`, via the pinned `openroad/orfs:26Q3-296-gda37dce1c` Docker image — `docs/environment.md`) |
-| sky130A PDK | `open_pdks` commit `c6d73a35f524070e85faff4a6a9eef49553ebc2b` |
+| sky130A PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` |
 | Deck | `sky130_fd_sc_hd__tt_025C_1v80`, content_hash `sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135` |
 | Input netlist | `flow/.klt/synthesize/modexp_synth_tied.v` (the tie-cell-patched synthesis output — see `flow/README.md`'s "Known upstream gaps"), content_hash `sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486` (unchanged — no RTL/synthesis change) |
 | `seed` | 42 |

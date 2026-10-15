@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 9,
+  "summary": "every claimed functional measurement has a committed cocotb testbench with a cold-start invocation (verification/test_modexp.py, cross_check_tb.py, gate-level suite); tool-run checks (DRC/LVS/STA) are outside the claim",
+  "source": "verification/signoff/evidence/testbenches.md",
+  "provenance": {
+    "klt_version": "0.7.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:049dfbf15c47cc477ec158ff1bd268f4793306291400158891c2055799832020",
+      "path": "testbenches.md"
+    }
+  }
+}

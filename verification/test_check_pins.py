@@ -45,7 +45,7 @@ def _pin(name: str) -> str:
 
 
 KLT_REV = _pin("KLT_REV")
-VOLARE = _pin("VOLARE_SKY130_VERSION")
+CIEL_REV = _pin("CIEL_SKY130_VERSION")
 YW_VER = _pin("YOWASP_YOSYS_VERSION")
 YW_SHA = _pin("YOWASP_YOSYS_WASM_SHA256")
 FAKE_REV = "0123456789abcdef0123456789abcdef01234567"
@@ -124,15 +124,15 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
         "KLT_REV=",
     ),
     (
-        "VOLARE_SKY130_VERSION bumped in doc table only",
-        _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(VOLARE, FAKE_REV))),
+        "CIEL_SKY130_VERSION bumped in doc table only",
+        _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(CIEL_REV, FAKE_REV))),
         1,
-        "VOLARE_SKY130_VERSION=",
+        "CIEL_SKY130_VERSION=",
     ),
     (
-        "KLT_REV left stale in one table row (signoff-report leg)",
+        "KLT_REV left stale in one table row (evidence leg)",
         _mut_doc(
-            lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff", lambda ln: ln.replace(KLT_REV, FAKE_REV))
+            lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, FAKE_REV))
         ),
         1,
         "stale or unsynced pin",
