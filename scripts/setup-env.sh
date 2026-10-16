@@ -259,7 +259,7 @@ echo "== 4/4 sky130A PDK (ciel ${CIEL_VERSION}, open_pdks ${CIEL_SKY130_VERSION:
 mkdir -p "${PDK_ROOT}"
 if "${VENV_DIR}/bin/ciel" enable \
     --pdk-root "${PDK_ROOT}" --pdk-family "${CIEL_PDK_FAMILY}" \
-    -l sky130_fd_pr "${CIEL_SKY130_VERSION}"; then
+    -l sky130_fd_pr -l sky130_fd_sc_hd "${CIEL_SKY130_VERSION}"; then
   # Verify the tree we will actually use IS the pinned open_pdks revision: its
   # SOURCES file names the revision it was built from. A missing or different
   # revision is a hard failure, never a silent pass -- a stray tree (e.g. a
@@ -273,6 +273,13 @@ if "${VENV_DIR}/bin/ciel" enable \
     echo "  name the pinned open_pdks ${CIEL_SKY130_VERSION}. It says:"
     sed 's/^/    /' "${SOURCES_FILE}"
     status=1
+  elif [ ! -d "${PDK_ROOT}/sky130A/libs.ref/sky130_fd_sc_hd" ]; then
+    # 'ciel enable -l' fetches only the named libraries; without the standard
+    # cells the tree verifies via SOURCES but 'klt synthesize' cannot find a
+    # liberty file. Fail here rather than at the first synthesis run.
+    echo "FATAL: ${PDK_ROOT}/sky130A/libs.ref/sky130_fd_sc_hd not found after"
+    echo "  'ciel enable'; the standard-cell library is required by 'klt synthesize'."
+    status=1
   else
     echo "sky130A ready under ${PDK_ROOT} (open_pdks ${CIEL_SKY130_VERSION:0:12} verified via SOURCES)"
   fi
@@ -281,7 +288,7 @@ else
   echo "  -> common causes: no network access to GitHub releases, or a rate"
   echo "     limit on unauthenticated GitHub API requests -- set GITHUB_TOKEN"
   echo "     and re-run, or run manually:"
-  echo "       ${VENV_DIR}/bin/ciel enable --pdk-root ${PDK_ROOT} --pdk-family ${CIEL_PDK_FAMILY} -l sky130_fd_pr ${CIEL_SKY130_VERSION}"
+  echo "       ${VENV_DIR}/bin/ciel enable --pdk-root ${PDK_ROOT} --pdk-family ${CIEL_PDK_FAMILY} -l sky130_fd_pr -l sky130_fd_sc_hd ${CIEL_SKY130_VERSION}"
   status=1
 fi
 
