@@ -31,21 +31,22 @@ module modexp (
 
   supply1 VDD;
   supply0 VSS;
-  wire n1568;
-  wire n1657;
-  wire n1683;
-  wire n1785;
-  wire n1802;
-  wire n1884;
-  wire n1915;
-  wire n1998;
+  wire n1578;
+  wire n1667;
+  wire n1692;
+  wire n1797;
+  wire n1814;
+  wire n1895;
+  wire n1928;
+  wire n2011;
+  wire n2468;
   wire n395;
-  wire n535;
-  wire n637;
-  wire n678;
-  wire n738;
-  wire n843;
-  wire n862;
+  wire n536;
+  wire n639;
+  wire n681;
+  wire n740;
+  wire n846;
+  wire n866;
   wire _0000_;
   wire _0001_;
   wire _0002_;
@@ -1500,19 +1501,19 @@ module modexp (
   );
   sky130_fd_sc_hd__bufinv_16 sky130_fd_sc_hd__bufinv_16_0 (
       .A(clknet_4_6_0_clk),
-      .Y(n1802)
+      .Y(n1814)
   );
   sky130_fd_sc_hd__bufinv_16 sky130_fd_sc_hd__bufinv_16_1 (
       .A(clknet_4_2_0_clk),
-      .Y(n862)
+      .Y(n866)
   );
   sky130_fd_sc_hd__bufinv_16 sky130_fd_sc_hd__bufinv_16_2 (
       .A(clknet_4_3_0_clk),
-      .Y(n535)
+      .Y(n536)
   );
   sky130_fd_sc_hd__bufinv_16 sky130_fd_sc_hd__bufinv_16_3 (
       .A(clknet_4_12_0_clk),
-      .Y(n1568)
+      .Y(n1578)
   );
   sky130_fd_sc_hd__bufinv_16 sky130_fd_sc_hd__bufinv_16_4 (
       .A(clknet_4_8_0_clk),
@@ -1520,7 +1521,7 @@ module modexp (
   );
   sky130_fd_sc_hd__bufinv_16 sky130_fd_sc_hd__bufinv_16_5 (
       .A(clknet_4_14_0_clk),
-      .Y(n1884)
+      .Y(n1895)
   );
   sky130_fd_sc_hd__clkinv_1 sky130_fd_sc_hd__clkinv_1_0 (
       .A(outer[3]),
@@ -1540,7 +1541,7 @@ module modexp (
   );
   sky130_fd_sc_hd__clkinv_1 sky130_fd_sc_hd__clkinv_1_4 (
       .A(clknet_4_1_0_clk),
-      .Y(n843)
+      .Y(n846)
   );
   sky130_fd_sc_hd__clkinv_1 sky130_fd_sc_hd__clkinv_1_5 (
       .A(_0153_),
@@ -1636,26 +1637,26 @@ module modexp (
   );
   sky130_fd_sc_hd__clkinv_2 sky130_fd_sc_hd__clkinv_2_0 (
       .A(clknet_4_9_0_clk),
-      .Y(n637)
+      .Y(n639)
   );
   sky130_fd_sc_hd__clkinv_4 sky130_fd_sc_hd__clkinv_4_0 (
       .A(clknet_4_4_0_clk),
-      .Y(n1657)
+      .Y(n1667)
   );
   sky130_fd_sc_hd__clkinv_4 sky130_fd_sc_hd__clkinv_4_1 (
       .A(clknet_4_7_0_clk),
-      .Y(n1915)
+      .Y(n1928)
   );
   sky130_fd_sc_hd__clkinv_4 sky130_fd_sc_hd__clkinv_4_2 (
       .A(clknet_4_13_0_clk),
-      .Y(n1683)
+      .Y(n1692)
   );
   sky130_fd_sc_hd__clkinv_4 sky130_fd_sc_hd__clkinv_4_3 (
       .A(clknet_4_15_0_clk),
-      .Y(n1998)
+      .Y(n2011)
   );
   sky130_fd_sc_hd__conb_1 sky130_fd_sc_hd__conb_1_0 (
-      .HI(VDD),
+      .HI(n2468),
       .LO(_tie_zero_)
   );
   sky130_fd_sc_hd__dfrtp_1 sky130_fd_sc_hd__dfrtp_1_0 (
@@ -8713,15 +8714,15 @@ module modexp (
   );
   sky130_fd_sc_hd__inv_1 sky130_fd_sc_hd__inv_1_0 (
       .A(clknet_4_0_0_clk),
-      .Y(n678)
+      .Y(n681)
   );
   sky130_fd_sc_hd__inv_1 sky130_fd_sc_hd__inv_1_1 (
       .A(clknet_4_11_0_clk),
-      .Y(n738)
+      .Y(n740)
   );
   sky130_fd_sc_hd__inv_6 sky130_fd_sc_hd__inv_6_0 (
       .A(clknet_4_5_0_clk),
-      .Y(n1785)
+      .Y(n1797)
   );
   sky130_fd_sc_hd__lpflow_inputiso1p_1 sky130_fd_sc_hd__lpflow_inputiso1p_1_0 (
       .A(_0000_),

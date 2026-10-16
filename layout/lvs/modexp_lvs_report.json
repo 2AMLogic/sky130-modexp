@@ -27,7 +27,7 @@
   "hints_applied": null,
   "status": "mismatch",
   "power_connectivity": {
-    "status": "match",
+    "status": "mismatch",
     "reason": null,
     "power_pins": [
       "VGND",
@@ -92,8 +92,1501 @@
     "instance_count": 3074,
     "expected_nets": null,
     "unchecked_expected_pins": [],
-    "findings": [],
-    "finding_count": 0
+    "findings": [
+      {
+        "rule": "power.inconsistent_pin_net",
+        "severity": "error",
+        "pin": "VPB",
+        "expected_net": null,
+        "description": "standard-cell power/ground pin 'VPB' reaches 26 distinct nets across 2809 instance(s) -- '$1125' (112 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_3); '$1258' (108 instance(s), e.g. SKY130_FD_SC_HD__A222OI_1_0); '$1403' (106 instance(s), e.g. SKY130_FD_SC_HD__A22O_1_10); '$1543' (110 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_12); '$1656' (133 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_6); '$170' (111 instance(s), e.g. SKY130_FD_SC_HD__DFRTP_1_0); '$1786' (139 instance(s), e.g. SKY130_FD_SC_HD__A211O_1_0); '$1902' (123 instance(s), e.g. SKY130_FD_SC_HD__A211OI_1_4); '$2024' (125 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_19); '$2129' (137 instance(s), e.g. SKY130_FD_SC_HD__A211OI_1_1); '$2222' (132 instance(s), e.g. SKY130_FD_SC_HD__A211OI_1_0); '$2326' (115 instance(s), e.g. SKY130_FD_SC_HD__A32O_1_2); '$2402' (109 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_13); '$2453' (107 instance(s), e.g. SKY130_FD_SC_HD__A211OI_1_3); '$2463' (97 instance(s), e.g. SKY130_FD_SC_HD__A211O_1_1); '$2464' (92 instance(s), e.g. SKY130_FD_SC_HD__FILL_1_102); '$2465' (92 instance(s), e.g. SKY130_FD_SC_HD__FILL_1_103); '$2466' (92 instance(s), e.g. SKY130_FD_SC_HD__FILL_1_104); '$2467' (92 instance(s), e.g. SKY130_FD_SC_HD__FILL_1_105); '$2470' (94 instance(s), e.g. SKY130_FD_SC_HD__CONB_1_0); '$2471' (52 instance(s), e.g. SKY130_FD_SC_HD__FILL_1_107); '$351' (108 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_0); '$501' (106 instance(s), e.g. SKY130_FD_SC_HD__A222OI_1_9); '$673' (96 instance(s), e.g. SKY130_FD_SC_HD__A222OI_1_10); '$838' (104 instance(s), e.g. SKY130_FD_SC_HD__A21BOI_0_0); '$973' (117 instance(s), e.g. SKY130_FD_SC_HD__A21OI_1_2). A single-power-domain block must wire every instance's same-named supply pin to the same net; declare options.power_connectivity.expected_nets to state which one is correct, or set options.power_connectivity: false if this design is genuinely multi-domain. If this design has no power distribution network routed at all -- every instance's supply pin landing on its own net is the same signature as no PDN having been added -- the more likely fix is request.power in klt place-and-route rather than either option above",
+        "instance_count": 2809,
+        "nets": [
+          {
+            "net": "$1125",
+            "instance_count": 112,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_3",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_4",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_1",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_12",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_2",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_15",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_9",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_1",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_7",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_111",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$1258",
+            "instance_count": 108,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_0",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_12",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_11",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_14",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_2",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_26",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_5",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_6",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_117",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_125",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$1403",
+            "instance_count": 106,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_10",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_15",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_3",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_0",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_10",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_3",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_7",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_8",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_101",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_105",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$1543",
+            "instance_count": 110,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_12",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_0",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_6",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_8",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_14",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_2",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_7",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_8",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_9",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_0",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$1656",
+            "instance_count": 133,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_6",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_8",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_9",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_1",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_5",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_1",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_5",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_6",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_5",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__AND2_0_1",
+                "cell": "SKY130_FD_SC_HD__AND2_0"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$170",
+            "instance_count": 111,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_0",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_104",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_11",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_114",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_25",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_52",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_67",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_96",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_118",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_131",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$1786",
+            "instance_count": 139,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211O_1_0",
+                "cell": "SKY130_FD_SC_HD__A211O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21BOI_0_1",
+                "cell": "SKY130_FD_SC_HD__A21BOI_0"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_1",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_15",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_17",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_7",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_4",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_4",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_6",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31O_1_0",
+                "cell": "SKY130_FD_SC_HD__A31O_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$1902",
+            "instance_count": 123,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211OI_1_4",
+                "cell": "SKY130_FD_SC_HD__A211OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_16",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_5",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_2",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A311O_1_0",
+                "cell": "SKY130_FD_SC_HD__A311O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_16",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_1",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__AND3_1_2",
+                "cell": "SKY130_FD_SC_HD__AND3_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUFINV_16_0",
+                "cell": "SKY130_FD_SC_HD__BUFINV_16"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUFINV_16_5",
+                "cell": "SKY130_FD_SC_HD__BUFINV_16"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2024",
+            "instance_count": 125,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_19",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_20",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A311OI_1_0",
+                "cell": "SKY130_FD_SC_HD__A311OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A311OI_1_1",
+                "cell": "SKY130_FD_SC_HD__A311OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_4",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_14",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_4_1",
+                "cell": "SKY130_FD_SC_HD__CLKINV_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_4_3",
+                "cell": "SKY130_FD_SC_HD__CLKINV_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_127",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_18",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2129",
+            "instance_count": 137,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211OI_1_1",
+                "cell": "SKY130_FD_SC_HD__A211OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_14",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__AND2_0_3",
+                "cell": "SKY130_FD_SC_HD__AND2_0"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__AND2_0_4",
+                "cell": "SKY130_FD_SC_HD__AND2_0"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_6",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_15",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_57",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_109",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_121",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_211",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2222",
+            "instance_count": 132,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211OI_1_0",
+                "cell": "SKY130_FD_SC_HD__A211OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211OI_1_2",
+                "cell": "SKY130_FD_SC_HD__A211OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_11",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_66",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_122",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_162",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_170",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_201",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_224",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_244",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2326",
+            "instance_count": 115,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_2",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_3",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_6",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_128",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_27",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_40",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_87",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_95",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DIODE_2_1",
+                "cell": "SKY130_FD_SC_HD__DIODE_2"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_132",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2402",
+            "instance_count": 109,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_13",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_18",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_5",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A32O_1_7",
+                "cell": "SKY130_FD_SC_HD__A32O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_112",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_35",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_47",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_127",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_172",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_194",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2453",
+            "instance_count": 107,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211OI_1_3",
+                "cell": "SKY130_FD_SC_HD__A211OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_10",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21O_1_3",
+                "cell": "SKY130_FD_SC_HD__A21O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_13",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_106",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_58",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DIODE_2_2",
+                "cell": "SKY130_FD_SC_HD__DIODE_2"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DIODE_2_3",
+                "cell": "SKY130_FD_SC_HD__DIODE_2"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_100",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_143",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2463",
+            "instance_count": 97,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A211O_1_1",
+                "cell": "SKY130_FD_SC_HD__A211O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__AND2_0_2",
+                "cell": "SKY130_FD_SC_HD__AND2_0"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_101",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_145",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_212",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_246",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_268",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_301",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_347",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_440",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2464",
+            "instance_count": 92,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_102",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_146",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_195",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_247",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_302",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_348",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_405",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_441",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_478",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_479",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2465",
+            "instance_count": 92,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_103",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_147",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_196",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_248",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_303",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_349",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_406",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_442",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_480",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_481",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2466",
+            "instance_count": 92,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_104",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_148",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_197",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_249",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_304",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_350",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_407",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_443",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_482",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_483",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2467",
+            "instance_count": 92,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_105",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_149",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_198",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_250",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_305",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_351",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_408",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_444",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_484",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_485",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2470",
+            "instance_count": 94,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CONB_1_0",
+                "cell": "SKY130_FD_SC_HD__CONB_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_106",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_150",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_167",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_199",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_251",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_306",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_352",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_409",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_445",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$2471",
+            "instance_count": 52,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_107",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_151",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_200",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_252",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_307",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_353",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_410",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_446",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_488",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__FILL_1_57",
+                "cell": "SKY130_FD_SC_HD__FILL_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$351",
+            "instance_count": 108,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_0",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_0",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_0",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_1",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_10",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_108",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_113",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_120",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_23",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_33",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$501",
+            "instance_count": 106,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_9",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUFINV_16_4",
+                "cell": "SKY130_FD_SC_HD__BUFINV_16"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_4",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_24",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_103",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_123",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_36",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_49",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_59",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__DFRTP_1_70",
+                "cell": "SKY130_FD_SC_HD__DFRTP_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$673",
+            "instance_count": 96,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_10",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_11",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_14",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_7",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUFINV_16_2",
+                "cell": "SKY130_FD_SC_HD__BUFINV_16"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_12",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_15",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_18",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_17",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_22",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$838",
+            "instance_count": 104,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21BOI_0_0",
+                "cell": "SKY130_FD_SC_HD__A21BOI_0"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_3",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_4",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_5",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_6",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_0",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_5",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUF_4_9",
+                "cell": "SKY130_FD_SC_HD__BUF_4"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_10",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__CLKINV_1_19",
+                "cell": "SKY130_FD_SC_HD__CLKINV_1"
+              }
+            ],
+            "instances_truncated": true
+          },
+          {
+            "net": "$973",
+            "instance_count": 117,
+            "instances": [
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A21OI_1_2",
+                "cell": "SKY130_FD_SC_HD__A21OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A222OI_1_13",
+                "cell": "SKY130_FD_SC_HD__A222OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_11",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A22O_1_13",
+                "cell": "SKY130_FD_SC_HD__A22O_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_1",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_12",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_13",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__A31OI_1_4",
+                "cell": "SKY130_FD_SC_HD__A31OI_1"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__AND2_0_0",
+                "cell": "SKY130_FD_SC_HD__AND2_0"
+              },
+              {
+                "circuit": "MODEXP",
+                "instance": "SKY130_FD_SC_HD__BUFINV_16_1",
+                "cell": "SKY130_FD_SC_HD__BUFINV_16"
+              }
+            ],
+            "instances_truncated": true
+          }
+        ]
+      }
+    ],
+    "finding_count": 1
   },
   "body_verification": {
     "status": "unchecked",
@@ -114,7 +1607,7 @@
   },
   "counts": {
     "nets": {
-      "layout": 771,
+      "layout": 793,
       "reference": 734,
       "matched": 333
     },
@@ -132,25 +1625,25 @@
   "device_classes": null,
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.10",
-    "layout_sha256": "34c62150f0a4c49973bc1cc8845c901c61033ffbab26b251d2eae68611a683f7",
+    "engine_version": "0.30.12",
+    "layout_sha256": "ce1c912e114e7be40c1805e314ae403ad1b76f5fa7bc017a167686d16a73c68c",
     "reference_sha256": "968aafe13a4550accb36a18021a04c00911435287d25c4b01dfd7ad02349d094",
     "extracted_netlist": null
   },
   "provenance": {
     "klt_version": "0.6.0+gdac2b5daceb6",
-    "klayout_version": "0.30.10",
+    "klayout_version": "0.30.12",
     "pdk": {
       "name": "sky130A",
-      "source": "search root: ~/.volare",
-      "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
     },
     "deck": null,
     "input": {
-      "content_hash": "sha256:34c62150f0a4c49973bc1cc8845c901c61033ffbab26b251d2eae68611a683f7",
+      "content_hash": "sha256:ce1c912e114e7be40c1805e314ae403ad1b76f5fa7bc017a167686d16a73c68c",
       "role": "netlist"
     },
-    "klayout_version_mismatch": false
+    "klayout_version_mismatch": true
   },
   "mismatches": [
     {

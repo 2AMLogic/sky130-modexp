@@ -1,0 +1,6 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": { "netlist": "layout/lvs/modexp_layout_abstracted.spice", "top": "modexp" },
+  "reference": { "netlist": "layout/lvs/modexp_reference.spice", "top": "modexp" }
+}
