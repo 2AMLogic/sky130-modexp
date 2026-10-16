@@ -109,3 +109,4 @@ test-merge-pr-unstable-fallback.sh  Needs a built loom-daemon: calls `loom_test_
 test-merge-pr-wait-for-checks-empty-settle.sh  Needs a built loom-daemon: calls `loom_test_require_daemon_bin`, so it FAILS rather than skips without a binary, and this toolchain-free job has none.
 test-merge-pr-help.sh  Needs a built loom-daemon: calls `loom_test_require_daemon_bin`, so it FAILS rather than skips without a binary, and this toolchain-free job has none.
 test-merge-pr-merge-method.sh  Needs a built loom-daemon: calls `loom_test_require_daemon_bin`, so it FAILS rather than skips without a binary, and this toolchain-free job has none.
+test-merge-pr-workflow-scope-preflight.sh  Needs a built loom-daemon: calls `loom_test_require_daemon_bin`, so it FAILS rather than skips without a binary, and this toolchain-free job has none.
