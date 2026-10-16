@@ -174,19 +174,36 @@ echo "--- discriminator (loom_repo_identity) ---"
 # shellcheck source=/dev/null
 source "$LIB_IFW"
 
-# AC: verified TRUE for rjwalters/loom itself. Asserted against this checkout,
-# not a fixture, so the discriminator cannot silently stop recognizing the one
-# tree whose Builders must never be denied.
-assert_eq "rjwalters/loom's own checkout classifies as 'upstream'" \
-    "upstream" "$(loom_repo_identity "$REPO_ROOT")"
+# The real checkout is asserted (not just fixtures) so the discriminator cannot
+# silently stop recognizing the one tree whose Builders must never be denied.
+# The expected answer is derived from layout markers INDEPENDENT of the
+# classifier: Loom's own source tree carries defaults/.claude/commands/loom/;
+# an installed consumer checkout has an install marker (or .loom/config.json /
+# .loom-project) and no defaults/ source tree. A checkout matching neither
+# layout expects "unknown". This repo is a consumer, so it must classify
+# 'consumer'; rjwalters/loom itself must still classify 'upstream'.
+expected_identity_for_layout() {
+    local root="$1"
+    if [[ -d "$root/defaults/.claude/commands/loom" ]]; then
+        echo upstream
+    elif [[ -f "$root/.loom/install-metadata.json" || -f "$root/.loom/config.json" || -d "$root/.loom-project" ]]; then
+        echo consumer
+    else
+        echo unknown
+    fi
+}
+REAL_EXPECTED="$(expected_identity_for_layout "$REPO_ROOT")"
+assert_eq "this checkout classifies as '$REAL_EXPECTED' (layout-derived expectation)" \
+    "$REAL_EXPECTED" "$(loom_repo_identity "$REPO_ROOT")"
 
 # ...and from inside one of its managed worktrees, where a Builder actually
 # works (a worktree is a full checkout, so it carries defaults/ too).
 if [[ -d "$REPO_ROOT/.loom/worktrees" ]]; then
     for wt in "$REPO_ROOT"/.loom/worktrees/*/; do
         [[ -d "$wt" ]] || continue
-        assert_eq "a managed worktree of Loom's own tree also classifies 'upstream'" \
-            "upstream" "$(loom_repo_identity "${wt%/}")"
+        wt_expected="$(expected_identity_for_layout "${wt%/}")"
+        assert_eq "a managed worktree of this checkout classifies '$wt_expected' (layout-derived)" \
+            "$wt_expected" "$(loom_repo_identity "${wt%/}")"
         break
     done
 fi
