@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 8,
+  "summary": "aggregated characterization report: every row of the ratified spec table with a verdict (or 'no ratified bound') and its record id; Fmax and setup/hold slack at all 18 corners; synthesized and routed area; one power estimate at tt_025C_1v80 with its method, activity assumption and limits stated. Figures are not compared with any external design.",
+  "source": "verification/signoff/evidence/characterization.md",
+  "provenance": {
+    "klt_version": "0.7.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:25f53b92742788590acf5fa49143b58aa85554b43100637c3f64b8af65ad0867",
+      "path": "characterization.md"
+    }
+  }
+}
