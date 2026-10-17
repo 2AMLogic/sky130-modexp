@@ -73,6 +73,33 @@ case "$KLT_VERSION_LINE" in
     ;;
 esac
 
+# Item 6 `not_applicable` evidence guard (issue #204). The graded spec index
+# is JSON, the spec is Markdown, so the index carries `source_hash` of
+# spec/modexp.md; editing the spec without re-deriving the index must fail
+# here. Likewise every row id must appear in the human statement. This runs
+# on the pinned klt too: it does not depend on the grader.
+check_item6_evidence() {
+  python3 - <<'PY'
+import hashlib, json, sys
+ev = "verification/signoff/evidence/"
+idx = json.load(open(ev + "modexp-spec-rows.json"))
+st = json.load(open(ev + "item-6-na-statement.json"))
+md = open(ev + "item-6-no-statistical-rows.md").read()
+want = "sha256:" + hashlib.sha256(open(idx["spec"], "rb").read()).hexdigest()
+bad = []
+if idx["source_hash"] != want:
+    bad.append(f"{idx['spec']} changed: index source_hash {idx['source_hash']} != {want}")
+ids = [r["id"] for r in idx["rows"]]
+if sorted(ids) != sorted(r["id"] for r in st["rows"]):
+    bad.append("spec row ids and statement row ids differ")
+bad += [f"row `{i}` missing from item-6-no-statistical-rows.md" for i in ids if f"`{i}`" not in md]
+if bad:
+    print("FAIL: item 6 not_applicable evidence is inconsistent:", *bad, sep="\n  ", file=sys.stderr)
+    sys.exit(1)
+PY
+}
+check_item6_evidence
+
 run_report() { # $1 = output file
   set +e
   "$KLT" signoff --manifest "$MANIFEST" --tiers-doc "$TIERS_DOC" --format json > "$1"

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "spec": "spec/modexp.md",
+  "status": "ratified",
+  "source_hash": "sha256:3fc9302aebd54d0d3669ccbf71c82c035d9afc762c352fcdb9fd6da23bc6ef1b",
+  "rows": [
+    {"id": "operation"},
+    {"id": "width"},
+    {"id": "correctness"},
+    {"id": "cell-count"},
+    {"id": "clock"},
+    {"id": "signoff"},
+    {"id": "area"}
+  ]
+}

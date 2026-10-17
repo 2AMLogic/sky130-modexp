@@ -38,6 +38,12 @@ duplicating it.
   `KLT=<path to a 0.7.0 klt> ./run-signoff.sh`.
 - `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 9,
   10 and the audit records they are bound to.
+- `evidence/item-6-no-statistical-rows.md`, `evidence/item-6-na-statement.json`,
+  `evidence/modexp-spec-rows.json` — the item 6 `not_applicable` statement
+  (issue #204): the human statement, its graded JSON form (one entry per spec
+  row), and a JSON row index of `spec/modexp.md` whose `source_hash` pins the
+  spec. `run-signoff.sh` fails if the spec, index and statement disagree. Not
+  yet cited by the manifest — see the item 6 row below.
 - `run-signoff.sh` — the runner (and the `--check` gate CI runs). Uses `$KLT`,
   else `klt` on `PATH`, and refuses any version other than 0.7.0 (the
   PDK-heavy legs' `.venv` klt is an older pin).
@@ -59,7 +65,7 @@ nothing here inflates a row to green.
 | 2 Layout | unmet (`check_failed`) | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). **Disclosure:** the committed P&R flow exists, but the exact run behind this GDS is not bit-reproducible (`layout/README.md`, issue #55) and no as-built netlist was captured (decision record 0006); the envelope's `summary` says so. The item text asks for "reproducibly generated"; that requirement is not satisfied, so the envelope attests `status: fail` on its own evidence and the grader renders the row `unmet`/`check_failed`. |
 | 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `evidence/testbenches.md` (each claimed functional measurement, its testbench, its cold-start invocation, and the PDK pin). Tool-run checks (DRC/LVS/STA) are stated to be outside the claim. |
 | 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `evidence/repo-hygiene.md` (README, spec table, LICENSE, CI, pins). |
-| 6 Monte Carlo | unmet (`no_evidence`) — unchanged by 0.7.0 | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. |
+| 6 Monte Carlo | unmet (`no_evidence`) — unchanged by 0.7.0 | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. | **Pending a klayout-tools release (issue #204):** the bound statement is committed under `evidence/` and validated with a from-source klt, which grades item 6 `not_applicable` (`t1_not_applicable_count: 1`, met stays 5, `tier` stays `null`). The 0.7.0 pin predates that outcome (klayout-tools#2865, PR #3200), so the manifest does not cite it yet. When a release containing it ships: bump the pin (`run-signoff.sh`, `docs/environment.md`, CI), add `"6": {"not_applicable": {"spec": {"file": "verification/signoff/evidence/modexp-spec-rows.json", "content_hash": "sha256:…"}, "statement": {"file": "verification/signoff/evidence/item-6-na-statement.json", "content_hash": "sha256:…"}}}` to `block-manifest.json`, and regenerate the report.
 | 8 Characterization | unmet (`no_evidence`) — unchanged by 0.7.0 | No aggregated characterization artifact (Fmax/area/power across corners) exists yet. |
 
 ## Citation policy (what is cited, and why the rest is deliberately not)

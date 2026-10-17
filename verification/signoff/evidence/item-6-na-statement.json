@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "rows": [
+    {"id": "operation", "class": "functional", "reason": "Defines the computation (base^exp mod m, square-and-multiply); a functional definition with no numeric bound. The Montgomery stretch is deferred and carries no bound either."},
+    {"id": "width", "class": "functional", "reason": "Enumerates the verified parameter set (16 primary; 4, 6, 8 verified); a discrete configuration choice, not a measured quantity with a distribution. The 32 stretch is deferred, unverified and unbounded."},
+    {"id": "correctness", "class": "functional", "reason": "Bit-exact equality against the reference pow(b, e, m) on randomized stimulus; a pass/fail logical equivalence of a deterministic digital circuit, with no tolerance and no statistical bound. The formal-equivalence stretch is likewise exact."},
+    {"id": "cell-count", "class": "implementation-metric", "reason": "No fixed target by Decision 3; the synthesis cell count is a deterministic integer for a given netlist and library, not a random variable. The reduction stretch is likewise a deterministic comparison."},
+    {"id": "clock", "class": "timing", "reason": "Corner-bounded by static timing analysis at the PDK's characterised corners (the decision-record exceptions 0004, 0005 and 0007 carry that corner-bound reading); STA slack is deterministic per corner and is not a Monte Carlo quantity. The 500 MHz stretch is graded the same way."},
+    {"id": "signoff", "class": "physical-verification", "reason": "DRC and LVS cleanliness on the produced GDS; deterministic rule-deck pass/fail with zero violations required, no statistical quantity."},
+    {"id": "area", "class": "implementation-metric", "reason": "Unset by Decision 4; a layout area is a deterministic measurement of the placed design, not a random variable."}
+  ]
+}
