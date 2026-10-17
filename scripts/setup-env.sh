@@ -41,7 +41,7 @@ cd "${REPO_ROOT}" || exit 1
 # every constant in this block must appear in that doc's "Pinned versions"
 # table. Keep assignments in plain NAME="value" form so it can parse them.
 KLT_REPO="https://github.com/2AMLogic/klayout-tools"
-KLT_REV="dac2b5daceb69a2068d9d2ee190d7afe37b29af7"
+KLT_REV="36956c68878052af63bc4e003877f92eb3fb973b"
 CIEL_VERSION="2.6.1"
 CIEL_PDK_FAMILY="sky130"
 CIEL_SKY130_VERSION="f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"

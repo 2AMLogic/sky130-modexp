@@ -40,8 +40,8 @@ source .venv/bin/activate
 
 | Component | Pinned to | Resolved via |
 |---|---|---|
-| `klayout-tools` (`klt`) | git revision [`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`](https://github.com/2AMLogic/klayout-tools/commit/dac2b5daceb69a2068d9d2ee190d7afe37b29af7) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"` (what `scripts/setup-env.sh` runs) |
-| `klayout-tools` (`klt`, signoff-report leg) | PyPI release `klayout-tools==0.7.0` (2026-10-08, tag `v0.7.0`) | `pip install "klayout-tools==0.7.0"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any other version (issue #165). This is deliberately **not** the pin above: the evidence legs stay on the older revision, see "Second klt pin" below |
+| `klayout-tools` (`klt`) | git revision [`36956c68878052af63bc4e003877f92eb3fb973b`](https://github.com/2AMLogic/klayout-tools/commit/36956c68878052af63bc4e003877f92eb3fb973b) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@36956c68878052af63bc4e003877f92eb3fb973b"` (what `scripts/setup-env.sh` runs) |
+| `klayout-tools` (`klt`, signoff-report leg) | PyPI release `klayout-tools==0.7.0` (2026-10-08, tag `v0.7.0`) | `pip install "klayout-tools==0.7.0"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any other version (issue #165). This is deliberately **not** the pin above: the evidence legs are on their own (different) revision, see "Second klt pin" below |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
 | `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision) |
@@ -143,6 +143,35 @@ without moving the pin:
 pip install --force-reinstall \
   "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@c66f18fd62250c5b71046e4e2a2b0288024eaff0"
 ```
+
+**Pin rationale (issue #206, 2026-10-17)**: the previous pin
+(`dac2b5daceb69a2068d9d2ee190d7afe37b29af7`, 2026-09-23) predated
+[klayout-tools#3443](https://github.com/2AMLogic/klayout-tools/pull/3443)
+(merged 2026-10-15 as `1664cb1c671205e110d6c8c1543bc47f82914cd7`; fixes the
+interleaved-warning misclassification, upstream issue #3450) and
+[klayout-tools#3550](https://github.com/2AMLogic/klayout-tools/pull/3550)
+(merged 2026-10-16 as `36956c68878052af63bc4e003877f92eb3fb973b`; adds
+`request.pdk.rebuild_corners` to `klt place-and-route`, upstream issue #3507).
+No release contains either (`v0.7.0` is 907 commits behind), so the pin is a
+`main` SHA. The current pin is `36956c68878052af63bc4e003877f92eb3fb973b`,
+the smallest sufficient SHA, chosen to limit verdict drift. Ancestry was
+checked live, not read from changelogs:
+`gh api repos/2AMLogic/klayout-tools/compare/1664cb1c671205e110d6c8c1543bc47f82914cd7...36956c68878052af63bc4e003877f92eb3fb973b`
+→ `"status": "ahead"` (so `36956c6` contains both fixes; `36956c6` is itself
+#3550's merge commit). Checked in a throwaway worktree venv at the new pin:
+`klt drc layout/modexp.gds --deck sky130` → `status: clean`, 0 violations
+(same verdict as the committed DRC records); the frozen
+`20260923-054800-e26f603` gate-level SDF request, run against its frozen
+artifacts, → `pass`, 2/2 tests, `sdf.annotated: true`, 129 dropped
+timingchecks (same as the record). No verdict moved, so no new record was
+minted; existing records stay as produced at `dac2b5da`. Note that
+`klt place-and-route --help` does not list corners: the capability is the
+request field `pdk.rebuild_corners`, documented in the tool's
+`docs/cli/place-and-route.md`. The **signoff-leg pin did not move**
+(`klayout-tools==0.7.0` stays, see "Second klt pin" below): that leg reads
+committed envelopes only and `run-signoff.sh --check` still matches the
+committed `tier-report.json` at 0.7.0. Moving it to the evidence pin would
+mean re-minting records, which stays #199/#201's decision.
 
 **Yosys/ABC build identity is pinned as of issue #143, and by content, not
 by version string.** `yosys -V` does not identify the `abc` build compiled
