@@ -36,15 +36,18 @@ duplicating it.
   block-manifest.json --tiers-doc design-evidence-tiers.md --format json`
   on the signoff-leg klt pin (`klayout-tools==0.7.0`). Regenerate with
   `KLT=<path to a 0.7.0 klt> ./run-signoff.sh`.
-- `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 9,
-  10 and the audit records they are bound to.
+- `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 8, 9,
+  10 and the audit records they are bound to. Item 8's envelope is generated,
+  not hand-edited: `python3 gen_characterization_envelope.py` rewrites it and
+  the manifest pin from `evidence/characterization.md`; `--check` (run by the
+  CI `signoff` job) fails if the report changed without regenerating.
 - `run-signoff.sh` — the runner (and the `--check` gate CI runs). Uses `$KLT`,
   else `klt` on `PATH`, and refuses any version other than 0.7.0 (the
   PDK-heavy legs' `.venv` klt is an older pin).
 
-## Current verdict (2026-10-08, this manifest)
+## Current verdict (2026-10-17, this manifest)
 
-**5 of 11 T1 items met; `tier: null`** (was 2 of 11 before issue #165). This is the honest graded state —
+**6 of 11 T1 items met; `tier: null`** (was 5 of 11 before issue #205, and 2 of 11 before issue #165). This is the honest graded state —
 an all-`unmet` manifest would have been a correct result too (issue #130);
 nothing here inflates a row to green.
 
@@ -60,7 +63,7 @@ nothing here inflates a row to green.
 | 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `evidence/testbenches.md` (each claimed functional measurement, its testbench, its cold-start invocation, and the PDK pin). Tool-run checks (DRC/LVS/STA) are stated to be outside the claim. |
 | 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `evidence/repo-hygiene.md` (README, spec table, LICENSE, CI, pins). |
 | 6 Monte Carlo | unmet (`no_evidence`) — unchanged by 0.7.0 | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. |
-| 8 Characterization | unmet (`no_evidence`) — unchanged by 0.7.0 | No aggregated characterization artifact (Fmax/area/power across corners) exists yet. |
+| 8 Characterization | **met** | `evidence/item-8-characterization.json`, bound to `evidence/characterization.md` (issue #205): every row of the ratified spec table with a verdict or "reported, no ratified bound" and its record id, Fmax and setup/hold slack at all 18 corners, synthesized and routed area, and one power estimate at `tt_025C_1v80` (record `power-estimate/20261017-192500-8c11c62`; stated default activity, no parasitics, one corner). **The item is met by the report existing and being current, not by the design meeting its bounds**: the report carries the item 5 Clock FAIL (10 of 18 corners) and the item 4 LVS mismatch as they are. The envelope is generated and checked by `gen_characterization_envelope.py`. |
 
 ## Citation policy (what is cited, and why the rest is deliberately not)
 
