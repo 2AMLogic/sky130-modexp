@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "modexp",
+  "testbench": "test_modexp",
+  "status": "pass",
+  "test_count": 2,
+  "passed_count": 2,
+  "failed_count": 0,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "test_modexp_known_vectors",
+      "status": "passed",
+      "sim_time_ns": 23750.0,
+      "real_time_s": 0.563723087310791
+    },
+    {
+      "name": "test_modexp_random",
+      "status": "passed",
+      "sim_time_ns": 180480.0,
+      "real_time_s": 6.947623252868652
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.0.1",
+    "results_xml": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-199/.klt/sdf-replay/out201-2/results_icarus.xml",
+    "random_seed": 1,
+    "source_defines": {},
+    "initial_state": null,
+    "sdf": {
+      "file": "/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-199/.klt/sdf-replay/modexp_route.sdf",
+      "corner": "min",
+      "entries": "all",
+      "annotated": true,
+      "partial": true,
+      "dropped": {
+        "timingcheck": {
+          "count": 129,
+          "reason": "Icarus Verilog implements SDF delay annotation (IOPATH/INTERCONNECT) but not SDF TIMINGCHECK -- every TIMINGCHECK section in the SDF is dropped, so $setup/$hold/$width checks run against the cell library's own placeholder timing, not the characterised limits in the SDF"
+        }
+      }
+    }
+  }
+}
