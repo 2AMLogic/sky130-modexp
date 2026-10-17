@@ -20,18 +20,24 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SMOKE_DIR="${REPO_ROOT}/scripts/openroad-smoke"
+# The fixtures and the Docker wrapper are siblings of this script, so none of
+# this depends on how deep in the tree the script sits. $OPENROAD_SMOKE_DIR
+# overrides the fixture directory.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SMOKE_DIR="${OPENROAD_SMOKE_DIR:-${SCRIPT_DIR}/openroad-smoke}"
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "${WORK_DIR}"' EXIT
 
+for f in smoke.tcl smoke_top.v; do
+  [ -r "${SMOKE_DIR}/${f}" ] || { echo "FATAL: ${SMOKE_DIR}/${f} not found." >&2; exit 1; }
+done
 cp "${SMOKE_DIR}/smoke.tcl" "${SMOKE_DIR}/smoke_top.v" "${WORK_DIR}/"
 
 if command -v openroad >/dev/null 2>&1; then
   OPENROAD_CMD=(openroad)
   echo "using openroad from \$PATH: $(command -v openroad)"
 else
-  OPENROAD_CMD=("${REPO_ROOT}/scripts/openroad-docker.sh")
+  OPENROAD_CMD=("${SCRIPT_DIR}/openroad-docker.sh")
   echo "openroad not on \$PATH; using ${OPENROAD_CMD[0]} (Docker route)"
 fi
 

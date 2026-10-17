@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -362,6 +363,47 @@ CASES = [
 ]
 
 
+def check_nested_copy_resolves_toplevel() -> list[str]:
+    """The linter and `_repo_utils.py`, copied one directory deeper (as a
+    vendored `common/` copy would sit), must still lint the enclosing repo
+    -- not the copy's parent directory -- and `$REPO_ROOT` must override."""
+    problems = []
+    with tempfile.TemporaryDirectory(prefix="record-linter-selftest-") as tmpdir:
+        repo = build_fixture_repo(Path(tmpdir))
+        nested = repo / "common"
+        nested.mkdir()
+        shutil.copyfile(LINTER, nested / "check_records.py")
+        shutil.copyfile(REPO_UTILS, nested / "_repo_utils.py")
+        args = ["--base-ref", BASE_REF, "--require-append-only"]
+
+        def run(script: Path, cwd: Path, env_root: Path | None = None):
+            env = {k: v for k, v in os.environ.items() if k != "REPO_ROOT"}
+            if env_root is not None:
+                env["REPO_ROOT"] = str(env_root)
+            res = subprocess.run(
+                [sys.executable, str(script), *args],
+                cwd=cwd, capture_output=True, text=True, env=env,
+            )
+            return res.returncode, res.stdout + res.stderr
+
+        rc, out = run(nested / "check_records.py", repo)
+        if rc != 0 or "verification/records/demo/records/20260101-000000-abc1234.md" not in out:
+            problems.append(f"nested copy did not lint the enclosing repo (exit {rc}): {out.strip()}")
+        # Same bytes, run from outside the repo: git toplevel comes from the
+        # script's own directory, not the caller's cwd.
+        rc, out = run(nested / "check_records.py", Path(tmpdir))
+        if rc != 0 or "PASS: all records valid" not in out:
+            problems.append(f"nested copy run from outside the repo failed (exit {rc}): {out.strip()}")
+        # $REPO_ROOT beats the git lookup: pointing it at a repo with no
+        # records dir must fail, proving the override is honoured.
+        empty = Path(tmpdir) / "empty"
+        empty.mkdir()
+        rc, out = run(nested / "check_records.py", repo, env_root=empty)
+        if rc == 0:
+            problems.append("REPO_ROOT override was ignored (lint passed against an empty root)")
+    return problems
+
+
 def main() -> int:
     if not LINTER.exists():
         print(f"FATAL: {LINTER} not found", file=sys.stderr)
@@ -395,11 +437,21 @@ def main() -> int:
             else:
                 print(f"OK:   {name}")
 
+    nested_problems = check_nested_copy_resolves_toplevel()
+    if nested_problems:
+        failures += 1
+        print("FAIL: nested-copy repo-root resolution")
+        for problem in nested_problems:
+            print(f"  - {problem}")
+    else:
+        print("OK:   nested copy resolves the repo root via git; REPO_ROOT overrides")
+
     print()
+    total = len(CASES) + 1
     if failures:
-        print(f"FAIL: {failures}/{len(CASES)} self-test case(s) did not behave as specified")
+        print(f"FAIL: {failures}/{total} self-test case(s) did not behave as specified")
         return 1
-    print(f"PASS: all {len(CASES)} self-test cases behaved as specified")
+    print(f"PASS: all {total} self-test cases behaved as specified")
     return 0
 
 

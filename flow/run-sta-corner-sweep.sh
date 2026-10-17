@@ -40,6 +40,10 @@
 #   ./flow/run-sta-corner-sweep.sh                # all 18 ratified corners
 #   ./flow/run-sta-corner-sweep.sh -o out.json    # write elsewhere
 #
+# <design> (flow/sta-<design>.json, layout/<design>.def) is $DESIGN, else the
+# stem of the repo's single rtl/*.v file; the repo root is $REPO_ROOT, else
+# `git rev-parse --show-toplevel`.
+#
 # Requires: an `openroad` binary on $PATH (docs/environment.md's "OpenROAD"
 # section -- scripts/openroad-docker.sh is the pinned route) and a resolvable
 # sky130A PDK (PDK_ROOT / $PDK, per docs/environment.md). Needs **no**
@@ -52,10 +56,21 @@
 
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="${REPO_ROOT:-$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)}"
+# Design name: $DESIGN, else the stem of the repo's one rtl/*.v file; with
+# zero or several RTL files there is no unambiguous default, so fail loudly.
+if [ -z "${DESIGN:-}" ]; then
+  _rtl=("${REPO_ROOT}"/rtl/*.v)
+  if [ "${#_rtl[@]}" -eq 1 ] && [ -f "${_rtl[0]}" ]; then
+    DESIGN="$(basename "${_rtl[0]}" .v)"
+  else
+    echo "FATAL: DESIGN not set and ${REPO_ROOT}/rtl does not hold exactly one .v file." >&2
+    exit 2
+  fi
+fi
 FLOW_DIR="${REPO_ROOT}/flow"
-REQUEST="${FLOW_DIR}/sta-modexp.json"
-ROUTED_DEF="${REPO_ROOT}/layout/modexp.def"
+REQUEST="${FLOW_DIR}/sta-${DESIGN}.json"
+ROUTED_DEF="${REPO_ROOT}/layout/${DESIGN}.def"
 OUT="${FLOW_DIR}/sta-corner-sweep-results.json"
 
 while [ "$#" -gt 0 ]; do
