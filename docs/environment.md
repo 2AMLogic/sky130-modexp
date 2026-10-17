@@ -417,6 +417,28 @@ under `verification/` or `layout/`. Run it with:
 ./scripts/openroad-smoke-test.sh
 ```
 
+### Reusing the scripts from another depth (`common/` copies)
+
+The flow and verification scripts (`flow/run-par.sh`,
+`flow/run-sta-corner-sweep.sh`, `verification/gate-level/run-gate-level-sim.sh`,
+`verification/gate-level/spice_to_verilog.py`,
+`layout/lvs/build_reference_netlist.py`, `verification/_repo_utils.py`,
+`verification/check_pins.py`, `scripts/openroad-*.sh`) are written so a
+byte-identical copy works from any directory depth. They take these inputs,
+all optional here:
+
+| Variable | Meaning | Default |
+|---|---|---|
+| `REPO_ROOT` | Root of the repository the script operates on | `git rev-parse --show-toplevel`, run from the script's own directory (`check_pins.py --repo-root` beats it) |
+| `DESIGN` | Design name used for file names and the top cell/module | The stem of the repo's single `rtl/*.v`; with zero or several RTL files there is no default and the script fails |
+| `OPENROAD_PIN_FILE` | File holding the `CIEL_SKY130_VERSION="<rev>"` PDK pin that `openroad-docker.sh` checks | `setup-env.sh` next to the script; if that is absent too, the check is skipped with a notice. An explicit but unreadable file is fatal |
+| `OPENROAD_SMOKE_DIR` | Directory holding `smoke.tcl` and `smoke_top.v` | `openroad-smoke/` next to `openroad-smoke-test.sh` |
+| `SPICE_LEF_PARSING_DIR` | Directory holding `spice_lef_parsing.py` | `<repo root>/scripts` |
+
+In this repo the defaults resolve to `DESIGN=modexp`, so existing invocations
+are unchanged. `flow/run-corner-sweep.sh` is not yet parametrized: a live
+evidence record pins its bytes, so changing it needs a decision (issue #211).
+
 ### Alternative: build from source
 
 For a host where Docker isn't viable, `OpenROAD-flow-scripts` also supports

@@ -37,6 +37,8 @@ legitimate re-pin a lint failure. The rationale prose under the table
 
 Usage:
     python3 verification/check_pins.py [--repo-root DIR]
+`--repo-root` defaults to $REPO_ROOT, else `git rev-parse --show-toplevel`
+(run from this file's directory), so the same bytes work from any depth.
 Exit codes: 0 consistent, 1 at least one mismatch, 2 a file or section is
 missing / unparseable.
 """
@@ -44,11 +46,25 @@ missing / unparseable.
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
-DEFAULT_REPO_ROOT = Path(__file__).resolve().parent.parent
+
+def default_repo_root() -> Path | None:
+    """$REPO_ROOT, else this file's `git rev-parse --show-toplevel`; None if
+    neither resolves. Independent of how deep this file sits in the tree."""
+    if os.environ.get("REPO_ROOT"):
+        return Path(os.environ["REPO_ROOT"])
+    git = subprocess.run(
+        ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "--show-toplevel"],
+        capture_output=True, text=True,
+    )
+    return Path(git.stdout.strip()) if git.returncode == 0 else None
+
+
 SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
 
@@ -182,7 +198,9 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--repo-root", type=Path, default=DEFAULT_REPO_ROOT)
+    default_root = default_repo_root()
+    ap.add_argument("--repo-root", type=Path, default=default_root, required=default_root is None,
+                    help="default: $REPO_ROOT, else `git rev-parse --show-toplevel`")
     args = ap.parse_args(argv)
     try:
         errors, notes = check(args.repo_root.resolve())

@@ -36,7 +36,23 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+def find_repo_root() -> Path:
+    """`$REPO_ROOT` if set, else `git rev-parse --show-toplevel` run from this
+    file's directory. Independent of how deep this file sits in the tree, so
+    a byte-identical copy vendored under e.g. `common/` resolves the
+    consuming repo's root, not its own parent directory."""
+    if os.environ.get("REPO_ROOT"):
+        return Path(os.environ["REPO_ROOT"]).resolve()
+    git = subprocess.run(
+        ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "--show-toplevel"],
+        capture_output=True, text=True,
+    )
+    if git.returncode != 0:
+        sys.exit("FATAL: not inside a git work tree and REPO_ROOT is not set")
+    return Path(git.stdout.strip())
+
+
+REPO_ROOT = find_repo_root()
 VENV_PYTHON = REPO_ROOT / ".venv" / "bin" / "python3"
 
 

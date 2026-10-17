@@ -20,6 +20,12 @@
 # Usage:
 #   ./verification/gate-level/run-gate-level-sim.sh [--no-regen] [--format json|text]
 #
+# <design> below is $DESIGN, else the stem of the repo's single rtl/*.v file.
+# The repo root is $REPO_ROOT, else `git rev-parse --show-toplevel`, so the
+# same bytes work from any directory depth. The per-design request
+# (request-<design>-gate-level.json) and netlist (<design>_post_route.v) sit
+# next to this script.
+#
 # Exit code is `klt functional-verification`'s own.
 #
 # ---------------------------------------------------------------------------
@@ -67,7 +73,19 @@
 set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${HERE}/../.." && pwd)"
+REPO_ROOT="${REPO_ROOT:-$(git -C "${HERE}" rev-parse --show-toplevel)}"
+
+# Design name: $DESIGN, else the stem of the repo's one rtl/*.v file; with
+# zero or several RTL files there is no unambiguous default, so fail loudly.
+if [ -z "${DESIGN:-}" ]; then
+  _rtl=("${REPO_ROOT}"/rtl/*.v)
+  if [ "${#_rtl[@]}" -eq 1 ] && [ -f "${_rtl[0]}" ]; then
+    DESIGN="$(basename "${_rtl[0]}" .v)"
+  else
+    echo "FATAL: DESIGN not set and ${REPO_ROOT}/rtl does not hold exactly one .v file." >&2
+    exit 1
+  fi
+fi
 
 FORMAT="json"
 REGEN=1
@@ -122,12 +140,13 @@ echo "  linked pdk-primitives.v, pdk-sky130_fd_sc_hd.v"
 
 if [ "${REGEN}" -eq 1 ]; then
   echo
-  echo "== regenerating modexp_post_route.v from the layout extraction =="
+  echo "== regenerating ${DESIGN}_post_route.v from the layout extraction =="
   "${PY}" "${HERE}/spice_to_verilog.py" \
-    "${REPO_ROOT}/layout/lvs/modexp_layout_abstracted.spice" \
+    "${REPO_ROOT}/layout/lvs/${DESIGN}_layout_abstracted.spice" \
     "${HD}/lef/sky130_fd_sc_hd.lef" \
-    "${HERE}/modexp_post_route.v" \
-    --report "${REPO_ROOT}/layout/lvs/modexp_layout_extract_report.json" \
+    "${HERE}/${DESIGN}_post_route.v" \
+    --report "${REPO_ROOT}/layout/lvs/${DESIGN}_layout_extract_report.json" \
+    --top "${DESIGN}" \
     --check || {
       echo "FATAL: netlist derivation reported a validation problem -- refusing" >&2
       echo "  to simulate a netlist that does not match the extraction report." >&2
@@ -137,6 +156,6 @@ fi
 
 echo
 echo "== klt functional-verification (post-route gate-level) =="
-"${KLT}" functional-verification "${HERE}/request-modexp-gate-level.json" \
+"${KLT}" functional-verification "${HERE}/request-${DESIGN}-gate-level.json" \
   --format "${FORMAT}"
 exit $?
