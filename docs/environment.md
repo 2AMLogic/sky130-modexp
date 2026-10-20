@@ -44,7 +44,7 @@ source .venv/bin/activate
 | `klayout-tools` (`klt`, signoff-report leg) | PyPI release `klayout-tools==0.7.0` (2026-10-08, tag `v0.7.0`) | `pip install "klayout-tools==0.7.0"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any other version (issue #165). This is deliberately **not** the pin above: the evidence legs are on their own (different) revision, see "Second klt pin" below |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
-| `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision) |
+| `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr -l sky130_fd_sc_hd f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision or `libs.ref/sky130_fd_sc_hd` is absent) |
 | `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
 | Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
 
@@ -54,6 +54,15 @@ job): a re-pin must update both in the same change, or lint fails. The
 rationale paragraphs below name *previous* pins on purpose and are not
 checked; neither are frozen evidence artifacts under `verification/records/`
 that restate the pin they ran against.
+
+**`klayout` engine skew (issue #193, 2026-10-15)**: `klayout` is not pinned
+here. A fresh venv resolved `klayout==0.30.12`, while the pinned `klt`
+(`0.6.0+gdac2b5daceb6`) warns it was tested against `0.30.10`. Decision: keep
+`klayout` unpinned. The committed records were produced with whatever resolved
+at the time and that is not re-derivable; pinning would change the engine
+behind `klt drc` and could invalidate comparison with recorded DRC results
+without a re-run. No verdict was observed to change. If pinning is wanted it is
+a separate reproducibility decision, to be filed as its own issue.
 
 **Pin rationale (issue #55, 2026-08-16)**: the previous pin
 (`af5791b557fc7c669c3981335a294256ccf37e6f`, 2026-08-04) predated three merged
