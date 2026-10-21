@@ -21,6 +21,7 @@ Exit codes: 0 all cases behave as specified, 1 at least one did not.
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -243,6 +244,34 @@ def run_case(mutation: Mutation) -> tuple[int, str]:
         return res.returncode, res.stdout + res.stderr
 
 
+def run_nested_copy_case() -> tuple[bool, str]:
+    """The checker copied one directory deeper (a vendored `common/` copy),
+    run with no `--repo-root`, must check the enclosing git repo; and
+    `$REPO_ROOT` must override that."""
+    with tempfile.TemporaryDirectory(prefix="check-pins-selftest-") as tmp:
+        root = Path(tmp)
+        for rel in (SCRIPT_REL, DOC_REL):
+            (root / rel).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(REPO_ROOT / rel, root / rel)
+        (root / "common").mkdir()
+        nested = root / "common" / "check_pins.py"
+        shutil.copyfile(CHECKER, nested)
+        subprocess.run(["git", "init", "--quiet", str(root)], check=True)
+        env = {k: v for k, v in os.environ.items() if k != "REPO_ROOT"}
+        res = subprocess.run([sys.executable, str(nested)], capture_output=True, text=True, env=env, cwd=tmp)
+        out = res.stdout + res.stderr
+        if res.returncode != 0 or "PASS" not in out:
+            return False, f"nested copy did not check the enclosing repo (exit {res.returncode}): {out.strip()}"
+        # Override beats git: an empty root has no setup-env.sh -> exit 2.
+        empty = root / "empty"
+        empty.mkdir()
+        env["REPO_ROOT"] = str(empty)
+        res = subprocess.run([sys.executable, str(nested)], capture_output=True, text=True, env=env, cwd=tmp)
+        if res.returncode != 2:
+            return False, f"REPO_ROOT override ignored (exit {res.returncode}, want 2)"
+    return True, ""
+
+
 def main() -> int:
     failures = 0
     for name, mutation, want_rc, want_text in CASES:
@@ -252,7 +281,12 @@ def main() -> int:
         if not ok:
             failures += 1
             print("  checker output:\n    " + out.strip().replace("\n", "\n    "))
-    total = len(CASES)
+    ok, why = run_nested_copy_case()
+    print(f"{'PASS' if ok else 'FAIL'}: nested copy resolves the repo root via git; REPO_ROOT overrides")
+    if not ok:
+        failures += 1
+        print("  " + why)
+    total = len(CASES) + 1
     print(f"test_check_pins: {total - failures}/{total} cases behave as specified")
     return 1 if failures else 0
 

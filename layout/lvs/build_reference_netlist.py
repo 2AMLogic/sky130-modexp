@@ -13,18 +13,51 @@ layout-side instance of it to stay positionally consistent with.
 Usage:
     build_reference_netlist.py <verilog_netlist> <layout_abstracted_spice> \
         <sky130_fd_sc_hd.lef> <output_spice>
+
+The top cell is $DESIGN, else the stem of the repo's single `rtl/*.v` file;
+with neither there is no default and the script exits with an error. The repo
+root is $REPO_ROOT, else `git rev-parse --show-toplevel`.
 """
+import os
 import re
+import subprocess
 import sys
 from collections import OrderedDict
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+def find_repo_root():
+    """$REPO_ROOT, else this file's `git rev-parse --show-toplevel`; None if
+    neither resolves. Independent of how deep this file sits in the tree."""
+    if os.environ.get("REPO_ROOT"):
+        return Path(os.environ["REPO_ROOT"])
+    git = subprocess.run(
+        ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "--show-toplevel"],
+        capture_output=True, text=True,
+    )
+    return Path(git.stdout.strip()) if git.returncode == 0 else None
+
+
+REPO_ROOT = find_repo_root()
+if REPO_ROOT is None:
+    sys.exit("FATAL: not inside a git work tree and REPO_ROOT is not set")
+# spice_lef_parsing.py lives in <repo>/scripts unless $SPICE_LEF_PARSING_DIR
+# says otherwise (e.g. a vendored copy under scripts/common).
+sys.path.insert(0, os.environ.get("SPICE_LEF_PARSING_DIR") or str(REPO_ROOT / "scripts"))
 
 from spice_lef_parsing import parse_lef_macros, parse_subckt_headers  # noqa: E402
 
 POWER_PINS = {"VPWR", "VGND", "VPB", "VNB"}
+
+
+def design_name():
+    """$DESIGN, else the stem of the repo's one `rtl/*.v`; exits if neither."""
+    if os.environ.get("DESIGN"):
+        return os.environ["DESIGN"]
+    rtl = sorted((REPO_ROOT / "rtl").glob("*.v"))
+    if len(rtl) != 1:
+        sys.exit(f"error: DESIGN not set and {REPO_ROOT / 'rtl'} does not hold exactly one .v file")
+    return rtl[0].stem
 
 
 def parse_lef_pins(lef_path, cell_type):
@@ -76,12 +109,15 @@ def main():
         sys.exit(1)
     v_path, layout_spice_path, lef_path, out_path = sys.argv[1:5]
 
+    design = design_name()
     layout_pins = parse_subckt_headers(Path(layout_spice_path))
-    top_pins_layout = layout_pins.pop("modexp")  # reuse layout's own top pin order/names
+    if design not in layout_pins:
+        sys.exit(f"error: no `.SUBCKT {design}` in {layout_spice_path}")
+    top_pins_layout = layout_pins.pop(design)  # reuse layout's own top pin order/names
 
     top_name, instances = parse_verilog(v_path)
-    if top_name != "modexp":
-        print(f"warning: top module is '{top_name}', expected 'modexp'", file=sys.stderr)
+    if top_name != design:
+        print(f"warning: top module is '{top_name}', expected '{design}'", file=sys.stderr)
 
     used_cell_types = OrderedDict()
     for cell_type, _inst, _ports in instances:
@@ -117,7 +153,7 @@ def main():
             )
         out.write("\n")
 
-        out.write(f".SUBCKT modexp {' '.join(top_pins_layout)}\n")
+        out.write(f".SUBCKT {design} {' '.join(top_pins_layout)}\n")
         for cell_type, inst_name, ports in instances:
             pin_order = pin_order_by_type[cell_type]
             args = []
@@ -134,7 +170,7 @@ def main():
                     args.append(unconn_net)
                     unconnected_pins.append((inst_name, cell_type, pin))
             out.write(f"X{inst_name} {' '.join(args)} {cell_type}\n")
-        out.write(".ENDS modexp\n\n")
+        out.write(f".ENDS {design}\n\n")
 
         for cell_type in used_cell_types:
             pin_order = pin_order_by_type[cell_type]

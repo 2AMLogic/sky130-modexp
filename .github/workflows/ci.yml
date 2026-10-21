@@ -138,6 +138,9 @@ jobs:
       - name: Regenerate and compare the tier report
         run: ./verification/signoff/run-signoff.sh --check
 
+      - name: Check the item 8 characterization envelope and manifest pin
+        run: python3 verification/signoff/gen_characterization_envelope.py --check
+
   guard-hooks:
     name: Loom guard-hook regression suites
     runs-on: ubuntu-latest

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "modexp",
+  "testbench": "test_modexp",
+  "status": "pass",
+  "test_count": 2,
+  "passed_count": 2,
+  "failed_count": 0,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "test_modexp_known_vectors",
+      "status": "passed",
+      "sim_time_ns": 23750.0,
+      "real_time_s": 0.062
+    },
+    {
+      "name": "test_modexp_random",
+      "status": "passed",
+      "sim_time_ns": 180480.0,
+      "real_time_s": 0.411
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.1.0",
+    "results_xml": "/tmp/i199-rtl-out/results_icarus.xml",
+    "random_seed": 1,
+    "source_defines": {},
+    "initial_state": null,
+    "sdf": null
+  }
+}

@@ -1,0 +1,28 @@
+OpenROAD 26Q3-1510-g6cb3f2b704 
+Features included (+) or not (-): +GPU +GUI +Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0227] LEF file: ~/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/techlef/sky130_fd_sc_hd__nom.tlef, created 14 layers, 25 vias
+[WARNING ODB-0220] WARNING (LEFPARS-2008): NOWIREEXTENSIONATPIN statement is obsolete in version 5.6 or later.
+The NOWIREEXTENSIONATPIN statement will be ignored. See file ~/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef at line 2.
+
+[INFO ODB-0227] LEF file: ~/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef, created 437 library cells
+[INFO ODB-0127] Reading DEF file: layout/modexp.def
+[INFO ODB-0128] Design: modexp
+[INFO ODB-0130]     Created 70 pins.
+[INFO ODB-0131]     Created 3074 components and 14396 component-terminals.
+[INFO ODB-0132]     Created 2 special nets and 11766 connections.
+[INFO ODB-0133]     Created 754 nets and 2614 connections.
+[INFO ODB-0134] Finished DEF file: layout/modexp.def
+POWER_METHOD corner=tt_025C_1v80 clock_period_ns=10.0 global_activity=0.1 duty=0.5 parasitics=none
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             5.63e-04   2.12e-05   1.51e-09   5.84e-04  54.7%
+Combinational          4.81e-05   4.29e-05   1.46e-09   9.10e-05   8.5%
+Clock                  2.64e-04   1.29e-04   2.04e-10   3.93e-04  36.8%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  8.75e-04   1.93e-04   3.18e-09   1.07e-03 100.0%
+                          81.9%      18.1%       0.0%
