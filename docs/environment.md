@@ -40,7 +40,7 @@ source .venv/bin/activate
 
 | Component | Pinned to | Resolved via |
 |---|---|---|
-| `klayout-tools` (`klt`) | git revision [`36956c68878052af63bc4e003877f92eb3fb973b`](https://github.com/2AMLogic/klayout-tools/commit/36956c68878052af63bc4e003877f92eb3fb973b) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@36956c68878052af63bc4e003877f92eb3fb973b"` (what `scripts/setup-env.sh` runs) |
+| `klayout-tools` (`klt`) | git revision [`d1dc0fc090d4f466e9447895803d58c22f1d3468`](https://github.com/2AMLogic/klayout-tools/commit/d1dc0fc090d4f466e9447895803d58c22f1d3468) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@d1dc0fc090d4f466e9447895803d58c22f1d3468"` (what `scripts/setup-env.sh` runs) |
 | `klayout-tools` (`klt`, signoff-report leg) | git revision [`7755612adb513f00ec61e7a77ff7091aee7630f5`](https://github.com/2AMLogic/klayout-tools/commit/7755612adb513f00ec61e7a77ff7091aee7630f5) (merge commit of klayout-tools PR #3200; reports as `klt 0.7.1.dev1312+g7755612adb51`) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any build not made from this SHA (issues #165, #218). This is deliberately **not** the pin above: the evidence legs are on their own (different) revision, see "Second klt pin" below |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
@@ -180,6 +180,22 @@ request field `pdk.rebuild_corners`, documented in the tool's
 (it has its own SHA, see "Second klt pin" below): that leg reads
 committed envelopes only. Moving it to the evidence pin would
 mean re-minting records, which stays #199/#201's decision.
+
+**Pin rationale (issue #217, 2026-10-23)**: the pin moved from
+`36956c68878052af63bc4e003877f92eb3fb973b` to
+`d1dc0fc090d4f466e9447895803d58c22f1d3468`, the merge commit of
+[klayout-tools#3605](https://github.com/2AMLogic/klayout-tools/pull/3605),
+so that issue #201's 18-corner place-and-route rebuild can be submitted to
+the batch fleet. It is the smallest sufficient SHA (the same reasoning as
+#206, to limit verdict drift); no release contains #3605. Ancestry checked
+live: `gh api repos/2AMLogic/klayout-tools/compare/36956c68878052af63bc4e003877f92eb3fb973b...d1dc0fc090d4f466e9447895803d58c22f1d3468`
+→ `"status": "ahead"`, `ahead_by: 220`, `behind_by: 0` (a forward bump).
+Checked in a throwaway venv at the new pin: `klt place-and-route --help`
+lists `--backend {local,batch}`; `klt drc layout/modexp.gds --deck sky130` →
+`status: clean`, 0 violations (same verdict as the committed DRC records).
+No verdict moved, so no new record was minted. The **signoff-leg pin did not
+move** (`klayout-tools==0.7.0`); `run-signoff.sh --check` was re-run against
+0.7.0 and is unaffected.
 
 **Yosys/ABC build identity is pinned as of issue #143, and by content, not
 by version string.** `yosys -V` does not identify the `abc` build compiled
