@@ -10,4 +10,4 @@ private and never committed; the manifest is public.
   (`verification/README.md`, "Artifact store").
 - Checked by `verification/check_artifact_manifests.py` in `npm run lint`.
 - Check the stored bytes from a fleet worker with `klt artifact verify <manifest>`.
-- Never write a bucket name, cloud account ID, `s3://` URI or broker URL here.
+- Never write a bucket name, cloud account ID, storage-scheme URI or broker URL here.
