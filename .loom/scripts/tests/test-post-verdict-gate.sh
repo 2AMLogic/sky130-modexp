@@ -40,6 +40,8 @@ STUB_DIR="$(mktemp -d)"
 trap 'rm -rf "$STUB_DIR" 2>/dev/null || true' EXIT
 export LOOM_TEST_STUB_DIR="$STUB_DIR"
 export LOOM_VERDICT_LOCK_DIR="$STUB_DIR/locks"
+# #12714: the review start is the dispatch epoch in the sweep id, not the agent's word.
+export LOOM_SWEEP_ID="step-judge-1-$(date +%s)"
 
 # --- Stateful stub gh: one PR (owner/repo), comments.json + labels.txt -------
 cat > "$STUB_DIR/gh" <<'STUB'
@@ -68,6 +70,12 @@ if [[ "${1:-}" == "api" ]]; then
       [[ -f "$D/labels-post-fail" || -f "$D/labels-write-fail" ]] && { echo "HTTP 403" >&2; exit 1; }
       for l in "${adds[@]}"; do grep -qxF "$l" "$D/labels.txt" || echo "$l" >> "$D/labels.txt"; done
       echo '[]'; exit 0 ;;
+    "GET repos/owner/repo/issues/"[0-9]*)
+      # #12614: the PR / linked-issue objects the stale-read check re-reads.
+      n="${path##*/}"
+      [[ -f "$D/issue-$n-read-fail" ]] && { echo "HTTP 502" >&2; exit 1; }
+      [[ -f "$D/issue-$n.json" ]] && { cat "$D/issue-$n.json"; exit 0; }
+      echo '{"body":""}'; exit 0 ;;
     "DELETE repos/owner/repo/issues/comments/"*)
       jq --argjson id "${path##*/}" 'map(select(.id != $id))' "$D/comments.json" > "$D/c.tmp" && mv "$D/c.tmp" "$D/comments.json"; exit 0 ;;
     "DELETE repos/owner/repo/issues/"*/labels/*)
@@ -77,6 +85,13 @@ if [[ "${1:-}" == "api" ]]; then
       grep -vxF "$l" "$D/labels.txt" > "$D/labels.tmp"; mv "$D/labels.tmp" "$D/labels.txt"; exit 0 ;;
   esac
   # The #7647 review gate's reads: a clean, empty review state.
+  if [[ "${2:-}" == "graphql" && "$*" == *userContentEdits* ]]; then
+    # #12714: the linked issue's body-edit history.
+    if [[ -f "$D/edits-read-fail" ]]; then echo "HTTP 502" >&2; exit 1; fi
+    if [[ -f "$D/edits.json" ]]; then cat "$D/edits.json"; else
+      echo '{"data":{"repository":{"issueOrPullRequest":{"userContentEdits":{"nodes":[]}}}}}'; fi
+    exit 0
+  fi
   if [[ "${2:-}" == "graphql" ]]; then
     printf '{"data":{"repository":{"pullRequest":{"reviewThreads":{"pageInfo":{"hasNextPage":false,"endCursor":null},"nodes":[]}}}}}\n'
   fi
@@ -115,9 +130,23 @@ STUB
 chmod +x "$STUB_DIR/gh"
 export PATH="$STUB_DIR:$PATH"
 
-# The comment itself goes over the gh ladder (pinned by test-post-verdict.sh);
-# the gate and label verbs are the real binary's, through LOOM_DAEMON_BIN.
-printf '#!/usr/bin/env bash\nexit 127\n' > "$STUB_DIR/self-daemon"
+# The comment goes through the daemon chokepoint (#9865: the only comment
+# path); this self-daemon lands it on the stub gh as `issue comment`. The gate
+# and label verbs are the real binary's, through LOOM_DAEMON_BIN.
+cat > "$STUB_DIR/self-daemon" <<'SELF'
+#!/usr/bin/env bash
+if [[ "${1:-} ${2:-}" == "forge comment" ]]; then
+  _n="$3"; shift 3; _repo=""; _body=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in --repo) _repo="$2"; shift 2 ;; --body) _body="$2"; shift 2 ;; *) shift ;; esac
+  done
+  exec gh issue comment "$_n" --repo "$_repo" --body "$_body"
+fi
+# #12475: the reconciliation gate reads comment verdicts through the trust
+# filter on this binary; the stub gh lists none, so echo the (empty) stdin.
+if [[ "${1:-} ${2:-}" == "forge trusted-comments" ]]; then cat; exit 0; fi
+exit 127
+SELF
 chmod +x "$STUB_DIR/self-daemon"
 export LOOM_DAEMON_SELF_BIN="$STUB_DIR/self-daemon"
 # #10485: approvals also pass the exact-head CI gate. Its reader is not under
@@ -156,7 +185,7 @@ echo "Testing post-verdict.sh + forge verdict-gate/verdict-labels (#10581)..."
 
 echo "== same-head contradiction is refused (the #10578 shape) =="
 state "$(cr_at "$HEAD" 360)" loom:changes-requested loom:reviewing
-pv 10578 approved "$HEAD" --body "Approved."
+pv 10578 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 7" 7 "$RC"
 contains "names the overrule flag" "$OUT" "--overrules-prior"
 check "nothing posted" "" "$POSTED"
@@ -164,27 +193,27 @@ contains "labels untouched" "$LABELS" "loom:changes-requested"
 
 echo "== same-head contradiction with an overrule rationale is allowed =="
 state "$(cr_at "$HEAD" 3600)" loom:changes-requested loom:reviewing
-pv 10578 approved "$HEAD" --body "Approved." --overrules-prior "$OVERRULE"
+pv 10578 approved "$HEAD" --body "Approved: covered by the new tests." --overrules-prior "$OVERRULE"
 check "exit 0" 0 "$RC"
 check "comment posted" 10578 "$POSTED"
 check "exactly loom:pr survives" "loom:pr " "$LABELS"
 
 echo "== loom:ci-failure blocks an approve =="
 state "[]" loom:review-requested loom:ci-failure
-pv 10579 approved "$HEAD" --body "Approved."
+pv 10579 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 7" 7 "$RC"
 contains "names the label" "$OUT" "loom:ci-failure"
 check "nothing posted" "" "$POSTED"
 
 echo "== a moved head approves normally; approve is exclusive =="
-state "$(cr_at "$MOVED" 60)" loom:changes-requested loom:reviewing loom:review-requested loom:operator-priority
-pv 10580 approved "$HEAD" --body "Approved."
+state "$(cr_at "$MOVED" 60)" loom:changes-requested loom:reviewing loom:review-requested loom:important
+pv 10580 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 0" 0 "$RC"
-check "loom:pr only, unrelated labels kept" "loom:operator-priority loom:pr " "$LABELS"
+check "loom:pr only, unrelated labels kept" "loom:important loom:pr " "$LABELS"
 
 echo "== changes-requested is exclusive, keeps loom:ci-failure =="
 state "[]" loom:pr loom:reviewing loom:ci-failure
-pv 10581 changes-requested "$HEAD" --body "Please fix."
+pv 10581 changes-requested "$HEAD" --body "Please fix the failing unit test."
 check "exit 0" 0 "$RC"
 check "loom:changes-requested, never with loom:pr" "loom:ci-failure loom:changes-requested " "$LABELS"
 
@@ -200,7 +229,7 @@ contains "labels still applied" "$LABELS" "loom:changes-requested"
 echo "== label write failure after the post is loud (#10605) =="
 state "[]" loom:review-requested loom:reviewing
 touch "$STUB_DIR/labels-write-fail"
-pv 10605 approved "$HEAD" --body "Approved."
+pv 10605 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 8" 8 "$RC"
 check "the comment was posted" 10605 "$POSTED"
 contains "repair command" "$OUT" "Repair: gh pr edit 10605 --repo owner/repo --add-label \"loom:pr\""
@@ -208,30 +237,30 @@ contains "repair command" "$OUT" "Repair: gh pr edit 10605 --repo owner/repo --a
 echo "== a failed label add leaves the queue/claim labels in place =="
 state "[]" loom:review-requested loom:reviewing
 touch "$STUB_DIR/labels-post-fail"
-pv 10607 approved "$HEAD" --body "Approved."
+pv 10607 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 8" 8 "$RC"
 contains "queue label kept" "$LABELS" "loom:review-requested"
 contains "claim label kept" "$LABELS" "loom:reviewing"
 
 echo "== the overrule rationale is published in the approval =="
 state "$(cr_at "$HEAD" 360)" loom:changes-requested loom:reviewing
-pv 10608 approved "$HEAD" --body "Approved." --overrules-prior "$OVERRULE"
+pv 10608 approved "$HEAD" --body "Approved: covered by the new tests." --overrules-prior "$OVERRULE"
 check "exit 0" 0 "$RC"
 contains "rationale in the posted body" "$(jq -r '.[-1].body' "$STUB_DIR/comments.json")" "$OVERRULE"
 
 echo "== an unreadable label state never passes an approval =="
 state "[]" loom:review-requested
 touch "$STUB_DIR/labels-read-fail"
-pv 10606 approved "$HEAD" --body "Approved."
+pv 10606 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 7" 7 "$RC"
 check "nothing posted" "" "$POSTED"
 
 echo "== concurrent identical callers post at most one verdict (#10581) =="
 state "[]" loom:review-requested loom:reviewing
 touch "$STUB_DIR/post-delay"
-"$POST_VERDICT" 10700 changes-requested "$HEAD" --body "Please fix (A)." >/dev/null 2>&1 &
+"$POST_VERDICT" 10700 changes-requested "$HEAD" --body "Please fix the failing test (A)." >/dev/null 2>&1 &
 PA=$!
-"$POST_VERDICT" 10700 changes-requested "$HEAD" --body "Please fix (B)." >/dev/null 2>&1 &
+"$POST_VERDICT" 10700 changes-requested "$HEAD" --body "Please fix the failing test (B)." >/dev/null 2>&1 &
 PB=$!
 wait "$PA"; RA=$?; wait "$PB"; RB=$?
 rm -f "$STUB_DIR/post-delay"
@@ -243,7 +272,7 @@ echo "== a stale approval cannot interleave with a rival verdict (#10581) =="
 state "[]" loom:review-requested loom:reviewing
 printf %s "$HEAD" > "$STUB_DIR/cur-sha"
 mkdir -p "$STUB_DIR/locks/owner_repo-10701"   # a verdict transaction in flight
-"$POST_VERDICT" 10701 approved "$HEAD" --body "Approved." >/dev/null 2>&1 &
+"$POST_VERDICT" 10701 approved "$HEAD" --body "Approved: covered by the new tests." >/dev/null 2>&1 &
 PA=$!
 sleep 2
 check "approval waits on the lock, posts nothing" "" "$(cat "$STUB_DIR/posted.log" 2>/dev/null)"
@@ -258,7 +287,7 @@ check "nothing posted by the approval" "" "$(cat "$STUB_DIR/posted.log" 2>/dev/n
 echo "== a held lock fails closed =="
 state "[]" loom:review-requested
 mkdir -p "$STUB_DIR/locks/owner_repo-10702"
-LOOM_VERDICT_LOCK_WAIT_SECS=2 pv 10702 approved "$HEAD" --body "Approved."
+LOOM_VERDICT_LOCK_WAIT_SECS=2 pv 10702 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 9" 9 "$RC"
 check "nothing posted" "" "$POSTED"
 check "foreign lock left alone" yes "$([[ -d "$STUB_DIR/locks/owner_repo-10702" ]] && echo yes)"
@@ -279,7 +308,7 @@ chmod +x "$STUB_DIR/old-daemon"
 
 echo "== a daemon without the verdict verbs posts an approval on the legacy path (round 4) =="
 state "[]" loom:review-requested loom:reviewing loom:changes-requested loom:ci-failure
-LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" pv 10720 approved "$HEAD" --body "Approved."
+LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" pv 10720 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 0 (the legacy approval posts)" 0 "$RC"
 contains "loud warning" "$OUT" "legacy path"
 contains "names the binary" "$OUT" "$STUB_DIR/old-daemon"
@@ -295,14 +324,14 @@ check "no lock taken" "" "$(ls "$STUB_DIR/locks" 2>/dev/null)"
 echo "== the legacy approval still refuses a moved head (exit 5) =="
 state "[]" loom:review-requested
 printf %s "$HEAD" > "$STUB_DIR/cur-sha"
-OUT="$(LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" "$POST_VERDICT" 10723 approved "$MOVED" --body "Approved." 2>&1)"; RC=$?
+OUT="$(LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" "$POST_VERDICT" 10723 approved "$MOVED" --body "Approved: covered by the new tests." 2>&1)"; RC=$?
 check "exit 5" 5 "$RC"
 check "nothing posted" "" "$(cat "$STUB_DIR/posted.log" 2>/dev/null)"
 check "labels untouched" "loom:review-requested " "$(tr '\n' ' ' < "$STUB_DIR/labels.txt")"
 
 echo "== a daemon without the verdict verbs still posts changes-requested (legacy path) =="
 state "[]" loom:pr loom:reviewing loom:review-requested loom:ci-failure
-LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" pv 10721 changes-requested "$HEAD" --body "Please fix."
+LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" pv 10721 changes-requested "$HEAD" --body "Please fix the failing unit test."
 check "exit 0" 0 "$RC"
 contains "loud warning" "$OUT" "legacy path"
 check "comment posted" 10721 "$POSTED"
@@ -312,7 +341,7 @@ check "exclusive changes-requested labels, loom:ci-failure kept" "loom:ci-failur
 echo "== the legacy path's label failure is loud (exit 8, repair command) =="
 state "[]" loom:pr loom:reviewing
 touch "$STUB_DIR/labels-write-fail"
-LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" pv 10722 changes-requested "$HEAD" --body "Please fix."
+LOOM_DAEMON_BIN="$STUB_DIR/old-daemon" pv 10722 changes-requested "$HEAD" --body "Please fix the failing unit test."
 check "exit 8" 8 "$RC"
 check "the comment was posted" 10722 "$POSTED"
 contains "repair command" "$OUT" "Repair: gh pr edit 10722 --repo owner/repo --add-label loom:changes-requested --remove-label loom:pr"
@@ -320,7 +349,7 @@ contains "repair command" "$OUT" "Repair: gh pr edit 10722 --repo owner/repo --a
 echo "== cross-host race: a rival changes-requested lands after our gate read (#10581) =="
 state "[]" loom:review-requested loom:reviewing
 printf changes-requested > "$STUB_DIR/rival-verdict"
-pv 10710 approved "$HEAD" --body "Approved."
+pv 10710 approved "$HEAD" --body "Approved: covered by the new tests."
 check "the losing approval exits 7" 7 "$RC"
 contains "says it was superseded" "$OUT" "SUPERSEDED"
 check "only the changes-requested label remains" "loom:changes-requested " "$LABELS"
@@ -330,14 +359,14 @@ contains "newest marker is changes-requested" "$LAST" "verdict=changes-requested
 echo "== cross-host race: a rival approval lands after our changes-requested gate read =="
 state "[]" loom:review-requested loom:reviewing
 printf approved > "$STUB_DIR/rival-verdict"
-pv 10711 changes-requested "$HEAD" --body "Please fix."
+pv 10711 changes-requested "$HEAD" --body "Please fix the failing unit test."
 check "changes-requested exits 0" 0 "$RC"
 check "changes-requested labels, never loom:pr" "loom:changes-requested " "$LABELS"
 
 echo "== cross-host race: an identical approval lands first (lower comment id) =="
 state "[]" loom:review-requested loom:reviewing
 printf approved > "$STUB_DIR/rival-verdict"
-pv 10713 approved "$HEAD" --body "Approved."
+pv 10713 approved "$HEAD" --body "Approved: covered by the new tests."
 check "the duplicate exits 0" 0 "$RC"
 contains "says it landed first" "$OUT" "landed first"
 check "exactly one approval comment stands" 1 "$(jq '[.[] | select(.body | contains("verdict=approved -->"))] | length' "$STUB_DIR/comments.json")"
@@ -347,15 +376,95 @@ check "the duplicate touched no labels" "loom:review-requested loom:reviewing " 
 echo "== cross-host race: an identical changes-requested lands first =="
 state "[]" loom:review-requested loom:reviewing
 printf changes-requested > "$STUB_DIR/rival-verdict"
-pv 10714 changes-requested "$HEAD" --body "Please fix."
+pv 10714 changes-requested "$HEAD" --body "Please fix the failing unit test."
 check "the duplicate exits 0" 0 "$RC"
 check "exactly one changes-requested comment stands" 1 "$(jq '[.[] | select(.body | contains("verdict=changes-requested -->"))] | length' "$STUB_DIR/comments.json")"
 
 echo "== no race: an unrelated earlier verdict at another head changes nothing =="
 state "$(cr_at "$MOVED" 60)" loom:review-requested loom:reviewing
-pv 10712 approved "$HEAD" --body "Approved."
+pv 10712 approved "$HEAD" --body "Approved: covered by the new tests."
 check "exit 0" 0 "$RC"
 check "loom:pr only" "loom:pr " "$LABELS"
+
+echo "== #9258: a body that is no rationale is refused by the real forge verdict-body-check =="
+printf '@-' > "$STUB_DIR/body-at-dash"; printf '@/tmp/x' > "$STUB_DIR/body-at-path"
+for spelling in "--body -" "--body    " "--body @-" "--body-file $STUB_DIR/body-at-dash" "--body-file $STUB_DIR/body-at-path" "--body Approved."; do
+  state "[]" loom:review-requested loom:reviewing
+  read -r flag value <<< "$spelling"; [[ "$spelling" == "--body    " ]] && value="   "
+  pv 10900 approved "$HEAD" "$flag" "$value"
+  check "$spelling: exit 2" 2 "$RC"
+  check "$spelling: nothing posted" "" "$POSTED"
+  check "$spelling: labels untouched" "loom:review-requested loom:reviewing " "$LABELS"
+done
+state "[]" loom:review-requested loom:reviewing
+OUT="$(printf '@-' | "$POST_VERDICT" 10901 approved "$HEAD" --body-file - 2>&1)"; RC=$?
+check "--body-file - (stdin '@-'): exit 2" 2 "$RC"
+contains "--body-file - (stdin '@-'): names the lone @ token" "$OUT" "lone '@' token"
+check "--body-file - (stdin '@-'): nothing posted" "" "$(cat "$STUB_DIR/posted.log" 2>/dev/null)"
+state "[]" loom:review-requested loom:reviewing
+pv 10902 approved "$HEAD" --body "@reviewer this looks good because the tests cover the fix"
+check "@mention prose still posts" 0 "$RC"
+check "@mention prose: comment posted" 10902 "$POSTED"
+
+echo "== #12614: an approval against a stale read of the spec is refused =="
+NOW_T="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+PAST_T="$(date -u -d '@'"$(($(date +%s) - 3600))" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -r "$(($(date +%s) - 3600))" +%Y-%m-%dT%H:%M:%SZ)"
+OP_COMMENT="$(jq -n --arg t "$NOW_T" '[{id: 4242, body: "rescoped: review against the new body", created_at: $t, html_url: "https://example/c/4242", user: {login: "the-operator", type: "User"}, author_association: "OWNER"}]')"
+echo '{"body":"Closes #50"}' > "$STUB_DIR/issue-12614.json"
+echo '{"body":"the design as reviewed"}' > "$STUB_DIR/issue-50.json"
+OLD_HASH="$(printf %s 'the design as reviewed' | sha256sum | cut -d' ' -f1)"
+
+state "$OP_COMMENT" loom:review-requested loom:reviewing
+pv 12614 approved "$HEAD" --body "Approved: covered by the new tests." --review-started "$PAST_T"
+check "operator comment after start: exit 7" 7 "$RC"
+contains "names the comment id and author" "$OUT" "comment 4242 by the-operator"
+check "operator comment: nothing posted" "" "$POSTED"
+
+state "$OP_COMMENT" loom:review-requested loom:reviewing
+pv 12614 changes-requested "$HEAD" --body "Changes requested: see the spec." --review-started "$PAST_T"
+check "changes-requested is never refused by it" 0 "$RC"
+
+# #12714: the start comes from the dispatch, so omitting or lying about the flag cannot hide a comment.
+DISPATCH_T="$(($(date +%s) - 3600))"
+state "$OP_COMMENT" loom:review-requested loom:reviewing
+LOOM_SWEEP_ID="step-judge-1-$DISPATCH_T" pv 12614 approved "$HEAD" --body "Approved: covered by the new tests."
+check "no --review-started, dispatch before the comment: exit 7" 7 "$RC"
+contains "no flag: names the comment" "$OUT" "comment 4242 by the-operator"
+state "$OP_COMMENT" loom:review-requested loom:reviewing
+LOOM_SWEEP_ID="step-judge-1-$DISPATCH_T" pv 12614 approved "$HEAD" --body "Approved: covered by the new tests." --review-started "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+check "a late --review-started cannot hide the comment: exit 7" 7 "$RC"
+state "[]" loom:review-requested loom:reviewing
+OUT="$(env -u LOOM_SWEEP_ID "$POST_VERDICT" 12614 approved "$HEAD" --body "Approved: covered by the new tests." 2>&1)"; RC=$?
+check "no resolvable start: exit 7" 7 "$RC"
+contains "no resolvable start: says so" "$OUT" "no review start time"
+
+state "[]" loom:review-requested loom:reviewing
+pv 12614 approved "$HEAD" --body "Approved: covered by the new tests." --review-started "$PAST_T" --issue-body-sha "50=$OLD_HASH"
+check "issue body unchanged: exit 0" 0 "$RC"
+check "issue body unchanged: posted" 12614 "$POSTED"
+
+echo '{"body":"rescoped to a daemon-only design"}' > "$STUB_DIR/issue-50.json"
+state "[]" loom:review-requested loom:reviewing
+pv 12614 approved "$HEAD" --body "Approved: covered by the new tests." --review-started "$PAST_T" --issue-body-sha "50=$OLD_HASH"
+check "issue body rescoped: exit 7" 7 "$RC"
+contains "names the issue" "$OUT" "issue #50's body changed"
+check "issue body rescoped: nothing posted" "" "$POSTED"
+
+echo '{"body":"the design as reviewed"}' > "$STUB_DIR/issue-50.json"
+cat > "$STUB_DIR/edits.json" <<EDITS
+{"data":{"repository":{"issueOrPullRequest":{"userContentEdits":{"nodes":[{"editedAt":"$NOW_T","editor":{"login":"the-operator","__typename":"User"}}]}}}}}
+EDITS
+state "[]" loom:review-requested loom:reviewing
+pv 12614 approved "$HEAD" --body "Approved: covered by the new tests." --review-started "$PAST_T"
+check "human body edit after start (PR body links Closes #50): exit 7" 7 "$RC"
+contains "names the edit" "$OUT" "issue #50's body was edited by the-operator"
+rm -f "$STUB_DIR/edits.json"
+
+touch "$STUB_DIR/issue-50-read-fail"
+state "[]" loom:review-requested loom:reviewing
+pv 12614 approved "$HEAD" --body "Approved: covered by the new tests." --review-started "$PAST_T" --issue-body-sha "50=$OLD_HASH"
+check "unreadable PR/issue state fails closed: exit 7" 7 "$RC"
+rm -f "$STUB_DIR/issue-50-read-fail"
 
 echo ""
 echo "test-post-verdict-gate: $PASSED passed, $FAILED failed"

@@ -16,13 +16,12 @@
 #
 # Toolchain: this is a tool-light, read-only report leg -- it re-runs no PDK
 # job, it only reads committed JSON envelopes. It therefore pins its OWN klt
-# revision (see docs/environment.md -> "Pinned versions", the signoff-report
-# row), newer than the PDK-heavy legs' pin, because the report leg needs the
-# digital-flow evidence kinds (`klt sta` / `klt functional-verification`
-# recognition, item 11 in the tier doc) that the older pin predates. Locally
-# the runner prefers `.venv/bin/klt` (what scripts/setup-env.sh provisions)
-# and falls back to whatever `klt` is on PATH; CI installs the pinned
-# revision directly.
+# release (see docs/environment.md -> "Pinned versions", the signoff-report
+# row), newer than the PDK-heavy legs' pin: a git SHA of klayout-tools (merge
+# commit of PR #3200), whose grader binds T1 items 1/2/9/10 to artifact-anchored
+# evidence (klayout-tools#2718) and grades item 6 `not_applicable` (unreleased
+# on PyPI). Locally the runner uses $KLT, else `klt` on PATH, and refuses any
+# build not made from that SHA; CI installs it from git directly.
 #
 # Exit codes: `klt signoff --manifest` exits 3 when the report rendered fine
 # but at least one T1 item is unmet -- which is this block's honest current
@@ -51,12 +50,60 @@ MANIFEST="verification/signoff/block-manifest.json"
 TIERS_DOC="verification/signoff/design-evidence-tiers.md"
 REPORT="verification/signoff/tier-report.json"
 
-if [[ -x ".venv/bin/klt" ]]; then
-  KLT=".venv/bin/klt"
+# The signoff-report leg pins its OWN klt build (issues #165, #218): the git
+# SHA below, which contains the grader for T1 items 1/2/9/10 (klayout-tools#2718)
+# and the item 6 `not_applicable` outcome (klayout-tools#2865, PR #3200). The
+# PDK-heavy legs' `.venv` klt is an older pin, so this script does NOT silently
+# fall back to it: set KLT to a klt built from that SHA (e.g. `uv venv /tmp/v &&
+# uv pip install --python /tmp/v/bin/python "klayout-tools @
+# git+https://github.com/2AMLogic/klayout-tools@<SHA>"`, then
+# `KLT=/tmp/v/bin/klt`), or have one on PATH. A git build reports
+# `klt <base>.devN+g<first 12 of SHA>`; the check below matches that suffix.
+SIGNOFF_KLT_SHA="7755612adb513f00ec61e7a77ff7091aee7630f5"
+SIGNOFF_KLT_VERSION="git ${SIGNOFF_KLT_SHA}"
+
+if [[ -n "${KLT:-}" ]]; then
+  :
 else
-  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and no .venv/bin/klt" >&2; exit 1; }
+  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and KLT unset (need klayout-tools at ${SIGNOFF_KLT_VERSION})" >&2; exit 1; }
 fi
-echo "klt: $KLT ($("$KLT" --version 2>/dev/null || echo 'version unknown'))" >&2
+KLT_VERSION_LINE="$("$KLT" --version 2>/dev/null || echo 'version unknown')"
+echo "klt: $KLT ($KLT_VERSION_LINE)" >&2
+case "$KLT_VERSION_LINE" in
+  "klt "*"+g${SIGNOFF_KLT_SHA:0:12}"*) ;;
+  *)
+    echo "FATAL: signoff leg is pinned to klayout-tools at ${SIGNOFF_KLT_VERSION}; got '${KLT_VERSION_LINE}'." >&2
+    echo "  Point KLT at an install built from ${SIGNOFF_KLT_SHA} (see the comment above)." >&2
+    exit 1
+    ;;
+esac
+
+# Item 6 `not_applicable` evidence guard (issue #204). The graded spec index
+# is JSON, the spec is Markdown, so the index carries `source_hash` of
+# spec/modexp.md; editing the spec without re-deriving the index must fail
+# here. Likewise every row id must appear in the human statement. This runs
+# on the pinned klt too: it does not depend on the grader.
+check_item6_evidence() {
+  python3 - <<'PY'
+import hashlib, json, sys
+ev = "verification/signoff/evidence/"
+idx = json.load(open(ev + "modexp-spec-rows.json"))
+st = json.load(open(ev + "item-6-na-statement.json"))
+md = open(ev + "item-6-no-statistical-rows.md").read()
+want = "sha256:" + hashlib.sha256(open(idx["spec"], "rb").read()).hexdigest()
+bad = []
+if idx["source_hash"] != want:
+    bad.append(f"{idx['spec']} changed: index source_hash {idx['source_hash']} != {want}")
+ids = [r["id"] for r in idx["rows"]]
+if sorted(ids) != sorted(r["id"] for r in st["rows"]):
+    bad.append("spec row ids and statement row ids differ")
+bad += [f"row `{i}` missing from item-6-no-statistical-rows.md" for i in ids if f"`{i}`" not in md]
+if bad:
+    print("FAIL: item 6 not_applicable evidence is inconsistent:", *bad, sep="\n  ", file=sys.stderr)
+    sys.exit(1)
+PY
+}
+check_item6_evidence
 
 run_report() { # $1 = output file
   set +e

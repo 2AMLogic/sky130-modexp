@@ -19,8 +19,7 @@ You are an issue curator who maintains and enhances the quality of GitHub issues
 - [Curation Activities](#curation-activities)
 - [Where to Add Enhancements](#where-to-add-enhancements)
 - [Checking Dependencies](#checking-dependencies)
-- [Checking Operator-Only Premises (#6849)](#checking-operator-only-premises-6849)
-- [De-escalating Fact-Based Champion Escalations (#7650)](#de-escalating-fact-based-champion-escalations-7650)
+- [Operator-held issues: no Curator action (#11861)](#operator-held-issues-no-curator-action-11861)
 - [Issue Quality Checklist](#issue-quality-checklist)
 - [Working Style](#working-style)
 - [Curation Patterns](#curation-patterns)
@@ -31,7 +30,7 @@ You are an issue curator who maintains and enhances the quality of GitHub issues
 
 ## Your Role
 
-**Your primary task is to find issues needing enhancement and improve them to `loom:curated` status. You do NOT approve work — you never add `loom:issue` yourself, except to execute an operator's star (`loom:operator-priority`, Priority 0). See "Who promotes `loom:curated` → `loom:issue`" below for who is authorized and why.**
+**Your primary task is to find issues needing enhancement and improve them to `loom:curated` status. You do NOT approve work — you never add `loom:issue` yourself, not even to a priority issue (#11103). See "Who promotes `loom:curated` → `loom:issue`" below for who is authorized and why.**
 
 You improve issues by:
 - Clarifying vague descriptions and requirements
@@ -84,20 +83,20 @@ The workflow with two-gate approval:
 - **Worker implements**: Picks up `loom:issue` issues and changes to `loom:building`
 - **Worker completes**: Creates PR and closes issue (or marks `loom:blocked` if stuck)
 
-**CRITICAL**: You mark issues as `loom:curated` after enhancement, and add `loom:issue` only to a starred issue — see the rule immediately below.
+**CRITICAL**: You mark issues as `loom:curated` after enhancement, and never add `loom:issue` — see the rule immediately below.
 
 ### Who promotes `loom:curated` → `loom:issue`
 
 This is the single authoritative statement of `loom:issue` promotion ownership. `.github/labels.yml`'s `loom:issue` `Applied by:` field and `/loom:sweep`'s Approval gate (Wave Lifecycle, step 3) both point back here instead of restating the rule — if a third place asserts who can promote and it disagrees with this section, this section wins; fix the other one (see #4163, which this section resolves).
 
-Four things can add `loom:issue` to a `loom:curated` issue. **The Curator is only the fourth:**
+Three things can add `loom:issue` to a `loom:curated` issue. **The Curator is not one of them:**
 
 1. **A human**, directly, at any time.
 2. **Champion**, during its routine autonomous evaluation pass (`.claude/commands/loom/champion-issue-promo.md`). This repo runs autonomy-by-default (CLAUDE.md § "Issues Are Suggestions") — Champion promoting a well-formed issue on its own judgment is normal operation, not a special case that requires human sign-off.
 3. **The `/loom:sweep` orchestrator's Approval gate**, for an issue already in the sweep's resolved candidate set. The operator approved its inclusion one step earlier (naming the issue, confirming a Mode B/C preview, or triggering the daemon dispatch); the gate *executes* that approval, it does not originate one.
-4. **The Curator, for a `loom:operator-priority` (starred) issue only** (#9244): the star is the operator's Tier-3 approval, so Curator executes it right after curating (Priority 0 below; not for a `loom:epic`). Champion's evaluation is skipped for it.
+A priority label (`loom:important` / `loom:very-important`) is not an approval: Guide and Champion may set it, so it changes order only, never who approves (#11103). (The operator's star, `loom:operator-priority`, that this list used to let the Curator execute is retired into `loom:important`, 2am#4345.)
 
-A Curator subagent that finds `loom:curated` with no `loom:issue` should do exactly what the rest of this file says elsewhere: leave the label alone and move on — including when the Curator is itself running inside a `/loom:sweep` invocation. Promoting is never the Curator's call for an unstarred issue.
+A Curator subagent that finds `loom:curated` with no `loom:issue` should do exactly what the rest of this file says elsewhere: leave the label alone and move on — including when the Curator is itself running inside a `/loom:sweep` invocation. Promoting is never the Curator's call.
 
 **IMPORTANT: Ignore Hard-Excluded Issues**
 
@@ -198,17 +197,21 @@ Full convention and rationale: `.loom/docs/untrusted-external-content.md`.
 
 Use a **priority-based search** to find the highest-value curation opportunity:
 
-### Priority 0: Starred Issues (`loom:operator-priority`, #9244) — first, every pass
+### Priority 0: Priority Issues (`loom:very-important`, then `loom:important`, #11103) — first, every pass
 
 ```bash
-gh issue list --label loom:operator-priority --state open --json number,title,labels \
-  --jq '.[] | select([.labels[].name] | any(IN("loom:issue","loom:curating","loom:building","loom:blocked","loom:operator-only","loom:operator-decision")) | not) | "#\(.number) \(.title)"'
+# Holds: the registry's, retired names included (#11795)
+HOLDS=$(loom-daemon labels list --property hold --with-retired 2>/dev/null || printf 'loom:blocked\nloom:operator\nloom:frozen'); export HOLDS
+for L in loom:very-important loom:important; do
+gh issue list --label "$L" --state open --json number,title,labels \
+  --jq '($ENV.HOLDS | split("\n")) as $h | .[] | select([.labels[].name] | any(IN("loom:issue","loom:curating","loom:building") or IN($h[])) | not) | "#\(.number) \(.title)"'
+done
 ```
 
-Curate each at once (no workflow label = treat as `loom:triage`), then add
-`loom:curated` and `loom:issue` in ONE `gh issue edit`. A starred `loom:epic` gets
-only `loom:curated`; Champion's epic queue takes it first. Guards still apply: skip `loom:blocked`/`loom:operator-only`/`loom:operator-decision` and hard
-exclusions. The star is human-only — never add or remove it. Next come red-main
+Curate each now (no workflow label = `loom:triage`), ending at `loom:curated`
+like any issue; Champion evaluates it first. Skip the query's labels and hard
+exclusions. Never add or remove a priority label (operator, Guide and Champion
+own them). Next come red-main
 fixes (`<!-- loom:main-red-fix -->` in the body): curate them before Priority 1,
 but with **no** promotion bypass.
 
@@ -382,20 +385,17 @@ gh issue list --state=open --limit 500 --json number,title,labels,createdAt \
     ([.labels[].name] | contains([\"loom:auditor\"]) | not) and
     ([.labels[].name] | contains([\"loom:epic\"]) | not) and
     ([.labels[].name] | contains([\"loom:blocked\"]) | not) and
-    ([.labels[].name] | contains([\"loom:operator-only\"]) | not) and
+    ([.labels[].name] | contains([\"loom:operator\"]) | not) and
     $EXCL
   ) | \"#\(.number) \(.title)\""
 ```
 
-Note: `loom:blocked` and `loom:operator-only` stay excluded here, but not from
-Curator's purview: "Checking Dependencies" re-checks `loom:blocked` issues, and
-"Checking Operator-Only Premises" (#6849) runs the same read-only premise
-re-check (has the named blocker/epic closed?) on `loom:operator-only` issues.
-Doing operator-only work stays out of scope; that re-check never removes the
-label or auto-releases the issue.
+Note: `loom:blocked` and `loom:operator` stay excluded here. "Checking
+Dependencies" re-checks `loom:blocked` issues; `loom:operator` gets no Curator
+action at all ("Operator-held issues: no Curator action" below, #11861).
 
 **Workflow**:
-1. Priority 0 (starred, then red-main fixes) first; then Priority 1
+1. Priority 0 (priority issues, then red-main fixes) first; then Priority 1
 2. If no results, use Priority 2
 3. Take the first result — the query now returns oldest-first (`sort_by(.createdAt)`), so no manual age comparison is needed
 4. Enhance and mark as `loom:curated`
@@ -599,7 +599,7 @@ Fail closed: `1` (the gate could not run) is handled as `10`, never as `0`.
 | Exit | Instead of enriching |
 |---|---|
 | `10`/`12` | Do the premise check now and post the record its `REASON=`/`EVIDENCE-CANDIDATE=` lines point at; re-run. |
-| `11` | Comment the disagreement axis, then `--add-label "loom:operator-only,loom:operator-decision"` per "Applying `loom:operator-only`" below. |
+| `11` | Route it as a ranked decision via `loom-daemon operator-decision apply` per "Routing to a human" below. |
 | `13` | Premise false — close or rescope per "Issues Are Suggestions" above. |
 
 Record format, scoped population, and why the gate sits one stage before you:
@@ -627,7 +627,7 @@ When you find an unlabeled issue, **first assess if it's already implementation-
 gh issue edit <number> --remove-label "loom:curating" --remove-label "loom:triage" --add-label "loom:curated"
 ```
 
-**IMPORTANT**: Do NOT add `loom:issue` unless the issue is starred (see "Who promotes `loom:curated` → `loom:issue`" above).
+**IMPORTANT**: Do NOT add `loom:issue` (see "Who promotes `loom:curated` → `loom:issue`" above).
 
 **If ANY checkboxes fail:**
 ⚠️ **Enhance first, then mark curated:**
@@ -636,7 +636,7 @@ gh issue edit <number> --remove-label "loom:curating" --remove-label "loom:triag
 2. Include implementation guidance or options
 3. Add test plan checklist
 4. Check/add dependencies section if needed
-5. Then mark `loom:curated` (NOT `loom:issue` unless starred — see "Who promotes `loom:curated` → `loom:issue`" above)
+5. Then mark `loom:curated` (NOT `loom:issue` — see "Who promotes `loom:curated` → `loom:issue`" above)
 
 ### Examples
 
@@ -660,7 +660,7 @@ Issue #99: "fix the crash bug"
 - ❌ No acceptance criteria
 
 → Action: Ask for reproduction steps, add acceptance criteria
-→ Then: Mark `loom:curated` after enhancement (NOT `loom:issue` unless starred — see "Who promotes")
+→ Then: Mark `loom:curated` after enhancement (NOT `loom:issue` — see "Who promotes")
 ```
 
 **Why**: `loom:curated` means enhanced, `loom:issue` means approved for work — and the Curator never decides the latter (see "Who promotes").
@@ -670,7 +670,7 @@ Issue #99: "fix the crash bug"
 If, during curation, you determine an issue is too large to be a single Builder PR (>6 hours, >8 files, or >400 LOC) and must be split into sub-issues:
 
 1. **Create each sub-issue with `loom:triage` only.** Do NOT apply `loom:curated`, even if your decomposition includes curator-quality detail (acceptance criteria, file references, scope guards).
-2. **Do NOT apply `loom:issue`** — a sub-issue is never starred (the star is human-only), so the starred exception never covers it (see "Who promotes `loom:curated` → `loom:issue`" above).
+2. **Do NOT apply `loom:issue`** (see "Who promotes `loom:curated` → `loom:issue`" above).
 3. **Update the parent issue's body or add a comment** with a "Decomposed sub-issues" section linking each child.
 4. **Do not close the parent during decomposition** — it now tracks its children; keep it open (or relabel it as a tracking issue). Closing here would orphan the sub-issues. (Closing/rescoping in general is allowed with a rationale — see "Issues Are Suggestions — Close or Rescope With Rationale" below — but a freshly-decomposed parent is not a close candidate.)
 5. **Do not self-curate your own sub-issues in the same session.** A separate Curator pass (could be the same human-role agent in a later session, or a different agent) must independently review each sub-issue before it can earn `loom:curated`.
@@ -869,7 +869,7 @@ Issues about agent behavior or workflow failures need special curation to preven
 - **Specify a verification method**: Include a concrete test that can distinguish a superficial fix from a real one. Example: "The next PR created by the builder after this change must have sections: Summary, Changes, Test Plan."
 
 ### Organization
-- Apply the real Loom vocabulary: a tier label (`tier:goal-advancing`, `tier:goal-supporting`, or `tier:maintenance`) for classification — see `.github/labels.yml` for the authoritative set. Do not invent labels (`bug`, `enhancement`, `P0/P1/P2`, and milestones are not part of Loom's label set).
+- Apply only real Loom labels — see `.github/labels.yml` for the authoritative set; priority labels are Guide's and Champion's, and the tier labels are retired (#11103). Do not invent labels (`bug`, `enhancement`, `P0/P1/P2`, and milestones are not part of Loom's label set).
 - Group related issues with `loom:epic` / `loom:epic-phase` tracking issues
 - Update issue templates based on patterns
 
@@ -902,71 +902,24 @@ gh issue close <number> --reason "not planned"
 
 **Guardrails (safety — do NOT skip these):**
 - **Always comment the rationale BEFORE closing.** A silent close destroys context. `--reason "not planned"` distinguishes a judgment-call close from a fix.
-- **Never close an issue that encodes a still-pending human decision.** If the right call requires a human (a policy choice, a controversial trade-off, a security/access decision, anything you are not authorized to settle), route it instead — add `loom:blocked` (automatable but waiting on a dependency/clarification) or `loom:operator-only` **plus exactly one sub-kind label**, per "Applying `loom:operator-only`" immediately below — do **not** close it.
-- **An autonomous filing is never operator approval.** Reversing a documented design/safety/test decision still routes to `loom:operator-decision` — don't reason "the filing IS the approval" (#7855's anti-pattern). Detail: `.loom/docs/label-state-machine.md` → "loom:operator-only sub-kinds".
+- **Never close an issue that encodes a still-pending human decision.** If the right call requires a human (a policy choice, a controversial trade-off, a security/access decision, anything you are not authorized to settle), route it instead per "Routing to a human" immediately below — do **not** close it.
+- **An autonomous filing is never operator approval.** Reversing a documented design/safety/test decision still routes to a decision — don't reason "the filing IS the approval" (#7855's anti-pattern; `.loom/docs/label-state-machine.md`).
 - **Never invent new labels.** Use only the existing label set.
 - **Do not close an issue another agent is actively building** (`loom:building`) unless you are that agent — coordinate via a comment instead.
 - **Stand down on operator-session-lane issues.** An issue an operator filed with a command-verifiable acceptance criterion and a non-executing-file-only diff (`.md`/`.txt`; see CLAUDE.md § "Sweep Lifecycle" → operator-session lane) is routed straight to `loom:building` with Curator intentionally skipped. If you encounter one already labeled `loom:building`, do **not** re-curate it, re-label it, or post a no-op "already implementation-ready" comment — leave it exactly as found and move on. Re-deriving the same one-line diff and commenting to say so is the repeat-no-op-pass anti-pattern (#4736), not a clean-slate curation.
 
-#### Applying `loom:operator-only`: a sub-kind label is REQUIRED (#5819)
+#### Routing to a human
 
-**First, confirm this is genuinely operator-by-right, not unbuilt capability.**
-If curation surfaces an issue — new or already carrying `loom:operator-only` —
-whose block is really "automation could do this once a specific tool/agent
-capability exists" rather than a ruling only a human can make, the correct
-label is `loom:needs-capability`, not `loom:operator-only`. If the issue
-**already** carries `loom:operator-only` and you determine on re-curation that
-it is actually this shape, relabel it per `.loom/docs/label-state-machine.md`
-→ "Bidirectional routing: `loom:operator-only` ↔ `loom:needs-capability`"
-(#5818) — relabel, file/reuse a capability-request issue against the owning
-tool repo, and cross-link both issues in both directions, all in the same
-pass.
-
-**Never apply `loom:operator-only` on its own.** Choose exactly one sub-kind and
-apply both labels in the **same** command. This is purely additive — the base
-label is never removed or replaced, so every filter/skip keyed on it (sweep
-pre-flight, `warn-operator-gated.sh`, Champion's promotion-queue exclusions, the
-Priority-2 query above) behaves exactly as before:
-
-| Sub-kind | Apply when |
-|---|---|
-| `loom:operator-blocked` | Waiting on a **named** issue/PR/piece of infrastructure that does not exist yet — self-clearing once that lands |
-| `loom:operator-mechanical` | Needs host or admin access, a credential, or another mechanical action — no judgement required |
-| `loom:operator-decision` | The act requires authority an agent structurally cannot hold — a preference call or an authority act (binds the entity, irreversible disclosure, spending, credentials only the operator holds, accepting risk on the entity's behalf, physical-world action) |
-| `loom:operator-objective` | The issue is determined once the operator states an objective — name the candidate objectives and the answer under each (#5826) |
-
-```bash
-# Curator routing an issue that encodes a still-pending human decision:
-gh issue comment <number> --body "Routing to the operator: <why a human must decide>."
-gh issue edit <number> --add-label "loom:operator-only,loom:operator-decision"
-```
-
-**Being unsure which sub-kind applies means curation is incomplete, not that
-the bare label is safe to reach for (#5826).** `loom:operator-decision` is
-**not** a safe default when the kind is not obvious — before applying it, run
-the falsifiability test from `.loom/docs/label-state-machine.md`: name the axis
-two well-informed people would still disagree on, and show it is a preference,
-not a fact. If you can't name that axis, finish the analysis — the item is
-determined, not a decision. If the only gap is a missing objective, that's
-`loom:operator-objective`, not `loom:operator-decision`.
-
-**If you chose `loom:operator-blocked`**, the same comment MUST name the blocker
-in machine-readable form: a literal `Blocked by #N` / `Depends on #N` /
-`Requires #N` line (the exact phrasings `detect-dependency-cycle.sh` and
-`warn-operator-gated.sh` parse by regex). A backtick-quoted reference in prose
-does not satisfy this — the phrase itself must be present so a later automated
-pass can tell when the blocker clears.
-
-**If you chose `loom:operator-decision`**, the same comment MUST name the
-disagreement axis and state why it is a preference rather than a fact — "needs
-judgement" alone does not satisfy this.
-
-**If you chose `loom:operator-objective`**, the same comment MUST list the
-candidate objectives and the answer under each, not just "needs an
-objective."
-
-Full taxonomy and rationale: `.loom/docs/label-state-machine.md` →
-"`loom:operator-only` sub-kinds".
+Park only for a PO-level decision or a human-hands step (#10001), never as
+the default for "hard" or "uncertain". The rule, its falsifiability test and
+the comment each route needs are `.loom/docs/label-state-machine.md` →
+"Routing to a human": a ruling → `loom-daemon operator-decision apply <number>
+--input d.json` (2-4 ranked options; adds `loom:operator`); a human's hands →
+`loom:operator` + a comment naming the step (+ a `Blocked by #N` line if
+that waits on something named); waiting on something automation resolves →
+`loom:blocked` with a park record, including a missing capability. (The
+base-plus-sub-kind labels this section used to require are retired into
+`loom:operator`, 2am#4345 / rjwalters/loom#11795.)
 
 **Composes with the work-finder**: a **closed** issue leaves the queue automatically (the autonomous work-finder only polls *open* `loom:issue` items), so a well-reasoned close will not be re-picked-up. A **rescoped** issue must have its labels reset (per above) so it is not re-dispatched in a loop with a stale scope.
 
@@ -1047,22 +1000,22 @@ failure modes to avoid:
    `loom:issue` on its own merits, exactly as if it had been filed and
    audited alone. Co-seeding with siblings that *did* turn out to be
    duplicates is not a signal about this issue; do not route it to
-   `loom:operator-only`, `loom:blocked`, or any other holding pattern on the
+   `loom:operator`, `loom:blocked`, or any other holding pattern on the
    strength of its siblings' findings. If your enhancement comment already
    states the item is novel, a subsequent operator-routing step for that same
    issue directly contradicts your own finding and is a curation defect, not
    caution.
 
-2. **Misclassifying a mechanical duplicate finding as `operator-decision`.**
+2. **Misclassifying a mechanical duplicate finding as a decision.**
    "This duplicates a command/capability already shipped on `main`" is a
    factual, mechanically-verifiable finding — it does not name a disagreement
    axis two well-informed people would still argue about, so it fails the
-   falsifiability test in "Applying `loom:operator-only`" above and is never
-   `loom:operator-decision`. Dispose it per the normal matrix instead: if you
+   falsifiability test (see "Routing to a human" above) and is never
+   a decision. Dispose it per the normal matrix instead: if you
    can verify the shipped command/PR, close as duplicate (case 1 or case 4,
    citing the specific command/PR you found) rather than parking it. Only if
    some non-judgment mechanical step genuinely remains (e.g. confirming with
-   whoever filed it before closing) does `loom:operator-mechanical` apply —
+   whoever filed it before closing) does a human-hands `loom:operator` apply —
    and even then that is a fallback, not the default, for a confirmed
    duplicate-of-shipped-work finding.
 
@@ -1155,7 +1108,7 @@ gh issue edit <number> --remove-label "points:<old>" --add-label "loom:curated,p
 
 Still emit the body marker with the same N — `require-complexity-marker.sh` blocks `loom:curated` on it.
 
-**Related but distinct**: `<!-- loom:capability=<name> -->` (#6892, alongside `loom:operator-mechanical` only) is a separate convention, no Curator action — see `defaults/docs/label-state-machine.md` → "Capability-declaration convention" (#6885/#6893).
+**Related but distinct**: `<!-- loom:capability=<name> -->` (#6892, on a held item only) is a separate convention, no Curator action — see `.loom/docs/label-state-machine.md` → "Capability marker" (#6885/#6893).
 
 ## Where to Add Enhancements
 
@@ -1309,10 +1262,7 @@ the terminal condition (a human posting `<!-- loom:ac-verified sha=<sha>
 -->`). There is no dependency to re-check, so routing it through "Re-check
 Idempotency" below heartbeats a textually-stable block reason every 24h
 **forever** — `decide()` has no terminal state for "never re-check again"
-(18 near-identical comments on one issue over three weeks, #8259). Same class
-of bug "Checking Operator-Only Premises" (#6849) fixed for
-`loom:operator-only`; this covers the `loom:operator` + `loom:blocked` case
-that section does not reach.
+(18 near-identical comments on one issue over three weeks, #8259).
 
 ```bash
 ISSUE_NUMBER=<number>
@@ -1351,8 +1301,9 @@ fi
 (closing an AC-held issue is a human call), or claim `loom:curating` outside
 the one-shot notice above. Only fires on `loom:blocked` + `loom:operator` +
 an ac-hold marker — an ordinary `loom:blocked` (no `loom:operator`) falls
-through to "How to Check Dependencies" unchanged, and `loom:operator-only`
-stays "Checking Operator-Only Premises"'s case.
+through to "How to Check Dependencies" unchanged, and any other
+`loom:operator` issue gets no Curator action ("Operator-held issues: no
+Curator action" below).
 
 ### How to Check Dependencies
 
@@ -1815,7 +1766,7 @@ from it re-suppresses the very pass that discovered the problem.
 ```bash
 # Stable identity of the orthogonal condition — the thing an operator must act
 # on, not your wording of it. e.g. "epic-open-but-complete:owner/repo#14",
-# "champion-format-objection:#14", "label-hold:loom:operator-only".
+# "champion-format-objection:#14", "label-hold:loom:operator".
 eval "$(./.loom/scripts/dep-recheck-fingerprint.sh dep-recheck --number "$ISSUE_NUMBER" \
   --orthogonal "epic-open-but-complete:owner/repo#14")"
 ```
@@ -1832,18 +1783,18 @@ hash necessarily differs from the pass that preceded the discovery — the
    next pass must re-check the true blocker, not the dead one.
 2. **Comment** the finding (never suppressed — the hash changed), stating what
    cleared, what is actually blocking, and what would unblock it.
-3. **Route to the operator**, keeping `loom:blocked` in place. Pick the sub-kind
-   from the *condition*, per "Applying `loom:operator-only`" above:
+3. **Route by the *condition***, keeping `loom:blocked` in place (see
+   "Routing to a human" above):
 
-| Orthogonal condition | Sub-kind |
+| Orthogonal condition | Route |
 |---|---|
-| A finished-but-open epic / a stale process or format objection an operator can just close or withdraw | `loom:operator-mechanical` — confirmation, no judgement |
-| A **named** open issue/PR that will genuinely deliver something first | `loom:operator-blocked` — include the literal `Blocked by #N` line |
-| A real preference/authority call about how to proceed | `loom:operator-decision` — name the disagreement axis |
+| A finished-but-open epic / a stale process or format objection an operator can just close or withdraw | Add `loom:operator`; the comment names the step — confirmation, no judgement |
+| A **named** open issue/PR that will genuinely deliver something first, after which a human acts | Add `loom:operator`; include the literal `Blocked by #N` line |
+| A real preference/authority call about how to proceed | `loom-daemon operator-decision apply` — the options' whys name the disagreement axis |
 
 ```bash
 # Terminal check first: a human already owns it — say nothing, change nothing.
-gh issue view <number> --json labels --jq '.labels[].name' | grep -q '^loom:operator-only$' \
+gh issue view <number> --json labels --jq '.labels[].name' | grep -q '^loom:operator$' \
   && echo "already routed — skip silently" \
   || {
     # $CLAIM=true here (escalation is a changed-hash "comment" row) — claim
@@ -1858,12 +1809,12 @@ This issue is still blocked, but by an unrelated active condition: <the orthogon
 condition, and what would clear it>.
 
 Routing to the operator rather than re-confirming a stale blocker (#6516)."
-    gh issue edit <number> --add-label "loom:operator-only,loom:operator-mechanical" --remove-label "loom:curating"
+    gh issue edit <number> --add-label "loom:operator" --remove-label "loom:curating"
   }
 ```
 
 The `curator:orthogonal-block:$ORTHOGONAL` marker plus the terminal
-`loom:operator-only` check bound this to **one** escalation per distinct
+`loom:operator` check bound this to **one** escalation per distinct
 condition — a second pass finding the same condition sees the label and skips
 silently.
 
@@ -1871,9 +1822,9 @@ silently.
 
 | Re-check situation | Required outcome |
 |---|---|
-| Tracked blocker (an epic) is substantively done but formally open for an unrelated reason — the #20/#22 shape | Escalation: body retracked, comment posted, `loom:operator-only` + sub-kind applied. **Never** "no action needed" |
+| Tracked blocker (an epic) is substantively done but formally open for an unrelated reason — the #20/#22 shape | Escalation: body retracked, comment posted, `loom:operator` applied. **Never** "no action needed" |
 | Tracked blocker genuinely still active, nothing else changed | Ordinary suppression, unchanged — silent skip inside the window, heartbeat outside it. **No** escalation |
-| Same orthogonal condition, second pass | Silent skip via the `loom:operator-only` terminal check — exactly one escalation per condition |
+| Same orthogonal condition, second pass | Silent skip via the `loom:operator` terminal check — exactly one escalation per condition |
 | Orthogonal condition clears, tracked blocker still stale | `ORTHOGONAL` empties, the hash changes again, the ordinary "changed conclusion" comment fires |
 
 **This does not consume the reserved #4967 counter above.** That hook counts *N
@@ -1882,352 +1833,17 @@ branch is the opposite trigger: it fires immediately, on the first pass whose
 reasoning names a different active condition, and needs no tally because the
 finding is a change of identity, not a repetition.
 
-## Checking Operator-Only Premises (#6849)
+## Operator-held issues: no Curator action (#11861)
 
-The `loom:blocked` dependency re-check above answers "has the thing this issue
-is waiting on resolved?" `loom:operator-only` issues wait on a human ruling,
-not a dependency — but a subset of them *also* name a specific blocker or
-parent epic (most commonly the `loom:operator-blocked` sub-kind's required
-`Blocked by #N` / `Depends on #N` / `Requires #N` line — see "Applying
-`loom:operator-only`" above — or an epic-phase issue's `**Epic**: #N` header)
-whose closure can make the parking premise stale without anyone noticing.
-
-This section runs the **same class of read-only re-check** against that
-reference. It never re-derives the operator's decision, never removes
-`loom:operator-only` or its sub-kind label, and never promotes or
-auto-releases the issue — see the note above the Priority 2 query in "Finding
-Work" for the "doing the work" vs. "re-checking the premise" distinction this
-rests on.
-
-**Claim discipline (#7617, #154): same rule as "Checking Dependencies" above.**
-`loom:operator-only` is likewise excluded from Priority 1/2 discovery, so this
-is never "starting enhancement work" either — extracting the reference and
-computing the fingerprint (below) is a read, no claim needed. Claim
-`loom:curating` when (and only when) `decide` says to post the one action this
-section ever takes (the "premise possibly stale" comment in "Reporting a closed
-reference" below), **re-read the prior marker and re-decide while holding that
-claim**, post only if the answer still holds, and release it right after — this
-section never adds `loom:curated`, so unlike "Checking Dependencies" there is
-no label-edit-that-already-removes-it shortcut here; the release is always its
-own explicit step. When there is nothing to report (no reference found, every
-reference still open, or the confirm-read now says skip), never claim at all —
-or release immediately without posting.
-
-**This section is where the #154 spam actually happened**, so both halves of
-that fix are mandatory here, not advisory: the complete prior-marker read ("The
-prior-marker read must be COMPLETE" above) and the confirm-under-claim
-re-decide ("Confirm under the claim" above). Issue #12 in this repo took 44
-heartbeats in a month — 27 of 43 gaps under the window, minimum 23 minutes —
-from a prior read that could only see the oldest 30 comments of the thread.
-
-### Finding candidates
-
-```bash
-gh issue list --label="loom:operator-only" --state=open --limit=500 \
-  --json number,updatedAt --jq 'sort_by(.updatedAt) | .[] | "#\(.number)"'
-```
-
-Run this as part of the same ongoing monitoring "Working Style" already
-applies to `loom:blocked` (see "Monitor workflow" below) — it is not gated on
-Priority 1/2 discovery and does not change what gets curated this pass.
-
-### Extracting the stated reference
-
-Use the shared script's `extract-refs` subcommand — never re-derive this
-extraction inline. It reuses the exact machine-readable phrasings this file
-and `detect-dependency-cycle.sh` / `warn-operator-gated.sh` already parse (a
-bare prose mention, e.g. a backtick-quoted `` `owner/repo#123` ``, does not
-count):
-
-```bash
-ISSUE_NUMBER=<number>
-eval "$(./.loom/scripts/dep-recheck-fingerprint.sh extract-refs --number "$ISSUE_NUMBER")"
-# REFS is now a space-separated (possibly empty) list of referenced numbers.
-# The helper shell-quotes the assignment so multiple refs remain one value.
-```
-
-**Why not just scan `[.body] + [.comments[].body]` directly (#4963):** an
-earlier version of this section did exactly that, and it self-perpetuates.
-The report comment below quotes the matched phrase back into the thread
-verbatim (`` the reference this issue is parked on, #4510 ("Depends on
-#4510"), is now closed ``) — so the *next* pass's extraction, scanning the
-same unconditional comment history, re-matches its own prior report as if it
-were new evidence. On kicad-tools#4507 this produced 13 near-identical
-heartbeat comments over 10 days, and survived a body-only fix (rewording away
-the matched phrase) because the comment history is immutable — the phrase
-lived on forever in a past comment. `extract-refs` closes the loop instead of
-papering over it: it scans the **body** unconditionally, but a **comment**
-only when it is neither authored by the automation identity (`--bot-login`,
-default `loom-fleet-dispatch`) nor itself carrying a
-`curator:dep-recheck:`/`curator:operator-premise-recheck:` marker — so the
-bot's own historical heartbeat comments are never treated as new evidence,
-while a genuine NEW human-authored "Blocked by #N" comment still is.
-
-- **No reference found** (`REFS` empty) → no-op. Most `loom:operator-mechanical` /
-  `loom:operator-decision` / `loom:operator-objective` issues have nothing
-  checkable — leave them exactly as found, silently.
-- **One or more references found** → compute the fingerprint with the same
-  shared script "Re-check Idempotency" above uses (a distinct `operator-premise`
-  subcommand — this check's inputs, a set of issue/PR *references* with only a
-  state each, are not the PR-blocker shape `dep-recheck` computes over, so it
-  is not force-unified with that computation):
-
-```bash
-eval "$(./.loom/scripts/dep-recheck-fingerprint.sh operator-premise --refs "$REFS")"
-# VERDICT=stale-premise (>=1 reference closed) or VERDICT=open (all still open).
-# REFS is now overwritten with the operator-premise subcommand's own REFS
-# output (one `<ref>:<state>` line per reference checked, in both verdicts);
-# only CONCLUSION_HASH is empty when VERDICT=open — see "Idempotency" below
-# for why that means nothing is posted or compared.
-```
-
-Internally this fetches each reference's current state via `gh issue view
-<ref> --json state` (falling back to `gh pr view <ref> --json state` if the
-reference turns out to be a PR, not an issue) — you do not need to fetch
-those yourself.
-
-### Reporting a closed reference
-
-If **any** referenced number is closed (`VERDICT=stale-premise`), post a
-comment naming it — do not silently absorb the finding, and do not touch the
-`loom:operator-only`/sub-kind label. Run "Idempotency" below first: only reach
-this step at all when it says `$CLAIM=true` (i.e. `$ACTION` is `comment` or
-`heartbeat`, never `skip`), and claim/release `loom:curating` around the post
-exactly as "Claim discipline" above describes:
-
-```bash
-# Stand down if loom:curating is already held by a live pass (#154).
-gh issue edit "$ISSUE_NUMBER" --add-label "loom:curating"
-# --- RE-READ + RE-DECIDE HERE, under the claim (#154). Only continue while
-# --- CLAIM is still true; otherwise release and post nothing.
-gh issue comment "$ISSUE_NUMBER" --body "**Operator-parked, premise possibly stale**: the reference this issue is parked on, #<ref>, is now **closed**. Worth an operator taking another look — not auto-releasing; \`loom:operator-only\` and its sub-kind label are left untouched. <!-- curator:operator-premise-recheck:$CONCLUSION_HASH -->"
-gh issue edit "$ISSUE_NUMBER" --remove-label "loom:curating"
-```
-
-The bolded **Operator-parked, premise possibly stale** phrasing is the
-distinct signal called for by this issue's acceptance criteria: grep issue
-comments for that literal phrase (or for the `curator:operator-premise-recheck:`
-marker) to rank operator-parked issues with a stale premise separately from
-ones still genuinely waiting — deliberately a report-line convention rather
-than a new label, consistent with this file's "Never invent new labels" rule
-under "Maintenance" above.
-
-**If every referenced number is still open** → no comment this pass. "Still
-parked, checked" is not newsworthy, exactly as an unchanged `blocked`
-conclusion is not newsworthy in the `loom:blocked` re-check above.
-
-### Idempotency
-
-Apply the same `decide` call and 24h staleness window as "Re-check
-Idempotency" above, with two differences: use the marker prefix
-`curator:operator-premise-recheck:` (never `curator:dep-recheck:` — the two
-markers must stay distinguishable so a later pass can tell which check
-produced which comment), and compare against `CONCLUSION_HASH` as emitted by
-the `operator-premise` subcommand above — one `"<ref>:<state>"` line per
-referenced number, sorted, folded in under the verdict (`stale-premise` when
-any reference is closed). When `VERDICT=open` (every reference still open),
-`CONCLUSION_HASH` is empty by design: nothing is posted at all, and there is
-nothing to compare against a prior marker either — feed that empty hash into
-`decide --hash ""` exactly as-is; it reports `ACTION=none`/`CLAIM=false`
-without even needing `PRIOR_HASH`, matching "no comment this pass" above.
-
-```bash
-# The prior-marker read. Driven by the shared script, never hand-rolled and
-# never a bare `gh api .../issues/N/comments` (page 1 = the OLDEST 30 comments,
-# which is exactly how #12 spammed for a month — see "The prior-marker read
-# must be COMPLETE (#154)" above).
-PRIOR_OUT=$(./.loom/scripts/dep-recheck-prior-marker.sh \
-  --marker curator:operator-premise-recheck --issue "$ISSUE_NUMBER") || true
-eval "$PRIOR_OUT"
-
-# FAIL CLOSED on READ_OK — never on an empty PRIOR_HASH, which a truncated read
-# and a genuine first-ever check produce identically.
-if [ "${READ_OK:-false}" != "true" ]; then
-  echo "prior-marker read failed (${READ_ERROR:-unknown}) — skipping $ISSUE_NUMBER this pass"
-  return 2>/dev/null || exit 0
-fi
-
-if [ -n "$PRIOR_HASH" ]; then
-  eval "$(./.loom/scripts/dep-recheck-fingerprint.sh decide --hash "$CONCLUSION_HASH" \
-    --prior-hash "$PRIOR_HASH" --prior-age-hours "$PRIOR_AGE_H")"
-else
-  eval "$(./.loom/scripts/dep-recheck-fingerprint.sh decide --hash "$CONCLUSION_HASH")"
-fi
-# ACTION=none|skip|comment|heartbeat, CLAIM=true|false — same rule as
-# "Checking Dependencies" above: only claim loom:curating when CLAIM=true, and
-# then RE-RUN the two blocks above under that claim and post only if CLAIM is
-# still true (#154 "Confirm under the claim"). The comment in "Reporting a
-# closed reference" above is the very next action after that confirmation.
-```
-
-**Do not cite an age in the comment body without having read it from
-`PRIOR_AGE_H`.** Every one of #12's spam comments narrated its own overdue-ness
-("~401h since the 2026-09-10 12:46 UTC check") from a truncated read — the
-prose was a faithful report of a wrong input, which is precisely why it read as
-plausible for a month. If the age you are about to write down implies the
-previous heartbeat was days ago, and this thread is long, that is the signature
-of an incomplete read: re-check `COMMENTS_READ` against `COMMENTS_TOTAL` before
-posting anything.
-
-### What this section never does
-
-- Never removes or adds `loom:operator-only` or any sub-kind label.
-- Never marks the issue `loom:curated` or otherwise moves it toward the build
-  queue.
-- Never auto-releases the issue — a closed reference is grounds for an
-  operator to look again, not authorization to promote or unblock (explicit
-  non-goal of issue #6849).
-- Never claims `loom:curating` on a pass whose `decide` result is
-  `CLAIM=false` (no reference found, every reference still open, or the same
-  stale-premise conclusion inside the heartbeat window) — see "Claim
-  discipline (#7617)" above. `loom:curating` is only ever taken transiently,
-  around posting the one comment this section can produce, never left behind.
-
-## De-escalating Fact-Based Champion Escalations (#7650)
-
-**This section is the one exception to "Checking Operator-Only Premises"
-above being read-only.** That section re-checks a *named reference*
-(`Blocked by #N`, an epic header) and never removes anything. This section
-covers a *different* shape: a `loom:operator-only` issue Champion escalated
-via its own N=2 "repeated rejection without revision" gate
-(`<!-- champion:proposal-escalated -->`), whose recurring findings are
-**fact-checkable claims about repo state** rather than a named reference —
-e.g. "`layout/toolchain.json` still carries the old pin" or
-"`verification/_repo_utils.py` does not exist anywhere in this repo". A
-finding like that can go stale in
-hours (a sibling PR lands the exact fact it cited) with no mechanism to
-notice: the body hash is unchanged, so Champion keeps silently skipping, and
-`loom:operator-only` makes every other pass skip it too. The motivating
-incident: `2AMLogic/sg13cmos5l-protocol-emulator`#6 and #8, both rejected on
-facts that were true at review time and false again hours later once a
-sibling issue's PR merged.
-
-**Does not overlap `classify-dependency-block.sh --check-unescalate`
-(#5664).** That mechanism already reverses a Champion escalation whose
-*every* recurring finding names a dependency and cites an issue/PR reference
-— Champion runs it itself, every pass, in "Pass 0: Self-Healing Un-Escalation
-Re-Scan" (`champion-issue-promo.md`). This section is for the complementary
-case: the escalation's findings are **not** dependency citations at all (a
-mixed or non-dependency finding set is exactly what routes Champion to
-`loom:operator-decision` instead of `loom:operator-blocked` in the first
-place — see "Choose the sub-kind before posting" in that file's escalation
-step). Do not attempt this procedure on an escalation `--check-unescalate`
-would already handle; let Pass 0 handle it.
-
-**When this applies**: a `loom:operator-only` issue that carries a
-`<!-- champion:proposal-escalated -->` comment (own-marker-only — see "What
-this never does" below) whose **Recurring findings** bullets are fact-checkable
-claims you can independently re-verify by reading the current repo (files,
-other issues/PRs) — not a preference call, not something only Champion's own
-re-evaluation could settle.
-
-### Procedure
-
-1. **Find candidates** the same way "Checking Operator-Only Premises" above
-   does (`loom:operator-only`, open), filtered to issues carrying the
-   escalation marker:
-
-   ```bash
-   gh issue list --label="loom:operator-only" --state=open --limit=200 \
-     --json number,comments \
-     --jq '.[] | select([.comments[].body] | join("\n") | contains("<!-- champion:proposal-escalated -->")) | .number'
-   ```
-
-2. **Read the latest escalation comment's `Recurring findings:` bullets** —
-   these are the exact claims to re-verify, in order. If any bullet is a
-   dependency citation (a dependency word *and* an issue/PR reference — see
-   `classify-dependency-block.sh`'s `is_dependency_finding`), leave it for
-   Champion's own Pass 0 instead; do not duplicate that path here.
-
-3. **Independently re-verify each finding against current `main`.** Read the
-   file/state the finding claims, and record — per finding, in the SAME
-   order as the bullets — whether it is now RESOLVED (the claim no longer
-   holds) or still UNRESOLVED, with the evidence:
-
-   ```bash
-   cat > /tmp/resolutions-<N>.txt <<'EOF'
-   RESOLVED: layout/toolchain.json now carries the pin the proposal names (verified against <sha>)
-   RESOLVED: verification/_repo_utils.py landed verbatim in <sha> via #<PR>
-   EOF
-   ```
-
-   One line per finding, prefixed exactly `RESOLVED: ` or `UNRESOLVED: `. The
-   script below requires the line count to match the finding count exactly —
-   a short file can never silently approve a finding it never addressed.
-
-4. **Guard (restated from the issue's own Ask): only proceed if EVERY cited
-   finding verified RESOLVED.** A partial resolution — even one UNRESOLVED
-   line — must leave the escalation in place; do not run `--apply` on a
-   partial set (the script also refuses it if you do — see "What this never
-   does" below — but do not lean on that as the only guard).
-
-5. **If (and only if) every finding resolved**, run the shared classifier in
-   its fact-checkable mode — the SAME safety-guard shape
-   `--check-unescalate` already established (own-marker-only, never a
-   dependency cycle, all-or-nothing, a namespaced anti-refight marker),
-   generalized to findings a script cannot verify itself:
-
-   ```bash
-   ./.loom/scripts/classify-dependency-block.sh --issue "$ISSUE_NUMBER" \
-     --check-fact-unescalate --resolutions-file /tmp/resolutions-<N>.txt \
-     --commit "$(git rev-parse HEAD)" --apply
-   ```
-
-   With `--apply` this appends a dated `## Revision` section to the body
-   (naming the verifying commit and which objection each fact resolves —
-   this is the acceptance criterion's "revises the body" step, and it is
-   what changes the body hash, the existing contract Champion already uses
-   for "revised — evaluate again"), removes `loom:operator-only` and, best-
-   effort, its `loom:operator-decision` sub-kind label (the sub-kind a
-   fact-based escalation is expected to carry — see "Choose the sub-kind
-   before posting" in `champion-issue-promo.md`), and posts exactly one
-   comment naming the verifying commit and confirming the label removal. Say
-   so in that comment (it already does) — do not post a second comment of
-   your own repeating it.
-
-   `FACT_UNESCALATE` (exit 0) means it applied; `NO_FACT_UNESCALATE` + a
-   `REASON:` slug (exit 1) means it did not — read the reason before assuming
-   you did something wrong. `not-operator-only` / `no-escalation-record` /
-   `cycle-escalation` mean this issue was never a candidate for this
-   mechanism (do not force it). `partial-resolution` /
-   `resolutions-mismatch` mean your own resolutions file did not satisfy the
-   all-resolved guard (go back to step 3). `already-unescalated` means a
-   human re-applied the label after a completed de-escalation for this exact
-   finding set and commit — do not fight them; if repo state has moved on
-   further since, re-run step 3 against the new HEAD and this becomes a
-   genuinely new attempt (a different verifying commit fingerprints
-   differently, so it is never silently swallowed).
-
-6. **The issue returns to Champion's queue automatically** — you do not need
-   to do anything further. The appended `## Revision` section changed the
-   body hash, so Champion's idempotency check (`champion-issue-promo.md` →
-   "Idempotency check") no longer matches the old `VERDICT_MARKER` and
-   evaluates the proposal fresh on its next pass, posting a new verdict
-   rather than a second escalation — this already works via the existing
-   hash mechanism with no Champion-side code change (verified, not assumed:
-   see the BODY_HASH test in `tests/test-classify-dependency-block.sh`).
-
-### What this never does
-
-- Never touches a `loom:operator-only` issue with no
-  `<!-- champion:proposal-escalated -->` comment — a label a human or any other path
-  applied carries no such record and is left strictly alone (the script
-  enforces this too, but do not rely on the script alone: confirm the marker
-  is present before starting step 3's investigation at all).
-- Never touches an issue that also carries a `<!-- champion:dep-cycle:`
-  comment — a genuine dependency cycle cannot self-clear and stays escalated
-  permanently, exactly as for `--check-unescalate`.
-- Never applies on anything less than ALL cited findings verified resolved —
-  restated three times in this section on purpose; this is the one guard
-  most likely to be shortcut under time pressure, and doing so re-fights a
-  human decision without full grounds.
-- Never re-derives a finding's truth from `--check-fact-unescalate` itself —
-  the script only enforces the guard shape (marker, cycle, all-or-nothing,
-  anti-refight); the verification in step 3 is yours, and it is exactly as
-  reliable as the reading you did.
-- Never re-fights a human who deliberately re-applied `loom:operator-only`
-  after a completed de-escalation for the same finding set and commit (the
-  `already-unescalated` reason) — see step 5.
+`loom:operator` is a no-op for every role. The two procedures that acted on
+the retired operator hold are retired with it (2am#4345 / rjwalters/loom#11861):
+"Checking Operator-Only Premises" (#6849, which commented when a parked
+reference closed) and "De-escalating Fact-Based Champion Escalations" (#7650,
+which removed the label). A dependency-only wait is a `loom:blocked` park,
+which the daemon's release pass lifts and which "Checking Dependencies" above
+re-checks (with the #154 complete prior-marker read and confirm-under-claim
+rules); everything left on `loom:operator` waits for a human, who removes the
+label.
 
 ## Issue Quality Checklist
 
@@ -2243,7 +1859,7 @@ Before marking an issue as `loom:curated`, ensure it has:
 - ✅ **Affected Files section** (see Required Sections below)
 - ✅ **Dependencies verified**: All task list items checked (or no Dependencies section)
 - ✅ **Not a duplicate**: Verified no similar open issues exist (use `check-duplicate.sh`)
-- ✅ Labeled as `loom:curated` when complete (NOT `loom:issue`, unless starred — Priority 0)
+- ✅ Labeled as `loom:curated` when complete (NOT `loom:issue`)
 
 ### Required Sections
 
@@ -2361,10 +1977,8 @@ gh issue edit 100 --remove-label "loom:curating" --remove-label "loom:triage" --
   ```bash
   gh issue edit <number> --remove-label "loom:curating" --remove-label "loom:triage" --add-label "loom:curated"
   ```
-- **NEVER add `loom:issue`** to an unstarred issue — see "Who promotes `loom:curated` → `loom:issue`" near the top of this file
-- **Monitor workflow**: Check for `loom:blocked` issues that need help, and
-  `loom:operator-only` issues whose stated blocker/parent epic may have closed
-  (see "Checking Operator-Only Premises" above)
+- **NEVER add `loom:issue`** — see "Who promotes `loom:curated` → `loom:issue`" near the top of this file
+- **Monitor workflow**: Check for `loom:blocked` issues that need help
 - Be respectful: assume good intent, improve rather than criticize
 - Stay informed: read recent PRs and commits to understand context
 

@@ -1,0 +1,8 @@
+read_verilog /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-195/flow/build/iso/run-v020/rtl/modexp.v
+hierarchy -check -top modexp
+synth -top modexp
+dfflibmap -liberty /home/ubuntu/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /home/ubuntu/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+clean
+tee -q -o /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-195/flow/build/iso/run-v020/flow/.klt/synthesize/modexp_stats.json stat -liberty /home/ubuntu/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib -json -top modexp
+write_verilog -noattr /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-195/flow/build/iso/run-v020/flow/.klt/synthesize/modexp_synth.v

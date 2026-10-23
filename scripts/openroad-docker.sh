@@ -101,6 +101,50 @@ if [ -z "${PDK_MOUNT_DIR}" ]; then
   fi
 fi
 
+# Check the resolved PDK tree is the pinned open_pdks revision (its
+# sky130A/SOURCES file names the revision it was built from) before mounting
+# it, so a stray tree -- e.g. a leftover ~/.volare at a previous pin -- cannot
+# be used silently. The pin is read from the file named by $OPENROAD_PIN_FILE
+# (a shell file with a CIEL_SKY130_VERSION="<rev>" line), defaulting to
+# scripts/setup-env.sh next to this script, its one home in this repo. An
+# explicit $OPENROAD_PIN_FILE that is unreadable is fatal; with no pin file
+# at all (e.g. a vendored copy whose directory has no setup-env.sh) the check
+# is skipped with an explicit notice, never silently.
+PIN_FILE="${OPENROAD_PIN_FILE:-}"
+if [ -n "${PIN_FILE}" ]; then
+  if [ ! -r "${PIN_FILE}" ]; then
+    echo "FATAL: OPENROAD_PIN_FILE=${PIN_FILE} is not a readable file." >&2
+    exit 1
+  fi
+elif [ -r "$(dirname "${BASH_SOURCE[0]}")/setup-env.sh" ]; then
+  PIN_FILE="$(dirname "${BASH_SOURCE[0]}")/setup-env.sh"
+else
+  echo "NOTICE: no PDK pin file (set OPENROAD_PIN_FILE; no setup-env.sh next to" \
+       "this script); skipping the PDK revision check." >&2
+fi
+PIN_REV=""
+if [ -n "${PIN_FILE}" ]; then
+  PIN_REV="$(sed -n 's/^CIEL_SKY130_VERSION="\([0-9a-f]*\)".*/\1/p' "${PIN_FILE}" | head -1)"
+  if [ -z "${PIN_REV}" ]; then
+    echo "FATAL: no CIEL_SKY130_VERSION=\"<rev>\" line in ${PIN_FILE}." >&2
+    exit 1
+  fi
+fi
+if [ -n "${PDK_MOUNT_DIR}" ] && [ -n "${PIN_REV}" ]; then
+  SOURCES_FILE="${PDK_MOUNT_DIR}/${PDK:-sky130A}/SOURCES"
+  if [ ! -f "${SOURCES_FILE}" ]; then
+    echo "WARNING: ${SOURCES_FILE} not found; cannot verify the PDK revision" \
+         "against the pin ${PIN_REV}." >&2
+  elif ! grep -q "${PIN_REV}" "${SOURCES_FILE}"; then
+    echo "FATAL: PDK revision mismatch: the resolved PDK root ${PDK_MOUNT_DIR}" >&2
+    echo "  is not open_pdks ${PIN_REV} (the pin in ${PIN_FILE})." >&2
+    echo "  Its SOURCES says:" >&2
+    sed 's/^/    /' "${SOURCES_FILE}" >&2
+    echo "  Set PDK_ROOT to a ciel tree at the pinned revision (~/.ciel)." >&2
+    exit 1
+  fi
+fi
+
 VOLUME_ARGS=(-v "${MOUNT_DIR}:${MOUNT_DIR}")
 if [ -n "${PDK_MOUNT_DIR}" ] && [ "${PDK_MOUNT_DIR}" != "${MOUNT_DIR}" ]; then
   VOLUME_ARGS+=(-v "${PDK_MOUNT_DIR}:${PDK_MOUNT_DIR}")

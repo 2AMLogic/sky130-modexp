@@ -4,6 +4,28 @@ LVS evidence for the routed GDS (`layout/modexp.gds`, from #7) — see
 `docs/signoff-claim.md` for the overall claim and the comparison level this
 establishes.
 
+## Update (issue #194, 2026-10-16): `layout/lvs/` regenerated with the pinned
+## klt — `power_connectivity` is now a measured `mismatch` (it was `match`).
+## Read this first; the sections below are retained history.
+
+The extraction, `modexp_layout_extract_report.json`, `modexp_lvs_report.json`
+and `modexp_lvs_report_netgen.json` in this directory are now the output of the
+pinned klt (`0.6.0+gdac2b5daceb6`, `open_pdks f6eeac7d…`) on the unchanged
+`layout/modexp.gds`: 798 nets, 61 cell types (was 771 / 59). **Both
+engines report `power_connectivity: "mismatch"`** — one finding, pin `VPB`
+reaching 26 distinct nets across 2809 instances — with `status` still `mismatch`
+(klayout 13 mismatches / 12 errors, netgen 3 / 2). The `power_connectivity:
+"match"` quoted in the sections below was measured on the klt-0.4.0 extraction and
+is **not** a property of the pinned toolchain. The cause is **not established**
+(the 26 nets coincide with the 26 row nwells; the abstracted tap cell exposes no
+`VPB` pin; whether the n-tap physically reaches the rail is unverified). T1 item 4
+stays `unmet`. The superseded files are preserved at
+`verification/records/drc-lvs/artifacts/20261016-010000-713829b/superseded-layout-lvs/`.
+Evidence: `verification/records/drc-lvs/records/20261016-010000-713829b.md`;
+decision: `spec/decision-records/0010-lvs-evidence-regenerated-with-the-pinned-klt-power-connectivity-measured-mismatch.md`.
+Regeneration is the command set in "Reproducing this comparison cold" below, with
+the extraction run from this directory as in that record.
+
 ## Update (issue #131, 2026-09-23): the comparison now runs against a
 ## `gate-level-verilog` reference — power connectivity verified, filler/tap
 ## cells pruned by the tool, second engine run; **still `mismatch` (12
@@ -468,8 +490,8 @@ the pin. `klt lvs` itself (the comparison step, which needs nothing from
     /tmp/modexp_reference.spice   # or overwrite the committed copy
   ```
 
-  (resolve the LEF path per `klt pdk find`/`docs/environment.md`'s volare
-  install; on the environment this evidence was produced on it is
+  (resolve the LEF path per `klt pdk find`/`docs/environment.md`'s ciel
+  install; on the environment this evidence was produced on it was
   `~/.volare/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef`).
 - `modexp_lvs_report.json` — `klt lvs`'s `--format json` response, engine
   `"klayout"` (`NetlistComparer`). **Since issue #131 this is the

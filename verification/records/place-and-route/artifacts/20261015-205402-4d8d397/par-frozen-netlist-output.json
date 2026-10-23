@@ -1,0 +1,1278 @@
+{
+  "schema_version": 1,
+  "engine": "openroad",
+  "engine_version": "26Q3-1510-g6cb3f2b704",
+  "engine_logs": [
+    {
+      "invocation_id": "061a1371ab244259ac7883874e1afd9b",
+      "script_name": "pnr_modexp_floorplan.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "72c01e1833edc164fbee0773cc33db234f3272db8fc354fa5b0d35c326a7f2d1",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "334e61ae1cac4814914bc9f488a88ffd",
+      "script_name": "pnr_modexp_place.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "f8b8403021af65bff379621dbf3cb9f87a1a69a4081a66169e0e562fcb03e468",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "47a57e9c3fa446cc8751ee7b20f27b49",
+      "script_name": "pnr_modexp_cts.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "11b2b064686923f3a94231b5a9478be5a441d312dbcc45410b4ea41e2e07337f",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "85e03774710b43f691b478adfc7e6a4b",
+      "script_name": "pnr_modexp_route.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "e67dbb6f5e6aea63075836351b283b344d85f9300172d7a71db706e90df777e2",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "806d29ae4d9c4342b0abaceeb4ff1645",
+      "script_name": "pnr_modexp_route_corners.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "28da4861176610486b834a839e934b9188196e69833a8245a4cc5ad9c0c537af",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "52bd099c9d474b13bb77132c99af7d1e",
+      "script_name": "pnr_modexp_route_corner_ff_100C_1v65.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "048439f7899eff82c9c9d5a0c1a0b5cc72485f4803068c91079187ffbcfcf860",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "d4583dec92c24661ad7f0fe75a624d51",
+      "script_name": "pnr_modexp_route_corner_ff_100C_1v95.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "55a6ff7bfbcffa4cab6578aac5d2f7967b6ec863bf632633de451ef79c4c9759",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "7d84bdf61dab45aa96f56fa99e52d2c1",
+      "script_name": "pnr_modexp_route_corner_ff_n40C_1v56.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "2fe77894853a7eb07acf9b70068a7ec433fbc6ba634c1a5ac42bca4763e4675b",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "36ff0aa40e014236aec00fc852826da4",
+      "script_name": "pnr_modexp_route_corner_ff_n40C_1v65.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "b98635347a5450c022799ce3738a397abc0522f1f76a44ee5691169a4b76bf3a",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "242e395ee8c04220a44b8d7b9448952f",
+      "script_name": "pnr_modexp_route_corner_ff_n40C_1v76.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "423239379efeff992dda7539d7c16b90073286c85f93907980542be621d49667",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "ee038b5cba7a4f939270b0565a6c160f",
+      "script_name": "pnr_modexp_route_corner_ff_n40C_1v95.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "4ec2b86dc52b3aa000e7253ebe5a651edc36661cdb2fc4e573a10db60eee2563",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "c4902e6c576346cf91df5b6f69a28af4",
+      "script_name": "pnr_modexp_route_corner_ss_100C_1v40.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "4844615c116582bf8f5d42d4d5601cee01b3384d0eed87f38b40584f46c7e734",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "a09508e83fd842afa2aada4aa7db5e19",
+      "script_name": "pnr_modexp_route_corner_ss_100C_1v60.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "3da670b23a2b8bfb4b9ae72af43f6050053999bcada89be5322ba9385a59e8d5",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "e4aca5bdff814b9eb7735873d1d63b8b",
+      "script_name": "pnr_modexp_route_corner_ss_n40C_1v28.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "8c0ac92421c26231ff26f16a8ea8abf18bacec2f98470b533f3f8cdec1f8132f",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "cd43ca1e907e4363907be91274c3082a",
+      "script_name": "pnr_modexp_route_corner_ss_n40C_1v35.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "c41dce3b86510fcf794942b87e9284c1ce0451ba798accc189b85b4f9cba9eb2",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "c3eb2318d21e43d5bc92c682ce86aa75",
+      "script_name": "pnr_modexp_route_corner_ss_n40C_1v40.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "555cde5d51da5a251d417221782674605a63fbdcb3995da0622740b685fd19e2",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "dd57851c232849e6a8a469fa4960180b",
+      "script_name": "pnr_modexp_route_corner_ss_n40C_1v44.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "f4cee70f218af0e71fc68a6b1d1e98a772161b84bba7f8d94a155b2c39bd1fb9",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "d390acad98244eecb1d243a9eac93e1a",
+      "script_name": "pnr_modexp_route_corner_ss_n40C_1v60.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "460b30d8cead6fad280a48082537a00757d432843da39612e1d11a8fff05b369",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "a372a19c44194d82b825b59506e34026",
+      "script_name": "pnr_modexp_route_corner_ss_n40C_1v76.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "22b4575a8e88f2a67f833e6b717e01825f4f4dd5e742609a0499a0a6b0042f43",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "de11ff990ec74e8d90ddf2b3970a7ad8",
+      "script_name": "pnr_modexp_route_corner_tt_025C_1v80.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "c6726bd24d22b32b639834fa0c8a4aef72c810fcaf41f912cd4f4345d0538c73",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "21051bb662ac4c029fa6b9b271b386c7",
+      "script_name": "pnr_modexp_route_corner_tt_100C_1v80.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "7cdfef2c066ffa1dbe3fd405b136bd6857fd91157dcf6ec95bb14adedc233fb3",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    },
+    {
+      "invocation_id": "f8fa4b7faf4046a19158e7f12868ce1b",
+      "script_name": "pnr_modexp_route_spef.tcl",
+      "script_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "script_sha256": "7ac977528b2172d7beaf78b57a4e7ac452c33dd2a11b50158617c266f359b78b",
+      "metrics_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "outcome": "exited",
+      "returncode": 0,
+      "directory": {
+        "path": null,
+        "scope": "external"
+      },
+      "stdout_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "stderr_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "metadata_path": {
+        "path": null,
+        "scope": "external"
+      },
+      "retention_errors": []
+    }
+  ],
+  "hdl_toplevel": "modexp",
+  "status": "ok",
+  "stage_reached": "route",
+  "seed": 42,
+  "interconnect_corner": "nom",
+  "die_area_um2": 21969.2,
+  "core_area_um2": 19398.6,
+  "utilization_pct": 39.3124,
+  "wirelength_um": 19060,
+  "worst_slack_ns": 3.73568,
+  "total_negative_slack_ns": 0,
+  "fmax_mhz": 159.634,
+  "setup_violation_count": 0,
+  "hold_violation_count": 0,
+  "nominal_hold_slack_ns": 0.34559,
+  "antenna_violation_count": 0,
+  "route_drc_violation_count": 0,
+  "estimated_power_mw": 0.9826,
+  "clock_skew_ns": 0.01634,
+  "worst_setup_slack_ns": -40.2741,
+  "worst_hold_slack_ns": 0.22662,
+  "corners": [
+    {
+      "name": "ff_100C_1v65",
+      "setup_slack_ns": 5.13122,
+      "hold_slack_ns": 0.30522,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ff_100C_1v95",
+      "setup_slack_ns": 6.21214,
+      "hold_slack_ns": 0.24232,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ff_n40C_1v56",
+      "setup_slack_ns": 3.60945,
+      "hold_slack_ns": 0.34814,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 34,
+      "max_capacitance_violation_count": 1
+    },
+    {
+      "name": "ff_n40C_1v65",
+      "setup_slack_ns": 4.48814,
+      "hold_slack_ns": 0.30734,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ff_n40C_1v76",
+      "setup_slack_ns": 5.26323,
+      "hold_slack_ns": 0.26968,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ff_n40C_1v95",
+      "setup_slack_ns": 6.13877,
+      "hold_slack_ns": 0.22662,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ss_100C_1v40",
+      "setup_slack_ns": -8.34792,
+      "hold_slack_ns": 1.06254,
+      "total_negative_setup_slack_ns": -129.027,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ss_100C_1v60",
+      "setup_slack_ns": -2.48769,
+      "hold_slack_ns": 0.73616,
+      "total_negative_setup_slack_ns": -37.0187,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 191,
+      "max_capacitance_violation_count": 6
+    },
+    {
+      "name": "ss_n40C_1v28",
+      "setup_slack_ns": -40.2741,
+      "hold_slack_ns": 2.2003,
+      "total_negative_setup_slack_ns": -977.116,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 159,
+      "max_capacitance_violation_count": 6
+    },
+    {
+      "name": "ss_n40C_1v35",
+      "setup_slack_ns": -24.5005,
+      "hold_slack_ns": 1.59046,
+      "total_negative_setup_slack_ns": -449.399,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ss_n40C_1v40",
+      "setup_slack_ns": -17.8475,
+      "hold_slack_ns": 1.3136,
+      "total_negative_setup_slack_ns": -276.218,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ss_n40C_1v44",
+      "setup_slack_ns": -14.0304,
+      "hold_slack_ns": 1.15936,
+      "total_negative_setup_slack_ns": -215.452,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "ss_n40C_1v60",
+      "setup_slack_ns": -4.98874,
+      "hold_slack_ns": 0.75943,
+      "total_negative_setup_slack_ns": -74.613,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 233,
+      "max_capacitance_violation_count": 9
+    },
+    {
+      "name": "ss_n40C_1v76",
+      "setup_slack_ns": -0.73152,
+      "hold_slack_ns": 0.57556,
+      "total_negative_setup_slack_ns": -8.21232,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 191,
+      "max_capacitance_violation_count": 5
+    },
+    {
+      "name": "tt_025C_1v80",
+      "setup_slack_ns": 3.64187,
+      "hold_slack_ns": 0.36598,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    },
+    {
+      "name": "tt_100C_1v80",
+      "setup_slack_ns": 3.8139,
+      "hold_slack_ns": 0.37379,
+      "total_negative_setup_slack_ns": 0,
+      "total_negative_hold_slack_ns": 0,
+      "timing_status": "constrained",
+      "max_transition_violation_count": 0,
+      "max_capacitance_violation_count": 0
+    }
+  ],
+  "max_transition_violation_count": 233,
+  "max_capacitance_violation_count": 9,
+  "timing_status": "constrained",
+  "stages": [
+    {
+      "name": "floorplan",
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.184,
+      "worst_slack_ns": 3.88653,
+      "total_negative_slack_ns": 0,
+      "timing_status": "constrained"
+    },
+    {
+      "name": "place",
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 37.3646,
+      "worst_slack_ns": 4.09336,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 14052.6,
+      "fmax_mhz": 169.301,
+      "estimated_power_mw": 0.5375,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "nominal_hold_slack_ns": 0.35377,
+      "timing_status": "constrained"
+    },
+    {
+      "name": "cts",
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 39.2608,
+      "worst_slack_ns": 3.98033,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 14962.8,
+      "fmax_mhz": 166.122,
+      "estimated_power_mw": 0.95,
+      "clock_skew_ns": 0.01091,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "nominal_hold_slack_ns": 0.38204,
+      "timing_status": "constrained"
+    },
+    {
+      "name": "route",
+      "die_area_um2": 21969.2,
+      "core_area_um2": 19398.6,
+      "utilization_pct": 39.3124,
+      "worst_slack_ns": 3.73568,
+      "total_negative_slack_ns": 0,
+      "wirelength_um": 19060,
+      "fmax_mhz": 159.634,
+      "estimated_power_mw": 0.9826,
+      "clock_skew_ns": 0.01634,
+      "setup_violation_count": 0,
+      "hold_violation_count": 0,
+      "nominal_hold_slack_ns": 0.34559,
+      "antenna_violation_count": 0,
+      "route_drc_violation_count": 0,
+      "worst_setup_slack_ns": -40.2741,
+      "worst_hold_slack_ns": 0.22662,
+      "corners": [
+        {
+          "name": "ff_100C_1v65",
+          "setup_slack_ns": 5.13122,
+          "hold_slack_ns": 0.30522,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ff_100C_1v95",
+          "setup_slack_ns": 6.21214,
+          "hold_slack_ns": 0.24232,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ff_n40C_1v56",
+          "setup_slack_ns": 3.60945,
+          "hold_slack_ns": 0.34814,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 34,
+          "max_capacitance_violation_count": 1
+        },
+        {
+          "name": "ff_n40C_1v65",
+          "setup_slack_ns": 4.48814,
+          "hold_slack_ns": 0.30734,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ff_n40C_1v76",
+          "setup_slack_ns": 5.26323,
+          "hold_slack_ns": 0.26968,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ff_n40C_1v95",
+          "setup_slack_ns": 6.13877,
+          "hold_slack_ns": 0.22662,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ss_100C_1v40",
+          "setup_slack_ns": -8.34792,
+          "hold_slack_ns": 1.06254,
+          "total_negative_setup_slack_ns": -129.027,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ss_100C_1v60",
+          "setup_slack_ns": -2.48769,
+          "hold_slack_ns": 0.73616,
+          "total_negative_setup_slack_ns": -37.0187,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 191,
+          "max_capacitance_violation_count": 6
+        },
+        {
+          "name": "ss_n40C_1v28",
+          "setup_slack_ns": -40.2741,
+          "hold_slack_ns": 2.2003,
+          "total_negative_setup_slack_ns": -977.116,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 159,
+          "max_capacitance_violation_count": 6
+        },
+        {
+          "name": "ss_n40C_1v35",
+          "setup_slack_ns": -24.5005,
+          "hold_slack_ns": 1.59046,
+          "total_negative_setup_slack_ns": -449.399,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ss_n40C_1v40",
+          "setup_slack_ns": -17.8475,
+          "hold_slack_ns": 1.3136,
+          "total_negative_setup_slack_ns": -276.218,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ss_n40C_1v44",
+          "setup_slack_ns": -14.0304,
+          "hold_slack_ns": 1.15936,
+          "total_negative_setup_slack_ns": -215.452,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "ss_n40C_1v60",
+          "setup_slack_ns": -4.98874,
+          "hold_slack_ns": 0.75943,
+          "total_negative_setup_slack_ns": -74.613,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 233,
+          "max_capacitance_violation_count": 9
+        },
+        {
+          "name": "ss_n40C_1v76",
+          "setup_slack_ns": -0.73152,
+          "hold_slack_ns": 0.57556,
+          "total_negative_setup_slack_ns": -8.21232,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 191,
+          "max_capacitance_violation_count": 5
+        },
+        {
+          "name": "tt_025C_1v80",
+          "setup_slack_ns": 3.64187,
+          "hold_slack_ns": 0.36598,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        },
+        {
+          "name": "tt_100C_1v80",
+          "setup_slack_ns": 3.8139,
+          "hold_slack_ns": 0.37379,
+          "total_negative_setup_slack_ns": 0,
+          "total_negative_hold_slack_ns": 0,
+          "timing_status": "constrained",
+          "max_transition_violation_count": 0,
+          "max_capacitance_violation_count": 0
+        }
+      ],
+      "max_transition_violation_count": 233,
+      "max_capacitance_violation_count": 9,
+      "timing_status": "constrained"
+    }
+  ],
+  "macros": [],
+  "def_path": "/tmp/g191/.klt/place-and-route/modexp.def",
+  "unrouted_def_path": null,
+  "gds_path": "/tmp/g191/.klt/place-and-route/modexp.gds",
+  "layer_map": {
+    "path": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/tech/sky130A.map",
+    "resolution": "exact"
+  },
+  "def_net_names": {
+    "single_pin_markers": 1,
+    "unresolved_single_pin_nets": []
+  },
+  "min_area_repair": {
+    "status": "clean",
+    "reason": null,
+    "patches": 0,
+    "repaired": 0,
+    "remaining": 0,
+    "rules": [],
+    "unrepaired": []
+  },
+  "verilog_path": "/tmp/g191/.klt/place-and-route/modexp.v",
+  "spef_sta": {
+    "spef_path": "/tmp/g191/.klt/place-and-route/modexp_route.spef",
+    "sdf_path": "/tmp/g191/.klt/place-and-route/modexp_route.sdf",
+    "worst_slack_ns": 3.54285,
+    "total_negative_slack_ns": 0,
+    "timing_status": "constrained",
+    "setup_violation_count": 0,
+    "hold_violation_count": 0,
+    "nets_annotated": 755,
+    "nets_total": 2429,
+    "design_nets_annotated": 755,
+    "design_nets_total": 756,
+    "annotation_complete": false,
+    "annotation_warning": "only 755 of 756 nets in the linked design are named by this SPEF -- the slack/violation values in this block are NOT a real-parasitics measurement to the extent annotation is missing, and should not be compared against the top-level estimate_parasitics-derived fields as if they were. See docs/cli/place-and-route.md's 'Net-name correlation' subsection."
+  },
+  "power": {
+    "preset": null,
+    "pdn": true,
+    "global_connect": true,
+    "power_net": "VDD",
+    "ground_net": "VSS",
+    "tapcell_master": "sky130_fd_sc_hd__tapvpwrvgnd_1",
+    "endcap_master": null,
+    "filler_masters": [
+      "sky130_fd_sc_hd__fill_1",
+      "sky130_fd_sc_hd__fill_2",
+      "sky130_fd_sc_hd__fill_4",
+      "sky130_fd_sc_hd__fill_8"
+    ],
+    "straps": [
+      {
+        "layer": "met1",
+        "spacing_um": null
+      },
+      {
+        "layer": "met4",
+        "spacing_um": null
+      },
+      {
+        "layer": "met5",
+        "spacing_um": null
+      }
+    ],
+    "connects": [
+      {
+        "layers": [
+          "met1",
+          "met4"
+        ],
+        "max_columns": null,
+        "ongrid": null,
+        "split_cuts": null
+      },
+      {
+        "layers": [
+          "met4",
+          "met5"
+        ],
+        "max_columns": null,
+        "ongrid": null,
+        "split_cuts": null
+      }
+    ],
+    "row_rail": {
+      "emitted": false,
+      "layer": null,
+      "power_net": null,
+      "ground_net": null,
+      "filler_masters": []
+    },
+    "placed": {
+      "evidence": "def",
+      "def_path": "/tmp/g191/.klt/place-and-route/modexp.def",
+      "unavailable_reason": null,
+      "status": "complete",
+      "missing": [],
+      "components": 3074,
+      "tapcells": 265,
+      "endcaps": 0,
+      "fillers": 2087,
+      "special_nets": [
+        {
+          "name": "VDD",
+          "use": "POWER",
+          "followpin_segments": 26,
+          "stripe_segments": 425,
+          "other_segments": 260,
+          "stripe_layers": [
+            "met5",
+            "met4",
+            "met3",
+            "met2",
+            "met1"
+          ],
+          "vias": 415
+        },
+        {
+          "name": "VSS",
+          "use": "GROUND",
+          "followpin_segments": 26,
+          "stripe_segments": 425,
+          "other_segments": 260,
+          "stripe_layers": [
+            "met5",
+            "met4",
+            "met3",
+            "met2",
+            "met1"
+          ],
+          "vias": 415
+        }
+      ]
+    }
+  },
+  "warnings": [],
+  "provenance": {
+    "klt_version": "0.6.0+gdac2b5daceb6",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486",
+      "role": "netlist"
+    }
+  }
+}

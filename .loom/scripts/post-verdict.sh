@@ -98,9 +98,13 @@
 # Usage:
 #   post-verdict.sh <pr-number> <approved|changes-requested> <sha> \
 #       (--body TEXT | --body-file PATH) [--reviews-reconciled TEXT] \
-#       [--overrules-prior TEXT]
+#       [--overrules-prior TEXT] [--review-started RFC3339] \
+#       [--issue-body-sha N=HASH]...
 #
 #   PATH may be "-" to read the body from stdin.
+#
+#   Aliases (exact, lowercase): `approve` -> approved, `request-changes` ->
+#   changes-requested. Anything else is rejected (exit 2).
 #
 #   --reviews-reconciled TEXT   Explicit disposition of the outstanding formal
 #       reviews / inline threads that check-review-feedback.sh reported. Must
@@ -112,13 +116,29 @@
 #       it such an approval is refused (#10581); with no new push, the usual
 #       answer is to wait for the Doctor rather than to overrule.
 #
+#   --review-started RFC3339   Approvals only (#12614): when this review began
+#       (capture `date -u +%Y-%m-%dT%H:%M:%SZ` when you claim the PR). The gate
+#       refuses the approval when a trusted human comment on the PR or a linked
+#       issue is newer, a human edited a linked issue body after it, or a body
+#       no longer matches its --issue-body-sha; the refusal (exit 7) names the
+#       comment or edit. The gate's start is the dispatch epoch in $LOOM_SWEEP_ID
+#       (or the PR's judge lease); this value can only move it earlier (#12714),
+#       so a retry in the same dispatch is refused again: re-review against the
+#       current spec and either end without a verdict (a fresh dispatch approves)
+#       or post changes-requested. With no start resolvable at all (no epoch, no
+#       lease, no flag) the approval is refused.
+#
+#   --issue-body-sha N=HASH   (repeatable) Issue N's body as you reviewed it:
+#       `printf %s "$(gh api repos/OWNER/REPO/issues/N --jq .body)" | sha256sum | cut -d' ' -f1`.
+#
 # Output: whatever `gh pr comment` prints on success (the comment URL) —
 # unchanged, so a caller parsing that output needs no change.
 #
 # Exit codes:
 #   0 - comment posted
 #   1 - the `gh pr comment` call failed
-#   2 - invalid arguments (bad PR number, verdict token, or SHA; missing body)
+#   2 - invalid arguments (bad PR number, verdict token, or SHA; missing body,
+#       or one forge verdict-body-check refuses: empty, -, @-, @path, too short)
 #   3 - approval refused by the formal-review reconciliation gate (#7647)
 #   5 - approval refused, CI not settled or unverifiable on <sha> (#10485):
 #       pending, head moved, reader error/absent. Post nothing approving,
@@ -146,7 +166,10 @@
 set -uo pipefail
 
 usage() {
-  sed -n '2,144p' "${BASH_SOURCE[0]:-$0}" | sed 's/^# \{0,1\}//'
+  # Print the whole leading comment block (line 2 to the first non-comment
+  # line). A hard-coded line range fell behind the header and cut --help off
+  # mid-sentence at exit code 8 (#12692).
+  awk 'NR == 1 { next } /^#/ { sub(/^# ?/, ""); print; next } { exit }' "${BASH_SOURCE[0]:-$0}"
 }
 
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
@@ -164,10 +187,16 @@ VERDICT="$2"
 SHA="$3"
 shift 3
 
+# Accept the natural imperatives; everything downstream sees canonical values.
+case "$VERDICT" in
+  approve) VERDICT="approved" ;;
+  request-changes) VERDICT="changes-requested" ;;
+esac
+
 BODY=""
 BODY_FILE=""
 HAVE_BODY=false
-RECONCILED="" OVERRULE=""
+RECONCILED="" OVERRULE="" REVIEW_STARTED="" ISSUE_HASHES=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -182,6 +211,8 @@ while [[ $# -gt 0 ]]; do
       ;;
     --reviews-reconciled) RECONCILED="${2:-}"; shift 2 ;;
     --overrules-prior) OVERRULE="${2:-}"; shift 2 ;;
+    --review-started) REVIEW_STARTED="${2:-}"; shift 2 ;;
+    --issue-body-sha) ISSUE_HASHES+=("${2:-}"); shift 2 ;;
     *)
       echo "post-verdict.sh: unknown argument: $1" >&2
       exit 2
@@ -191,19 +222,6 @@ done
 
 if [[ -z "$PR" || ! "$PR" =~ ^[0-9]+$ ]]; then
   echo "post-verdict.sh: a numeric PR number is required, got: '$PR'" >&2
-  exit 2
-fi
-
-# `gh pr comment --body @path` does NOT expand @path — it posts the literal
-# string as the comment (the anti-pattern that destroyed a Judge review on PR
-# #4457, and is a hard-denied Bash pattern for a LITERAL `gh pr comment ...
-# --body @path` call — see comment-body-literal-path.md). That guard
-# pattern-matches the literal command text, so it does not see this call
-# (the top-level command is `post-verdict.sh`, not `gh pr comment`) — refuse
-# the identical mistake here rather than silently reintroducing the hole one
-# layer down.
-if [[ "$HAVE_BODY" == "true" && "$BODY" == @* ]]; then
-  echo "post-verdict.sh: --body starts with '@' — like 'gh pr comment --body @path', this posts the literal string, it does NOT read the file. Use --body-file <path> instead." >&2
   exit 2
 fi
 
@@ -237,10 +255,25 @@ if [[ -n "$BODY_FILE" ]]; then
   fi
 fi
 
-if [[ -z "$BODY" ]]; then
-  echo "post-verdict.sh: --body or --body-file is required (and must be non-empty)" >&2
-  exit 2
-fi
+[[ -n "$BODY" ]] || { echo "post-verdict.sh: --body or --body-file is required (and must be non-empty)" >&2; exit 2; }
+# Is the body a rationale at all? (#9258) `gh pr comment --body @path` / `--body
+# @-` post the literal string (PR #4457 lost a review that way; #9258 merged on an
+# approval whose whole body was `@-`). The Bash guard matches literal command text
+# and cannot see this call, and `--body-file` content was never checked, so every
+# body spelling goes through `loom-daemon forge verdict-body-check`
+# (loom_daemon::verdict_body): empty, `-`, a lone `@`-token or under 20
+# non-whitespace chars is refused here; this script owns none of those rules. A
+# binary WITHOUT the verb (the #10581 capability-probe posture) keeps a degraded
+# shell refusal of a lone `-`/`@`-token (never weaker than pre-#9258), loudly; one
+# that has the verb but gives no answer refuses an approval (fail closed).
+VB_OUT="$(printf '%s' "$BODY" | "${LOOM_DAEMON_BIN:-loom-daemon}" forge verdict-body-check 2>&1)"; VB_RC=$?
+case "$VB_RC:$VB_OUT" in
+  "0:LOOM-VERDICT-BODY OK"*) ;;
+  "1:LOOM-VERDICT-BODY REJECT"*) echo "post-verdict.sh: refusing to post: ${VB_OUT#LOOM-VERDICT-BODY REJECT } (#9258). Nothing was posted; write the rationale to a file and pass --body-file <path>." >&2; exit 2 ;;
+  *) "${LOOM_DAEMON_BIN:-loom-daemon}" forge verdict-body-check --help >/dev/null 2>&1 && [[ "$VERDICT" == approved ]] && { echo "post-verdict.sh: REFUSING to post an approval: 'forge verdict-body-check' gave no answer: ${VB_OUT:0:300} (#9258). Nothing was posted." >&2; exit 2; }
+     [[ "$BODY" =~ ^[[:space:]]*(-|@[^[:space:]]*)[[:space:]]*$ ]] && { echo "post-verdict.sh: refusing to post: the body is a lone '-' or '@' token, which reads nothing (#9258; degraded check, 'forge verdict-body-check' unavailable). Nothing was posted; write the rationale to a file and pass --body-file <path>." >&2; exit 2; }
+     echo "post-verdict.sh: WARNING — verdict body check unavailable (${VB_OUT:0:200}); posting with only the degraded lone-token check. Roll loom-daemon to a build with 'forge verdict-body-check' (#9258)." >&2 ;;
+esac
 
 # --- Formal-review reconciliation gate (#7647) -----------------------------
 # Runs on APPROVALS ONLY — a changes-requested verdict cannot merge anything,
@@ -370,7 +403,7 @@ if [[ "$VERDICT" == "approved" && "${GATE_SKIPPED:-false}" != "true" ]]; then
     RECONCILIATION_MARKER="<!-- loom:review-reconciliation state=$GATE_STATE_TOKEN reviews=${GATE_REVIEWS:-0} blocking_current=${GATE_BLOCK_CURRENT:-0} blocking_older=${GATE_BLOCK_OLDER:-0} inline_unresolved=${GATE_INLINE_UNRESOLVED:-0} source=${GATE_SOURCE:-none} reconciled=yes -->"
     RECONCILIATION_NOTE="---
 
-**Formal review reconciliation (#7647)** — \`check-review-feedback.sh\` reported **$GATE_STATE**: ${GATE_REVIEWS:-0} formal review(s), ${GATE_BLOCK_CURRENT:-0} outstanding at this head, ${GATE_BLOCK_OLDER:-0} at an older head, ${GATE_INLINE_UNRESOLVED:-0} unresolved inline thread(s) (resolution source: ${GATE_SOURCE:-none}).
+**Formal review reconciliation (#7647)** — \`check-review-feedback.sh\` reported **$GATE_STATE**: ${GATE_REVIEWS:-0} formal review(s) and comment verdict(s), ${GATE_BLOCK_CURRENT:-0} outstanding at this head, ${GATE_BLOCK_OLDER:-0} at an older head, ${GATE_INLINE_UNRESOLVED:-0} unresolved inline thread(s) (resolution source: ${GATE_SOURCE:-none}).
 
 $RECONCILED"
   fi
@@ -403,8 +436,8 @@ if [[ "$VERDICT" == "approved" ]]; then
   PENDING_NEXT="Nothing was posted. Do NOT add loom:pr: release your claim, leave loom:review-requested, and re-evaluate once CI settles on this head."
   case "$CI_TOKEN" in
     LOOM-CHECKS-GREEN|LOOM-CHECKS-NONE) [[ -n "$CI_SHA" && "$CI_SHA" == "$SHA"* ]] || ci_refuse "checks were read for ${CI_SHA:-an unknown head}, not the reviewed head $SHA" "$PENDING_NEXT" 5 ;;
-    LOOM-CHECKS-RED) ci_refuse "a check on $SHA is failing (required or not — an all-CI policy refuses both)" "Nothing was posted. Post changes-requested naming the checks above (loom:ci-failure); if the only failure is an external approval-required workflow, point at the operator rather than the Doctor." 6 ;;
-    LOOM-CHECKS-TIMEOUT) ci_refuse "checks on $SHA are pending (or empty while contexts are required)" "$PENDING_NEXT" 5 ;;
+    LOOM-CHECKS-RED) ci_refuse "a check on $SHA is failing (required or not — an all-CI policy refuses both)" "Nothing was posted. Follow judge.md \"When CI Fails\" / judge-ci-red.md (finished run, named test, flake route) before any changes-requested (loom:ci-failure); if the only failure is an external approval-required workflow, point at the operator rather than the Doctor." 6 ;;
+    LOOM-CHECKS-TIMEOUT|LOOM-CHECKS-NO-RUN) ci_refuse "checks on $SHA are pending (or empty while contexts are required; NO-RUN = no Actions run at all, likely a skip-CI marker, #11389)" "$PENDING_NEXT" 5 ;;
     LOOM-CHECKS-HEAD-MOVED) ci_refuse "the PR head moved during inspection" "$PENDING_NEXT" 5 ;;
     LOOM-CHECKS-ERROR) ci_refuse "the checks could not be read" "$PENDING_NEXT" 5 ;;
     *) ci_refuse "no checks sentinel from '${LOOM_DAEMON_BIN:-loom-daemon} forge wait-checks' (missing daemon, or older than 0.19.707?) — an unread CI state is never green. Run ./.loom/scripts/resync-installed.sh / roll loom-daemon" "$PENDING_NEXT" 5 ;;
@@ -508,7 +541,7 @@ fi
 # the build that merges #10684; no version floor is declared for them, because the
 # capability probe above checks them on the resolved binary. Roll loom-daemon
 # before (or with) these scripts: until then, verdicts take the legacy path.
-VG_RC=0; VG_OUT="$("${LOOM_DAEMON_BIN:-loom-daemon}" forge verdict-gate "$PR" --repo "$REPO" --verdict "$VERDICT" --sha "$SHA" --overrules-prior "$OVERRULE" 2>&1)" || VG_RC=$?  # set -e is on (forge-helpers.sh)
+VG_RC=0; VG_OUT="$("${LOOM_DAEMON_BIN:-loom-daemon}" forge verdict-gate "$PR" --repo "$REPO" --verdict "$VERDICT" --sha "$SHA" --overrules-prior "$OVERRULE" ${REVIEW_STARTED:+--review-started "$REVIEW_STARTED"} ${ISSUE_HASHES[@]+"${ISSUE_HASHES[@]/#/--issue-body-sha=}"} 2>&1)" || VG_RC=$?  # set -e is on (forge-helpers.sh)
 case "$VG_RC:$VG_OUT" in
   "0:LOOM-VERDICT-GATE PROCEED"*) forge_gh_comment_rl_safe "$REPO" "$PR" "$FULL_BODY" 1 || exit 1 ;;
   "10:LOOM-VERDICT-GATE DEDUPE"*) NONCE=""; echo "post-verdict.sh: not posting a duplicate verdict on PR #$PR (applying its labels only): $VG_OUT" >&2 ;;

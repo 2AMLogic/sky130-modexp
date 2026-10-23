@@ -118,9 +118,10 @@ jobs:
     # stale_evidence, the diff goes non-empty, and CI fails instead of
     # letting the committed verdict rot. Tool-light by construction -- the
     # report leg only reads committed JSON envelopes, no PDK, no simulator
-    # -- so it installs its own klt pin (newer than the PDK-heavy legs'
-    # pin, which predates the digital-flow evidence kinds and item 11; see
-    # docs/environment.md -> "Pinned versions").
+    # -- so it installs its own klt pin (klayout-tools git SHA 7755612, newer
+    # than the PDK-heavy legs' pin, which predates the artifact-anchored
+    # evidence for T1 items 1/2/9/10 and the item 6 not_applicable grader;
+    # see docs/environment.md -> "Second klt pin").
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -132,10 +133,13 @@ jobs:
       - name: Install klt at the signoff-report pin
         run: |
           python3 -m pip install --disable-pip-version-check \
-            "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dac2b5daceb69a2068d9d2ee190d7afe37b29af7"
+            "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"
 
       - name: Regenerate and compare the tier report
         run: ./verification/signoff/run-signoff.sh --check
+
+      - name: Check the item 8 characterization envelope and manifest pin
+        run: python3 verification/signoff/gen_characterization_envelope.py --check
 
   guard-hooks:
     name: Loom guard-hook regression suites
@@ -164,8 +168,54 @@ jobs:
           # job exists to close. `set +e` overrides the runner default so
           # every suite runs and each rc is classified explicitly.
           set +e -u -o pipefail
+
+          # Some upstream hook suites cannot pass on this consumer repo's
+          # runners (#185): test-guard-mcp-tools.sh is daemon-backed and
+          # already tracked in upstream's ci-excluded.txt (under
+          # defaults/hooks/tests/), and two more are consumer-layout-skewed
+          # and tracked in the repo-owned supplement. Consult both by
+          # basename so the skip set self-maintains across resyncs; every
+          # skip prints its reason, so the gap shows up in the log.
+          excluded_manifest=.loom/scripts/tests/ci-excluded.txt
+          consumer_skips=.github/ci-suites-consumer-skips.txt
+          if [[ ! -f "$excluded_manifest" ]]; then
+            # Fail loudly rather than fall back to "run everything": without
+            # the manifest there's no record of which suites need a binary.
+            echo "::error::missing $excluded_manifest -- cannot tell which suites are daemon-backed"
+            exit 1
+          fi
+          if [[ ! -f "$consumer_skips" ]]; then
+            echo "::error::missing $consumer_skips -- cannot tell which suites are carved out for this repo"
+            exit 1
+          fi
+          # Same parse as check-ci-suite-manifest.sh's manifest_names(); only
+          # defaults/hooks/tests/ entries can name a suite in this job's glob,
+          # so match those by basename.
+          excluded_hooks=$(sed -E 's/#.*$//' "$excluded_manifest" \
+            | awk '$1 ~ /^defaults\/hooks\/tests\// { n = $1; sub(/.*\//, "", n); print n }')
+          consumer_names=$(sed -E 's/#.*$//' "$consumer_skips" | awk 'NF { print $1 }')
+
           overall_fail=0
+          ran=()
+          skipped=()
           for f in .loom/hooks/tests/*.sh; do
+            name=${f##*/}
+            if grep -qxF -- "$name" <<<"$excluded_hooks"; then
+              # Print the reason verbatim from the manifest, with the
+              # suite name removed (reasons may contain `#NNNN`, so take
+              # the raw line, not the comment-stripped one).
+              reason=$(awk -v n="defaults/hooks/tests/$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$excluded_manifest")
+              echo "SKIPPED (listed in $excluded_manifest): $name -- ${reason:-<no reason given>}"
+              skipped+=("$name")
+              continue
+            elif grep -qxF -- "$name" <<<"$consumer_names"; then
+              reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$consumer_skips")
+              echo "SKIPPED (listed in $consumer_skips): $name -- ${reason:-<no reason given>}"
+              skipped+=("$name")
+              continue
+            fi
+
+            ran+=("$name")
             echo "::group::$f"
             out=$(bash "$f" 2>&1)
             rc=$?
@@ -179,14 +229,28 @@ jobs:
             # deliberate safety feature that reached the vendored hook AFTER
             # those assertions were written, so the suite's own assertions
             # were updated to match and it now passes outright. Every suite
-            # is judged on its exit status alone again -- do not reintroduce
-            # a per-suite tolerance without a tracked issue, since a
-            # carve-out also suppresses that suite's rc entirely.
+            # is judged on its exit status alone again -- the only sanctioned
+            # skip is a whole-suite one, backed by a tracked issue via the
+            # two manifests above (#185); do not reintroduce a per-suite
+            # rc tolerance, since a carve-out also suppresses that suite's
+            # rc entirely.
             if [[ "$rc" -ne 0 ]]; then
               echo "FAILED: $f (exit $rc)"
               overall_fail=1
             fi
           done
+
+          echo
+          echo "Summary: ran ${#ran[@]} suite(s), skipped ${#skipped[@]} suite(s) listed in $excluded_manifest or $consumer_skips"
+          for s in ${skipped[@]+"${skipped[@]}"}; do
+            echo "  not run (daemon-backed or consumer carve-out, see #185): $s"
+          done
+          # Don't let the job go green having run nothing (e.g. a resync
+          # that moves every hook suite into a skip list).
+          if [[ "${#ran[@]}" -eq 0 ]]; then
+            echo "::error::no .loom/hooks/tests/*.sh suite was run -- every one is in a skip list"
+            exit 1
+          fi
           exit "$overall_fail"
 
   merge-pr-suites:
@@ -240,6 +304,18 @@ jobs:
           # Same parse as check-ci-suite-manifest.sh's manifest_names().
           excluded_names=$(sed -E 's/#.*$//' "$excluded_manifest" | awk 'NF { print $1 }')
 
+          # Repo-owned supplement (#185): suites that cannot pass on this
+          # consumer repo's runners but that upstream's manifests cannot
+          # express -- e.g. a daemon-backed suite missing from upstream's
+          # ci-excluded.txt at this resync vintage (#177). Same parsing
+          # idiom, same "fail loudly if absent" guard.
+          consumer_skips=.github/ci-suites-consumer-skips.txt
+          if [[ ! -f "$consumer_skips" ]]; then
+            echo "::error::missing $consumer_skips -- cannot tell which suites are carved out for this repo"
+            exit 1
+          fi
+          consumer_names=$(sed -E 's/#.*$//' "$consumer_skips" | awk 'NF { print $1 }')
+
           overall_fail=0
           ran=()
           skipped=()
@@ -251,6 +327,11 @@ jobs:
               # the raw line, not the comment-stripped one).
               reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$excluded_manifest")
               echo "SKIPPED (listed in $excluded_manifest): $name -- ${reason:-<no reason given>}"
+              skipped+=("$name")
+              continue
+            elif grep -qxF -- "$name" <<<"$consumer_names"; then
+              reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$consumer_skips")
+              echo "SKIPPED (listed in $consumer_skips): $name -- ${reason:-<no reason given>}"
               skipped+=("$name")
               continue
             fi
@@ -269,9 +350,9 @@ jobs:
           done
 
           echo
-          echo "Summary: ran ${#ran[@]} suite(s), skipped ${#skipped[@]} daemon-backed suite(s) listed in $excluded_manifest"
+          echo "Summary: ran ${#ran[@]} suite(s), skipped ${#skipped[@]} suite(s) listed in $excluded_manifest or $consumer_skips"
           for s in ${skipped[@]+"${skipped[@]}"}; do
-            echo "  not run (needs a built loom-daemon): $s"
+            echo "  not run (needs a built loom-daemon, or consumer carve-out per #185): $s"
           done
           # Don't let the job go green having run nothing (e.g. a resync
           # that moves every merge-pr suite into the manifest).

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Test suite for .loom/hooks/skill-router.sh (issue #3609)
+# Test suite for defaults/hooks/skill-router.sh (issue #3609)
 #
-# Usage: ./.loom/hooks/tests/test-skill-router.sh
+# Usage: ./defaults/hooks/tests/test-skill-router.sh
 #
 # Covers the #3609 rework of the UserPromptSubmit routing hook:
 #   - non-matching / short / slash prompts emit NO additionalContext
@@ -12,18 +12,29 @@
 #     with rjwalters/loom") no longer route
 #   - the hook never exits non-zero and never emits invalid JSON
 #
-# The hook + routing config under test are the installed sources at
-# .loom/ (the version-controlled source of truth for a consumer repo),
-# copied into an isolated temp tree so the hook's MAIN_ROOT resolves there
-# (git-common-dir fails outside a repo, so the BASH_SOURCE fallback locates
-# our temp root). Exit code 0 = all tests pass, 1 = failures detected.
+# The hook + routing config under test are the canonical sources at
+# defaults/ (the version-controlled source of truth), copied into an isolated
+# temp tree so the hook's MAIN_ROOT resolves there (git-common-dir fails
+# outside a repo, so the BASH_SOURCE fallback locates our temp root).
+# Exit code 0 = all tests pass, 1 = failures detected.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+# Prefer the installed hook/config (a Loom-installed consumer repo has no
+# defaults/ directory at all); fall back to defaults/ for Loom's own source
+# tree. See issue #6496. DEFAULTS_HOOK/DEFAULTS_CONFIG stay strictly the
+# defaults/ paths -- they back the config-hygiene assertions below (which
+# intentionally police the committed defaults/ source, not whichever copy
+# happens to be installed) and the "defaults/ vs .loom/ sync" diff, which
+# must remain a real cross-copy diff, not a self-diff.
 SRC_HOOK="$REPO_ROOT/.loom/hooks/skill-router.sh"
+[[ -r "$SRC_HOOK" ]] || SRC_HOOK="$REPO_ROOT/defaults/hooks/skill-router.sh"
 SRC_CONFIG="$REPO_ROOT/.loom/config/skill-routes.json"
+[[ -r "$SRC_CONFIG" ]] || SRC_CONFIG="$REPO_ROOT/defaults/config/skill-routes.json"
+DEFAULTS_HOOK="$REPO_ROOT/defaults/hooks/skill-router.sh"
+DEFAULTS_CONFIG="$REPO_ROOT/defaults/config/skill-routes.json"
 
 PASS=0
 FAIL=0
@@ -39,11 +50,11 @@ NC='\033[0m'
 TMPROOT="$(mktemp -d)"
 trap 'rm -rf "$TMPROOT"' EXIT
 git init -q "$TMPROOT"
-mkdir -p "$TMPROOT/.loom/hooks" "$TMPROOT/.loom/config"
-cp "$SRC_HOOK" "$TMPROOT/.loom/hooks/skill-router.sh"
-chmod +x "$TMPROOT/.loom/hooks/skill-router.sh"
+mkdir -p "$TMPROOT/defaults/hooks" "$TMPROOT/.loom/config"
+cp "$SRC_HOOK" "$TMPROOT/defaults/hooks/skill-router.sh"
+chmod +x "$TMPROOT/defaults/hooks/skill-router.sh"
 cp "$SRC_CONFIG" "$TMPROOT/.loom/config/skill-routes.json"
-HOOK="$TMPROOT/.loom/hooks/skill-router.sh"
+HOOK="$TMPROOT/defaults/hooks/skill-router.sh"
 
 # Build stdin JSON. Second arg (session_id) is optional.
 make_input() {
@@ -82,9 +93,6 @@ context_of() {
 
 pass() { PASS=$((PASS + 1)); TOTAL=$((TOTAL + 1)); printf "${GREEN}PASS${NC} %s\n" "$1"; }
 fail() { FAIL=$((FAIL + 1)); TOTAL=$((TOTAL + 1)); printf "${RED}FAIL${NC} %s\n" "$1"; }
-# Not counted toward pass/fail: used when a subtest's precondition (e.g. a
-# defaults/ tree this repo does not have) is unavailable in this environment.
-skip() { echo "  SKIP: $1"; }
 
 assert_no_output() {
     local desc="$1" out="$2"
@@ -272,42 +280,46 @@ for probe in "the weather is quite nice today" "please implement the new feature
     fi
 done
 
-# --- Config hygiene ---------------------------------------------------------
-if jq empty "$SRC_CONFIG" 2>/dev/null; then
-    pass "defaults config is valid JSON"
+# --- Config hygiene (policing the committed defaults/ source; skipped in a
+# bare consumer layout where defaults/ does not exist) -----------------------
+if [[ ! -f "$DEFAULTS_CONFIG" ]]; then
+    echo "SKIP: defaults/config/skill-routes.json not present (bare consumer layout) -- config-hygiene checks not applicable"
 else
-    fail "defaults config is valid JSON"
-fi
+    if jq empty "$DEFAULTS_CONFIG" 2>/dev/null; then
+        pass "defaults config is valid JSON"
+    else
+        fail "defaults config is valid JSON"
+    fi
 
-if grep -q "shepherd" "$SRC_CONFIG"; then
-    fail "dead shepherd route removed from defaults config"
-else
-    pass "dead shepherd route removed from defaults config"
-fi
+    if grep -q "shepherd" "$DEFAULTS_CONFIG"; then
+        fail "dead shepherd route removed from defaults config"
+    else
+        pass "dead shepherd route removed from defaults config"
+    fi
 
-if grep -Eq '"/(shepherd|architect|judge|doctor|hermit|builder|curator|guide|auditor|loom)"' "$SRC_CONFIG"; then
-    fail "no un-namespaced /<role> agents in defaults config"
-else
-    pass "all agents are namespaced /loom:<role> in defaults config"
+    if grep -Eq '"/(shepherd|architect|judge|doctor|hermit|builder|curator|guide|auditor|loom)"' "$DEFAULTS_CONFIG"; then
+        fail "no un-namespaced /<role> agents in defaults config"
+    else
+        pass "all agents are namespaced /loom:<role> in defaults config"
+    fi
 fi
 
 # --- defaults/ vs .loom/ sync (both hook and config) ------------------------
 DEPLOY_HOOK="$REPO_ROOT/.loom/hooks/skill-router.sh"
 DEPLOY_CONFIG="$REPO_ROOT/.loom/config/skill-routes.json"
-if [[ -d "$REPO_ROOT/defaults" ]]; then
-    if [[ -f "$DEPLOY_HOOK" ]] && diff -q "$SRC_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
-        pass ".loom/ hook byte-identical to defaults/"
-    else
-        fail ".loom/ hook byte-identical to defaults/"
-    fi
-    if [[ -f "$DEPLOY_CONFIG" ]] && diff -q "$SRC_CONFIG" "$DEPLOY_CONFIG" >/dev/null 2>&1; then
-        pass ".loom/ config byte-identical to defaults/"
-    else
-        fail ".loom/ config byte-identical to defaults/"
-    fi
+if [[ ! -f "$DEFAULTS_HOOK" ]]; then
+    echo "SKIP: defaults/hooks/skill-router.sh not present (bare consumer layout) -- sync check not applicable"
+elif [[ -f "$DEPLOY_HOOK" ]] && diff -q "$DEFAULTS_HOOK" "$DEPLOY_HOOK" >/dev/null 2>&1; then
+    pass ".loom/ hook byte-identical to defaults/"
 else
-    skip ".loom/ hook byte-identical to defaults/ (no defaults/ tree in this repo)"
-    skip ".loom/ config byte-identical to defaults/ (no defaults/ tree in this repo)"
+    fail ".loom/ hook byte-identical to defaults/"
+fi
+if [[ ! -f "$DEFAULTS_CONFIG" ]]; then
+    echo "SKIP: defaults/config/skill-routes.json not present (bare consumer layout) -- sync check not applicable"
+elif [[ -f "$DEPLOY_CONFIG" ]] && diff -q "$DEFAULTS_CONFIG" "$DEPLOY_CONFIG" >/dev/null 2>&1; then
+    pass ".loom/ config byte-identical to defaults/"
+else
+    fail ".loom/ config byte-identical to defaults/"
 fi
 
 echo "=== $PASS/$TOTAL passed ==="

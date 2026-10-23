@@ -21,6 +21,7 @@ Exit codes: 0 all cases behave as specified, 1 at least one did not.
 
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -34,6 +35,8 @@ REPO_ROOT = SCRIPT_DIR.parent
 CHECKER = SCRIPT_DIR / "check_pins.py"
 SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
+SIGNOFF_REL = Path("verification/signoff/run-signoff.sh")
+CI_REL = Path(".github/workflows/ci.yml")
 
 
 def _pin(name: str) -> str:
@@ -44,8 +47,11 @@ def _pin(name: str) -> str:
     return m.group(1)
 
 
+SIGNOFF_SHA = re.search(
+    r'^SIGNOFF_KLT_SHA="([0-9a-f]{40})"', (REPO_ROOT / SIGNOFF_REL).read_text(encoding="utf-8"), re.MULTILINE
+).group(1)
 KLT_REV = _pin("KLT_REV")
-VOLARE = _pin("VOLARE_SKY130_VERSION")
+CIEL_REV = _pin("CIEL_SKY130_VERSION")
 YW_VER = _pin("YOWASP_YOSYS_VERSION")
 YW_SHA = _pin("YOWASP_YOSYS_WASM_SHA256")
 FAKE_REV = "0123456789abcdef0123456789abcdef01234567"
@@ -105,6 +111,14 @@ def _both(*muts: Mutation) -> Mutation:
     return apply
 
 
+def _mut_file(rel: Path, fn: Callable[[str], str]) -> Mutation:
+    def apply(root: Path) -> None:
+        p = root / rel
+        p.write_text(fn(p.read_text(encoding="utf-8")), encoding="utf-8")
+
+    return apply
+
+
 def _frozen_artifact(root: Path) -> None:
     art = root / "verification/records/x/artifacts/20260101-000000-abc1234"
     art.mkdir(parents=True)
@@ -124,18 +138,52 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
         "KLT_REV=",
     ),
     (
-        "VOLARE_SKY130_VERSION bumped in doc table only",
-        _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(VOLARE, FAKE_REV))),
+        "CIEL_SKY130_VERSION bumped in doc table only",
+        _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(CIEL_REV, FAKE_REV))),
         1,
-        "VOLARE_SKY130_VERSION=",
+        "CIEL_SKY130_VERSION=",
     ),
     (
-        "KLT_REV left stale in one table row (signoff-report leg)",
+        "KLT_REV left stale in one table row (evidence leg)",
         _mut_doc(
-            lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff", lambda ln: ln.replace(KLT_REV, FAKE_REV))
+            lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, FAKE_REV))
         ),
         1,
         "stale or unsynced pin",
+    ),
+    (
+        "signoff-leg doc row stale (SIGNOFF_KLT_SHA bumped in run-signoff.sh only)",
+        _mut_file(SIGNOFF_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+        1,
+        "signoff-leg row names",
+    ),
+    (
+        "signoff-leg doc row bumped, run-signoff.sh and ci.yml left",
+        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff-report leg)", lambda ln: ln.replace(SIGNOFF_SHA, FAKE_REV))),
+        1,
+        "signoff-leg row names",
+    ),
+    (
+        "ci.yml signoff install SHA stale",
+        _mut_file(CI_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+        1,
+        "no klayout-tools install at SIGNOFF_KLT_SHA",
+    ),
+    (
+        "evidence-leg row must not accept the signoff SHA",
+        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, SIGNOFF_SHA))),
+        1,
+        "stale or unsynced pin",
+    ),
+    (
+        "positive: consistent re-pin of the signoff leg in all three places passes",
+        _both(
+            _mut_file(SIGNOFF_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+            _mut_file(CI_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+            _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff-report leg)", lambda ln: ln.replace(SIGNOFF_SHA, FAKE_REV))),
+        ),
+        0,
+        None,
     ),
     (
         "YOWASP_YOSYS_VERSION bumped in script only",
@@ -231,7 +279,7 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
 def run_case(mutation: Mutation) -> tuple[int, str]:
     with tempfile.TemporaryDirectory(prefix="check-pins-selftest-") as tmp:
         root = Path(tmp)
-        for rel in (SCRIPT_REL, DOC_REL):
+        for rel in (SCRIPT_REL, DOC_REL, SIGNOFF_REL, CI_REL):
             (root / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO_ROOT / rel, root / rel)
         mutation(root)
@@ -243,6 +291,34 @@ def run_case(mutation: Mutation) -> tuple[int, str]:
         return res.returncode, res.stdout + res.stderr
 
 
+def run_nested_copy_case() -> tuple[bool, str]:
+    """The checker copied one directory deeper (a vendored `common/` copy),
+    run with no `--repo-root`, must check the enclosing git repo; and
+    `$REPO_ROOT` must override that."""
+    with tempfile.TemporaryDirectory(prefix="check-pins-selftest-") as tmp:
+        root = Path(tmp)
+        for rel in (SCRIPT_REL, DOC_REL, SIGNOFF_REL, CI_REL):
+            (root / rel).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(REPO_ROOT / rel, root / rel)
+        (root / "common").mkdir()
+        nested = root / "common" / "check_pins.py"
+        shutil.copyfile(CHECKER, nested)
+        subprocess.run(["git", "init", "--quiet", str(root)], check=True)
+        env = {k: v for k, v in os.environ.items() if k != "REPO_ROOT"}
+        res = subprocess.run([sys.executable, str(nested)], capture_output=True, text=True, env=env, cwd=tmp)
+        out = res.stdout + res.stderr
+        if res.returncode != 0 or "PASS" not in out:
+            return False, f"nested copy did not check the enclosing repo (exit {res.returncode}): {out.strip()}"
+        # Override beats git: an empty root has no setup-env.sh -> exit 2.
+        empty = root / "empty"
+        empty.mkdir()
+        env["REPO_ROOT"] = str(empty)
+        res = subprocess.run([sys.executable, str(nested)], capture_output=True, text=True, env=env, cwd=tmp)
+        if res.returncode != 2:
+            return False, f"REPO_ROOT override ignored (exit {res.returncode}, want 2)"
+    return True, ""
+
+
 def main() -> int:
     failures = 0
     for name, mutation, want_rc, want_text in CASES:
@@ -252,7 +328,12 @@ def main() -> int:
         if not ok:
             failures += 1
             print("  checker output:\n    " + out.strip().replace("\n", "\n    "))
-    total = len(CASES)
+    ok, why = run_nested_copy_case()
+    print(f"{'PASS' if ok else 'FAIL'}: nested copy resolves the repo root via git; REPO_ROOT overrides")
+    if not ok:
+        failures += 1
+        print("  " + why)
+    total = len(CASES) + 1
     print(f"test_check_pins: {total - failures}/{total} cases behave as specified")
     return 1 if failures else 0
 

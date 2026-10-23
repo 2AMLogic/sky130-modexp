@@ -74,6 +74,14 @@ scripts/tests/ci-excluded.txt
 #   Both carry the "prior-marker read must be COMPLETE" and "Confirm under the
 #   claim" rules; pinning only one would leave the other reverted and the two
 #   copies silently disagreeing about the claim protocol.
+#   2am#4345 (2026-10-14): both copies had their retired-label usage
+#   (loom:operator-only + sub-kinds, loom:operator-priority, tier:*) collapsed
+#   the way upstream did (#11103/#11795/#11861): "Routing to a human" replaces
+#   the sub-kind section, Priority 0 reads loom:very-important/loom:important,
+#   and the retired "Checking Operator-Only Premises" / "De-escalating
+#   Fact-Based Champion Escalations" procedures give way to upstream's
+#   "Operator-held issues: no Curator action". The #154 rules above are kept
+#   on the dep-recheck path they still govern.
 roles/curator.md
 commands/loom/curator.md
 
@@ -85,5 +93,10 @@ commands/loom/curator.md
 # to the installed tree stay denied. Tracking: 2AMLogic/sky130-modexp#158;
 # upstream report rjwalters/loom#9154 (still open, no fix in defaults/ as of
 # the #172 audit). No upstream PR yet -- remove this pin once the fix lands.
+# #182: because this file is pinned it does NOT track upstream, and had fallen
+# behind the (resync-refreshed) test-guard-forge-egress.sh suite. The upstream
+# `forge egress guard` block (issue #9989) was ported in verbatim from
+# rjwalters/loom defaults/ v0.19.1055; the #158 patch is untouched. Any later
+# upstream change to this hook must be ported by hand until the pin is retired.
 hooks/guard-loom-workflow.sh
 hooks/tests/test-guard-installed-write-cd-tracking.sh
