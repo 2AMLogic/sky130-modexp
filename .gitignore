@@ -37,6 +37,9 @@ results_icarus.xml
 # paths (klt.functional_verification.request/1 has no PDK block). The links
 # point outside the repo and are recreated on every run -- never committed.
 verification/gate-level/pdk-*.v
+# verification/cross_check.py --mint-record stages evidence bytes here for
+# `klt artifact put`; the bytes live in the artifact store, never in git.
+.artifact-staging/
 # >>> loom-managed (do not edit) >>>
 # Loom runtime state (don't commit these)
 .loom-in-use

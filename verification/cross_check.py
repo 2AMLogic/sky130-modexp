@@ -33,7 +33,10 @@ Usage:
     python3 verification/cross_check.py --mint-record
         Also write a new append-only evidence record under
         `verification/records/width-cross-check/` (see
-        `verification/README.md` for the record convention). Only do this
+        `verification/README.md` for the record convention). The per-WIDTH
+        transcripts go to the artifact store (`klt artifact put`) and only
+        a manifest under `manifests/artifacts/` is committed; fails closed
+        (nonzero, nothing written) if the store is unavailable. Only do this
         deliberately -- do not wire --mint-record into CI, which would mint
         a new record on every PR.
 """
@@ -62,8 +65,12 @@ DEFAULT_CASES = 500
 # without minting a fresh record -- it is what makes reruns reproduce the
 # same vectors documented in docs/baseline.md.
 PINNED_BASE_SEED = 20260807
+# Git-ignored scratch dir where --mint-record stages bytes for `klt artifact put`.
+ARTIFACT_STAGING_DIR = ".artifact-staging"
 
 sys.path.insert(0, str(SCRIPT_DIR))
+
+from artifact_store import ArtifactStoreError, store_files  # noqa: E402
 
 
 def _require_cocotb() -> None:
@@ -177,16 +184,32 @@ def run_width(width: int, cases: int, seed: int, build_root: Path) -> dict:
 
 
 def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
-    """Copy this run's transcripts into verification/records/width-cross-check/
-    and write a new append-only .md record. Returns the record's path."""
+    """Store this run's transcripts in the artifact store, write a
+    manifest under manifests/artifacts/, and write a new append-only .md
+    record linking it. Raises `ArtifactStoreError` (writing nothing) if the
+    store is unavailable -- raw bytes are never committed. Returns the
+    record's path."""
     now = datetime.datetime.now(datetime.timezone.utc)
     short_sha = _git_revision()[:7]
     record_id = f"{now:%Y%m%d-%H%M%S}-{short_sha}"
 
     experiment_dir = REPO_ROOT / "verification" / "records" / "width-cross-check"
-    artifacts_dir = experiment_dir / "artifacts" / record_id
     records_dir = experiment_dir / "records"
-    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    manifest_rel = f"manifests/artifacts/width-cross-check-{record_id}.manifest.json"
+
+    # Stage in the git-ignored scratch dir, store, and only then write
+    # anything tracked: a store failure leaves no manifest and no record.
+    staging = REPO_ROOT / ARTIFACT_STAGING_DIR / record_id
+    staging.mkdir(parents=True, exist_ok=True)
+    try:
+        staged = []
+        for summary in run_summaries:
+            dest = staging / summary["transcript_path"].name
+            shutil.copyfile(summary["transcript_path"], dest)
+            staged.append((dest, f"width-cross-check/{record_id}/{dest.name}"))
+        entries = store_files(staged, REPO_ROOT / manifest_rel)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
     records_dir.mkdir(parents=True, exist_ok=True)
 
     input_hashes = [
@@ -196,10 +219,6 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
             "content_hash": sha256_of(TESTBENCH_SOURCE),
         },
     ]
-
-    for summary in run_summaries:
-        dest = artifacts_dir / summary["transcript_path"].name
-        shutil.copyfile(summary["transcript_path"], dest)
 
     total_cases = sum(s["cases"] for s in run_summaries)
     total_mismatches = sum(s["mismatches"] for s in run_summaries)
@@ -224,9 +243,8 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
         for s in run_summaries
     )
     links_lines = "\n".join(
-        f"    - `verification/records/width-cross-check/artifacts/{record_id}/"
-        f"width-{s['width']}.jsonl`"
-        for s in run_summaries
+        f"    - `{e['name']}`: {e['size']} bytes, sha256 `{e['sha256']}`"
+        for e in entries
     )
 
     body = f"""<!-- record-meta
@@ -259,7 +277,9 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
   - Driver: `verification/cross_check.py`
   - Testbench: `verification/cross_check_tb.py`
   - Design under test: `rtl/modexp.v`
-  - Transcripts:
+  - Artifact manifest: `{manifest_rel}` (bytes in the artifact store,
+    verify with `klt artifact verify`)
+  - Transcripts (name, size, sha256):
 {links_lines}
 - **Timestamp / author**: {now.strftime("%Y-%m-%dT%H:%M:%SZ")}, loom-builder (issue #5)
 - **Supersedes**: none
@@ -385,7 +405,11 @@ def main() -> int:
         print("RESULT:", "PASS" if overall_ok else "FAIL")
 
         if overall_ok and args.mint_record:
-            record_path = mint_record(summaries, tool_versions)
+            try:
+                record_path = mint_record(summaries, tool_versions)
+            except ArtifactStoreError as exc:
+                print(f"\nFATAL: no record minted -- {exc}", file=sys.stderr)
+                return 1
             print(f"\nMinted record: {record_path.relative_to(REPO_ROOT)}")
     finally:
         if keep_build:
