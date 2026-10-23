@@ -25,6 +25,13 @@ Checks, all pure text -- no network, no PDK, no tools:
    but left stale in another -- fails here. Rows whose component is pinned
    somewhere other than `scripts/setup-env.sh` (`EXTERNALLY_PINNED_ROWS`)
    are exempt from this direction only.
+4. The signoff-report-leg `klayout-tools` row is a separate pin from
+   `KLT_REV`. Its SHA must equal `SIGNOFF_KLT_SHA` in
+   `verification/signoff/run-signoff.sh`, and every
+   `klayout-tools @ git+...@<sha>` install in `.github/workflows/ci.yml`
+   must name `SIGNOFF_KLT_SHA` or `KLT_REV`, with `SIGNOFF_KLT_SHA` present
+   (the three-way sync, issue #218). The row is exempt from check 3 only for
+   that SHA; the evidence-leg row stays checked against `KLT_REV`.
 
 Deliberately OUT of scope: frozen evidence artifacts that restate a pin,
 e.g. the `rerun-pinned-synthesis.sh` scripts under
@@ -67,6 +74,11 @@ def default_repo_root() -> Path | None:
 
 SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
+SIGNOFF_REL = Path("verification/signoff/run-signoff.sh")
+CI_REL = Path(".github/workflows/ci.yml")
+SIGNOFF_ROW_MARK = "signoff-report leg"
+SIGNOFF_ASSIGN = re.compile(r'^SIGNOFF_KLT_SHA="([0-9a-f]{40})"', re.MULTILINE)
+CI_KLT_INSTALL = re.compile(r"klayout-tools @ git\+\S*?@([0-9a-f]{40})")
 
 REQUIRED_PINS = (
     "KLT_REV",
@@ -150,7 +162,9 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
     """Return (errors, notes). Raises ParseError on structural problems."""
     script_path = repo_root / SCRIPT_REL
     doc_path = repo_root / DOC_REL
-    for p in (script_path, doc_path):
+    signoff_path = repo_root / SIGNOFF_REL
+    ci_path = repo_root / CI_REL
+    for p in (script_path, doc_path, signoff_path, ci_path):
         if not p.is_file():
             raise ParseError(f"missing file: {p.relative_to(repo_root)}")
 
@@ -175,10 +189,37 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
         else:
             notes.append(f"ok: {name} = {value}")
 
+    m = SIGNOFF_ASSIGN.search(signoff_path.read_text(encoding="utf-8"))
+    if not m:
+        raise ParseError(f"{SIGNOFF_REL}: no SIGNOFF_KLT_SHA=\"<40 hex>\" assignment")
+    signoff_sha = m.group(1)
+    signoff_rows = [r for r in rows if SIGNOFF_ROW_MARK in _first_cell(r)]
+    if len(signoff_rows) != 1:
+        errors.append(
+            f"{DOC_REL}: expected exactly one '{SIGNOFF_ROW_MARK}' klayout-tools row, found {len(signoff_rows)}"
+        )
+    for row in signoff_rows:
+        toks = set(HEX_TOKEN.findall(row))
+        if toks != {signoff_sha}:
+            errors.append(
+                f"{DOC_REL}: signoff-leg row names {sorted(toks)}, but {SIGNOFF_REL} "
+                f"pins SIGNOFF_KLT_SHA={signoff_sha}"
+            )
+        else:
+            notes.append(f"ok: SIGNOFF_KLT_SHA = {signoff_sha}")
+    ci_shas = CI_KLT_INSTALL.findall(ci_path.read_text(encoding="utf-8"))
+    if signoff_sha not in ci_shas:
+        errors.append(f"{CI_REL}: no klayout-tools install at SIGNOFF_KLT_SHA={signoff_sha} (from {SIGNOFF_REL})")
+    for sha in sorted(set(ci_shas)):
+        if sha != signoff_sha and sha != pins.get("KLT_REV"):
+            errors.append(
+                f"{CI_REL}: klayout-tools install at {sha} matches neither SIGNOFF_KLT_SHA nor KLT_REV (stale or unsynced pin)"
+            )
+
     pin_values = set(pins.values())
     for row in rows:
         component = _first_cell(row)
-        if component.startswith(EXTERNALLY_PINNED_ROWS):
+        if component.startswith(EXTERNALLY_PINNED_ROWS) or SIGNOFF_ROW_MARK in component:
             continue
         for tok in sorted(set(HEX_TOKEN.findall(row))):
             if tok not in pin_values:

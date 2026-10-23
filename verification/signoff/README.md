@@ -34,8 +34,9 @@ duplicating it.
   doc; the CI `--check` leg fails until the report is regenerated.
 - `tier-report.json` — the committed output of `klt signoff --manifest
   block-manifest.json --tiers-doc design-evidence-tiers.md --format json`
-  on the signoff-leg klt pin (`klayout-tools==0.7.0`). Regenerate with
-  `KLT=<path to a 0.7.0 klt> ./run-signoff.sh`.
+  on the signoff-leg klt pin (klayout-tools git SHA `7755612adb51…`, see
+  `docs/environment.md`). Regenerate with
+  `KLT=<path to a klt built from that SHA> ./run-signoff.sh`.
 - `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 8, 9,
   10 and the audit records they are bound to. Item 8's envelope is generated,
   not hand-edited: `python3 gen_characterization_envelope.py` rewrites it and
@@ -48,7 +49,7 @@ duplicating it.
   spec. `run-signoff.sh` fails if the spec, index and statement disagree. Not
   yet cited by the manifest — see the item 6 row below.
 - `run-signoff.sh` — the runner (and the `--check` gate CI runs). Uses `$KLT`,
-  else `klt` on `PATH`, and refuses any version other than 0.7.0 (the
+  else `klt` on `PATH`, and refuses any build not made from the pinned SHA (the
   PDK-heavy legs' `.venv` klt is an older pin).
 
 ## Current verdict (2026-10-17, this manifest)
@@ -167,8 +168,8 @@ Full record: `verification/records/sta-corner-sweep/records/20260923-093000-28a7
 ## Running it
 
 ```bash
-# needs klayout-tools==0.7.0, e.g. a throwaway venv:
-#   uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools==0.7.0"
+# needs klayout-tools at the pinned SHA (SIGNOFF_KLT_SHA in run-signoff.sh), e.g. a throwaway venv:
+#   uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"
 KLT=/tmp/v/bin/klt ./verification/signoff/run-signoff.sh          # regenerate tier-report.json
 KLT=/tmp/v/bin/klt ./verification/signoff/run-signoff.sh --check  # what CI runs
 ```

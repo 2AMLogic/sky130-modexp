@@ -35,6 +35,8 @@ REPO_ROOT = SCRIPT_DIR.parent
 CHECKER = SCRIPT_DIR / "check_pins.py"
 SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
+SIGNOFF_REL = Path("verification/signoff/run-signoff.sh")
+CI_REL = Path(".github/workflows/ci.yml")
 
 
 def _pin(name: str) -> str:
@@ -45,6 +47,9 @@ def _pin(name: str) -> str:
     return m.group(1)
 
 
+SIGNOFF_SHA = re.search(
+    r'^SIGNOFF_KLT_SHA="([0-9a-f]{40})"', (REPO_ROOT / SIGNOFF_REL).read_text(encoding="utf-8"), re.MULTILINE
+).group(1)
 KLT_REV = _pin("KLT_REV")
 CIEL_REV = _pin("CIEL_SKY130_VERSION")
 YW_VER = _pin("YOWASP_YOSYS_VERSION")
@@ -106,6 +111,14 @@ def _both(*muts: Mutation) -> Mutation:
     return apply
 
 
+def _mut_file(rel: Path, fn: Callable[[str], str]) -> Mutation:
+    def apply(root: Path) -> None:
+        p = root / rel
+        p.write_text(fn(p.read_text(encoding="utf-8")), encoding="utf-8")
+
+    return apply
+
+
 def _frozen_artifact(root: Path) -> None:
     art = root / "verification/records/x/artifacts/20260101-000000-abc1234"
     art.mkdir(parents=True)
@@ -137,6 +150,40 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
         ),
         1,
         "stale or unsynced pin",
+    ),
+    (
+        "signoff-leg doc row stale (SIGNOFF_KLT_SHA bumped in run-signoff.sh only)",
+        _mut_file(SIGNOFF_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+        1,
+        "signoff-leg row names",
+    ),
+    (
+        "signoff-leg doc row bumped, run-signoff.sh and ci.yml left",
+        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff-report leg)", lambda ln: ln.replace(SIGNOFF_SHA, FAKE_REV))),
+        1,
+        "signoff-leg row names",
+    ),
+    (
+        "ci.yml signoff install SHA stale",
+        _mut_file(CI_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+        1,
+        "no klayout-tools install at SIGNOFF_KLT_SHA",
+    ),
+    (
+        "evidence-leg row must not accept the signoff SHA",
+        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, SIGNOFF_SHA))),
+        1,
+        "stale or unsynced pin",
+    ),
+    (
+        "positive: consistent re-pin of the signoff leg in all three places passes",
+        _both(
+            _mut_file(SIGNOFF_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+            _mut_file(CI_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+            _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff-report leg)", lambda ln: ln.replace(SIGNOFF_SHA, FAKE_REV))),
+        ),
+        0,
+        None,
     ),
     (
         "YOWASP_YOSYS_VERSION bumped in script only",
@@ -232,7 +279,7 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
 def run_case(mutation: Mutation) -> tuple[int, str]:
     with tempfile.TemporaryDirectory(prefix="check-pins-selftest-") as tmp:
         root = Path(tmp)
-        for rel in (SCRIPT_REL, DOC_REL):
+        for rel in (SCRIPT_REL, DOC_REL, SIGNOFF_REL, CI_REL):
             (root / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO_ROOT / rel, root / rel)
         mutation(root)
@@ -250,7 +297,7 @@ def run_nested_copy_case() -> tuple[bool, str]:
     `$REPO_ROOT` must override that."""
     with tempfile.TemporaryDirectory(prefix="check-pins-selftest-") as tmp:
         root = Path(tmp)
-        for rel in (SCRIPT_REL, DOC_REL):
+        for rel in (SCRIPT_REL, DOC_REL, SIGNOFF_REL, CI_REL):
             (root / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO_ROOT / rel, root / rel)
         (root / "common").mkdir()
