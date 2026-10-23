@@ -235,6 +235,37 @@ verification/records/
   deferral, rather than as an unevidenced assertion that "we looked into
   it".
 
+## Artifact store (manifest-forward evidence)
+
+New run evidence keeps its raw bytes out of git. Bytes go to the fleet
+artifact store with `klt artifact put`; git keeps a manifest under
+`manifests/artifacts/<experiment>-<record-id>.manifest.json` (name, size,
+sha256, `artifact:` URI per object) plus the record `.md`. Evidence bytes are
+private and manifests are public, so a manifest is safe to commit.
+
+- `python3 verification/cross_check.py --mint-record` does this itself for
+  the `width-cross-check` transcripts: it stages them in the git-ignored
+  `.artifact-staging/`, stores them, writes the manifest, and only then writes
+  the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is unset, `klt`
+  lacks `artifact put`, or the broker is unreachable, it exits nonzero and
+  writes no manifest and no record. There is no fallback to committing bytes.
+- **Hand-run legs** (`flow/run-*.sh`, `verification/gate-level/run-gate-level-sim.sh`,
+  `klt drc` / `klt lvs`): do not copy raw outputs into `artifacts/<record-id>/`
+  for a new record. Instead, from a fleet worker:
+  1. keep the outputs in an ignored scratch directory
+     (`.artifact-staging/<record-id>/`);
+  2. `klt artifact put --manifest manifests/artifacts/<experiment>-<record-id>.manifest.json --name <experiment>/<record-id>/<file> <file>...`
+     (one `--name` per single-file call);
+  3. `klt artifact verify <manifest>` must exit 0;
+  4. commit only the manifest and the record `.md`, and cite the manifest and
+     each object's name, size and sha256 in the record's **Links**.
+- `python3 verification/check_artifact_manifests.py` (part of `npm run lint`)
+  validates every manifest: v1 schema, `artifact:` URIs only, no `s3://`,
+  `arn:aws:` or `http(s)://` strings (the broker URL is never written into
+  the repo), and no tracked file whose sha256 matches a manifest entry.
+- Manifest-forward only: evidence already under `artifacts/` and the living
+  signoff reports under `layout/` stay where they are (append-only).
+
 ## Record format
 
 Each record is a markdown file, `records/<record-id>.md`, with two parts:
