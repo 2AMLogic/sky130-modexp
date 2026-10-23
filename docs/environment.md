@@ -41,7 +41,7 @@ source .venv/bin/activate
 | Component | Pinned to | Resolved via |
 |---|---|---|
 | `klayout-tools` (`klt`) | git revision [`36956c68878052af63bc4e003877f92eb3fb973b`](https://github.com/2AMLogic/klayout-tools/commit/36956c68878052af63bc4e003877f92eb3fb973b) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@36956c68878052af63bc4e003877f92eb3fb973b"` (what `scripts/setup-env.sh` runs) |
-| `klayout-tools` (`klt`, signoff-report leg) | PyPI release `klayout-tools==0.7.0` (2026-10-08, tag `v0.7.0`) | `pip install "klayout-tools==0.7.0"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any other version (issue #165). This is deliberately **not** the pin above: the evidence legs are on their own (different) revision, see "Second klt pin" below |
+| `klayout-tools` (`klt`, signoff-report leg) | git revision [`7755612adb513f00ec61e7a77ff7091aee7630f5`](https://github.com/2AMLogic/klayout-tools/commit/7755612adb513f00ec61e7a77ff7091aee7630f5) (merge commit of klayout-tools PR #3200; reports as `klt 0.7.1.dev1312+g7755612adb51`) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any build not made from this SHA (issues #165, #218). This is deliberately **not** the pin above: the evidence legs are on their own (different) revision, see "Second klt pin" below |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
 | `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr -l sky130_fd_sc_hd f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision or `libs.ref/sky130_fd_sc_hd` is absent) |
@@ -177,9 +177,8 @@ minted; existing records stay as produced at `dac2b5da`. Note that
 `klt place-and-route --help` does not list corners: the capability is the
 request field `pdk.rebuild_corners`, documented in the tool's
 `docs/cli/place-and-route.md`. The **signoff-leg pin did not move**
-(`klayout-tools==0.7.0` stays, see "Second klt pin" below): that leg reads
-committed envelopes only and `run-signoff.sh --check` still matches the
-committed `tier-report.json` at 0.7.0. Moving it to the evidence pin would
+(it has its own SHA, see "Second klt pin" below): that leg reads
+committed envelopes only. Moving it to the evidence pin would
 mean re-minting records, which stays #199/#201's decision.
 
 **Yosys/ABC build identity is pinned as of issue #143, and by content, not
@@ -195,11 +194,11 @@ reproducible are in "Yosys and the embedded ABC build" below.
 host — it does not vendor them (`yosys` is the exception: `scripts/setup-env.sh`
 now provisions it into `.venv` at the pin above). Those are:
 
-**Second klt pin, signoff-report leg only (issue #130; moved to 0.7.0 by issue #165, 2026-10-08).** The
+**Second klt pin, signoff-report leg only (issue #130; moved to 0.7.0 by issue #165, 2026-10-08; moved to a git SHA by issue #218, 2026-10-23).** The
 row above pins the klt that **produces evidence** (the PDK-heavy legs whose
 records cite the pin in their `provenance`). The `klt signoff --manifest`
-report leg (`verification/signoff/`) carries its own, newer pin: PyPI
-`klayout-tools==0.7.0`. History: `dac2b5da` (2026-09-23) added `klt sta` /
+report leg (`verification/signoff/`) carries its own, newer pin: klayout-tools
+git revision `7755612adb513f00ec61e7a77ff7091aee7630f5`. History: `dac2b5da` (2026-09-23) added `klt sta` /
 `klt functional-verification` envelope recognition in tier-verdict mode
 (klayout-tools#1959), the items-3/4 kind restrictions (#1987) and the eleventh
 T1 item (#2025). 0.7.0 adds artifact-anchored `generic` evidence for T1 items
@@ -210,11 +209,21 @@ bind those four items to anything topical. The report leg re-runs no PDK job
 — it only reads committed JSON envelopes — so bumping **its** pin does not
 invalidate any evidence record and requires only regenerating
 `verification/signoff/tier-report.json`
-(`KLT=<a 0.7.0 klt> ./verification/signoff/run-signoff.sh`); the CI `signoff`
+(`KLT=<a klt built from the pinned SHA> ./verification/signoff/run-signoff.sh`); the CI `signoff`
 job's `--check` fails until that regeneration is committed. The two pins
 intentionally remain separate: converging them means re-minting the DRC/LVS/P&R records
 against the newer tool (the "re-pin ⇒ mint fresh records" rule above), which
 is the evidence legs' own decision to make, not the report leg's.
+
+**Why the signoff pin is a SHA, not a release (issue #218).** The grader that
+accepts a `not_applicable` outcome for T1 item 6 (klayout-tools#2865, PR #3200)
+is not in any PyPI or GitHub release (`v0.7.0` predates it), so no release pin
+can express it. `7755612adb513f00ec61e7a77ff7091aee7630f5` is the merge commit of PR #3200, the smallest commit
+containing it. Verified at the pin in a throwaway venv: `klt signoff
+--describe-grader --format json` lists `"not_applicable_items": {"6":
+["digital"]}`. **Going back to a release:** once a klayout-tools release
+contains PR #3200, replace the SHA with that release in `run-signoff.sh`,
+`ci.yml` and the row above, and regenerate `tier-report.json`.
 
 | Tool | Used for | Resolved version on the environment these records were produced on |
 |---|---|---|
