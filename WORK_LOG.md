@@ -3,6 +3,72 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-23
+
+- **Issue #220** (closed): Remove docs/issue-54-decomposition.md: finished, unreferenced process note
+- **Issue #218** (closed): Move the signoff-report klt pin off PyPI 0.7.0 to a git SHA with the item 6 not_applicable grader, unblocking #204
+- **Issue #217** (closed): Bump the evidence-leg klt pin (KLT_REV) past klayout-tools PR #3605 so #201 can submit the 18-corner rebuild to the batch fleet
+- **Issue #216** (closed): Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
+- **PR #223**: docs: remove finished issue-54 decomposition note
+- **PR #222**: build: pin signoff-report klt to the SHA with the item 6 not_applicable grader
+- **PR #221**: build: bump evidence-leg klt pin to klayout-tools#3605 merge commit
+- **PR #219**: feat(verification): keep new run evidence bytes in the artifact store, commit manifests
+
+### 2026-10-21
+
+- **Issue #214** (closed): CI red on main: test-guard-installed-file-writes.sh classifies checkout as 'consumer' after v0.19.1201 resync
+- **PR #215**: ci: skip layout-bound guard installed-file-writes suite in consumer CI
+- **PR #213**: Bump Repo Skills 0.24.3 -> 0.24.7
+- **PR #181**: fix(ci): repair Loom guard-hook regression suites (#180)
+
+### 2026-10-20
+
+- **Issue #193** (closed): setup-env.sh enables only sky130_fd_pr, so a fresh provision cannot run klt synthesize (no sky130_fd_sc_hd)
+- **PR #197**: fix(setup-env): fetch sky130_fd_sc_hd and fail when it is missing
+
+### 2026-10-17
+
+- **Issue #206** (closed): Bump the evidence-leg klt pin (KLT_REV) past klayout-tools#3443 and #3550 to unblock #199 (T1 item 7) and #201
+- **Issue #205** (closed): T1 item 8: aggregated characterization report (Fmax, area, power across corners) with a generated generic envelope
+- **Issue #199** (closed): Gate-level SDF leg (T1 item 7) is blocked at open_pdks f6eeac7: klt rejects an interleaved SDF warning
+- **PR #212**: feat(flow): resolve repo root via git and take design name from DESIGN for vendored reuse
+- **PR #210**: feat(verification): record annotated SDF gate-level pass at open_pdks f6eeac7
+- **PR #209**: feat(signoff): add hash-bound item 6 not_applicable statement and spec-drift guard
+- **PR #208**: chore(env): bump evidence-leg KLT_REV to 36956c6
+- **PR #207**: feat(signoff): add T1 item 8 characterization report with generated envelope
+
+### 2026-10-16
+
+- **Issue #194** (closed): Committed layout/lvs abstracted extraction is not reproducible with the pinned klt (power_connectivity match depends on it)
+- **Issue #191** (closed): Re-qualify PDK-dependent evidence records under open_pdks f6eeac7 (split from #190)
+- **PR #203**: Bump Repo Skills 0.24.1 -> 0.24.3
+- **PR #202**: verification: regenerate layout/lvs with the pinned klt; power_connectivity recorded as measured mismatch
+
+### 2026-10-15
+
+- **Issue #195** (closed): docs/baseline.md and flow/README.md say synthesis reproduces 682 cells; pinned toolchain gives 717
+- **Issue #190** (closed): Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3
+- **Issue #180** (closed): CI red on main: Loom guard-hook regression suites fail (4 suites), blocking merges
+- **Issue #165** (closed): T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence)
+- **PR #200**: docs: attribute 682 to 717 synthesis delta to the klt-generated Yosys script
+- **PR #198**: verification: re-qualify place-and-route and STA corner sweep under open_pdks f6eeac7
+- **PR #196**: verification: re-qualify synthesis, DRC/LVS and gate-level sim records under open_pdks f6eeac7
+- **PR #192**: build: re-pin sky130 PDK to open_pdks f6eeac7 via ciel and verify resolved revision
+- **PR #189**: Bump Repo Skills 0.19.5 -> 0.24.1
+- **PR #176**: feat(signoff): klayout-tools 0.7.0 pin + artifact-anchored evidence for T1 items 1, 2, 9, 10
+
+### 2026-10-14
+
+- **Issue #185** (closed): CI: carve out daemon-backed and consumer-layout-skewed Loom suites so the two regression jobs can go green (unblocks #182)
+- **PR #188**: fix(loom): replace retired label names in the pinned curator.md copies (2am#4345)
+- **PR #187**: ci: carve out test-guard-loom-workspace.sh (hook/suite skew) (#185)
+
+### 2026-10-13
+
+- **Issue #182** (closed): Guard-hook regression suites red on main: forge-egress, installed-file-writes, mcp-tools, hook-wiring
+- **PR #186**: chore(loom): drop onIdle [auditor] — follow the fleet idle-role setting
+- **PR #183**: fix(guard): port upstream forge-egress block into pinned guard-loom-workflow.sh (part of #182)
+
 ### 2026-10-08
 
 - **Issue #172** (closed): Audit .loom/resync-ignore pins (12 files): drop what is upstream, upstream or keep the rest
