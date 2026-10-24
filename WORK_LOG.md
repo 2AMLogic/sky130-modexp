@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-08
 
+- **Issue #172** (closed): Audit .loom/resync-ignore pins (12 files): drop what is upstream, upstream or keep the rest
+- **PR #174**: chore: audit .loom/resync-ignore pins; retire resync-installed pins (#172)
 - **Issue #170** (closed): Main CI red: test-merge-pr-help.sh and test-merge-pr-merge-method.sh need loom-daemon but are not in ci-excluded.txt
 - **PR #171**: fix: exclude test-merge-pr-help/-merge-method from toolchain-free CI (#170)
 
