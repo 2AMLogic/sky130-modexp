@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-24
+
+- **Issue #227** (closed): CI red on main: test-merge-pr-feature-branch-close.sh needs a built loom-daemon (blocks docs PRs, e.g. #226)
+- **PR #229**: ci: skip daemon-backed merge-pr feature-branch-close suite in consumer CI
+
 ### 2026-10-23
 
 - **Issue #220** (closed): Remove docs/issue-54-decomposition.md: finished, unreferenced process note
