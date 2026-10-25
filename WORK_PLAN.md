@@ -8,21 +8,29 @@ hand-edit that region.
 <!-- guide:plan-body:start -->
 ## Operator Attention: Merge-Risk-Hold Pileup
 
-Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
+Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
 _None._
 
-## Operator Priority
+## Very Important
 
-Issues the operator starred (`loom:operator-priority`); land these first.
+`loom:very-important` (one counts per workspace); every stage takes these first.
 
 _None._
+
+## Important
+
+`loom:important`; taken before unlabelled work.
+
+- **#177**: Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence)
+- **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence)
+- **#177**: Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence)
+- **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence
 
 ## In Progress
 
@@ -46,12 +54,14 @@ _None._
 
 Issues carrying `loom:curated`.
 
-- **#135**: README: embed the fleet burndown chart (one line) *(curated)*
-- **#165**: T1 signoff manifest: wire evidence for items 1, 2, 6, 8, 9, 10 (currently graded no_evidence) *(curated)*
+- **#177**: Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence) *(curated)*
+- **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
+- **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence *(curated)*
+- **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-_None._
+- **#228**: Condense layout/lvs/README.md: six stacked 'Update — read this first' sections *(hermit)*
 
 ## Epics
 
@@ -59,15 +69,16 @@ _None._
 
 ## Backlog Balance
 
-| Tier | Count |
+| Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Operator priority | 0 |
-| Ready (`loom:issue`) | 1 |
+| Very important | 0 |
+| Important | 2 |
+| Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 2 |
-| Architect / Hermit proposals | 0 |
+| Curated | 4 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
