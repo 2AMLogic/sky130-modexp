@@ -5,6 +5,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-27
 
+- **PR #257**: docs: replace stale Leg 2 FAIL status in baseline.md with current PASS pointer
+- **PR #254**: docs: condense layout/lvs/README.md into a current-state page
+- **Issue #253** (closed): Condense docs/baseline.md Leg 2 section: stale 'still FAIL' contradicts gate-level README
+- **Issue #228** (closed): Condense layout/lvs/README.md: six stacked 'Update — read this first' sections
 - **Issue #249** (closed): layout/README.md pin table cites removed KLT_REV constant
 - **Issue #248** (closed): Condense verification/gate-level/README.md: superseded Leg 2 history sections
 - **PR #252**: docs: mark layout README klt revision as historical KLT_REV pin

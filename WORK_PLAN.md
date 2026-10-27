@@ -36,24 +36,25 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-- **#228**: Condense layout/lvs/README.md: six stacked 'Update — read this first' sections
+- **#258**: docs: update stale Leg 2 FAIL text in docs/signoff-claim.md (follow-on from PR #257)
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#254**: docs: condense layout/lvs/README.md into a current-state page
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#259**: docs: update signoff-claim Leg 2 bullet to current PASS
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
+- **#258**: docs: update stale Leg 2 FAIL text in docs/signoff-claim.md (follow-on from PR #257) *(curated)*
 - **#177**: Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence) *(curated)*
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
 - **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence *(curated)*
@@ -62,7 +63,6 @@ Issues carrying `loom:curated`.
 ## Proposed (Architect / Hermit)
 
 - **#242**: Condense docs/signoff-claim.md: superseded verdict and history sections still read 'not met' *(hermit)*
-- **#253**: Condense docs/baseline.md Leg 2 section: stale 'still FAIL' contradicts gate-level README *(hermit)*
 
 ## Epics
 
@@ -77,9 +77,9 @@ Issues carrying `loom:curated`.
 | Important | 2 |
 | Ready (`loom:issue`) | 2 |
 | In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 0 |
-| Curated | 4 |
-| Architect / Hermit proposals | 2 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 5 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
