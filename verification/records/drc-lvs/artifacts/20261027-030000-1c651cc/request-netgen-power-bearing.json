@@ -1,0 +1,6 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "netgen",
+  "layout": { "netlist": "layout/lvs/modexp_layout_abstracted.spice", "top": "modexp" },
+  "reference": { "netlist": "verification/records/drc-lvs/artifacts/20261027-030000-1c651cc/reference-asbuilt-power-bearing.spice", "top": "modexp" }
+}

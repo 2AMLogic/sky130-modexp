@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "engine": "netgen",
+  "layout": "layout/lvs/modexp_layout_abstracted.spice",
+  "reference": "verification/records/drc-lvs/artifacts/20261027-030000-1c651cc/reference-asbuilt-power-bearing.spice",
+  "top": "MODEXP",
+  "reference_top": "MODEXP",
+  "parameter_tolerance": null,
+  "options": {
+    "combine_devices": false,
+    "combine_devices_per_circuit": null,
+    "combine_devices_max_attempts": 5,
+    "flatten_layout": false,
+    "flatten_reference": false,
+    "netgen_setup": null,
+    "parameter_tolerance": null,
+    "compare_parameters": null,
+    "power_connectivity": null,
+    "anchor_top_level_pins": null,
+    "strict_top_level_pin_count": false,
+    "supply_nets": [
+      "GND",
+      "VCC",
+      "VDD",
+      "VGND",
+      "VPWR",
+      "VSS"
+    ],
+    "finfet_bulk": null
+  },
+  "hints_applied": null,
+  "status": "match",
+  "power_connectivity": {
+    "status": "unchecked",
+    "reason": "reference.form is 'plain-element', whose reference netlist carries its own power/ground pins and nets -- they take part in the ordinary compare, so this check (which exists to cover the signal-only 'gate-level-verilog' form) does not apply",
+    "power_pins": [],
+    "power_pins_derivation": null,
+    "instance_count": 0,
+    "expected_nets": null,
+    "unchecked_expected_pins": [],
+    "findings": [],
+    "finding_count": 0
+  },
+  "body_verification": {
+    "status": "unchecked",
+    "reason": "no request.layout.deck was given (the pre-extracted request.layout.netlist form), so nothing establishes this layout's substrate/well-tap convention and no synthesized body net can be told apart from a real one -- this run verified nothing about the device bodies either way",
+    "device_classes": [],
+    "device_count": 0,
+    "findings": [],
+    "finding_count": 0
+  },
+  "device_parameter_coverage": null,
+  "mismatch_count": 0,
+  "error_count": 0,
+  "category_counts": {},
+  "category_error_counts": {},
+  "counts": {
+    "nets": {
+      "layout": 777,
+      "reference": 777,
+      "matched": 777
+    },
+    "devices": {
+      "layout": 0,
+      "reference": 0,
+      "matched": 0
+    },
+    "pins": {
+      "layout": 70,
+      "reference": 70,
+      "matched": 70
+    }
+  },
+  "device_classes": null,
+  "environment": {
+    "engine": "netgen",
+    "engine_version": "1.5.133",
+    "netgen_binary": "/home/ubuntu/.local/bin/netgen",
+    "layout_sha256": "c8e432f39f6d931143bec55a1585bfb479d1888451244d20df8d86bae54afadc",
+    "reference_sha256": "be99554a681399670790d2b207d7249db370217c1e6289bc7ddce49116f5644f",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.7.1.dev1127+gd1dc0fc090d4",
+    "klayout_version": "0.30.12",
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:c8e432f39f6d931143bec55a1585bfb479d1888451244d20df8d86bae54afadc",
+      "role": "netlist"
+    },
+    "klayout_version_mismatch": false
+  },
+  "mismatches": [],
+  "net_correspondence": []
+}
