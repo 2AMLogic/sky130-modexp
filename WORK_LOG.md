@@ -3,6 +3,21 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-27
+
+- **Issue #243** (closed): Condense layout/drc/README.md: superseded result sections and a stale evidence-record pointer
+- **Issue #236** (closed): Re-run the SDF-annotated gate-level replay (T1 item 7) against the regenerated layout
+- **Issue #235** (closed): T1 item 11 (power delivery): re-cite the power-delivery row once LVS power_connectivity reads match
+- **Issue #234** (closed): T1 item 5 (corner verification): find a microarchitecture that closes ss_n40C_1v28 at the ratified 100 MHz without the bit-serial throughput loss
+- **Issue #233** (closed): T1 item 4 (LVS clean): LVS match against the committed as-built netlist, and root-cause the VPB power_connectivity mismatch
+- **Issue #232** (closed): T1 item 2 (layout): reproducible P&R re-run of layout/modexp.gds with its as-built netlist committed, so the item-2 envelope can pass
+- **PR #244**: docs(drc): condense layout/drc README to current result and record pointer
+- **PR #241**: evidence(gate-level): replay SDF on the committed layout and re-point T1 item 7
+- **PR #240**: evidence(erc): declare a checked n-well tie and re-grade T1 item 11 as met
+- **PR #239**: evidence(lvs): LVS match on the as-built netlist; VPB mismatch was an extraction artifact of the earlier klt build
+- **PR #238**: evidence: candidate study finds no microarchitecture closing ss_n40C_1v28 at 100 MHz
+- **PR #237**: feat(layout): regenerate routed layout with as-built netlist, show P&R reproducible
+
 ### 2026-10-24
 
 - **Issue #227** (closed): CI red on main: test-merge-pr-feature-branch-close.sh needs a built loom-daemon (blocks docs PRs, e.g. #226)
