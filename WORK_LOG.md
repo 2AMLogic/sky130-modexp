@@ -5,6 +5,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-27
 
+- **Issue #249** (closed): layout/README.md pin table cites removed KLT_REV constant
+- **Issue #248** (closed): Condense verification/gate-level/README.md: superseded Leg 2 history sections
+- **PR #252**: docs: mark layout README klt revision as historical KLT_REV pin
+- **PR #251**: docs: condense superseded Leg 2 history in gate-level README
 - **Issue #246** (closed): Bump klayout-tools pin 7755612adb51, d1dc0fc090d4 → 0.8.0
 - **PR #247**: chore(env): pin klayout-tools==0.8.0 from PyPI for all legs
 - **Issue #243** (closed): Condense layout/drc/README.md: superseded result sections and a stale evidence-record pointer
