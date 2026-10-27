@@ -520,7 +520,8 @@ split described above. The re-run **reproduces** the recorded finding
 rather than changing it, so no new evidence record is minted;
 `layout/drc/modexp-drc-report.json` was re-run in the same pass as a
 freshness check and came back byte-identical (`clean`, 0 violations).
-Detail: `layout/lvs/README.md`'s issue #86 section.
+Detail: `layout/lvs/README.md`'s history table (issue #86 row) and
+`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md`.
 
 **`counts.pins.matched` is not a top-level-I/O-pin match count (issue #92,
 2026-09-15)**: `modexp_lvs_report.json` reports `pins: {layout: 70,
@@ -637,8 +638,8 @@ was no PDN to bridge that gap even where it existed, so a power-net
 mismatch was an *expected*, structurally-guaranteed consequence of a
 documented missing-flow-stage gap. Now that issue #81 adds a real PDN,
 `klt extract` reports genuine, continuous `VDD`/`VSS` top-level pins for
-the first time (confirmed directly — see `layout/lvs/README.md`'s issue
-#81 update) — but `NetlistComparer` still never reaches net-by-net
+the first time (confirmed directly — see
+`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md`) — but `NetlistComparer` still never reaches net-by-net
 correspondence in either comparison, because it stops at the
 circuit-type-level block (the unmatched-type mismatches described above)
 before it would attempt matching any individual net, power or otherwise.
