@@ -520,7 +520,8 @@ split described above. The re-run **reproduces** the recorded finding
 rather than changing it, so no new evidence record is minted;
 `layout/drc/modexp-drc-report.json` was re-run in the same pass as a
 freshness check and came back byte-identical (`clean`, 0 violations).
-Detail: `layout/lvs/README.md`'s issue #86 section.
+Detail: `layout/lvs/README.md`'s history table (issue #86 row) and
+`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md`.
 
 **`counts.pins.matched` is not a top-level-I/O-pin match count (issue #92,
 2026-09-15)**: `modexp_lvs_report.json` reports `pins: {layout: 70,
@@ -537,8 +538,8 @@ of the same field, filed upstream as
 [2AMLogic/klayout-tools#1887](https://github.com/2AMLogic/klayout-tools/issues/1887).
 333 is the size of `net_correspondence`, i.e. the number of matched local
 pin-name pairs across the 46 matched per-cell-type `.SUBCKT` declarations
-(`layout/lvs/README.md` already documented this hypothesis before it was
-confirmed); it says nothing about whether `modexp`'s own 68/70 top-level
+(the hypothesis was documented before it was confirmed; see
+`verification/records/drc-lvs/records/20260915-131549-c87a304.md`); it says nothing about whether `modexp`'s own 68/70 top-level
 I/O pins correspond, and in this report they do not even get a
 `net_correspondence` entry, since the top `modexp` circuit itself could
 not be matched. Full synthetic-test evidence:
@@ -594,8 +595,7 @@ shapes on layers outside the deck's connectivity graph, both cited directly
 in the extraction's own `warnings[]`) cause some nets to extract as multiple
 disconnected pieces. Full evidence, the fresh comparison, and the
 byte-identical-behavior check on `build_reference_netlist.py`'s generalized
-parser: `layout/lvs/README.md` and
-`verification/records/drc-lvs/records/20260816-174310-5e656e5.md`.
+parser: `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`.
 
 **Comparison level actually achieved: cell-instance granularity
 (standard-cell black boxes, 0 transistor-level devices on either side), not
@@ -637,8 +637,8 @@ was no PDN to bridge that gap even where it existed, so a power-net
 mismatch was an *expected*, structurally-guaranteed consequence of a
 documented missing-flow-stage gap. Now that issue #81 adds a real PDN,
 `klt extract` reports genuine, continuous `VDD`/`VSS` top-level pins for
-the first time (confirmed directly — see `layout/lvs/README.md`'s issue
-#81 update) — but `NetlistComparer` still never reaches net-by-net
+the first time (confirmed directly — see
+`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md`) — but `NetlistComparer` still never reaches net-by-net
 correspondence in either comparison, because it stops at the
 circuit-type-level block (the unmatched-type mismatches described above)
 before it would attempt matching any individual net, power or otherwise.
@@ -801,8 +801,8 @@ caveats:
   `pow(base, exp, mod)`, and returns byte-identical results to the RTL on the
   same 500 pinned vectors. That is a positive, simulation-based answer to
   part of what the LVS run could not itself confirm (the LVS comparator
-  stopped short of net-by-net correspondence, per "Reading this result" in
-  `layout/lvs/README.md`).
+  stopped short of net-by-net correspondence, per the comparison-level
+  statement in this page's LVS section above).
 - **What it does NOT model**, carried forward verbatim from this page's LVS
   scope plus what is specific to simulation: **no parasitic extraction** (no
   R/C, no SPEF — `klt extract` was run without `--parasitics`), **no
