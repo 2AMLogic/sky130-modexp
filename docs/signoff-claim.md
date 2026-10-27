@@ -810,8 +810,19 @@ caveats:
   but one corner-independent Verilog cell-model set), **no power/ground
   network** (power pins dropped — this GDS has no PDN), and **cell-instance
   granularity, not transistor level**.
-- **Leg 2 (delay-annotated SDF simulation), updated 2026-09-09, issue #78:
-  RE-ATTEMPTED — still FAIL, narrower failure class.** Issue #55 first
+- **Leg 2 (delay-annotated SDF simulation), updated 2026-10-27, issue #236:
+  PASS with a disclosed `IOPATH` annotation-class exclusion.** The replay was
+  re-done on the committed layout, and all 1,920 net-delay `INTERCONNECT`
+  entries are back-annotated (`environment.sdf.annotated: true`). Every
+  `IOPATH` cell-arc entry is excluded: `IOPATH` back-annotation on these
+  models under Icarus 13 mechanically kills a timing-clean design. Current
+  record:
+  `verification/records/gate-level-sim/records/20261027-050100-163f791.md`.
+  Status, counts and isolation evidence are kept in
+  `verification/gate-level/README.md`. The earlier FAIL attempts are kept
+  below as superseded history.
+- **Leg 2, superseded history (updated 2026-09-09, issue #78): RE-ATTEMPTED —
+  was still FAIL, narrower failure class; superseded by the PASS above.** Issue #55 first
   exercised Leg 2 end to end after `klayout-tools#1007` (SDF export/option)
   landed: `klt`'s SDF diagnostic gate reported 200 of ~753 `INTERCONNECT`
   entries (every one top-level-port-attached) unresolved, filed generically
