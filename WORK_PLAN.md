@@ -31,19 +31,18 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 - **#177**: Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence)
 - **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence
-- **#249**: layout/README.md pin table cites removed KLT_REV constant
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#228**: Condense layout/lvs/README.md: six stacked 'Update — read this first' sections
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#254**: docs: condense layout/lvs/README.md into a current-state page
 
 ## Approved (Awaiting Merge)
 
@@ -62,7 +61,8 @@ Issues carrying `loom:curated`.
 
 ## Proposed (Architect / Hermit)
 
-- **#228**: Condense layout/lvs/README.md: six stacked 'Update — read this first' sections *(hermit)*
+- **#242**: Condense docs/signoff-claim.md: superseded verdict and history sections still read 'not met' *(hermit)*
+- **#253**: Condense docs/baseline.md Leg 2 section: stale 'still FAIL' contradicts gate-level README *(hermit)*
 
 ## Epics
 
@@ -75,11 +75,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 2 |
-| Ready (`loom:issue`) | 3 |
-| In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
+| Ready (`loom:issue`) | 2 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 4 |
-| Architect / Hermit proposals | 1 |
+| Architect / Hermit proposals | 2 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
