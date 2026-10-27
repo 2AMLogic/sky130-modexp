@@ -1,0 +1,7 @@
+{
+  "bulk_nets": {
+    "HI|VDD|VPB|VPWR": 4122
+  },
+  "distinct_bulk_nets": 1,
+  "pfet_count": 4122
+}

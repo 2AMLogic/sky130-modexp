@@ -4,6 +4,26 @@ LVS evidence for the routed GDS (`layout/modexp.gds`, from #7) — see
 `docs/signoff-claim.md` for the overall claim and the comparison level this
 establishes.
 
+## Update (issue #233, 2026-10-27): **LVS `match` against the as-built netlist;
+## `power_connectivity` `match`; T1 item 4 is `met`.** Read this first.
+
+`modexp_layout_abstracted.spice`, `modexp_layout_extract_report.json`,
+`modexp_lvs_report.json` and `modexp_lvs_report_netgen.json` are regenerated from the
+#232 GDS with the repo-pinned klt (`0.7.1.dev1127+gd1dc0fc090d4`). The reference is the
+as-built netlist `layout/modexp.v` itself (gate-level-verilog form; no
+`expand_concat_assigns.py` step is needed, it holds no `assign`). The klayout report is
+`status: match`, 0 errors, `power_connectivity: match`, warnings listed: 5 pruned
+power-only masters, 68 anchored top-level pins. The netgen report on the same
+gate-level form is still `mismatch` (matched 0), as on every earlier layout; netgen's
+concurrence is recorded on a power-bearing SPICE form of the same netlist
+(`match`, 777/777 nets). The `VPB` finding below was an extraction artifact of klt
+`0.6.0+gdac2b5da`, not a layout defect: a flat extraction puts all 4127 pfet bulks on
+the `VPWR` net. Evidence: `verification/records/drc-lvs/records/20261027-030000-1c651cc.md`;
+decision: `spec/decision-records/0012-lvs-item-4-met-on-the-as-built-netlist-and-the-vpb-mismatch-was-an-extraction-artifact-of-the-earlier-klt-build.md`.
+The sections below are retained history and describe the previous layout.
+`modexp_synth_expanded.v`, `modexp_reference.spice` and the builders are not used by
+the current comparison.
+
 ## Update (issue #194, 2026-10-16): `layout/lvs/` regenerated with the pinned
 ## klt — `power_connectivity` is now a measured `mismatch` (it was `match`).
 ## Read this first; the sections below are retained history.

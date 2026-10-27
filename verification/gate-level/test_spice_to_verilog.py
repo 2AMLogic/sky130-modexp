@@ -49,8 +49,17 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent.parent
 CONVERTER = HERE / "spice_to_verilog.py"
 COMMITTED_NETLIST = HERE / "modexp_post_route.v"
-EXTRACT_REPORT = REPO_ROOT / "layout" / "lvs" / "modexp_layout_extract_report.json"
-ABSTRACTED_SPICE = REPO_ROOT / "layout" / "lvs" / "modexp_layout_abstracted.spice"
+# The committed netlist is deliberately frozen at the extraction it was derived
+# from: live item-7 record 20261017-200000-79564a8 pins its hash (#236), so it
+# is not regenerated when layout/lvs/ is (#233 re-extracted the #232 GDS). The
+# consistency case therefore compares it against the frozen, hash-identical
+# copies of that extraction kept in the append-only 20261016-010000-713829b
+# drc-lvs record, not against the live layout/lvs/ files.
+FROZEN_EXTRACTION = (
+    REPO_ROOT / "verification" / "records" / "drc-lvs" / "artifacts" / "20261016-010000-713829b"
+)
+EXTRACT_REPORT = FROZEN_EXTRACTION / "extract-report.json"
+ABSTRACTED_SPICE = FROZEN_EXTRACTION / "modexp_layout_abstracted.spice"
 
 # --------------------------------------------------------------------------
 # Synthetic fixture: a two-flop shift register plus an inverter, with the
