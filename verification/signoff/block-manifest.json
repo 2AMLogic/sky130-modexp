@@ -19,7 +19,7 @@
       "file": "verification/records/sta-corner-sweep/artifacts/20261027-013900-98bf55d/sta-corner-sweep-results.json",
       "content_hash": "sha256:9cfbe9ee3774aab9a42ccc2897b8a7b5104c52548e583d034f80769af1b85377"
     },
-    "7": "verification/records/gate-level-sim/artifacts/20261017-200000-79564a8/klt-functional-verification-sdf-run1.json",
+    "7": "verification/records/gate-level-sim/artifacts/20261027-050100-163f791/klt-functional-verification-sdf-run1.json",
     "8": {
       "file": "verification/signoff/evidence/item-8-characterization.json",
       "content_hash": "sha256:d68f28fd826766232137e454768b9b9f88e60b19bccf34ac2f57360e40ee624d"
