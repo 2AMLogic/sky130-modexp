@@ -76,7 +76,10 @@ inputs.
 `test_spice_to_verilog.py` is the converter's own self-test (7 cases: a
 synthetic-fixture happy path, one executable negative case per guard above,
 and a consistency check of the **committed** `modexp_post_route.v` against
-the extraction report — which is what catches a stale committed netlist). It
+the extraction report — which is what catches a stale committed netlist; the
+report and abstracted SPICE it compares against are the frozen copies in drc-lvs
+record `20261016-010000-713829b`, because item-7 record `20261017-200000-79564a8`
+pins the netlist's hash, so it is not regenerated with `layout/lvs/`). It
 needs no PDK and no simulator, so it runs in CI alongside
 `test_check_records.py`.
 
