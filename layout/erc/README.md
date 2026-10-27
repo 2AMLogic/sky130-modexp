@@ -39,6 +39,11 @@ antenna table covers only part of the rules) -- a different vocabulary from the
 result. The label-text and gate-net counts quoted below were measured on the
 previous GDS (1848 gate nets); the current ones are in the report itself.
 
+**Updated by issue #235**: the report was regenerated with the `nwell_tap`
+tie declared (same klt, klayout and command). The GDS hash is unchanged.
+`erc_finding_count` stays 0 and `erc_status` stays `clean`; the `no_ties_declared`
+inapplicable entry is replaced by the checked `nwell_tap` tie.
+
 ## Reading the verdict
 
 `status: clean`, `erc_finding_count: 0` over 1848 gate nets — and zero
@@ -79,53 +84,46 @@ the supply findings, not the antenna ratios — an antenna verdict or a
 floating-gate finding would be a real defect but is not this item's
 subject (klayout-tools#1994).
 
-## What is NOT verified here: `erc.missing_tie` (klayout-tools#2169)
+## Well ties: `erc.missing_tie` (issue #235)
 
-`erc-supply-spec.json` deliberately declares no `ties[]`, so the committed
-report **does not compute** `erc.missing_tie` at all — klayout-tools
-`docs/cli/erc.md` is explicit that omitting `ties[]` means the rule is
-never computed. Its zero count in the report is an **absence of evidence,
-not evidence of absence**, and must not be cited as a well-tie verdict.
+`erc-supply-spec.json` declares one tie, `nwell_tap`: every merged `nwell`
+shape (64/20) must contain a `tap.drawing` (65/44) shape electrically
+connected, through `li1`, to `VPWR`. 65/44 is a tap-only layer in sky130, so
+the tie carries `tap_is_dedicated: true` and is graded as checked work:
+`erc_coverage.checked` lists `erc.missing_tie:["nwell_tap"]`,
+`erc_coverage.skipped` is empty, and `erc_finding_count` is 0. This replaces
+the earlier omission of `ties[]`, which was a workaround for
+klayout-tools#2169 (a declared tie collapsing the design into one island and
+reporting a false `erc.supply_short`); the pinned klt
+(`0.7.1.dev1127+gd1dc0fc090d4`) no longer does that on this layout --
+`VPWR` and `VGND` still resolve to one island each, with no
+`erc.supply_short`.
 
-The reason it is omitted is a real tool gap, filed upstream as
-**klayout-tools#2169**: declaring `ties[]` on a real routed standard-cell
-layout joins the well/tap regions into the primary connectivity graph,
-collapses the whole design into one electrical island, and reports a
-false `erc.supply_short` (reproduced four ways in `gf180-drone-fc`'s
-FRICTION F-034).
+Falsifiability control (variant spec, not committed): the same tie declared
+against `VGND` instead of `VPWR` reports 26 `erc.missing_tie` findings (one
+per nwell shape), so the zero is a computed verdict. 265 of the layout's 530
+tap shapes sit inside an nwell, matching the 265 tapcell instances in the
+P&R record.
 
-What **is** admissible evidence that the well ties exist and reach the
-rails, standing in for the uncomputed rule:
+What is **not** verified: the **p-substrate (`VGND`) tie**. sky130 draws no
+substrate well, so the only expressible declaration is `well_layer: null`
+plus a `well_boxes` assertion of the substrate region, and a region covering
+this die is graded `degenerate_well_assertion` (skipped work, which item 11
+renders `supply_spec_incomplete`). Narrowing the box just to pass that test
+would be a different, unfalsifiable claim, so no substrate tie is declared and
+no `ties_disclosure` is used. The gap is filed generically upstream as klayout-tools#4285 (see the
+PR description too). Admissible evidence standing in for it: the `VGND`
+island read above, and the P&R record's PDN with
+`tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1` and 265 tapcell instances.
+Item 11 therefore reads `met` on the grader's terms with the nwell half
+computed and the substrate half unverified here.
 
-1. **The PDN was actually built, with tapcells**: the committed
-   place-and-route record
-   (`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`,
-   raw envelope `artifacts/20260911-052542-d5e43d3/par-nominal-output.json`)
-   records `power.pdn: true`, `power.global_connect: true`, `power_net:
-   "VDD"`, `ground_net: "VSS"`, `tapcell_master:
-   sky130_fd_sc_hd__tapvpwrvgnd_1`, and **265 tapcell instances** —
-   issue #81's run. Every `power.straps[].layer` (met1 followpins, met4,
-   met5) is covered by this spec's own stackup.
-2. **PG pin labels in the merged GDS**: the tap cells' well pins are
-   labelled in the stream itself — 2810 `VPB` texts on `nwell.label`
-   (64/5) and 2810 `VNB` texts on `pwell.label` (64/59) — and the DEF
-   SPECIALNETS join wires `VPB` into `VDD` and `VNB` into `VSS`.
-3. **The supply-island verdict itself covers the tap cells' rail side**:
-   the tap cells' `VPWR`/`VGND` met1 pins are part of the 3095-label set
-   that resolves to one island per polarity.
-
-What is **missing** from this repo's evidence, stated plainly: the
-committed LVS report (`layout/lvs/modexp_lvs_report.json`, run before
-`power_connectivity` existed in the installed `klt`) carries **no
-`power_connectivity` verdict at all** — not `"match"`, not even
-`"unchecked"`; the field is absent. Item 11's digital column requires
-`power_connectivity.status: "match"` for a *met* citation, so the
-standing-in list above is what this repo has today, and a fresh
-`klt lvs` re-run on the current `klt` pin is the follow-up that would
-close that half. Until both the tie rule (#2169) and the LVS
-power-connectivity re-run land, this directory establishes the
-supply-island read only — the strongest single structural-power statement
-this repo's pinned toolchain can compute.
+The P&R envelope item 11 cites is the item-2 flow run's
+`verification/records/place-and-route/artifacts/20261027-013900-98bf55d/par-run1-output.json`
+(`power.pdn: true`, `tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1`, straps
+met1/met4/met5). The manifest pins the `content_hash` of the evidence's
+*input* (GDS for the ERC report, netlist for the P&R envelope), not of the
+JSON file itself.
 
 ## Where the graded row lives
 
