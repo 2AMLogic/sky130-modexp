@@ -46,6 +46,13 @@ was left in scratch and lost, and the run cannot be reproduced (issue #55),
 so that GDS has no LVS-able reference. `flow/run-par.sh` makes the capture
 mechanical; do not bypass it for a run you intend to pin.
 
+**Update (issue #232):** the committed `layout/modexp.{def,gds,v}` were
+regenerated this way and the flow was shown reproducible — two sequential
+`flow/run-par.sh` runs gave byte-identical outputs (record
+`verification/records/place-and-route/records/20261027-013900-98bf55d.md`).
+The paragraph above describes the state before that; the as-built netlist is
+now committed next to the DEF and GDS.
+
 Step 3's artifacts land in `flow/.klt/place-and-route/` (gitignored scratch,
 like every other `klt` working directory — see `.gitignore`'s `.klt/`
 entry): `modexp.def` / `modexp.gds`, one `pnr_modexp_<stage>.tcl` script and

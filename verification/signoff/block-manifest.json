@@ -4,25 +4,25 @@
   "evidence": {
     "1": {
       "file": "verification/signoff/evidence/item-1-design-sources.json",
-      "content_hash": "sha256:3daae39c6b878d852f35b323189ef22d4de37ba9f05e7689ccab37d593bd0fdc"
+      "content_hash": "sha256:3e1fc4d421a646d657e5f513f8919825f221a4e1ede54d05d2850f3f8244bf39"
     },
     "2": {
       "file": "verification/signoff/evidence/item-2-layout.json",
-      "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
+      "content_hash": "sha256:cc970173409a1fcb28f6bc8c1c916f90d0f5fedf88fff3690cb91102f2734372"
     },
     "3": {
       "file": "layout/drc/modexp-drc-report.json",
-      "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
+      "content_hash": "sha256:cc970173409a1fcb28f6bc8c1c916f90d0f5fedf88fff3690cb91102f2734372"
     },
     "4": "layout/lvs/modexp_lvs_report.json",
     "5": {
-      "file": "verification/records/sta-corner-sweep/artifacts/20260923-093000-28a7c96/sta-corner-sweep-results.json",
-      "content_hash": "sha256:a35b956766144fe5df7addabf77a35b1df6645edaf62e05ec2d1891eaaa0b87a"
+      "file": "verification/records/sta-corner-sweep/artifacts/20261027-013900-98bf55d/sta-corner-sweep-results.json",
+      "content_hash": "sha256:9cfbe9ee3774aab9a42ccc2897b8a7b5104c52548e583d034f80769af1b85377"
     },
     "7": "verification/records/gate-level-sim/artifacts/20261017-200000-79564a8/klt-functional-verification-sdf-run1.json",
     "8": {
       "file": "verification/signoff/evidence/item-8-characterization.json",
-      "content_hash": "sha256:25f53b92742788590acf5fa49143b58aa85554b43100637c3f64b8af65ad0867"
+      "content_hash": "sha256:d68f28fd826766232137e454768b9b9f88e60b19bccf34ac2f57360e40ee624d"
     },
     "9": {
       "file": "verification/signoff/evidence/item-9-testbenches.json",
@@ -35,7 +35,7 @@
     "11": [
       {
         "file": "layout/erc/modexp-erc-supply-report.json",
-        "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79"
+        "content_hash": "sha256:cc970173409a1fcb28f6bc8c1c916f90d0f5fedf88fff3690cb91102f2734372"
       },
       "layout/lvs/modexp_lvs_report.json",
       {
