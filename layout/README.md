@@ -34,7 +34,7 @@ pins below (same host, two runs; not a cross-host claim).
 | Field | Value |
 | --- | --- |
 | `klt` version | `0.7.1.dev1127+gd1dc0fc090d4` |
-| `klt` git revision | [`d1dc0fc090d4f466e9447895803d58c22f1d3468`](https://github.com/2AMLogic/klayout-tools/commit/d1dc0fc090d4f466e9447895803d58c22f1d3468) (`scripts/setup-env.sh` `KLT_REV`) |
+| `klt` git revision | [`d1dc0fc090d4f466e9447895803d58c22f1d3468`](https://github.com/2AMLogic/klayout-tools/commit/d1dc0fc090d4f466e9447895803d58c22f1d3468) (the `KLT_REV` pin in `scripts/setup-env.sh` when this layout was built, before #246 replaced it with `KLT_VERSION`) |
 | OpenROAD build | `26Q3-1510-g6cb3f2b704` (`openroad -version`, native on `$PATH`) |
 | sky130A PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` |
 | Deck | `sky130_fd_sc_hd__tt_025C_1v80`, content_hash `sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135` |
