@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-27
 
+- **Issue #246** (closed): Bump klayout-tools pin 7755612adb51, d1dc0fc090d4 → 0.8.0
+- **PR #247**: chore(env): pin klayout-tools==0.8.0 from PyPI for all legs
 - **Issue #243** (closed): Condense layout/drc/README.md: superseded result sections and a stale evidence-record pointer
 - **Issue #236** (closed): Re-run the SDF-annotated gate-level replay (T1 item 7) against the regenerated layout
 - **Issue #235** (closed): T1 item 11 (power delivery): re-cite the power-delivery row once LVS power_connectivity reads match
