@@ -180570,16 +180570,12 @@
       "erc.floating_gate:[\"gate997\"]",
       "erc.floating_gate:[\"gate998\"]",
       "erc.floating_gate:[\"gate999\"]",
+      "erc.missing_tie:[\"nwell_tap\"]",
       "erc.net_connectivity:[\"VGND\"]",
       "erc.net_connectivity:[\"VPWR\"]"
     ],
     "skipped": [],
-    "inapplicable": [
-      {
-        "id": "erc.missing_tie:[]",
-        "reason": "no_ties_declared"
-      }
-    ],
+    "inapplicable": [],
     "unknown": [],
     "nothing_checked": false,
     "nothing_checked_reasons": [],
@@ -180588,9 +180584,7 @@
     "layers_in_stream_without_declaration": [
       "64/5",
       "64/16",
-      "64/20",
       "64/59",
-      "65/44",
       "66/15",
       "67/16",
       "68/16",
@@ -180626,7 +180620,7 @@
       "role": "layout"
     },
     "spec": {
-      "content_hash": "sha256:d53e5cd02eebfc2e9fec4afe599dae530240ac99ca25e188c3bebcdb7dd80337"
+      "content_hash": "sha256:452518ab73da98361a0e267599c3411e17ec9565412b1116c13a117f3c114bbd"
     },
     "devices": [],
     "net_exclusions": [],
