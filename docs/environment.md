@@ -40,8 +40,7 @@ source .venv/bin/activate
 
 | Component | Pinned to | Resolved via |
 |---|---|---|
-| `klayout-tools` (`klt`) | git revision [`d1dc0fc090d4f466e9447895803d58c22f1d3468`](https://github.com/2AMLogic/klayout-tools/commit/d1dc0fc090d4f466e9447895803d58c22f1d3468) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@d1dc0fc090d4f466e9447895803d58c22f1d3468"` (what `scripts/setup-env.sh` runs) |
-| `klayout-tools` (`klt`, signoff-report leg) | git revision [`7755612adb513f00ec61e7a77ff7091aee7630f5`](https://github.com/2AMLogic/klayout-tools/commit/7755612adb513f00ec61e7a77ff7091aee7630f5) (merge commit of klayout-tools PR #3200; reports as `klt 0.7.1.dev1312+g7755612adb51`) | `pip install "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"`, done directly by the CI `signoff` job; `verification/signoff/run-signoff.sh` refuses any build not made from this SHA (issues #165, #218). This is deliberately **not** the pin above: the evidence legs are on their own (different) revision, see "Second klt pin" below |
+| `klayout-tools` (`klt`) | PyPI release `0.8.0` (tag [`v0.8.0`](https://github.com/2AMLogic/klayout-tools/releases/tag/v0.8.0), commit `c572046be644`); `klt --version` prints `klt 0.8.0` | `pip install "klayout-tools==0.8.0"` (what `scripts/setup-env.sh` runs, and what the CI `signoff` job installs). `verification/signoff/run-signoff.sh` refuses any other version (issues #165, #218, #246). Both legs share this one pin; a git build reports a `.devN+g<sha>` version and does not satisfy `==0.8.0` (klayout-tools#2823) |
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc revision [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db) | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
 | `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr -l sky130_fd_sc_hd f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision or `libs.ref/sky130_fd_sc_hd` is absent) |
@@ -210,36 +209,18 @@ reproducible are in "Yosys and the embedded ABC build" below.
 host — it does not vendor them (`yosys` is the exception: `scripts/setup-env.sh`
 now provisions it into `.venv` at the pin above). Those are:
 
-**Second klt pin, signoff-report leg only (issue #130; moved to 0.7.0 by issue #165, 2026-10-08; moved to a git SHA by issue #218, 2026-10-23).** The
-row above pins the klt that **produces evidence** (the PDK-heavy legs whose
-records cite the pin in their `provenance`). The `klt signoff --manifest`
-report leg (`verification/signoff/`) carries its own, newer pin: klayout-tools
-git revision `7755612adb513f00ec61e7a77ff7091aee7630f5`. History: `dac2b5da` (2026-09-23) added `klt sta` /
-`klt functional-verification` envelope recognition in tier-verdict mode
-(klayout-tools#1959), the items-3/4 kind restrictions (#1987) and the eleventh
-T1 item (#2025). 0.7.0 adds artifact-anchored `generic` evidence for T1 items
-1, 2, 9 and 10 ([klayout-tools#2718](https://github.com/2AMLogic/klayout-tools/issues/2718)):
-an envelope that names the audited artifact and its `content_hash`, pinned by
-the manifest, which the grader re-hashes. The pinned `dac2b5da` grader cannot
-bind those four items to anything topical. The report leg re-runs no PDK job
-— it only reads committed JSON envelopes — so bumping **its** pin does not
-invalidate any evidence record and requires only regenerating
-`verification/signoff/tier-report.json`
-(`KLT=<a klt built from the pinned SHA> ./verification/signoff/run-signoff.sh`); the CI `signoff`
-job's `--check` fails until that regeneration is committed. The two pins
-intentionally remain separate: converging them means re-minting the DRC/LVS/P&R records
-against the newer tool (the "re-pin ⇒ mint fresh records" rule above), which
-is the evidence legs' own decision to make, not the report leg's.
-
-**Why the signoff pin is a SHA, not a release (issue #218).** The grader that
-accepts a `not_applicable` outcome for T1 item 6 (klayout-tools#2865, PR #3200)
-is not in any PyPI or GitHub release (`v0.7.0` predates it), so no release pin
-can express it. `7755612adb513f00ec61e7a77ff7091aee7630f5` is the merge commit of PR #3200, the smallest commit
-containing it. Verified at the pin in a throwaway venv: `klt signoff
---describe-grader --format json` lists `"not_applicable_items": {"6":
-["digital"]}`. **Going back to a release:** once a klayout-tools release
-contains PR #3200, replace the SHA with that release in `run-signoff.sh`,
-`ci.yml` and the row above, and regenerate `tier-report.json`.
+**One klt pin for both legs (issue #246, 2026-10-27).** Before #246 the
+signoff-report leg (`verification/signoff/`, the CI `signoff` job) carried its
+own, newer klt pin from the PDK-heavy evidence legs: first a release
+(`0.7.0`, issue #165), then a git SHA (issue #218) because the item 6
+`not_applicable` grader (klayout-tools#2865) was in no release yet. Release
+`0.8.0` contains it, so both legs now install `klayout-tools==0.8.0` from PyPI
+and the SHA-form pins (`KLT_REV`, `SIGNOFF_KLT_SHA`) are collapsed into the one
+`KLT_VERSION` constant. `verification/check_pins.py` keeps `scripts/setup-env.sh`,
+`verification/signoff/run-signoff.sh`, `.github/workflows/ci.yml` and the table
+above on the same version. Committed DRC/LVS/ERC/P&R records keep citing the
+`0.7.1.dev1127+gd1dc0fc090d4` build that produced them; they are append-only
+evidence and were not regenerated.
 
 | Tool | Used for | Resolved version on the environment these records were produced on |
 |---|---|---|

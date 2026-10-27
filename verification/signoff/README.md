@@ -34,9 +34,9 @@ duplicating it.
   doc; the CI `--check` leg fails until the report is regenerated.
 - `tier-report.json` — the committed output of `klt signoff --manifest
   block-manifest.json --tiers-doc design-evidence-tiers.md --format json`
-  on the signoff-leg klt pin (klayout-tools git SHA `7755612adb51…`, see
+  on the pinned klt (`klayout-tools==0.8.0`, see
   `docs/environment.md`). Regenerate with
-  `KLT=<path to a klt built from that SHA> ./run-signoff.sh`.
+  `KLT=<path to a klt 0.8.0> ./run-signoff.sh`.
 - `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 8, 9,
   10 and the audit records they are bound to. Item 8's envelope is generated,
   not hand-edited: `python3 gen_characterization_envelope.py` rewrites it and
@@ -168,18 +168,17 @@ Full record: `verification/records/sta-corner-sweep/records/20260923-093000-28a7
 ## Running it
 
 ```bash
-# needs klayout-tools at the pinned SHA (SIGNOFF_KLT_SHA in run-signoff.sh), e.g. a throwaway venv:
-#   uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"
+# needs klayout-tools at the pinned release (SIGNOFF_KLT_VERSION in run-signoff.sh), e.g. a throwaway venv:
+#   uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools==0.8.0"
 KLT=/tmp/v/bin/klt ./verification/signoff/run-signoff.sh          # regenerate tier-report.json
 KLT=/tmp/v/bin/klt ./verification/signoff/run-signoff.sh --check  # what CI runs
 ```
 
-CI (`.github/workflows/ci.yml`, `signoff` job) installs the signoff-leg
-klt pin and runs `--check`: a manifest citing an artifact that has since
+CI (`.github/workflows/ci.yml`, `signoff` job) installs the pinned klt
+and runs `--check`: a manifest citing an artifact that has since
 changed (hash pin no longer matches) or any un-regenerated report drift
-fails the build rather than rotting. The report leg's klt pin is tracked
-in `docs/environment.md` alongside (and separately from) the PDK-heavy
-legs' older pin — see there for the rationale.
+fails the build rather than rotting. The report leg shares its klt pin
+with the PDK-heavy legs; it is tracked in `docs/environment.md`.
 
 Paths inside `block-manifest.json` are relative to the repository root;
 the runner always executes `klt signoff` from the root. `source_doc` in
