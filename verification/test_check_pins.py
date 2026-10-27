@@ -47,10 +47,8 @@ def _pin(name: str) -> str:
     return m.group(1)
 
 
-SIGNOFF_SHA = re.search(
-    r'^SIGNOFF_KLT_SHA="([0-9a-f]{40})"', (REPO_ROOT / SIGNOFF_REL).read_text(encoding="utf-8"), re.MULTILINE
-).group(1)
-KLT_REV = _pin("KLT_REV")
+KLT_VER = _pin("KLT_VERSION")
+FAKE_VER = "0.9.9"
 CIEL_REV = _pin("CIEL_SKY130_VERSION")
 YW_VER = _pin("YOWASP_YOSYS_VERSION")
 YW_SHA = _pin("YOWASP_YOSYS_WASM_SHA256")
@@ -132,10 +130,10 @@ def _frozen_artifact(root: Path) -> None:
 CASES: list[tuple[str, Mutation, int, str | None]] = [
     ("baseline: committed files are consistent", lambda r: None, 0, None),
     (
-        "KLT_REV bumped in script only",
-        _mut_script(lambda s: _set_script(s, "KLT_REV", FAKE_REV)),
+        "KLT_VERSION bumped in script only",
+        _mut_script(lambda s: _set_script(s, "KLT_VERSION", FAKE_VER)),
         1,
-        "KLT_REV=",
+        "KLT_VERSION=",
     ),
     (
         "CIEL_SKY130_VERSION bumped in doc table only",
@@ -144,43 +142,42 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
         "CIEL_SKY130_VERSION=",
     ),
     (
-        "KLT_REV left stale in one table row (evidence leg)",
-        _mut_doc(
-            lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, FAKE_REV))
-        ),
+        "klt install spec stale in the doc table row",
+        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(f"klayout-tools=={KLT_VER}", "klayout-tools==0.7.0"))),
         1,
-        "stale or unsynced pin",
+        "klayout-tools==0.7.0",
     ),
     (
-        "signoff-leg doc row stale (SIGNOFF_KLT_SHA bumped in run-signoff.sh only)",
-        _mut_file(SIGNOFF_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+        "SIGNOFF_KLT_VERSION bumped in run-signoff.sh only",
+        _mut_file(SIGNOFF_REL, lambda s: s.replace(f'SIGNOFF_KLT_VERSION="{KLT_VER}"', f'SIGNOFF_KLT_VERSION="{FAKE_VER}"')),
         1,
-        "signoff-leg row names",
+        "SIGNOFF_KLT_VERSION=",
     ),
     (
-        "signoff-leg doc row bumped, run-signoff.sh and ci.yml left",
-        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff-report leg)", lambda ln: ln.replace(SIGNOFF_SHA, FAKE_REV))),
+        "ci.yml klt install stale",
+        _mut_file(CI_REL, lambda s: s.replace(f"klayout-tools=={KLT_VER}", "klayout-tools==0.7.0")),
         1,
-        "signoff-leg row names",
+        "klayout-tools==0.7.0 install does not match",
     ),
     (
-        "ci.yml signoff install SHA stale",
-        _mut_file(CI_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
+        "ci.yml klt install removed",
+        _mut_file(CI_REL, lambda s: s.replace(f"klayout-tools=={KLT_VER}", "klayout-tools")),
         1,
-        "no klayout-tools install at SIGNOFF_KLT_SHA",
+        "no klayout-tools==",
     ),
     (
-        "evidence-leg row must not accept the signoff SHA",
-        _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`) |", lambda ln: ln.replace(KLT_REV, SIGNOFF_SHA))),
+        "ci.yml reverts to a git-SHA klt install",
+        _mut_file(CI_REL, lambda s: s + f'\n      - run: pip install "klayout-tools @ git+https://example.invalid/klt@{FAKE_REV}"\n'),
         1,
-        "stale or unsynced pin",
+        "git install found",
     ),
     (
-        "positive: consistent re-pin of the signoff leg in all three places passes",
+        "positive: consistent re-pin of every klt location passes",
         _both(
-            _mut_file(SIGNOFF_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
-            _mut_file(CI_REL, lambda s: s.replace(SIGNOFF_SHA, FAKE_REV)),
-            _mut_doc(lambda d: _edit_row(d, "| `klayout-tools` (`klt`, signoff-report leg)", lambda ln: ln.replace(SIGNOFF_SHA, FAKE_REV))),
+            _mut_script(lambda s: _set_script(s, "KLT_VERSION", FAKE_VER)),
+            _mut_file(SIGNOFF_REL, lambda s: s.replace(f'SIGNOFF_KLT_VERSION="{KLT_VER}"', f'SIGNOFF_KLT_VERSION="{FAKE_VER}"')),
+            _mut_file(CI_REL, lambda s: s.replace(f"klayout-tools=={KLT_VER}", f"klayout-tools=={FAKE_VER}")),
+            _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(KLT_VER, FAKE_VER))),
         ),
         0,
         None,
@@ -222,9 +219,9 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
     ),
     (
         "required pin removed from the script's pin block",
-        _mut_script(lambda s: re.sub(r'^KLT_REV="[^"]*"\n', "", s, flags=re.MULTILINE)),
+        _mut_script(lambda s: re.sub(r'^KLT_VERSION="[^"]*"\n', "", s, flags=re.MULTILINE)),
         1,
-        "required pin KLT_REV",
+        "required pin KLT_VERSION",
     ),
     (
         "pin block marker missing from script",
@@ -241,8 +238,8 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
     (
         "positive: consistent re-pin of every hash pin passes",
         _both(
-            _mut_script(lambda s: _set_script(_set_script(s, "KLT_REV", FAKE_REV), "YOWASP_YOSYS_WASM_SHA256", FAKE_SHA)),
-            _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(KLT_REV, FAKE_REV).replace(YW_SHA, FAKE_SHA))),
+            _mut_script(lambda s: _set_script(s, "YOWASP_YOSYS_WASM_SHA256", FAKE_SHA)),
+            _mut_doc(lambda d: _edit_table(d, lambda t: t.replace(YW_SHA, FAKE_SHA))),
         ),
         0,
         None,

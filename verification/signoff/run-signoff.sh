@@ -50,33 +50,31 @@ MANIFEST="verification/signoff/block-manifest.json"
 TIERS_DOC="verification/signoff/design-evidence-tiers.md"
 REPORT="verification/signoff/tier-report.json"
 
-# The signoff-report leg pins its OWN klt build (issues #165, #218): the git
-# SHA below, which contains the grader for T1 items 1/2/9/10 (klayout-tools#2718)
-# and the item 6 `not_applicable` outcome (klayout-tools#2865, PR #3200). The
-# PDK-heavy legs' `.venv` klt is an older pin, so this script does NOT silently
-# fall back to it: set KLT to a klt built from that SHA (e.g. `uv venv /tmp/v &&
-# uv pip install --python /tmp/v/bin/python "klayout-tools @
-# git+https://github.com/2AMLogic/klayout-tools@<SHA>"`, then
-# `KLT=/tmp/v/bin/klt`), or have one on PATH. A git build reports
-# `klt <base>.devN+g<first 12 of SHA>`; the check below matches that suffix.
-SIGNOFF_KLT_SHA="7755612adb513f00ec61e7a77ff7091aee7630f5"
-SIGNOFF_KLT_VERSION="git ${SIGNOFF_KLT_SHA}"
+# The signoff-report leg runs on the same klt release as the evidence legs
+# (issues #165, #218, #246): the PyPI release pinned below, which contains the
+# grader for T1 items 1/2/9/10 (klayout-tools#2718) and the item 6
+# `not_applicable` outcome (klayout-tools#2865). Keep it equal to `KLT_VERSION`
+# in scripts/setup-env.sh; verification/check_pins.py enforces that. This
+# script does NOT silently fall back to any other klt: set KLT to a klt of
+# exactly this version (e.g. `uv venv /tmp/v && uv pip install --python
+# /tmp/v/bin/python "klayout-tools==<version>"`, then `KLT=/tmp/v/bin/klt`), or
+# have one on PATH. A release build reports bare `klt <version>`
+# (klayout-tools#2823); a git build reports a `.devN+g<sha>` version and is
+# refused.
+SIGNOFF_KLT_VERSION="0.8.0"
 
 if [[ -n "${KLT:-}" ]]; then
   :
 else
-  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and KLT unset (need klayout-tools at ${SIGNOFF_KLT_VERSION})" >&2; exit 1; }
+  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and KLT unset (need klayout-tools==${SIGNOFF_KLT_VERSION})" >&2; exit 1; }
 fi
 KLT_VERSION_LINE="$("$KLT" --version 2>/dev/null || echo 'version unknown')"
 echo "klt: $KLT ($KLT_VERSION_LINE)" >&2
-case "$KLT_VERSION_LINE" in
-  "klt "*"+g${SIGNOFF_KLT_SHA:0:12}"*) ;;
-  *)
-    echo "FATAL: signoff leg is pinned to klayout-tools at ${SIGNOFF_KLT_VERSION}; got '${KLT_VERSION_LINE}'." >&2
-    echo "  Point KLT at an install built from ${SIGNOFF_KLT_SHA} (see the comment above)." >&2
-    exit 1
-    ;;
-esac
+if [[ "$KLT_VERSION_LINE" != "klt ${SIGNOFF_KLT_VERSION}" ]]; then
+  echo "FATAL: signoff leg is pinned to klayout-tools==${SIGNOFF_KLT_VERSION}; got '${KLT_VERSION_LINE}'." >&2
+  echo "  Point KLT at an install of klayout-tools==${SIGNOFF_KLT_VERSION} (see the comment above)." >&2
+  exit 1
+fi
 
 # Item 6 `not_applicable` evidence guard (issue #204). The graded spec index
 # is JSON, the spec is Markdown, so the index carries `source_hash` of

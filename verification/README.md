@@ -427,7 +427,7 @@ would produce a *passing* gate-level run against the wrong netlist, with no
 test failure attached to it.
 
 `npm run lint` also runs `verification/check_pins.py`, which fails if a pin
-constant in `scripts/setup-env.sh`'s pinned-versions block (`KLT_REV`,
+constant in `scripts/setup-env.sh`'s pinned-versions block (`KLT_VERSION`,
 `VOLARE_SKY130_VERSION`, `YOWASP_YOSYS_VERSION`, `YOWASP_YOSYS_WASM_SHA256`,
 ...) is missing from `docs/environment.md`'s "Pinned versions" table, or if
 that table names a revision/digest/`yowasp-yosys==` version the script does

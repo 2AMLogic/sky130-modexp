@@ -2,7 +2,7 @@
 """Check that `scripts/setup-env.sh`'s pin constants match `docs/environment.md`.
 
 `scripts/setup-env.sh` provisions the environment from a block of pin
-constants (`KLT_REV`, `CIEL_SKY130_VERSION`, `YOWASP_YOSYS_VERSION`,
+constants (`KLT_VERSION`, `CIEL_SKY130_VERSION`, `YOWASP_YOSYS_VERSION`,
 `YOWASP_YOSYS_WASM_SHA256`, ...). `docs/environment.md`'s "## Pinned
 versions" table restates those values for readers. The table is part of the
 pin's mechanism, not a description of it: a reader who trusts the table
@@ -20,18 +20,17 @@ Checks, all pure text -- no network, no PDK, no tools:
    "## Pinned versions" table. A pin bumped in the script but not the doc
    fails here.
 3. Every git-revision / sha256-shaped hex token, and every
-   `yowasp-yosys==<version>` spec, in that table equals some pin constant.
+   `yowasp-yosys==<version>` / `klayout-tools==<version>` spec, in that table equals some pin constant.
    A pin bumped in the doc but not the script -- or bumped in one table row
    but left stale in another -- fails here. Rows whose component is pinned
    somewhere other than `scripts/setup-env.sh` (`EXTERNALLY_PINNED_ROWS`)
    are exempt from this direction only.
-4. The signoff-report-leg `klayout-tools` row is a separate pin from
-   `KLT_REV`. Its SHA must equal `SIGNOFF_KLT_SHA` in
-   `verification/signoff/run-signoff.sh`, and every
-   `klayout-tools @ git+...@<sha>` install in `.github/workflows/ci.yml`
-   must name `SIGNOFF_KLT_SHA` or `KLT_REV`, with `SIGNOFF_KLT_SHA` present
-   (the three-way sync, issue #218). The row is exempt from check 3 only for
-   that SHA; the evidence-leg row stays checked against `KLT_REV`.
+4. The signoff-report leg shares the one klt pin (issue #246). The
+   `SIGNOFF_KLT_VERSION` in `verification/signoff/run-signoff.sh` must equal
+   `KLT_VERSION`, and every `klayout-tools==<version>` install in
+   `.github/workflows/ci.yml` must name `KLT_VERSION`, with at least one
+   present. A leftover git-SHA install in CI also fails (it reports a dev
+   version that cannot satisfy the `==` pin, klayout-tools#2823).
 
 Deliberately OUT of scope: frozen evidence artifacts that restate a pin,
 e.g. the `rerun-pinned-synthesis.sh` scripts under
@@ -76,12 +75,12 @@ SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
 SIGNOFF_REL = Path("verification/signoff/run-signoff.sh")
 CI_REL = Path(".github/workflows/ci.yml")
-SIGNOFF_ROW_MARK = "signoff-report leg"
-SIGNOFF_ASSIGN = re.compile(r'^SIGNOFF_KLT_SHA="([0-9a-f]{40})"', re.MULTILINE)
-CI_KLT_INSTALL = re.compile(r"klayout-tools @ git\+\S*?@([0-9a-f]{40})")
+SIGNOFF_ASSIGN = re.compile(r'^SIGNOFF_KLT_VERSION="([0-9][0-9A-Za-z.+_-]*)"', re.MULTILINE)
+CI_KLT_INSTALL = re.compile(r"klayout-tools==([0-9][0-9A-Za-z.+_-]*)")
+CI_KLT_GIT_INSTALL = re.compile(r"klayout-tools\s*@\s*git\+")
 
 REQUIRED_PINS = (
-    "KLT_REV",
+    "KLT_VERSION",
     "CIEL_VERSION",
     "CIEL_SKY130_VERSION",
     "YOWASP_YOSYS_VERSION",
@@ -101,6 +100,7 @@ PIN_BLOCK_END = re.compile(r"^#\s*-{4,}\s*$")
 ASSIGNMENT = re.compile(r'^([A-Z][A-Z0-9_]*)="([^"$`\\]*)"\s*(?:#.*)?$')
 TABLE_HEADING = re.compile(r"^##\s+Pinned versions\s*$")
 HEX_TOKEN = re.compile(r"(?<![0-9A-Za-z])(?:[0-9a-f]{64}|[0-9a-f]{40})(?![0-9A-Za-z])")
+KLT_SPEC = re.compile(r"klayout-tools==([0-9][0-9A-Za-z.+_-]*[0-9A-Za-z])")
 YOWASP_SPEC = re.compile(r"yowasp-yosys==([0-9A-Za-z.+_-]*[0-9A-Za-z])")
 
 
@@ -189,43 +189,44 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
         else:
             notes.append(f"ok: {name} = {value}")
 
+    klt_version = pins.get("KLT_VERSION")
     m = SIGNOFF_ASSIGN.search(signoff_path.read_text(encoding="utf-8"))
     if not m:
-        raise ParseError(f"{SIGNOFF_REL}: no SIGNOFF_KLT_SHA=\"<40 hex>\" assignment")
-    signoff_sha = m.group(1)
-    signoff_rows = [r for r in rows if SIGNOFF_ROW_MARK in _first_cell(r)]
-    if len(signoff_rows) != 1:
+        raise ParseError(f"{SIGNOFF_REL}: no SIGNOFF_KLT_VERSION=\"<version>\" assignment")
+    if m.group(1) != klt_version:
         errors.append(
-            f"{DOC_REL}: expected exactly one '{SIGNOFF_ROW_MARK}' klayout-tools row, found {len(signoff_rows)}"
+            f"{SIGNOFF_REL}: SIGNOFF_KLT_VERSION={m.group(1)} but {SCRIPT_REL} pins KLT_VERSION={klt_version}"
         )
-    for row in signoff_rows:
-        toks = set(HEX_TOKEN.findall(row))
-        if toks != {signoff_sha}:
+    else:
+        notes.append(f"ok: SIGNOFF_KLT_VERSION = {m.group(1)}")
+    ci_text = ci_path.read_text(encoding="utf-8")
+    ci_versions = CI_KLT_INSTALL.findall(ci_text)
+    if not ci_versions:
+        errors.append(f"{CI_REL}: no klayout-tools=={klt_version} install")
+    for ver in sorted(set(ci_versions)):
+        if ver != klt_version:
             errors.append(
-                f"{DOC_REL}: signoff-leg row names {sorted(toks)}, but {SIGNOFF_REL} "
-                f"pins SIGNOFF_KLT_SHA={signoff_sha}"
+                f"{CI_REL}: klayout-tools=={ver} install does not match KLT_VERSION={klt_version} (stale or unsynced pin)"
             )
-        else:
-            notes.append(f"ok: SIGNOFF_KLT_SHA = {signoff_sha}")
-    ci_shas = CI_KLT_INSTALL.findall(ci_path.read_text(encoding="utf-8"))
-    if signoff_sha not in ci_shas:
-        errors.append(f"{CI_REL}: no klayout-tools install at SIGNOFF_KLT_SHA={signoff_sha} (from {SIGNOFF_REL})")
-    for sha in sorted(set(ci_shas)):
-        if sha != signoff_sha and sha != pins.get("KLT_REV"):
-            errors.append(
-                f"{CI_REL}: klayout-tools install at {sha} matches neither SIGNOFF_KLT_SHA nor KLT_REV (stale or unsynced pin)"
-            )
+    if CI_KLT_GIT_INSTALL.search(ci_text):
+        errors.append(f"{CI_REL}: klayout-tools git install found; pin the PyPI release klayout-tools=={klt_version}")
 
     pin_values = set(pins.values())
     for row in rows:
         component = _first_cell(row)
-        if component.startswith(EXTERNALLY_PINNED_ROWS) or SIGNOFF_ROW_MARK in component:
+        if component.startswith(EXTERNALLY_PINNED_ROWS):
             continue
         for tok in sorted(set(HEX_TOKEN.findall(row))):
             if tok not in pin_values:
                 errors.append(
                     f"{DOC_REL}: row '{component}' names {tok}, which matches no "
                     f"pin constant in {SCRIPT_REL} (stale or unsynced pin)"
+                )
+        for ver in sorted(set(KLT_SPEC.findall(row))):
+            if ver != klt_version:
+                errors.append(
+                    f"{DOC_REL}: row '{component}' names klayout-tools=={ver}, but "
+                    f"{SCRIPT_REL} pins KLT_VERSION={klt_version!r}"
                 )
         for ver in sorted(set(YOWASP_SPEC.findall(row))):
             if ver != pins.get("YOWASP_YOSYS_VERSION"):

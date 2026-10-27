@@ -118,10 +118,8 @@ jobs:
     # stale_evidence, the diff goes non-empty, and CI fails instead of
     # letting the committed verdict rot. Tool-light by construction -- the
     # report leg only reads committed JSON envelopes, no PDK, no simulator
-    # -- so it installs its own klt pin (klayout-tools git SHA 7755612, newer
-    # than the PDK-heavy legs' pin, which predates the artifact-anchored
-    # evidence for T1 items 1/2/9/10 and the item 6 not_applicable grader;
-    # see docs/environment.md -> "Second klt pin").
+    # -- so it installs klt itself, at the same PyPI release as the PDK-heavy
+    # legs (see docs/environment.md -> "Pinned versions").
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -132,8 +130,8 @@ jobs:
 
       - name: Install klt at the signoff-report pin
         run: |
-          python3 -m pip install --disable-pip-version-check \
-            "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@7755612adb513f00ec61e7a77ff7091aee7630f5"
+          python3 -m pip install --disable-pip-version-check "klayout-tools==0.8.0"
+          klt --version
 
       - name: Regenerate and compare the tier report
         run: ./verification/signoff/run-signoff.sh --check
