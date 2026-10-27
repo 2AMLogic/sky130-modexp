@@ -16,7 +16,7 @@ re-made. Paths are repo-root-relative.
 | File | Derivation |
 |---|---|
 | `verification/records/synthesis-baseline/artifacts/20260808-032045-5488082/modexp_synth.v` | Frozen `klt synthesize` (Yosys) output of `rtl/modexp.v` from `flow/synthesize-modexp.json` (record `20260808-032045-5488082`). |
-| `verification/records/place-and-route/artifacts/20260816-072918-d8eafca/modexp_synth_tied.v` | That synthesis output after `flow/tie_constants.py` (constant-tie literals to a `conb_1` instance). This is the netlist fed to place-and-route (`flow/par-modexp.json`), content hash `sha256:67a218e16cf51e4f3010e5f87404b829f0574d9765b2569278abd54a4fdc7486`. |
+| `verification/records/place-and-route/artifacts/20261027-013900-98bf55d/modexp_synth_tied.v` | A fresh `klt synthesize` of `rtl/modexp.v` after `flow/tie_constants.py` (which found no bare constant literal and copied it unchanged). This is the netlist fed to place-and-route (`flow/par-modexp.json`) for the committed `layout/modexp.{def,gds,v}`, content hash `sha256:57ea1b45627b90139f4c29bfb99b13a469de73683821d2e696780e96526a6228` (record `20261027-013900-98bf55d`). The earlier 683-cell tied netlist (hash `67a218e1…`) fed the layout issue #232 replaced and is no longer an input of the committed layout. |
 
 ## Regeneration
 
@@ -26,10 +26,15 @@ flow/synthesize-modexp.json`, then `python3 flow/tie_constants.py`.
 ## Freshness audit
 
 `rtl/modexp.v` has one commit in its history (`589aadc`, the migration),
-which predates the P&R run (design revision `d5e43d3`) that consumed the
-tied netlist; the RTL has not changed since the netlist was derived.
+which predates the P&R run (design revision `98bf55d`, record
+`20261027-013900-98bf55d`) that consumed the tied netlist; the RTL has not
+changed since the netlist was derived.
 `sha256(rtl/modexp.v)` at the time of this audit:
 `109db84055efe603af2e71506aa7630483696d84653b1de4c0c1d05171b8ed93`.
+
+## Layout derived from it
+
+Two sequential `flow/run-par.sh` runs on that netlist produced byte-identical DEF, GDS and as-built netlist (record `20261027-013900-98bf55d`); see item 2.
 
 ## Not covered
 

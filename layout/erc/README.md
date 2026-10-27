@@ -20,19 +20,24 @@ layout/erc/
 Regenerate the report:
 
 ```bash
-klt erc layout/modexp.gds layout/erc/erc-supply-spec.json \
+klt erc layout/modexp.gds layout/erc/erc-supply-spec.json --pdk sky130 \
   --format json > layout/erc/modexp-erc-supply-report.json
 ```
 
-`klt 0.5.0` (git revision `2f64ab88bfcc` — a working-tree build ahead of
-`docs/environment.md`'s `f77036bf` pin; the report's own
-`provenance.klt_version` records `0.5.0`), klayout `0.30.10`. The
-committed report's `provenance.input.content_hash` is
-`sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79`,
-which is the sha256 of the committed `layout/modexp.gds` on this branch —
-the report pins exactly the GDS it was run against (and its
-`provenance.spec.content_hash` pins the spec the same way, per
-klayout-tools#2036).
+**Updated by issue #232**: re-run on the regenerated `layout/modexp.gds` with
+`klt 0.7.1.dev1127+gd1dc0fc090d4` (the `scripts/setup-env.sh` pin), klayout
+`0.30.12`. The report's `provenance.input.content_hash` is
+`sha256:cc970173409a1fcb28f6bc8c1c916f90d0f5fedf88fff3690cb91102f2734372`, the
+committed GDS. Result: `erc_status: clean`, `erc_finding_count: 0`, `VPWR` and
+`VGND` one island each, 1842 gate nets. The command gained `--pdk sky130`:
+without it this klt reports the top-level `status` as `not_checked` (every
+antenna verdict `unchecked`; the connectivity verdict `erc_status` is `clean`
+either way), whereas the previous klt reported a plain `clean`. With it the
+top-level `status` is `clean_partial` (every gate `pass_partial`: the built-in
+antenna table covers only part of the rules) -- a different vocabulary from the
+`clean` of the klt 0.5.0 report this replaces, not a weaker connectivity
+result. The label-text and gate-net counts quoted below were measured on the
+previous GDS (1848 gate nets); the current ones are in the report itself.
 
 ## Reading the verdict
 

@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
   "kind": "generic",
-  "status": "fail",
+  "status": "pass",
   "t1_item": 2,
-  "summary": "committed routed GDS produced by the committed klt place-and-route flow (flow/par-modexp.json, flow/run-par.sh); DISCLOSURE: the exact run behind this GDS is not bit-reproducible (layout/README.md, issue #55) and its as-built netlist was not captured (decision record 0006)",
+  "summary": "committed routed GDS, DEF and as-built netlist (layout/modexp.{gds,def,v}) produced by the committed klt place-and-route flow (flow/par-modexp.json via flow/run-par.sh) from the committed synthesized netlist; REPRODUCTION OBSERVED: two sequential flow/run-par.sh runs at the recorded pins produced byte-identical GDS, DEF and netlist (record verification/records/place-and-route/records/20261027-013900-98bf55d.md; same host and OpenROAD build, not a cross-host claim)",
   "source": "layout/modexp.gds",
   "provenance": {
-    "klt_version": "0.7.0",
+    "klt_version": "0.7.1.dev1127+gd1dc0fc090d4",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
     "input": {
-      "content_hash": "sha256:9fa0dbe1dafa4aa4b09bec781817e118d7b1c7d2fe9b8a7688a4b34e9191ef79",
+      "content_hash": "sha256:cc970173409a1fcb28f6bc8c1c916f90d0f5fedf88fff3690cb91102f2734372",
       "path": {
         "path": "layout/modexp.gds",
         "scope": "repo"
