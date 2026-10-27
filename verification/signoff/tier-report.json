@@ -249,7 +249,7 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "verification/records/gate-level-sim/artifacts/20261017-200000-79564a8/klt-functional-verification-sdf-run1.json",
+        "file": "verification/records/gate-level-sim/artifacts/20261027-050100-163f791/klt-functional-verification-sdf-run1.json",
         "command": null,
         "kind": "functional-verification",
         "check_status": "pass",

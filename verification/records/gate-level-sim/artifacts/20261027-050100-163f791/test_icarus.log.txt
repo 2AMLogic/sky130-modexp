@@ -1,0 +1,152 @@
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/usr/lib/x86_64-linux-gnu/libpython3.12.so.1.0'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:233  in gpi_load_users                  Running entry func 'initialize' from loaded library '/home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.venv/lib/python3.12/site-packages/cocotb/simulator.cpython-312-x86_64-linux-gnu.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:114  in initialize                      Using Python 3.12.12 interpreter at /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.venv/bin/python
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Seeding Python random module with 1
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.venv/lib/python3.12/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running test_modexp.test_modexp_known_vectors (1/2)
+                                                            Directed vectors, including the exponent/base edge cases.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:1944: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:1959: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:1974: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:1989: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2004: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2019: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2034: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2049: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2064: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2079: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2094: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2109: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2124: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2139: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2154: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2169: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2184: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2199: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2214: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2229: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2244: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2259: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2274: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2289: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2304: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2319: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2334: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2349: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2364: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2379: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2394: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2409: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2424: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2439: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2454: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2469: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2484: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2499: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2514: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2529: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2544: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2559: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2574: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2589: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2604: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2619: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2634: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2649: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2664: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2679: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2694: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2709: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2724: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2739: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2754: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2769: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2784: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2799: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2814: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2829: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2844: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2859: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2874: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2889: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2904: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2919: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2934: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2949: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2964: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2979: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:2994: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3009: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3024: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3039: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3054: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3069: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3084: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3099: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3114: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3129: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3144: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3159: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3174: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3189: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3204: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3219: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3234: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3249: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3264: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3279: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3294: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3309: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3324: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3339: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3354: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3369: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3384: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3399: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3414: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3429: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3444: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3459: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3474: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3489: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3504: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3519: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3534: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3549: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3564: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3579: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3594: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3609: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3624: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3639: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3654: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3669: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3684: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3699: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3714: TIMINGCHECK not supported.
+SDF WARNING: 23750.00ns INFO     cocotb.regression                  test_modexp.test_modexp_known_vectors passed
+ 23750.00ns INFO     cocotb.regression                  running test_modexp.test_modexp_random (2/2)
+                                                            Randomized cross-check against Python `pow`, fixed seed for reproducibility.
+204230.00ns INFO     cocotb.regression                  test_modexp.test_modexp_random passed
+204230.00ns INFO     cocotb.regression                  ***********************************************************************************************
+                                                        ** TEST                                   STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ***********************************************************************************************
+                                                        ** test_modexp.test_modexp_known_vectors   PASS       23750.00           0.50      47472.39  **
+                                                        ** test_modexp.test_modexp_random          PASS      180480.00           6.47      27910.98  **
+                                                        ***********************************************************************************************
+                                                        ** TESTS=2 PASS=2 FAIL=0 SKIP=0                      204230.00           6.97      29310.52  **
+                                                        ***********************************************************************************************
+ /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3729: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3744: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3759: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3774: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3789: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3804: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3819: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3834: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3849: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3864: TIMINGCHECK not supported.
+SDF WARNING: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-236/.klt/sdf-replay/sim/.klt/functional-verification/klt_sdf_safe.sdf:3879: TIMINGCHECK not supported.

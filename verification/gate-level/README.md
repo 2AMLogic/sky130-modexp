@@ -18,6 +18,15 @@ cell-arc entry is excluded because IOPATH back-annotation on these models
 under Icarus 13 mechanically kills a *timing-clean* design — isolation
 evidence and the two upstream filings in "Leg 2" below)
 
+**Update 2026-10-27, issue #236:** the Leg 2 replay was re-done on the
+**committed** layout. A `klt place-and-route` run with SPEF/SDF export
+reproduced `layout/modexp.{def,gds,v}` byte-for-byte
+(`place-and-route/20261027-050000-163f791`), and the same INTERCONNECT-only
+subset filter (now 1,920 entries; 1 antenna-diode entry dropped; counts in the
+record) was replayed on it: `gate-level-sim/20261027-050100-163f791`, 2/2, 3
+runs, `annotated: true`. T1 item 7 cites that record; the figures above
+describe the earlier route.
+
 ## The netlist problem, and why the netlist here is derived, not exported
 
 `klt place-and-route` at this repo's pinned `klt` revision has **no
@@ -76,10 +85,7 @@ inputs.
 `test_spice_to_verilog.py` is the converter's own self-test (7 cases: a
 synthetic-fixture happy path, one executable negative case per guard above,
 and a consistency check of the **committed** `modexp_post_route.v` against
-the extraction report — which is what catches a stale committed netlist; the
-report and abstracted SPICE it compares against are the frozen copies in drc-lvs
-record `20261016-010000-713829b`, because item-7 record `20261017-200000-79564a8`
-pins the netlist's hash, so it is not regenerated with `layout/lvs/`). It
+the extraction report — which is what catches a stale committed netlist). It
 needs no PDK and no simulator, so it runs in CI alongside
 `test_check_records.py`.
 
