@@ -40,88 +40,28 @@ on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 > "what does this block's evidence establish?" gets the whole answer in one
 > place.
 
-## Verdict (updated 2026-09-23, issue #131): **not met** — DRC is clean;
-LVS still mismatches, now 12 errors, all of them P&R cell insertions and
-resizes the pre-CTS reference cannot model
+## Current verdict (issue #233, 2026-10-27): DRC clean; LVS `match`; T1 item 4 `met`
 
-**Decision (issue #139, 2026-10-01, record
-`spec/decision-records/0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md`):
-T1 item 4 stays formally `unmet` for the current pin.** The 12 mismatches
-are all router-inserted or resized cells (680 identical, 3 resized, 35
-fixups, 0 missing) and cannot be resolved against a GDS whose as-built
-post-route netlist was never committed. A genuine match (re-pin with the
-as-built netlist committed) is deferred to the next natural re-pin; a
-DEF-derived reference was rejected as too close to circular. From now on
-every P&R run commits its as-built netlist (`flow/run-par.sh`).
+- **DRC**: `status: "clean"`, 0 violations on `layout/modexp.gds` (see "DRC"
+  below).
+- **LVS**: `status: match`, 0 errors, `power_connectivity: match`, against the
+  as-built netlist `layout/modexp.v` (see the amendment at the top of this
+  page for engine pin, warnings, and the netgen caveat). A connectivity /
+  pin-to-net verdict, not rail continuity or IR drop.
+- Timing (T1 item 5) is a separate, still-failing claim: see "Multi-corner
+  timing" below.
 
-**LVS's residue is now one named cause, and two of its previously-open
-questions are answered** (issue #131). The comparison moved onto `klt
-lvs`'s `reference.form: "gate-level-verilog"` surface, which changes three
-things and leaves the headline verdict alone:
-
-- `status` is **still `"mismatch"`**, so the Signoff row is still not met
-  and T1 item 4 still renders `unmet`. `error_count` is **12** (was 17).
-- **`power_connectivity.status` is `"match"`**, over all 3074 placed
-  instances, zero findings — the first time this block has answered that
-  question at all (every other `reference.form` reports it `"unchecked"`).
-  It is a per-instance power/ground pin-to-net consistency verdict, **not**
-  geometric rail continuity and **not** an IR-drop result.
-- **The second-engine cross-check has been run** and concurs: netgen
-  1.5.133, same netlist pair, also `mismatch`. The line further down this
-  page recording it as "not run" no longer applies and is superseded.
-- The five physical-only masters (`tapvpwrvgnd_1`, `fill_{1,2,4,8}`) are
-  no longer mismatches: `klt lvs` removes them itself, before comparing,
-  and discloses each by name in a `topology.power_only_pruned` warning.
-
-See "LVS" below for the full statement, `layout/lvs/README.md` for the
-per-leg detail, and
-`verification/records/drc-lvs/records/20260923-062424-7d0dd52.md` for the
-evidence record.
-
-## Verdict (2026-09-11, issue #81): **not met** — DRC is now clean;
-LVS still mismatches
-
-**DRC is now clean, 0 violations** (issue #81): `flow/par-modexp.json`
-gained a `power` block driving `klt place-and-route`'s tapcell + PDN +
-filler-cell insertion (`request.power`, added upstream by
-[klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120)),
-and the regenerated `layout/modexp.gds`/`layout/modexp.def` close all 234
-`nwell.space.1`/`nwell.width.1` violations issue #79 had classified
-(121 `nwell.space.1` + all 40 `nwell.width.1`, the documented-gap class —
-closed for real, as intended — **and**, incidentally, the 73 check-engine-
-limitation violations too, since continuous filler-cell nwell coverage
-removes the same-polygon concave notches that class depended on;
-[klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)
-itself is untouched and remains open upstream on its own merits). See "DRC"
-below for the full record.
-
-**DRC's history, for context**: DRC was clean at the issue #55 pin, but
-issue #78's later pin bump (taken for an unrelated reason — gate-level-sim
-Leg 2's SDF fix) surfaced those same 234 violations against the
-then-unmodified `layout/modexp.gds`, because the DRC deck itself grew
-coverage between the two pins (`klayout-tools#1433`, merged 2026-08-26,
-added `nwell.space.1`/`nwell.width.1` for the first time) — not a design
-regression, a previously-invisible, never-actually-checked gap. Issue #79
-individually classified all 234; issue #81 closed them by finally adding
-the filler-cell/tapcell/PDN insertion issue #79's own classification named
-as the real fix.
-
-**LVS still reports `status: "mismatch"`** — re-run against the new,
-tapcell/PDN/filler-cell-bearing GDS (issue #81): mismatch count grew from
-15 to 17, still 100% `topology`, fully attributed to 5 new physical-only
-cell types this issue's own `power` block adds (no synthesis-side
-counterpart can exist for a tapcell/filler master, by construction) plus
-ordinary CTS/timing/antenna-fixup churn — not a new mismatch category. See
-"LVS" below. `spec/modexp.md`'s Signoff row (*"DRC + LVS clean"*, both
-conjuncts required) remains **not met** overall — stated plainly, not "met
-with caveats," and not relaxed: DRC is now clean, but LVS closure remains a
-separate, unstarted effort (this repo's LVS methodology needs either a
-`sky130` extraction-deck layer-coverage extension, `klt extract`'s
-net-naming defaults resolved, or a different LVS methodology entirely — see
-"LVS" below, unchanged by this update). What follows is why neither the
-(now-zero) DRC violations nor the LVS mismatches indicate a defect *beyond*
-what is documented below; every reported finding is classified with
-evidence, not asserted.
+**Superseded history lives in git and in the records, not on this page.**
+Earlier revisions of this page carried the dated "not met" verdicts (issues
+#81, #131), the 234-violation classified DRC state (issue #79), and the
+LVS `mismatch` statements and their histories (issues #55, #81, #131). They
+were removed from the page in issue #242 so a heading no longer contradicts
+the current verdict. Recover them with
+`git show a5d8839:docs/signoff-claim.md`; the same states are recorded in
+`spec/decision-records/` 0003, 0006, 0010, 0012 and the append-only
+`verification/records/drc-lvs/records/`. Decision records that cite sections
+by name ("LVS", "Second-engine cross-check ... not run") refer to that
+revision.
 
 ## DRC — **CLEAN: 0 violations** (was: 234, individually classified, issue
 #79; before that, clean at the issue #55 pin; before that, 10 violations)
@@ -143,105 +83,6 @@ itself was fixed** (it was not touched and remains open upstream; a
 different design, or a future change to this one, could still trigger the
 same `Region.space_check` approximation gap on a different same-polygon
 notch).
-
-### History: the 234-violation classified state (issue #79, superseded)
-
-`klt drc layout/modexp.gds --deck sky130 --format json` previously reported
-**`status: "violations"`, `violation_count: 234`** (`nwell.space.1`: 194,
-`nwell.width.1`: 40), against the pre-#81 `layout/modexp.gds` (identical
-content hash to every run since issue #7, before issue #81 regenerated it).
-Full report, provenance, and the per-violation classification:
-`verification/records/drc-lvs/records/20260911-012604-6e5ac66.md` (and its
-twin, `20260911-012620-6e5ac66.md`), superseding
-`20260909-230959-92e00f2`/`20260909-231045-92e00f2` — retained below as
-history.
-
-**What changed, issue #78 (2026-09-09)**: the DRC deck's own
-`content_hash` changed between this repo's two most recent `klt` pins
-(`sha256:2e78949d...` → `sha256:5afac7ab...`), because
-[klayout-tools#1433](https://github.com/2AMLogic/klayout-tools/pull/1433)
-("feat(decks): add sky130 nwell.width.1/nwell.space.1 DRC rules", merged
-2026-08-26) added these two rules to the deck's curated subset between the
-two pins. `layout/drc/README.md` already documented the deck as a "curated
-starter subset of 17 rules, not the full sky130 design rule manual" — these
-two rules were simply not among that subset before. This design's
-`nwell.space.1`/`nwell.width.1` compliance was **never actually checked**
-prior to this pin bump; there is no design or GDS change to explain, and no
-false-positive check-engine defect to file upstream (unlike the prior two
-findings below) — the new coverage is legitimate upstream feature growth,
-and it revealed a genuine, previously-invisible gap in this design's own
-signoff status.
-
-**Classification (issue #79, 2026-09-11)**: all 234 violations were
-individually classified by cross-referencing each violation's geometry
-against the merged `nwell.drawing` region (the same region `klt drc`
-itself checks) and `layout/modexp.def`'s cell-instance placement. Full
-method, counts, and per-violation detail:
-`verification/records/drc-lvs/records/20260911-012604-6e5ac66.md` and
-`verification/records/drc-lvs/artifacts/20260911-012604-6e5ac66/classification.json`.
-
-- **73 of 194 `nwell.space.1` violations — (iii) check-engine limitation.**
-  Each touches exactly one merged `nwell.drawing` polygon (a large,
-  non-box, many-vertex outline) — a concave notch within a single physical
-  well, not a gap between two distinct wells. `nwell.space.1` is
-  transcribed as `check="space"` (`Region.space_check`), which — unlike the
-  source `sky130.lydrc` rule `nwell.2a`'s `isolated` semantics — also flags
-  same-polygon notches, exactly as the rule's own docstring in
-  `src/klayout_tools/decks/sky130.py` warns is possible ("no corpus
-  regression found... but that doesn't rule out a false positive specific
-  to this design's own nwell geometry"). Filed upstream, generic, no
-  design-specific detail:
-  [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654).
-- **121 of 194 `nwell.space.1` violations — (ii) accepted/documented gap.**
-  Each touches two or more *distinct* merged `nwell.drawing` polygons,
-  confirmed (via `layout/modexp.def` placement) to belong to two different,
-  non-abutting standard-cell instances. This traces directly to
-  `layout/README.md`'s already-documented "no filler-cell insertion" gap:
-  without filler cells bridging sparsely-placed instances, two separate
-  PMOS wells can end up closer than the 1.27 µm `nwell.2a` threshold with
-  no filler-cell nwell material between them.
-- **40 of 40 `nwell.width.1` violations — (ii) accepted/documented gap.**
-  Every one touches exactly one merged, non-box, many-vertex polygon at a
-  locally narrow "waist" formed where two or more misaligned adjacent
-  standard-cell instances' `nwell` rectangles partially overlap or
-  corner-touch. Not a library-cell defect (every one of the 718
-  individual, per-instance, unmerged `nwell.drawing` rectangles measures
-  >= 1.76 µm x 1.605 µm, well above the 0.84 µm threshold) and not a
-  check-engine limitation (`nwell.width.1`'s docstring carries no
-  approximation caveat) — the narrow waist is purely a merge artifact of
-  the same missing-filler-cell gap as above, on the width failure mode
-  rather than spacing.
-
-**No violation was classified (i) — a newly-discovered real design defect
-requiring an unplanned layout/floorplan change.** Closing the 161
-documented-gap violations for real needed filler-cell (and ultimately
-tapcell/PDN) insertion in the place-and-route flow — a new flow capability,
-out of issue #79's scope per its own "Out of scope" section, tracked as
-[sky130-modexp#81](https://github.com/2AMLogic/sky130-modexp/issues/81) —
-**issue #81 has since landed this and closed all 234** (see "DRC" above);
-this subsection is retained as history of the classification that made
-that closure possible, not a current claim. The 73 check-engine-limitation
-violations' upstream fix
-([klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654))
-was never landed — those 234-era violations stopped recurring only because
-issue #81's filler-cell insertion happens to remove the specific
-same-polygon geometry pattern this design had; #1654 itself remains open.
-
-**History (issue #55)**: the prior 10 violations (all `diff.enclosing.licon.1`, all
-on `sky130_fd_sc_hd__and3_1` instances) were classified as **(iii) — a `klt
-drc` check-engine limitation firing on correct-by-construction geometry**:
-`klt drc`'s `"enclosing"` check built its `Region` from raw, unmerged
-same-layer shapes (`kdb.Region(cell.begin_shapes_rec(...))`, no `.merge()`),
-producing a false enclosure violation where this one library cell's `diff`
-geometry happens to be drawn as two abutting (not merged) rectangles — filed
-as [klayout-tools#995](https://github.com/2AMLogic/klayout-tools/issues/995).
-That issue is now closed upstream, fixed by
-[klayout-tools#998](https://github.com/2AMLogic/klayout-tools/pull/998) ("fix(drc):
-merge checked regions before running check primitives", merged 2026-08-15) —
-exactly the missing `.merge()` call. Issue #55 bumped this repo's `klt` pin
-past that fix and re-ran DRC against the identical GDS: the 10 violations do
-not recur, and no new violation appeared. Full before/after evidence:
-`layout/drc/README.md`.
 
 ### Deck coverage gaps (enumerated, per this issue's acceptance criteria)
 
@@ -354,266 +195,6 @@ the exact deck the committed clean verdict came from:
   bounds above. That framing is unchanged by the re-enumeration — the point
   of the re-enumeration is that the list is now current and complete *as a
   description of what ran*, which is what item 3 requires.
-
-## LVS — still `status: "mismatch"`, now 12 errors, all of them the P&R
-cell-insertion/resize transform; power connectivity `match`; cross-checked
-by a second engine (updated 2026-09-23, issue #131)
-
-**Current, authoritative LVS statement. The two subsections after this one
-are retained history.**
-
-`klt lvs` (engine `klayout`, `NetlistComparer`) against the committed
-`layout/lvs/modexp_layout_abstracted.spice` (extracted from the unchanged
-`layout/modexp.gds`) and a `reference.form: "gate-level-verilog"`
-reference derived from the same frozen, pre-CTS `klt synthesize` netlist
-every prior record used:
-
-- **`status: "mismatch"`**, `mismatch_count: 13`, `error_count: 12`,
-  `category_counts: {"topology": 12, "topology.power_only_pruned": 1}`.
-  The 13th entry is a `severity: "warning"` disclosure, not an error.
-- **`power_connectivity.status: "match"`** — `power_pins: ["VGND", "VPB",
-  "VPWR"]`, derived by klt's own `declared-by-every-instantiated-master`
-  rule over 47 masters with `corroborated: true`, `instance_count: 3074`,
-  `findings: []`.
-- **`body_verification.status: "unchecked"`** — the pre-extracted
-  `layout.netlist` request form carries no extraction deck, so nothing can
-  tell a drawn body tie from a synthesized one. Recorded as `"unchecked"`,
-  never read as `"verified"`.
-
-**The 12 errors are one cause, not a mixture.** All 12 are `"circuit could
-not be matched to a counterpart"`, and every one names a cell type the
-router inserted or resized: 10 `side: "layout"` (`BUF_4`, `BUFINV_16`,
-`CLKINV_2`, `CLKINV_4`, `INV_1`, `INV_6`, `NOR2_2` — CTS/timing fixups;
-`DIODE_2` — antenna fixup; `O21AI_2`, `O22AI_2` — post-resize drive
-strengths), 1 `side: "reference"` (`O22AI_1`, the pre-resize strength the
-routed layout no longer instantiates), 1 `side: "both"` (the top `MODEXP`
-circuit, cascading). Zero `net.split` / `net.merged` / `device.*`. The
-instance-by-instance DEF-vs-Verilog accounting below (680 identical
-name+type, 3 resized, 35 fixup insertions, 0 synthesis instances missing)
-still holds and is now the *whole* explanation rather than part of it.
-
-**The five physical-only masters are removed by the tool, with
-disclosure.** `klt lvs`'s `gate-level-verilog` form prunes every
-layout-side circuit whose every declared pin is a power/ground pin of the
-reference library — here `sky130_fd_sc_hd__tapvpwrvgnd_1` and
-`__fill_{1,2,4,8}` — before comparing, and names each one in a
-`topology.power_only_pruned` warning. That is klt's own rule, keyed off the
-PDK library's pin-order data, **not** a filter this repo applied to make a
-number look better. The prune stops where the evidence does: the
-antenna-fixup master `DIODE_2` declares a non-power `DIODE` pin and is not
-pruned, which is why it is still in the error list above.
-
-**What `power_connectivity: "match"` does and does not establish.** It is a
-per-instance pin-to-net consistency verdict: every master's
-`VGND`/`VPB`/`VPWR` pin reaches the same net every other instance's
-same-named pin reaches, across all 3074 placed instances. The check runs
-*before* the filler/tap prune by design, so the 2352 physical-only
-instances are **inside** this verdict — their power connectivity is the
-only thing about them any check can verify. It is **not** a statement that
-a rail is an unbroken island (that is `klt erc`'s question — see
-`layout/erc/` for this block's supply evidence) and **not** an IR-drop or
-current-capacity result. `VNB` is absent from the derived pin universe
-because the committed abstracted extraction resolved no `VNB` pin on any
-master; that is an extraction-coverage fact, disclosed rather than read as
-a clean verdict on a pin nothing checked.
-
-**Second-engine cross-check (T1 item 4): RUN, and it concurs.** netgen
-1.5.133 (the Ubuntu `netgen-lvs` build, unpatched), same request with
-`"engine": "netgen"`, committed as
-`layout/lvs/modexp_lvs_report_netgen.json`: also `status: "mismatch"`,
-also `power_connectivity: "match"`. netgen fails *differently* — where
-`NetlistComparer` stops at the circuit-type level, netgen proceeds to
-instance/net partitioning and reports `device.unmatched` +
-`net.unmatched`, whose raw side-by-side fragments show that every
-layout-side instance carries `VGND`/`VPB`/`VPWR` terminals the signal-only
-gate-level reference has no counterpart for, so its fanout-class
-refinement cannot converge. **The two engines agree on the verdict and
-disagree on the diagnosis.** That is the honest strength of this
-cross-check: it removes "one toolchain agreeing with itself" as an
-explanation, and independently confirms nothing here is silently passing.
-It does **not** upgrade the verdict — two engines reporting `mismatch` is
-still `mismatch`. The "not run" statement further down this page is
-superseded by this paragraph.
-
-**Two deviations from a bare `klt lvs` invocation, both disclosed, neither
-touching the design:**
-
-1. The reference netlist handed to `klt lvs` is
-   `layout/lvs/modexp_synth_expanded.v` — a mechanically rewritten copy of
-   the frozen `modexp_synth_tied.v` in which three Yosys concatenation
-   `assign` statements are expanded into 52 per-bit plain `assign`s,
-   because klt's Verilog reader rejects a concatenation right-hand side.
-   Every other line is copied byte for byte, and all three rewritten nets
-   are dead in the frozen netlist (no cell instance reads them), so the
-   compared connectivity is unchanged. The frozen evidence file itself is
-   not edited. Filed upstream, generically:
-   [klayout-tools#2372](https://github.com/2AMLogic/klayout-tools/issues/2372).
-2. The netgen leg reached its binary through a `PATH` shim, because klt
-   invokes the engine as the literal name `netgen` and Ubuntu's package
-   installs it as `netgen-lvs`. Filed upstream, generically:
-   [klayout-tools#2373](https://github.com/2AMLogic/klayout-tools/issues/2373).
-
-**What would make this `status: "match"`, and why it is not claimed here.**
-The reference would have to be the *as-built* post-route netlist. `klt
-place-and-route` wrote one for the run that produced the committed layout
-(`…/20260911-052542-d5e43d3/par-nominal-output.json` records a
-`verilog_path` beside the `def_path`/`gds_path`), but only the DEF and GDS
-were committed from that run, and issue #55 established that re-running
-P&R against the identical frozen inputs does not reproduce
-`layout/modexp.gds`. So no as-built netlist for *this* GDS exists in the
-tree and none can be regenerated. Deriving one from `layout/modexp.def` is
-possible but deliberately not done: the layout-side extraction already
-takes its net *names* from that same DEF, so the resulting `match` would
-sound materially stronger than the comparison is. Tracked as
-[sky130-modexp#139](https://github.com/2AMLogic/sky130-modexp/issues/139)
-rather than forced. **Resolved by issue #139 as Option 3** (decision record
-0006): item 4 stays `unmet`; the match is deferred to the next re-pin.
-
-Evidence record:
-`verification/records/drc-lvs/records/20260923-062424-7d0dd52.md` (which
-also carries the control leg — the superseded `plain-element` comparison,
-re-run unchanged on the current `klt` pin, reproducing **17** exactly, so
-the whole 17 → 12 change is the reference form and not tool drift).
-Per-leg narrative: `layout/lvs/README.md`.
-
-## LVS history: `status: "mismatch"` against the regenerated,
-tapcell/PDN/filler-cell GDS (2026-09-11, issue #81) — superseded for
-freshness by the section above
-
-Issue #81 regenerated `layout/modexp.gds`/`layout/modexp.def` (added
-`request.power`: tapcell + PDN + filler-cell insertion) to close the DRC
-violations above; this re-runs issue #8's original direct-comparison LVS
-methodology (below) against the new GDS to confirm it does not silently
-regress. **Result: still `status: "mismatch"`, 17 mismatches (was 15),
-100% `topology`, fully attributed** — 15 `side: "layout"` unmatched
-circuit types (6 CTS/timing-fixup-only + 1 antenna-fixup + 3 post-resize +
-**5 new physical-only types this issue's own `power` block adds**:
-`sky130_fd_sc_hd__tapvpwrvgnd_1` and the four `__fill_{1,2,4,8}` filler
-masters, none of which can have a synthesis-side counterpart by
-construction), 1 `side: "reference"` unmatched type (same pre-resize
-`o22ai_1` as before), 1 `side: "both"` (top circuit, cascading). No new
-mismatch category (still 0 `net.split`/`net.merged`/`device.*`); `klt
-lvs`'s `net_correspondence` table still carries 333 entries, reported
-identically as both `counts.nets.matched` and `counts.pins.matched`
-(unchanged) — **not** a comparison against the 70/68 top-level I/O pins,
-see the "counts.pins.matched" note below. Direct instance-by-instance
-DEF-vs-Verilog accounting confirms the 718 logic-bearing instances
-(excluding 2356 new `TAP_*`/`FILLER_*`/`ANTENNA_*` physical-only
-instances) are otherwise unchanged in kind from the pre-#81 comparison: 680
-identical name+type, 3 resized, 35 new CTS/timing/antenna-fixup insertions,
-0 missing. Full detail, and a confirmed (not assumed) scoping finding about
-`write_verilog -remove_cells` not applying to this repo's GDS-direct
-extraction methodology:
-`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md` (and its
-twin, `20260911-053520-d5e43d3.md`), `layout/lvs/README.md`.
-
-**Artifact/narrative gap closed (issue #86, 2026-09-15)**: the 17-mismatch
-result above was recorded in the records cited here from 2026-09-11 onward,
-but the committed `layout/lvs/modexp_lvs_report.json` was left at the
-original 2026-08-14 run (15 mismatches) until now — so the JSON on disk
-contradicted this page. Issue #86 re-ran `klt lvs` against the current
-committed netlist pair and committed the result: `status: "mismatch"`,
-`mismatch_count: 17`, 100% `topology`, `net_correspondence` still 333
-entries (reported identically as `counts.nets.matched`/`counts.pins.matched`
-— see the note below), with the same 15/1/1 `layout`/`reference`/`both`
-split described above. The re-run **reproduces** the recorded finding
-rather than changing it, so no new evidence record is minted;
-`layout/drc/modexp-drc-report.json` was re-run in the same pass as a
-freshness check and came back byte-identical (`clean`, 0 violations).
-Detail: `layout/lvs/README.md`'s history table (issue #86 row) and
-`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md`.
-
-**`counts.pins.matched` is not a top-level-I/O-pin match count (issue #92,
-2026-09-15)**: `modexp_lvs_report.json` reports `pins: {layout: 70,
-reference: 68, matched: 333}` — a `matched` figure larger than either
-side's own declared pin count, which reads as impossible or as a
-tool-side field swap at a glance. Issue #92 confirmed, with a synthetic
-SPICE netlist pair run against the exact pinned `klt` revision
-(`f77036bff1eaf97b992e121acd702a98519142fb`), that this is **not** a
-mix-up: `klt lvs`'s `counts.{nets,pins}.matched` are scoped across the
-*whole* compared hierarchy (every matched circuit, top and subcircuits
-alike), while `counts.{nets,pins}.{layout,reference}` are scoped to the
-*top circuit only* — a genuine scope inconsistency between the two halves
-of the same field, filed upstream as
-[2AMLogic/klayout-tools#1887](https://github.com/2AMLogic/klayout-tools/issues/1887).
-333 is the size of `net_correspondence`, i.e. the number of matched local
-pin-name pairs across the 46 matched per-cell-type `.SUBCKT` declarations
-(the hypothesis was documented before it was confirmed; see
-`verification/records/drc-lvs/records/20260915-131549-c87a304.md`); it says nothing about whether `modexp`'s own 68/70 top-level
-I/O pins correspond, and in this report they do not even get a
-`net_correspondence` entry, since the top `modexp` circuit itself could
-not be matched. Full synthetic-test evidence:
-`verification/records/drc-lvs/records/20260915-131549-c87a304.md`.
-
-**This re-run does not touch or supersede** the separate "fresh
-self-consistent build" comparison issue #55 introduced below (1324
-mismatches) — that comparison already builds its own reference from an
-independent rebuild rather than from the committed `layout/modexp.gds`, for
-reasons unrelated to this issue, and remains current, unaffected evidence
-in its own right.
-
-## LVS history: a true as-built reference, a different, deeper-diagnosed
-cause (issue #55, 2026-08-16)
-
-Resolved the reference-netlist question issue #8 raised: `klt extract`
-gained cell-instance-level (black-box + pins) abstraction
-(`--abstract-cells`, klayout-tools#620/#622) in direct response to this
-issue being filed, and it works — option (b) from the issue body.
-
-**Issue #8's original comparison** used a golden reference built from `klt
-synthesize`'s pre-CTS gate-level netlist. `klt lvs` reported `status:
-"mismatch"`, 15 mismatches, every one fully attributed (independent
-instance-by-instance DEF-vs-Verilog accounting) to two ordinary P&R
-optimizations the pre-CTS reference could not model (35 CTS/timing-fixup
-cell insertions + 5 resizes) — not a connectivity defect, but also not a
-comparison that got far enough to attempt real net/instance correspondence
-(`NetlistComparer` stopped at the circuit-type level).
-
-**Issue #55 closed that gap**: `klayout-tools#997` (merged 2026-08-15) added
-`klt place-and-route`'s `write_verilog` as-built export, and this repo's
-`klt` pin was bumped past it. Re-running `klt place-and-route` against the
-identical, frozen synthesis netlist/floorplan/seed with the bumped `klt`
-does **not**, however, reproduce `layout/modexp.gds` byte-for-byte (722 vs
-718 instances, materially different timing/wirelength — a real,
-independently useful finding, evidenced in full in the record below) — so
-the true as-built reference this record builds is compared against a
-**fresh, self-consistent build's own extraction**, not against
-`layout/modexp.gds` itself (deliberately left unchanged).
-
-With that as-built reference, `klt lvs` (engine `klayout`) gets **past** the
-circuit-type-level block for the first time — every cell type has a
-same-named counterpart on both sides — and attempts real net/instance
-correspondence. Result: still `status: "mismatch"` (1324 mismatches: 888
-`topology`, 434 `net.split`, 2 `net.merged`), now attributed to two
-different, evidenced causes, **neither of which is CTS/resize** (that
-half of the prior gap is fully resolved): (1) `klt extract`'s default
-net-naming has no correlation to the reference's own signal names —
-`--def-net-names` (`klayout-tools#951`) measurably improves this
-(`net.merged` 48→2) but does not close it; (2) the `sky130` extraction
-deck's own documented layer-coverage limits (3367 dead-metal clusters, 1137
-shapes on layers outside the deck's connectivity graph, both cited directly
-in the extraction's own `warnings[]`) cause some nets to extract as multiple
-disconnected pieces. Full evidence, the fresh comparison, and the
-byte-identical-behavior check on `build_reference_netlist.py`'s generalized
-parser: `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`.
-
-**Comparison level actually achieved: cell-instance granularity
-(standard-cell black boxes, 0 transistor-level devices on either side), not
-transistor-level.** Power-net (`VPWR`/`VGND`/`VPB`) correspondence is
-explicitly out of scope for this comparison — see below.
-
-**Second-engine cross-check (T1 item 4): SUPERSEDED — it has since been
-run (issue #131, 2026-09-23); see the current LVS section at the top of
-this page.** What this paragraph recorded, retained as history: *"not run.
-`docs/cli/lvs.md` documents a `netgen`-backed engine alongside the default
-`NetlistComparer` one. `netgen` has no Homebrew formula and was not present
-on this build host; a from-source build was not attempted within this
-issue's scope. This LVS leg is therefore one toolchain's own verdict, not
-yet cross-checked by a second, independent engine."* The cross-check now
-exists (netgen 1.5.133, `layout/lvs/modexp_lvs_report_netgen.json`) and
-concurs with the `klayout` engine's `mismatch` verdict — it was run against
-the current comparison, not against this 2026-08-16 fresh-build one, which
-remains uncross-checked on its own terms.
 
 ## What this GDS has not been through (missing flow stages) — updated,
 issue #81
@@ -739,7 +320,7 @@ design-specific detail beyond PDK standard-cell names) at
    — **closed upstream, fixed by
    [klayout-tools#997](https://github.com/2AMLogic/klayout-tools/pull/997)**
    (merged 2026-08-15); this repo's `klt` pin was bumped past it and a true
-   as-built reference is now used (see "LVS" above) — though closing this
+   as-built reference is now used (see the amendment at the top of this page) — though closing this
    gap surfaced a *new* one (`klt` pin bumps are not P&R-reproducible; see
    `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`), not
    yet filed as its own generic report since it may simply be expected
@@ -789,20 +370,20 @@ the findings below remain correct history against the layout they were
 measured against, not a current claim about the regenerated GDS.
 
 Issue #9 re-ran the committed bit-exact suite against a gate-level netlist of
-this same GDS, using the very extraction artifact this page's LVS section
-describes (`layout/lvs/modexp_layout_abstracted.spice`). That is a separate
+this same GDS, using the very extraction artifact this page's LVS history
+(issue #131 revision, see "Current verdict") describes (`layout/lvs/modexp_layout_abstracted.spice`). That is a separate
 claim from the DRC/LVS verdict above and does not change it, but it is worth
 recording here because it uses the same layout and inherits the same scope
 caveats:
 
 - **What it establishes**: the 718-instance netlist implied by this routed
   layout — including all 35 CTS/timing-fixup insertions and all 5 resizes
-  that the LVS section above attributes — is functionally bit-exact against
+  that the issue #131 LVS statement (superseded; see "Current verdict") attributed — is functionally bit-exact against
   `pow(base, exp, mod)`, and returns byte-identical results to the RTL on the
   same 500 pinned vectors. That is a positive, simulation-based answer to
   part of what the LVS run could not itself confirm (the LVS comparator
   stopped short of net-by-net correspondence, per the comparison-level
-  statement in this page's LVS section above).
+  statement in the issue #131 revision of this page).
 - **What it does NOT model**, carried forward verbatim from this page's LVS
   scope plus what is specific to simulation: **no parasitic extraction** (no
   R/C, no SPEF — `klt extract` was run without `--parasitics`), **no
