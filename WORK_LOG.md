@@ -5,6 +5,9 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-28
 
+- **PR #272**: docs: record P1 kernel re-measure (best 85.95 MHz, misses 100 MHz); gate complete build
+- **PR #265**: docs: update signoff-claim Signoff-row and missing-stages sections to current verdict
+- **Issue #263** (closed): docs: update remaining stale 'still not met' wording in signoff-claim.md
 - **PR #269**: feat: attest T1 items 1, 9, 10 with klt signoff --attest and refresh tiers doc to v0.8.0
 - **PR #264**: docs: condense stale signoff-claim sections to the current verdict
 - **Issue #266** (closed): T1 grading: re-grade items 1, 9, 10 against the current tiers doc with klt signoff --attest envelopes
