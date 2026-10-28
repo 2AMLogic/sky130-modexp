@@ -26,4 +26,5 @@ Decision 0006 kept T1 item 4 `unmet` because no as-built post-route netlist exis
 
 - Item 4's `met` rests on one engine's gate-level report plus a netgen concurrence on a derived reference; a reader wanting netgen to concur on the gate-level form needs a tool change (netgen leg that accepts a signal-only reference), which is a generic upstream gap.
 - `layout/lvs/README.md` and `docs/signoff-claim.md` carry dated amendments; their older sections remain history.
+  - *Amendment (issue #242, operator ruling 2026-10-28):* the superseded verdict/LVS sections were later removed from `docs/signoff-claim.md`; that history remains in git (`git show a5d8839:docs/signoff-claim.md`) and in the records above.
 - A re-pin of klt can move `power_connectivity` again; that is a new record.
