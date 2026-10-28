@@ -196,103 +196,40 @@ the exact deck the committed clean verdict came from:
   of the re-enumeration is that the list is now current and complete *as a
   description of what ran*, which is what item 3 requires.
 
-## What this GDS has not been through (missing flow stages) — updated,
-issue #81
+## What this GDS has not been through (missing flow stages)
 
-Per `layout/README.md`'s "What this GDS does *not* contain": as of issue
-#81, `layout/modexp.gds` now has **tapcell insertion, power-grid (PDN)
-generation, and filler-cell insertion** (`request.power`, via
-`flow/par-modexp.json`'s new `power` block) — the exclusion list above no
-longer applies to those three. **Still absent**: metal (density) fill (a
-routing-layer CMP-density pass, unrelated to standard-cell row fillers) and
-`DONT_USE_CELLS` exclusion, both out of this issue's scope. No IO ring
-either way (unaffected by `request.power`).
+Per `layout/README.md`'s "What this GDS does *not* contain":
+`layout/modexp.gds` has tapcell insertion, power-grid (PDN) generation, and
+filler-cell insertion (`request.power`, via `flow/par-modexp.json`'s `power`
+block). **Still absent**:
 
-**Consequence for the LVS `VPWR`/`VGND`/`VPB`/power-net scoping note
-below** (carried forward from the pre-#81 comparisons, both the
-issue-#81 re-run above and the issue-#55 fresh-build comparison): power-net
-correspondence is still not attempted by either comparison, but the reason
-has changed. Previously, there was no PDN at all — row-level power-rail
-continuity between non-adjacent placements was not guaranteed, and there
-was no PDN to bridge that gap even where it existed, so a power-net
-mismatch was an *expected*, structurally-guaranteed consequence of a
-documented missing-flow-stage gap. Now that issue #81 adds a real PDN,
-`klt extract` reports genuine, continuous `VDD`/`VSS` top-level pins for
-the first time (confirmed directly — see
-`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md`) — but `NetlistComparer` still never reaches net-by-net
-correspondence in either comparison, because it stops at the
-circuit-type-level block (the unmatched-type mismatches described above)
-before it would attempt matching any individual net, power or otherwise.
-Power-net correspondence therefore remains untested, but for a *different*
-structural reason than before — worth stating precisely rather than
-carrying forward a now-stale rationale.
+- **Metal (density) fill**: a routing-layer CMP-density pass, unrelated to the
+  standard-cell row fillers `request.power` inserts.
+- **`DONT_USE_CELLS` exclusion.**
+- **An IO ring.**
 
-**Partially superseded (issue #131, 2026-09-23).** The paragraph above is
-still exactly right about *net-by-net* power correspondence inside the
-compare: `NetlistComparer` still stops at the circuit-type level, so it
-still never attempts to match `VPWR`/`VGND`/`VPB` as individual nets. What
-has changed is that the question is no longer entirely unasked. `klt lvs`'s
-`power_connectivity` block — reachable only on the `gate-level-verilog`
-reference form the current LVS section uses — checks each placed
-instance's power/ground **pin-to-net** consistency independently of the
-signal compare, and reports `match` over all 3074 instances. That is a
-weaker and narrower statement than "power-net correspondence verified",
-and it is stated as such: pin-to-net consistency, not net matching, and
-not geometric rail continuity. The "untested" wording above should be read
-as scoped to the signal compare's own net-matching stage.
+These do not change the DRC/LVS verdict above; they bound what "DRC clean"
+means for this GDS (no density-rule evidence, no pad-ring evidence).
 
-## Reading the spec's Signoff row (updated 2026-09-11, issue #81)
+## Reading the spec's Signoff row
 
 `spec/modexp.md`'s Signoff row — *"DRC + LVS clean on the OpenROAD-produced
-GDS"* — is **still not met** by `layout/modexp.gds`, stated plainly: DRC is
-now clean, but LVS is not, and the row requires both. The ratified table
-itself is unchanged (this update adds a real layout regeneration plus
-re-run evidence, it does not relax the target — no decision-record entry is
-needed since nothing about the ratified row changes). What this repo's
-evidence establishes, precisely bounded:
+GDS"* — is met by `layout/modexp.gds` as the "Current verdict" section states:
+DRC clean (0 violations) and LVS `match` (0 errors, `power_connectivity:
+match`) against the as-built netlist `layout/modexp.v`, T1 item 4 `met`
+(issue #233, decision record 0012). The ratified row was not relaxed to get
+there. What this evidence establishes, precisely bounded:
 
-- **DRC is now clean against `layout/modexp.gds`** (issue #81):
-  `flow/par-modexp.json`'s new `power` block drives tapcell + PDN +
-  filler-cell insertion, closing all 234 previously-classified
-  `nwell.space.1`/`nwell.width.1` violations (161 documented-gap, the
-  intended target, plus 73 check-engine-limitation ones as an incidental
-  consequence — [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)
-  itself remains open upstream, untouched). This closes the DRC half of the
-  Signoff row's requirement for the first time since issue #78's deck
-  coverage bump reopened it.
-- **LVS is still not clean.** Re-run against the same regenerated GDS
-  (issue #81): mismatch count grew from 15 to 17 (5 new physical-only cell
-  types with no possible synthesis-side counterpart + the same class of
-  ordinary CTS/timing-fixup churn as before), still 100% `topology`, no new
-  mismatch category. The separate "fresh self-consistent build" comparison
-  (issue #55, 1324 mismatches, unaffected by this update) gets past the
-  circuit-type-level block a pre-CTS reference always produced and attempts
-  real net/instance correspondence — still `status: "mismatch"`, traced to
-  `klt extract`'s net-naming defaults and the `sky130` extraction deck's
-  own documented layer-coverage limits, neither a real connectivity defect.
-- The LVS reference-netlist question has a genuinely as-built answer
-  (`write_verilog`, cell-instance granularity), demonstrated end-to-end
-  against a self-consistent fresh build — the deepest this toolchain's
-  digital LVS path has been exercised against this design so far. This is
-  unchanged by issue #81.
-- A separate, load-bearing finding from issue #55, still standing: a `klt`
-  pin bump is **not** a P&R-reproducibility guarantee (see
-  `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`).
-  Issue #81's own P&R run, by contrast, **is** confirmed byte-for-byte
-  reproducible across two independent cold runs at the same pin — a
-  narrower, single-pin reproducibility check, not a contradiction of the
-  cross-pin finding above.
-
-Per this issue's own acceptance criteria, `spec/modexp.md` is **not**
-relaxed to accommodate the remaining LVS shortfall. The Signoff row staying
-unmet with a documented, evidence-backed reason is the correct outcome, not
-a failure of this update — this is exactly the seam `README.md` names as the
-point of this repo: *"the seam where digital output re-enters the layout
-tools."* Closing LVS for real needs either a `sky130` extraction-deck
-layer-coverage extension or a different LVS methodology (see "Friction filed
-upstream" below) — a decision-record entry tracking that as the next input
-to Decision-record-worthy spec discussion is a natural follow-up, not
-undertaken here.
+- **DRC** is clean against a curated 47-rule subset of the sky130 rules, not
+  the full design rule manual (see "DRC").
+- **LVS** is a connectivity / pin-to-net verdict on the as-built netlist, not
+  rail continuity or IR drop; the netgen gate-level caveat is in the
+  amendment at the top of this page.
+- A `klt` pin bump is **not** a P&R-reproducibility guarantee (see
+  `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`); a
+  single-pin run is byte-for-byte reproducible across independent cold runs.
+- The Signoff row says nothing about timing: T1 item 5 fails separately (see
+  "Multi-corner timing").
 
 ## Friction filed upstream
 
