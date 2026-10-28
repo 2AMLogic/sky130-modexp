@@ -355,10 +355,8 @@ new CTS/timing/antenna-fixup insertions, 0 missing.
 
 **This closes DRC for real** (`docs/signoff-claim.md`): all 234
 `nwell.space.1`/`nwell.width.1` violations issue #79 classified against
-the pre-#81 GDS are gone. LVS is re-run and still reports `mismatch` (17,
-was 15 — fully attributed to the 5 new physical-only cell types plus
-ordinary CTS churn), so `spec/modexp.md`'s Signoff row remains not met
-overall. Full record:
+the pre-#81 GDS are gone. Current LVS status is tracked in
+[`docs/signoff-claim.md`](signoff-claim.md). Full record:
 [`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`](../verification/records/place-and-route/records/20260911-052542-d5e43d3.md).
 
 **The 18-corner sweep above (both the original and the mapping-only
@@ -581,8 +579,8 @@ for the current state; DRC is now clean against it
 this section are unaffected** — they were always measured via
 `flow/run-corner-sweep.sh`'s separate, revised (55% utilization) floorplan,
 never against the committed `layout/modexp.gds`/`flow/par-modexp.json`
-this note describes, and issue #81 did not re-run that sweep. It is not
-yet a fully signoff-ready macro (LVS is still not clean); the full record,
+this note describes, and issue #81 did not re-run that sweep. See
+[`docs/signoff-claim.md`](signoff-claim.md) for the current signoff verdict; the full record,
 including provenance and the reproduction recipe, is at
 [`verification/records/place-and-route/`](../verification/records/place-and-route/).
 
@@ -640,7 +638,7 @@ git symlink (`git ls-files -s verification/gate-level/test_modexp.py` → mode
   characterized delay. sky130A ships 18 liberty corners but one
   corner-independent set of Verilog cell models, so this run has no corner
   attribute at all. Timing evidence remains the OpenSTA corner sweep above.
-- **No power/ground network** — power pins are dropped; this GDS has no PDN.
+- **No power pins in the netlist** — the extraction drops power pins by construction (`spice_to_verilog.py`), so the gate-level model has no power/ground network.
 - **`WIDTH` = 16 only.** The netlist is an extraction of one fixed physical
   layout of one elaboration; `WIDTH` is an RTL parameter that does not
   survive synthesis. The case count is *not* reduced (500, matching the RTL
