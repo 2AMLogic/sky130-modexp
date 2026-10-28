@@ -5,6 +5,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-28
 
+- **PR #269**: feat: attest T1 items 1, 9, 10 with klt signoff --attest and refresh tiers doc to v0.8.0
+- **PR #264**: docs: condense stale signoff-claim sections to the current verdict
+- **Issue #266** (closed): T1 grading: re-grade items 1, 9, 10 against the current tiers doc with klt signoff --attest envelopes
+- **Issue #262** (closed): docs/signoff-claim.md: 'Reading the spec's Signoff row' and 'What this GDS has not been through' still say 'still not met'
 - **PR #261**: docs: condense signoff-claim.md to the current DRC/LVS verdict
 - **Issue #242** (closed): Condense docs/signoff-claim.md: superseded verdict and history sections still read 'not met'
 
