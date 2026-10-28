@@ -1,11 +1,11 @@
 # Testbench inventory (T1 item 9)
 
-The audited artifact for T1 item 9. `klt signoff` binds the sibling
-`item-9-testbenches.json` attestation to the exact bytes of this file.
+Human-readable context for T1 item 9; the graded artifact is
+`../inventory-item9.json` (attested by `klt signoff --attest 9`), not this file.
 Paths are repo-root-relative. Environment: `./scripts/setup-env.sh &&
 source .venv/bin/activate` (cocotb 2.0.1, Icarus Verilog), per
 `docs/environment.md`, which also pins the PDK revision (`sky130A`,
-`open_pdks` `c6d73a35f524070e85faff4a6a9eef49553ebc2b`).
+`open_pdks` `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`).
 
 ## Claimed measurements and their testbenches
 

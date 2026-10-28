@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "description": "Which bytes of rtl/modexp.v each committed derived netlist was produced from (T1 item 1 freshness). Read by check_netlist_freshness.py. Re-derive the netlist (flow/README.md 'Cold start' steps 1-2) and update both hashes together when the RTL changes.",
+  "rtl": "rtl/modexp.v",
+  "derived": {
+    "synthesis-baseline": {
+      "path": "verification/records/synthesis-baseline/artifacts/20260808-032045-5488082/modexp_synth.v",
+      "rtl_sha256": "109db84055efe603af2e71506aa7630483696d84653b1de4c0c1d05171b8ed93",
+      "netlist_sha256": "68337f3a7d9a529a6605018bf68ba68a013239ff181fbd78021bbe8de0747a3d",
+      "record_envelope": "verification/records/synthesis-baseline/artifacts/20260808-032045-5488082/synthesize-output.json"
+    },
+    "place-and-route-input": {
+      "path": "verification/records/place-and-route/artifacts/20261027-013900-98bf55d/modexp_synth_tied.v",
+      "rtl_sha256": "109db84055efe603af2e71506aa7630483696d84653b1de4c0c1d05171b8ed93",
+      "netlist_sha256": "57ea1b45627b90139f4c29bfb99b13a469de73683821d2e696780e96526a6228",
+      "record_envelope": null
+    }
+  }
+}

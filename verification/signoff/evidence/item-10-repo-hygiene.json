@@ -3,16 +3,100 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 10,
-  "summary": "README, spec table, LICENSE and CI workflow present and covering the stated content, per the committed checklist",
-  "source": "verification/signoff/evidence/repo-hygiene.md",
+  "summary": "T1 item 10 (Repo hygiene): 8/8 attestation checks passed (klt signoff --attest)",
+  "source": "verification/signoff/inventory-item10.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 8,
+    "passed_count": 8,
+    "checks": [
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": ".github/workflows/ci.yml",
+        "passed": true,
+        "content_hash": "sha256:cefa5b8551e88ee96f431e863ccc2407edd6b61a80f4641266e709591bc5e46b"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "LICENSE",
+        "passed": true,
+        "content_hash": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "README.md",
+        "passed": true,
+        "content_hash": "sha256:29652c58c548ac5aeaafe025c7b7df0b75ca3ee322e5befce7944525a0bb7692"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "docs/environment.md",
+        "passed": true,
+        "content_hash": "sha256:9b10be936e045e70262f86b9879e42688d4caaaa3a8fc2bd27c598c9978ac4cf"
+      },
+      {
+        "check": "present",
+        "role": "hygiene",
+        "path": "spec/modexp.md",
+        "passed": true,
+        "content_hash": "sha256:3fc9302aebd54d0d3669ccbf71c82c035d9afc762c352fcdb9fd6da23bc6ef1b"
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "pins-in-sync",
+        "argv": [
+          "python3",
+          "verification/check_pins.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "evidence-records-lint",
+        "argv": [
+          "python3",
+          "verification/check_records.py"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "audit",
+        "name": "setup-script-syntax",
+        "argv": [
+          "bash",
+          "-n",
+          "scripts/setup-env.sh"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      }
+    ]
+  },
   "provenance": {
-    "klt_version": "0.7.0",
+    "klt_version": "0.8.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
     "input": {
-      "content_hash": "sha256:4bac12687f3b2f00f5a577f9996f216b1f0232bab78dd82fe6a180028397382c",
-      "path": "repo-hygiene.md"
+      "path": {
+        "path": "verification/signoff/inventory-item10.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:ac033412c3287d6319e72e7a1ac4be2fc6b14f75f94a88044dc1c9738eac837d"
     }
   }
 }

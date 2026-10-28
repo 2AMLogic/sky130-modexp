@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 1,
+  "description": "Design sources and the gate-level netlists derived from them; see evidence/design-sources.md for the regeneration steps.",
+  "sources": [
+    "rtl/modexp.v",
+    "flow/synthesize-modexp.json",
+    "flow/tie_constants.py"
+  ],
+  "derived": [
+    {
+      "path": "verification/records/synthesis-baseline/artifacts/20260808-032045-5488082/modexp_synth.v",
+      "generator": "klt synthesize flow/synthesize-modexp.json",
+      "check": {"argv": ["python3", "verification/signoff/check_netlist_freshness.py", "synthesis-baseline"]}
+    },
+    {
+      "path": "verification/records/place-and-route/artifacts/20261027-013900-98bf55d/modexp_synth_tied.v",
+      "generator": "klt synthesize flow/synthesize-modexp.json; python3 flow/tie_constants.py",
+      "check": {"argv": ["python3", "verification/signoff/check_netlist_freshness.py", "place-and-route-input"]}
+    }
+  ]
+}
