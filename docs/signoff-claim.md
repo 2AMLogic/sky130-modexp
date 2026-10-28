@@ -198,40 +198,38 @@ the exact deck the committed clean verdict came from:
 
 ## What this GDS has not been through (missing flow stages)
 
+Per `layout/README.md`'s "What this GDS does *not* contain":
 `layout/modexp.gds` has tapcell insertion, power-grid (PDN) generation, and
-filler-cell insertion (`request.power` in `flow/par-modexp.json`). **Still
-absent**: metal (density) fill (a routing-layer CMP-density pass, unrelated to
-standard-cell row fillers) and `DONT_USE_CELLS` exclusion. There is no IO
-ring. None of these changes the DRC/LVS verdict in "Current verdict" above;
-they bound what that verdict covers.
+filler-cell insertion (`request.power`, via `flow/par-modexp.json`'s `power`
+block). **Still absent**:
 
-The earlier "power nets are not compared" rationale (no PDN; later, the
-compare stopping at the circuit-type level) is superseded: LVS against the
-as-built netlist is `match` with `power_connectivity: match`, a
-pin-to-net verdict, not rail continuity or IR drop. See "Current verdict" and
-`spec/decision-records/0012-lvs-item-4-met-on-the-as-built-netlist-and-the-vpb-mismatch-was-an-extraction-artifact-of-the-earlier-klt-build.md`.
-The older states are recoverable with `git show a5d8839:docs/signoff-claim.md`.
+- **Metal (density) fill**: a routing-layer CMP-density pass, unrelated to the
+  standard-cell row fillers `request.power` inserts.
+- **`DONT_USE_CELLS` exclusion.**
+- **An IO ring.**
+
+These do not change the DRC/LVS verdict above; they bound what "DRC clean"
+means for this GDS (no density-rule evidence, no pad-ring evidence).
 
 ## Reading the spec's Signoff row
 
 `spec/modexp.md`'s Signoff row — *"DRC + LVS clean on the OpenROAD-produced
-GDS"* — is answered by "Current verdict" above: DRC `clean` and LVS `match`
-on `layout/modexp.gds`, T1 item 4 `met` (decision record 0012). The ratified
-row is unchanged and was never relaxed to reach this verdict.
+GDS"* — is met by `layout/modexp.gds` as the "Current verdict" section states:
+DRC clean (0 violations) and LVS `match` (0 errors, `power_connectivity:
+match`) against the as-built netlist `layout/modexp.v`, T1 item 4 `met`
+(issue #233, decision record 0012). The ratified row was not relaxed to get
+there. What this evidence establishes, precisely bounded:
 
-Two findings carried from earlier revisions still stand:
-
+- **DRC** is clean against a curated 47-rule subset of the sky130 rules, not
+  the full design rule manual (see "DRC").
+- **LVS** is a connectivity / pin-to-net verdict on the as-built netlist, not
+  rail continuity or IR drop; the netgen gate-level caveat is in the
+  amendment at the top of this page.
 - A `klt` pin bump is **not** a P&R-reproducibility guarantee (see
-  `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`). A
-  single-pin check (issue #81) did reproduce the P&R run byte-for-byte across
-  two cold runs; that is narrower than, and does not contradict, the
-  cross-pin finding.
-- The digital LVS path has a genuinely as-built reference (`write_verilog`,
-  cell-instance granularity), exercised end-to-end against this design.
-
-The dated "not met" verdicts of 2026-09-11 (issue #81) and the intermediate
-DRC/LVS states are superseded history, recoverable with
-`git show a5d8839:docs/signoff-claim.md`.
+  `verification/records/drc-lvs/records/20260816-174310-5e656e5.md`); a
+  single-pin run is byte-for-byte reproducible across independent cold runs.
+- The Signoff row says nothing about timing: T1 item 5 fails separately (see
+  "Multi-corner timing").
 
 ## Friction filed upstream
 
