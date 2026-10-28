@@ -133,8 +133,26 @@ jobs:
           python3 -m pip install --disable-pip-version-check "klayout-tools==0.8.0"
           klt --version
 
+      - name: Install Icarus Verilog and cocotb (item 9 cold start)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends iverilog
+          python3 -m pip install --disable-pip-version-check "cocotb==2.0.1"
+
       - name: Regenerate and compare the tier report
         run: ./verification/signoff/run-signoff.sh --check
+
+      # Re-attest T1 items 1, 9, 10 (issue #266): runs each inventory's
+      # mechanical checks and diffs against the committed envelope, so a
+      # drifted inventoried file or a failing check outcome fails CI.
+      - name: Re-attest T1 item 1 (design sources + netlist freshness)
+        run: klt signoff --attest 1 --inventory verification/signoff/inventory-item1.json --check verification/signoff/evidence/item-1-design-sources.json
+
+      - name: Re-attest T1 item 9 (testbenches + cold start + pins)
+        run: klt signoff --attest 9 --inventory verification/signoff/inventory-item9.json --check verification/signoff/evidence/item-9-testbenches.json
+
+      - name: Re-attest T1 item 10 (repo hygiene + audit commands)
+        run: klt signoff --attest 10 --inventory verification/signoff/inventory-item10.json --check verification/signoff/evidence/item-10-repo-hygiene.json
 
       - name: Check the item 8 characterization envelope and manifest pin
         run: python3 verification/signoff/gen_characterization_envelope.py --check

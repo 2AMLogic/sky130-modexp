@@ -3,8 +3,15 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-28
+
+- **PR #261**: docs: condense signoff-claim.md to the current DRC/LVS verdict
+- **Issue #242** (closed): Condense docs/signoff-claim.md: superseded verdict and history sections still read 'not met'
+
 ### 2026-10-27
 
+- **PR #259**: docs: update signoff-claim Leg 2 bullet to current PASS
+- **Issue #258** (closed): docs: update stale Leg 2 FAIL text in docs/signoff-claim.md (follow-on from PR #257)
 - **PR #257**: docs: replace stale Leg 2 FAIL status in baseline.md with current PASS pointer
 - **PR #254**: docs: condense layout/lvs/README.md into a current-state page
 - **Issue #253** (closed): Condense docs/baseline.md Leg 2 section: stale 'still FAIL' contradicts gate-level README

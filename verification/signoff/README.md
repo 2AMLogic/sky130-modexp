@@ -21,10 +21,12 @@ duplicating it.
   partition), and the per-item evidence citations (below).
 - `design-evidence-tiers.md` — the pinned copy of
   `2AMLogic/klayout-tools`'s `docs/design-evidence-tiers.md` the report
-  grades against, byte-identical to upstream revision
-  [`0882541638acaec9ceb43c4df77b47d5a1a179db`](https://github.com/2AMLogic/klayout-tools/commit/0882541638acaec9ceb43c4df77b47d5a1a179db)
-  (2026-09-22, the last commit to touch that doc at pin time; sha256
-  `63eeec72e3d849761cf32dcf091af5728b069b1515e32bb3138e9454303671e5`).
+  grades against, byte-identical to the doc at the klayout-tools tag
+  [`v0.8.0`](https://github.com/2AMLogic/klayout-tools/blob/v0.8.0/docs/design-evidence-tiers.md)
+  — the tag the signoff klt is pinned to (sha256
+  `a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7`). The
+  earlier copy (upstream revision `0882541`) predated the artifact-anchored
+  and `--attest` rules for items 1/2/9/10 (klayout-tools#2718, #2844).
   Pinned — rather than resolved from the installed `klt` — because the
   tier list moves upstream (item 11 again) and a pinned copy makes each
   checklist revision a reviewable change in this repo, on the same pin
@@ -37,6 +39,20 @@ duplicating it.
   on the pinned klt (`klayout-tools==0.8.0`, see
   `docs/environment.md`). Regenerate with
   `KLT=<path to a klt 0.8.0> ./run-signoff.sh`.
+- `inventory-item{1,9,10}.json` — the versioned attestation inventories
+  (`schema_version: 1`) for items 1, 9 and 10. The envelopes
+  `evidence/item-{1,9,10}-*.json` are **produced by**
+  `klt signoff --attest N --inventory inventory-itemN.json -o <envelope>`
+  (run from the repo root, on klt 0.8.0 with `cocotb==2.0.1` and `iverilog` on
+  the path for item 9's cold start); do not hand-edit them. CI re-attests each
+  with `--check` (the `signoff` job), so a changed inventoried file or a
+  changed check outcome fails the build. Re-attest after editing any
+  inventoried file (e.g. `.github/workflows/ci.yml`, `rtl/modexp.v`).
+- `check_netlist_freshness.py`, `netlist-derivations.json` — item 1's
+  freshness check for the derived netlists: a hash-binding check (RTL hash,
+  netlist hash, and the synthesis record's own recorded input hash), **not** a
+  re-synthesis, since Yosys needs the PDK that CI does not fetch and its
+  mapping is not cross-host reproducible.
 - `evidence/` — the artifact-anchored `generic` envelopes for items 1, 2, 8, 9,
   10 and the audit records they are bound to. Item 8's envelope is generated,
   not hand-edited: `python3 gen_characterization_envelope.py` rewrites it and
@@ -65,10 +81,10 @@ nothing here inflates a row to green.
 | 7 Post-layout verification | **met** | The cited gate-level `klt functional-verification` run (record `20260923-054800-e26f603`) passes **with** `environment.sdf.annotated: true` — the SDF-annotated post-layout regression item 7 requires (issue #138). Its own disclosure rides with it: the annotation is `partial`, because Icarus implements SDF `IOPATH`/`INTERCONNECT` but not `TIMINGCHECK`, so all 129 `TIMINGCHECK` sections are dropped and `$setup`/`$hold` run against the cell library's placeholder limits. **This is net-delay back-annotation, not timing-check verification** — the setup/hold question is item 5's, and item 5 is `unmet` below. |
 | 5 Corner verification | unmet (`check_failed`) | **Now cited, and failing on its own evidence rather than on an absence of it** (issue #132): `verification/records/sta-corner-sweep/artifacts/20261027-013900-98bf55d/sta-corner-sweep-results.json` (re-run by issue #232 on the regenerated DEF; the figures below are from the previous layout, the current binding corner is −30.332 ns / 24.79 MHz, still 10 of 18), one `klt sta` envelope covering all 18 ratified corners of the committed layout, pinned by the analysed DEF's `content_hash`. The grader's rule is that every reported corner must be `timing_status: "constrained"` with non-negative setup **and** hold slack; **100 MHz closes at 10 of 18** — binding corner `ss_n40C_1v28` at **22.80 MHz**, setup WNS −33.867 ns. Hold is clean at all 18. This is a disclosed, bounded FAIL carried against an unamended ratified Clock row, ratified as `spec/decision-records/0004-…`; it is deliberately **not** closed by lowering the target, and the decision record prices the measured route to 18/18. **Update (issue #141):** that route was run through committed `klt` requests and reaches **17 of 18** (`ss_n40C_1v28` at −0.574 ns / 94.57 MHz), not eighteen — `spec/decision-records/0005-…` and record `20260924-134500-1a8313b`. This row's cited evidence and verdict are unchanged: no layout, RTL or flow request moved. |
 | 11 Power delivery (structural) | **met** (issue #235) | Compound entry: `layout/erc/modexp-erc-supply-report.json` (`erc_finding_count: 0`, `VPWR`/`VGND` one island each, the `nwell_tap` tie in `erc_coverage.checked`, input pinned to the current GDS) + the item-4 LVS report (`power_connectivity.status: match`) + the item-2 flow run's P&R envelope `20261027-013900-98bf55d/par-run1-output.json` (`power.pdn: true`, `tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1`, straps met1/met4/met5 inside the spec's stackup). **Disclosure:** only the n-well tie is computed; the p-substrate tie is not expressible non-degenerately on this klt (see `layout/erc/README.md`). |
-| 1 Design sources | **met** | Artifact-anchored `generic` envelope `evidence/item-1-design-sources.json`, bound to the committed inventory `evidence/design-sources.md` (RTL + the synthesized netlist derived from it + regeneration steps). Added by issue #165 on klt 0.7.0. |
+| 1 Design sources | **met** | Tool-produced attestation `evidence/item-1-design-sources.json` (`attestation.producer: klt signoff --attest`), bound to `inventory-item1.json` (RTL + flow recipe + the two netlists derived from it). Re-attested by `klt signoff --attest 1` over `inventory-item1.json` (issue #266): sources present, and both derived netlists pass `check_netlist_freshness.py` (hash-binding, not re-synthesis; see above). |
 | 2 Layout | **met** | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). Issue #232 regenerated `layout/modexp.{def,gds,v}` from the committed flow and **observed** reproduction: two sequential `flow/run-par.sh` runs gave byte-identical GDS, DEF and as-built netlist (record `verification/records/place-and-route/records/20261027-013900-98bf55d.md`). The claim is bounded to one host and OpenROAD build; it is not a cross-host claim. The envelope is the repo's own attestation (`status: pass`), as for items 1/9/10. |
-| 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `evidence/testbenches.md` (each claimed functional measurement, its testbench, its cold-start invocation, and the PDK pin). Tool-run checks (DRC/LVS/STA) are stated to be outside the claim. |
-| 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `evidence/repo-hygiene.md` (README, spec table, LICENSE, CI, pins). |
+| 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `inventory-item9.json` (testbenches present, a reduced cold-start run of the cross-check that exits 0, PDK and tool pins). `evidence/testbenches.md` remains the human-readable claim-to-testbench map. Tool-run checks (DRC/LVS/STA) are outside the claim. The gate-level simulation is not in the cold start (needs the PDK). |
+| 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `inventory-item10.json` (README, LICENSE, spec, environment doc, CI workflow present; `check_pins.py`, `check_records.py` and `bash -n scripts/setup-env.sh` exit 0). `evidence/repo-hygiene.md` remains the human-readable checklist. CI-run success is not an inventoried check (it needs forge access). |
 | 6 Monte Carlo | unmet (`no_evidence`) — unchanged by 0.7.0 | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated here explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. **Pending a klayout-tools release (issue #204):** the bound statement is committed under `evidence/` and validated with a from-source klt, which grades item 6 `not_applicable` (`t1_not_applicable_count: 1`, met stays 6, `tier` stays `null`). The 0.7.0 pin predates that outcome (klayout-tools#2865, PR #3200), so the manifest does not cite it yet. When a release containing it ships: bump the pin (`run-signoff.sh`, `docs/environment.md`, CI), add `"6": {"not_applicable": {"spec": {"file": "verification/signoff/evidence/modexp-spec-rows.json", "content_hash": "sha256:…"}, "statement": {"file": "verification/signoff/evidence/item-6-na-statement.json", "content_hash": "sha256:…"}}}` to `block-manifest.json`, and regenerate the report. |
 | 8 Characterization | **met** | `evidence/item-8-characterization.json`, bound to `evidence/characterization.md` (issue #205): every row of the ratified spec table with a verdict or "reported, no ratified bound" and its record id, Fmax and setup/hold slack at all 18 corners, synthesized and routed area, and one power estimate at `tt_025C_1v80` (record `power-estimate/20261017-192500-8c11c62`; stated default activity, no parasitics, one corner). **The item is met by the report existing and being current, not by the design meeting its bounds**: the report carries the item 5 Clock FAIL (10 of 18 corners) and the item 4 LVS mismatch as they are. The envelope is generated and checked by `gen_characterization_envelope.py`. |
 
@@ -86,19 +102,23 @@ pins the same hash; the grader re-hashes the artifact (`input_verified`), so
 editing the audited bytes turns the row `stale_evidence` and the CI `--check`
 fails.
 
-- **Item 1 / 9 / 10** are bound to committed, human-readable audit records
-  under `evidence/` (`design-sources.md`, `testbenches.md`,
-  `repo-hygiene.md`). The envelope's `status: pass` is this repo's own
-  assertion — the grader does not re-audit the inventory — so each record
-  states what it does and does not cover. Editing a record means re-reading it
-  against the repo and re-hashing (envelope + manifest pin) in the same change.
+- **Item 1 / 9 / 10** are bound to the attestation inventories
+  (`inventory-item{1,9,10}.json`) and their envelopes are produced by
+  `klt signoff --attest` (klt 0.8.0), which runs the item's mechanical checks.
+  The hand-written `kind: generic` envelopes of issue #165 carried no
+  `attestation` block and ran no check; the current tiers doc no longer
+  accepts that form as the item's evidence. The `.md` records under
+  `evidence/` are kept as human-readable context and are no longer graded.
+  Editing an inventory means re-attesting (envelope) and re-pinning the
+  inventory hash in `block-manifest.json` in the same change; the report is
+  regenerated with `run-signoff.sh`.
 - **Item 2** is bound to the committed routed GDS itself. Its envelope
   attests `status: pass` since issue #232, which observed bit-identical
   regeneration (record `20261027-013900-98bf55d`); until then it attested
   `fail` (the run behind the previous GDS could not be reproduced, issue #55,
   decision record 0006).
-- `status: pass` on these is the attestation of the audit, not a tool
-  measurement. A borrowed native envelope is never used for them.
+- For item 2 `status: pass` is the attestation of the audit, not a tool
+  measurement (it is still a hand-written envelope; no `--attest` producer exists for it). A borrowed native envelope is never used for them.
 - **Items 6 and 8** are unaffected by 0.7.0 and stay `unmet`/`no_evidence`
   (reasons in the table). **Items 4, 5, 11** are as before.
 

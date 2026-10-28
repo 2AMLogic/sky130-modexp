@@ -1,7 +1,7 @@
 # Repo-hygiene checklist (T1 item 10)
 
-The audited artifact for T1 item 10. `klt signoff` binds the sibling
-`item-10-repo-hygiene.json` attestation to the exact bytes of this file.
+Human-readable context for T1 item 10; the graded artifact is
+`../inventory-item10.json` (attested by `klt signoff --attest 10`), not this file.
 Audited on the commit that introduced this file.
 
 - [x] `README.md`: states what the block is, its status ("early"), the

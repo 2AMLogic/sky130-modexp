@@ -1,9 +1,8 @@
 # Design-source inventory (T1 item 1, digital column)
 
-The audited artifact for T1 item 1. `klt signoff` binds the sibling
-`item-1-design-sources.json` attestation to the exact bytes of this file;
-editing it turns the row `stale_evidence` until the attestation is
-re-made. Paths are repo-root-relative.
+Human-readable context for T1 item 1; the graded artifact is
+`../inventory-item1.json` (attested by `klt signoff --attest 1`), not this file.
+Paths are repo-root-relative.
 
 ## Committed RTL sources
 

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 9,
+  "description": "Testbenches behind the claimed measurements; see evidence/testbenches.md. The cold start is a reduced-size run of the CI cross-check (WIDTH=4, 5 cases); the full WIDTH=4,6,8,16 x 500-case run is the CI cross-check job.",
+  "testbenches": [
+    "verification/test_modexp.py",
+    "verification/_dut.py",
+    "verification/cross_check_tb.py",
+    "verification/cross_check.py",
+    "verification/gate-level/test_spice_to_verilog.py",
+    "verification/test_check_records.py",
+    "verification/test_check_pins.py"
+  ],
+  "cold_start": {
+    "argv": ["python3", "verification/cross_check.py", "--widths", "4", "--cases", "5", "--transcript-dir", "/tmp/signoff-item9-cold-start"]
+  },
+  "pins": {
+    "pdk": {"name": "sky130A", "revision": "f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"},
+    "tools": {
+      "klt": "0.8.0",
+      "cocotb": "2.0.1",
+      "ciel": "2.6.1",
+      "yowasp-yosys": "0.68.0.0.post1208"
+    }
+  }
+}
