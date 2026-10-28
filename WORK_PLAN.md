@@ -36,7 +36,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-- **#258**: docs: update stale Leg 2 FAIL text in docs/signoff-claim.md (follow-on from PR #257)
+- **#263**: docs: update remaining stale 'still not met' wording in signoff-claim.md
 
 ## PRs Awaiting Review
 
@@ -48,21 +48,21 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#259**: docs: update signoff-claim Leg 2 bullet to current PASS
+- **#265**: docs: update remaining stale 'still not met' wording in signoff-claim.md
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#258**: docs: update stale Leg 2 FAIL text in docs/signoff-claim.md (follow-on from PR #257) *(curated)*
 - **#177**: Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence) *(curated)*
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
 - **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence *(curated)*
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
+- **#263**: docs: update remaining stale 'still not met' wording in signoff-claim.md *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#242**: Condense docs/signoff-claim.md: superseded verdict and history sections still read 'not met' *(hermit)*
+- **#268**: docs/baseline.md: stale 'LVS not clean' and 'no PDN' claims contradict the current verdict *(hermit)*
 
 ## Epics
 
