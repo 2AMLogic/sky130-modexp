@@ -1,0 +1,31 @@
+
+Startpoint: _545_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _613_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout   Delay    Time   Description
+---------------------------------------------------------------
+          0.00    0.00   clock clk (rise edge)
+          0.00    0.00   clock network delay (ideal)
+          0.00    0.00 ^ _545_/CLK (sky130_fd_sc_hd__dfrtp_1)
+     4    2.19    2.19 v _545_/Q (sky130_fd_sc_hd__dfrtp_1)
+     5    3.08    5.27 v _323_/X (sky130_fd_sc_hd__maj3_2)
+     2    1.46    6.73 ^ _399_/Y (sky130_fd_sc_hd__xnor2_1)
+     2    0.65    7.38 v _401_/Y (sky130_fd_sc_hd__nor2_1)
+     3    2.66   10.03 v _403_/X (sky130_fd_sc_hd__o31a_1)
+          0.00   10.03 v _613_/D (sky130_fd_sc_hd__dfrtp_1)
+                 10.03   data arrival time
+
+         10.00   10.00   clock clk (rise edge)
+          0.00   10.00   clock network delay (ideal)
+          0.00   10.00   clock reconvergence pessimism
+                 10.00 ^ _613_/CLK (sky130_fd_sc_hd__dfrtp_1)
+         -1.77    8.23   library setup time
+                  8.23   data required time
+---------------------------------------------------------------
+                  8.23   data required time
+                -10.03   data arrival time
+---------------------------------------------------------------
+                 -1.80   slack (VIOLATED)
+
