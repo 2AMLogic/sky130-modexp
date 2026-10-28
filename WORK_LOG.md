@@ -5,6 +5,9 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-28
 
+- **PR #275**: docs: remove stale LVS-mismatch and no-PDN claims from baseline
+- **PR #274**: docs: record registered-quotient kernel probes and DR-0014 (no re-timing closes 100 MHz)
+- **Issue #268** (closed): docs/baseline.md: stale 'LVS not clean' and 'no PDN' claims contradict the current verdict
 - **PR #272**: docs: record P1 kernel re-measure (best 85.95 MHz, misses 100 MHz); gate complete build
 - **PR #265**: docs: update signoff-claim Signoff-row and missing-stages sections to current verdict
 - **Issue #263** (closed): docs: update remaining stale 'still not met' wording in signoff-claim.md
