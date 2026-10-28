@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 10,
+  "description": "Repo-hygiene artifacts and the offline audit commands that back them; see evidence/repo-hygiene.md.",
+  "hygiene": [
+    "README.md",
+    "LICENSE",
+    "spec/modexp.md",
+    "docs/environment.md",
+    ".github/workflows/ci.yml"
+  ],
+  "checks": [
+    {"name": "pins-in-sync", "argv": ["python3", "verification/check_pins.py"]},
+    {"name": "evidence-records-lint", "argv": ["python3", "verification/check_records.py"]},
+    {"name": "setup-script-syntax", "argv": ["bash", "-n", "scripts/setup-env.sh"]}
+  ]
+}

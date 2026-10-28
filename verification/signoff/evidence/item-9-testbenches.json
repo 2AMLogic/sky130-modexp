@@ -3,16 +3,114 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "every claimed functional measurement has a committed cocotb testbench with a cold-start invocation (verification/test_modexp.py, cross_check_tb.py, gate-level suite); tool-run checks (DRC/LVS/STA) are outside the claim",
-  "source": "verification/signoff/evidence/testbenches.md",
+  "summary": "T1 item 9 (Testbenches shipped): 10/10 attestation checks passed (klt signoff --attest)",
+  "source": "verification/signoff/inventory-item9.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 10,
+    "passed_count": 10,
+    "checks": [
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/_dut.py",
+        "passed": true,
+        "content_hash": "sha256:5d18ef3b38b7f27644d83d6f85000317d9ebe044ebdd7224c6881ffee57eb252"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/cross_check.py",
+        "passed": true,
+        "content_hash": "sha256:6f116a512402d81170b6b65cd5d2cb9feb95183002c150b4412612fa89adbe45"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/cross_check_tb.py",
+        "passed": true,
+        "content_hash": "sha256:34bb7a2b032eefd664a2e75c04ff88e457000e9391e6c6d1a55cffa5d59cea9e"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/gate-level/test_spice_to_verilog.py",
+        "passed": true,
+        "content_hash": "sha256:6a6eb7ceb98e0580c320bd4aa6967d9a419abeaba8d7c920e859f6c22acf1919"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/test_check_pins.py",
+        "passed": true,
+        "content_hash": "sha256:669e69847285333a84c5dae353dec3fdf8798cc956f5f80180703ac89191f064"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/test_check_records.py",
+        "passed": true,
+        "content_hash": "sha256:5892928867a7da6b05f24af8195457774e8ba5cdf497e2eb6fbc86a39cd21f2d"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/test_modexp.py",
+        "passed": true,
+        "content_hash": "sha256:d5993783035bad3f8299a5e378c9e8334e4e4cedd86bb86e23a8fe0bb29e4acd"
+      },
+      {
+        "check": "command",
+        "role": "cold_start",
+        "argv": [
+          "python3",
+          "verification/cross_check.py",
+          "--widths",
+          "4",
+          "--cases",
+          "5",
+          "--transcript-dir",
+          "/tmp/signoff-item9-cold-start"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "pin",
+        "role": "pdk",
+        "passed": true,
+        "value": {
+          "name": "sky130A",
+          "revision": "f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
+        }
+      },
+      {
+        "check": "pin",
+        "role": "tools",
+        "passed": true,
+        "value": {
+          "ciel": "2.6.1",
+          "cocotb": "2.0.1",
+          "klt": "0.8.0",
+          "yowasp-yosys": "0.68.0.0.post1208"
+        }
+      }
+    ]
+  },
   "provenance": {
-    "klt_version": "0.7.0",
+    "klt_version": "0.8.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
     "input": {
-      "content_hash": "sha256:049dfbf15c47cc477ec158ff1bd268f4793306291400158891c2055799832020",
-      "path": "testbenches.md"
+      "path": {
+        "path": "verification/signoff/inventory-item9.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:53119a858c3beb9b4f281cddcab8b1b6e6b06386d8590a6ee7e683b8f806edd4"
     }
   }
 }

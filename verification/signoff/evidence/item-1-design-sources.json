@@ -3,16 +3,91 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 1,
-  "summary": "committed RTL (rtl/modexp.v) and the synthesized gate-level netlist derived from it (klt synthesize + flow/tie_constants.py) that feeds the committed layout, inventoried with regeneration steps; RTL unchanged since the netlist was derived",
-  "source": "verification/signoff/evidence/design-sources.md",
+  "summary": "T1 item 1 (Design sources): 7/7 attestation checks passed (klt signoff --attest)",
+  "source": "verification/signoff/inventory-item1.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 7,
+    "passed_count": 7,
+    "checks": [
+      {
+        "check": "present",
+        "role": "source",
+        "path": "flow/synthesize-modexp.json",
+        "passed": true,
+        "content_hash": "sha256:6b86cf02f7aa159a07099f1b74b4cda1f494a568cda373958731bc279df44e30"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "flow/tie_constants.py",
+        "passed": true,
+        "content_hash": "sha256:ed02a26d6ffc357bd36bc76461004797bf34d1b69bbb0fca5a3a873f92eb5b17"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "rtl/modexp.v",
+        "passed": true,
+        "content_hash": "sha256:109db84055efe603af2e71506aa7630483696d84653b1de4c0c1d05171b8ed93"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "verification/records/place-and-route/artifacts/20261027-013900-98bf55d/modexp_synth_tied.v",
+        "passed": true,
+        "content_hash": "sha256:57ea1b45627b90139f4c29bfb99b13a469de73683821d2e696780e96526a6228"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "verification/records/synthesis-baseline/artifacts/20260808-032045-5488082/modexp_synth.v",
+        "passed": true,
+        "content_hash": "sha256:68337f3a7d9a529a6605018bf68ba68a013239ff181fbd78021bbe8de0747a3d"
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "verification/records/place-and-route/artifacts/20261027-013900-98bf55d/modexp_synth_tied.v",
+        "generator": "klt synthesize flow/synthesize-modexp.json; python3 flow/tie_constants.py",
+        "argv": [
+          "python3",
+          "verification/signoff/check_netlist_freshness.py",
+          "place-and-route-input"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "verification/records/synthesis-baseline/artifacts/20260808-032045-5488082/modexp_synth.v",
+        "generator": "klt synthesize flow/synthesize-modexp.json",
+        "argv": [
+          "python3",
+          "verification/signoff/check_netlist_freshness.py",
+          "synthesis-baseline"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true
+      }
+    ]
+  },
   "provenance": {
-    "klt_version": "0.7.0",
+    "klt_version": "0.8.0",
     "klayout_version": null,
     "pdk": null,
     "deck": null,
     "input": {
-      "content_hash": "sha256:3e1fc4d421a646d657e5f513f8919825f221a4e1ede54d05d2850f3f8244bf39",
-      "path": "design-sources.md"
+      "path": {
+        "path": "verification/signoff/inventory-item1.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:aa0dd407335506c678957aa3d239bd5c6b63a52e982aaa16ead0cc48682dc53a"
     }
   }
 }
