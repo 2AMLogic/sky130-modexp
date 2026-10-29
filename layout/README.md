@@ -43,55 +43,24 @@ pins below (same host, two runs; not a cross-host claim).
 | Design git revision | `98bf55dccfc3` (parent commit; `rtl/modexp.v` `sha256:109db840…`) |
 | `modexp.def` / `modexp.gds` / `modexp.v` | `sha256:9cfbe9ee…` / `sha256:cc970173…` / `sha256:647cdd23…` |
 
-**This is a different layout from the one it replaces** (issue #232): the
-previous GDS followed the frozen 683-cell netlist; this one follows the
-717-cell mapping the committed recipe produces under the pinned toolchain
-(die 22761.8 um^2 vs 21969.2, WNS +4.28617 ns vs +3.73568 at tt_025C_1v80).
-The earlier "unchanged — no RTL/synthesis change" and `f77036bf` /
-`26Q3-1260` provenance no longer apply. The historical text below describes
-the previous layout.
-
-**Updated by issue #81** (2026-09-11): `flow/par-modexp.json` gained a
-`power` block (`request.power`) driving `klt place-and-route`'s tapcell +
-PDN + filler-cell insertion — see "What this GDS does *not* contain" below
-for what changed and `verification/records/place-and-route/records/20260911-052542-d5e43d3.md`
-for the full measurement, superseding
-`verification/records/place-and-route/records/20260814-203901-c741877.md`
-for this single-corner recipe. The `floorplan`/`io`/`constraints`/`seed`
-blocks of `flow/par-modexp.json` are byte-identical to that superseded
-record's — only the new `power` block is additive.
-
 The full per-corner measurement (area, utilization, wirelength, WNS, TNS,
 Fmax, setup/hold violation counts, estimated power) is recorded under
 `verification/records/place-and-route/`, including the raw `klt
-place-and-route` JSON envelope as a frozen artifact.
+place-and-route` JSON envelope as a frozen artifact. The previous GDS stays in
+git history and in record
+`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`.
 
 ## What this GDS does *not* contain
 
-**Updated by issue #81**: `klt place-and-route`'s `request.power` field
-(added upstream by [klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120))
-now drives real **tapcell insertion, power-grid (PDN) generation, and
-filler-cell insertion** — `flow/par-modexp.json`'s `power` block enables
-all three via one `tapcell`/`pdngen`/`filler_placement` pipeline. **Still
-absent**: metal (density) fill (a separate OpenROAD `add_fill`-class pass
-over the routing layers for CMP density rules — `request.power` inserts
-standard-cell row fillers, not routing-layer density fill) and
-`DONT_USE_CELLS` exclusion, both unrelated to this issue's change. This is
-evidence toward `spec/modexp.md` Decision 2 (clock target) and Decision 4
-(area target)'s revisit triggers, **not** yet a fully signoff-ready macro —
-DRC is now clean against this GDS (see "Signoff status" below), but LVS is
-not, and metal fill / `DONT_USE_CELLS` remain open items for a future
-issue.
+`flow/par-modexp.json`'s `power` block drives `klt place-and-route`'s tapcell
+insertion, power-grid (PDN) generation, and filler-cell insertion, so all
+three are present in `modexp.gds`. **Still absent**: metal (density) fill (a
+separate OpenROAD `add_fill`-class pass over the routing layers for CMP
+density rules; the `power` block inserts standard-cell row fillers, not
+routing-layer density fill) and `DONT_USE_CELLS` exclusion.
 
-## Signoff status (#8, updated #79, #81)
+## Signoff status
 
-DRC and LVS have been run against this GDS — see `docs/signoff-claim.md`
-for the single authoritative claim. Verdict: `spec/modexp.md`'s Signoff row
-is **not met** (both DRC and LVS must be clean; LVS is not), stated
-plainly. **DRC is now clean, 0 violations** — issue #81's tapcell/PDN/
-filler-cell insertion closed all 234 previously-classified
-`nwell.space.1`/`nwell.width.1` violations (`layout/drc/`). LVS still
-reports `status: "mismatch"` (17 mismatches, up from 15 — fully attributed
-to 5 new physical-only cell types this issue's own `power` block adds, plus
-ordinary CTS/timing/antenna-fixup churn; not a new mismatch category) —
-see `layout/lvs/` and `docs/signoff-claim.md` for the full classification.
+The current DRC and LVS verdict for this GDS is stated once, in
+`docs/signoff-claim.md`; the underlying runs are in `layout/drc/` and
+`layout/lvs/` (see `layout/lvs/README.md`). This page does not restate it.
