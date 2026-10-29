@@ -5,6 +5,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-10-29
 
+- **PR #282**: docs: price pipelined column halves at 2 cycles per Montgomery iteration, propose contingent 0001 latency supersession (DR-0017)
+- **Issue #280** (closed): T1 item 5: price pipelined column halves and propose supersession of 0001 Decision 3 (operator ruling branch c)
 - **PR #281**: docs: record q-loop single-mux2 kernel probe P12 and DR-0016; probe (b) fails
 - **PR #279**: docs: condense layout/README to current state and fix stale no-PDN citation
 - **Issue #278** (closed): Condense layout/README.md: stale 'LVS mismatch / signoff not met' and superseded-layout history contradict the current verdict

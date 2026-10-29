@@ -58,10 +58,11 @@ Issues carrying `loom:curated`.
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
 - **#204**: T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence *(curated)*
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
+- **#271**: T1 item 5: build out the carry-save Montgomery datapath (DR-0011's open lead) and measure ss_n40C_1v28 at 100 MHz *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#268**: docs/baseline.md: stale 'LVS not clean' and 'no PDN' claims contradict the current verdict *(hermit)*
+_None._
 
 ## Epics
 
@@ -78,7 +79,7 @@ Issues carrying `loom:curated`.
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 4 |
-| Architect / Hermit proposals | 1 |
+| Curated | 5 |
+| Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
