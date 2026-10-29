@@ -57,6 +57,10 @@ need a concrete schema to be checkable rather than aspirational:
   self-test: asserts every pin constant in `scripts/setup-env.sh` appears in
   `docs/environment.md`'s "Pinned versions" table, and that the table names
   no stale pin (see "Enforcement").
+- `cycle-price/` — a throwaway, schedule-only Verilog model and testbench that
+  count clock edges from `start` to `done` for candidate Montgomery schedules,
+  calibrated against the shipped `rtl/modexp.v` and record `0001`'s latency
+  formula (issue #280). Not RTL; run with `verification/cycle-price/run.sh`.
 - `records/` — the append-only evidence records this convention produces.
 - `signoff/` — the `klt signoff --manifest` block manifest, the pinned
   T1 tier checklist it grades against, the committed tier-verdict report,
@@ -202,8 +206,8 @@ verification/records/
 
 - **`<experiment-slug>`** — short, descriptive, kebab-case name for the
   claim being verified. The slugs in use are `width-cross-check`,
-  `synthesis-baseline`, `place-and-route`, `drc-lvs`, `gate-level-sim`, and
-  `sta-corner-sweep` (standalone multi-corner STA of the *committed* routed
+  `synthesis-baseline`, `place-and-route`, `drc-lvs`, `gate-level-sim`,
+  `cycle-price`, and `sta-corner-sweep` (standalone multi-corner STA of the *committed* routed
   DEF via `klt sta`, distinct from `place-and-route`'s own per-corner
   rebuild sweeps — see that directory's records for why the two are not
   interchangeable). One directory per distinct claim, not per run.
