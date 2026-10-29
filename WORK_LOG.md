@@ -3,8 +3,16 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-29
+
+- **PR #281**: docs: record q-loop single-mux2 kernel probe P12 and DR-0016; probe (b) fails
+- **PR #279**: docs: condense layout/README to current state and fix stale no-PDN citation
+- **Issue #278** (closed): Condense layout/README.md: stale 'LVS mismatch / signoff not met' and superseded-layout history contradict the current verdict
+- **Issue #135** (closed): README: embed the fleet burndown chart (one line)
+
 ### 2026-10-28
 
+- **PR #277**: docs: record depth-lever kernel probes P10-P11c; quotient recurrence binds, no kernel closes
 - **PR #275**: docs: remove stale LVS-mismatch and no-PDN claims from baseline
 - **PR #274**: docs: record registered-quotient kernel probes and DR-0014 (no re-timing closes 100 MHz)
 - **Issue #268** (closed): docs/baseline.md: stale 'LVS not clean' and 'no PDN' claims contradict the current verdict
