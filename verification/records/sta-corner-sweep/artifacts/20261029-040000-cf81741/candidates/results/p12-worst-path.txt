@@ -1,0 +1,44 @@
+[INFO ODB-0227] LEF file: /home/ubuntu/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/techlef/sky130_fd_sc_hd__nom.tlef, created 14 layers, 25 vias
+[WARNING ODB-0220] WARNING (LEFPARS-2008): NOWIREEXTENSIONATPIN statement is obsolete in version 5.6 or later.
+The NOWIREEXTENSIONATPIN statement will be ignored. See file /home/ubuntu/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef at line 2.
+
+[INFO ODB-0227] LEF file: /home/ubuntu/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef, created 437 library cells
+[INFO ODB-0127] Reading DEF file: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-271/.scratch/p12/layout/modexp.def
+[INFO ODB-0128] Design: modexp
+[INFO ODB-0130]     Created 89 pins.
+[INFO ODB-0131]     Created 2254 components and 10351 component-terminals.
+[INFO ODB-0132]     Created 2 special nets and 8584 connections.
+[INFO ODB-0133]     Created 516 nets and 1744 connections.
+[INFO ODB-0134] Finished DEF file: /home/ubuntu/GitHub/sky130-modexp/.loom/worktrees/issue-271/.scratch/p12/layout/modexp.def
+Startpoint: _623_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _688_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+Fanout   Delay    Time   Description
+---------------------------------------------------------------
+          0.00    0.00   clock clk (rise edge)
+          0.00    0.00   clock network delay (ideal)
+          0.00    0.00 ^ _623_/CLK (sky130_fd_sc_hd__dfrtp_1)
+     4    2.19    2.19 v _623_/Q (sky130_fd_sc_hd__dfrtp_1)
+     5    3.06    5.25 v _389_/X (sky130_fd_sc_hd__maj3_2)
+     3    3.49    8.75 v _477_/X (sky130_fd_sc_hd__xor3_1)
+     1    0.60    9.35 ^ _478_/Y (sky130_fd_sc_hd__nor2_1)
+     2    0.40    9.74 v _480_/Y (sky130_fd_sc_hd__o21ai_1)
+     3    2.53   12.28 v _483_/X (sky130_fd_sc_hd__mux2_2)
+          0.00   12.28 v _688_/D (sky130_fd_sc_hd__dfrtp_1)
+                 12.28   data arrival time
+
+         10.00   10.00   clock clk (rise edge)
+          0.00   10.00   clock network delay (ideal)
+          0.00   10.00   clock reconvergence pessimism
+                 10.00 ^ _688_/CLK (sky130_fd_sc_hd__dfrtp_1)
+         -1.80    8.20   library setup time
+                  8.20   data required time
+---------------------------------------------------------------
+                  8.20   data required time
+                -12.28   data arrival time
+---------------------------------------------------------------
+                 -4.08   slack (VIOLATED)
+
+
