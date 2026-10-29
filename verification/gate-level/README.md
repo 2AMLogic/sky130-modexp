@@ -110,9 +110,11 @@ needs no PDK and no simulator, so it runs in CI alongside
   **not** a timing model of the routed design.
 - **`USE_POWER_PINS` is deliberately not defined**, and the derived netlist
   carries no `VPWR`/`VGND`/`VPB`/`VNB` connections. This is not a shortcut:
-  `layout/README.md` records that this GDS has **no PDN**, so the extracted
-  rail connectivity is fragmented per placement row (444 distinct "power"
-  nets across 718 cells) and is not a power network worth simulating. The
+  the gate-level netlist is signal-only, and the power connectivity
+  extracted from the GDS when this experiment ran was fragmented per
+  placement row (444 distinct "power" nets across 718 cells), not a power
+  network worth simulating. `layout/README.md` now records that the GDS has
+  tapcells, PDN and fillers; that measurement was not redone here. The
   same scope caveat #8 documented for LVS carries forward here verbatim.
 
 ## Running it
