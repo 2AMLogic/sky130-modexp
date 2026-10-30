@@ -3,6 +3,10 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-10-30
+
+- **Issue #271** (closed): T1 item 5: build out the carry-save Montgomery datapath (DR-0011's open lead) and measure ss_n40C_1v28 at 100 MHz
+
 ### 2026-10-29
 
 - **PR #282**: docs: price pipelined column halves at 2 cycles per Montgomery iteration, propose contingent 0001 latency supersession (DR-0017)
