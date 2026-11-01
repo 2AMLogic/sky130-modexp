@@ -3,6 +3,10 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
+### 2026-11-01
+
+- **PR #286**: Bump Repo Skills 0.24.7 -> 0.25.1
+
 ### 2026-10-30
 
 - **Issue #271** (closed): T1 item 5: build out the carry-save Montgomery datapath (DR-0011's open lead) and measure ss_n40C_1v28 at 100 MHz
