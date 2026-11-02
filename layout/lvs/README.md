@@ -13,7 +13,7 @@ item 4 is `met`.**
 `modexp_lvs_report.json` and `modexp_lvs_report_netgen.json` are regenerated from
 the #232 GDS with the repo-pinned klt (`0.7.1.dev1127+gd1dc0fc090d4`). The
 reference is the as-built netlist `layout/modexp.v` itself (gate-level-verilog
-form; it holds no `assign`, so no `expand_concat_assigns.py` step is needed).
+form; it holds no `assign`, so no concatenation-expansion step is needed).
 
 | Leg | Engine | Reference | `status` | mismatches / errors | `power_connectivity` |
 |---|---|---|---|---|---|
@@ -64,12 +64,13 @@ decision: `spec/decision-records/0012-lvs-item-4-met-on-the-as-built-netlist-and
   SPICE reference (`plain-element` form) and its builder. **Not used by the
   current comparison**; kept as the control leg, which still reproduces its
   17-mismatch result (see history below).
-- `expand_concat_assigns.py`, `modexp_synth_expanded.v` — expand the
-  concatenation `assign`s of the frozen pre-CTS synthesis netlist into plain
-  per-bit `assign`s for `klt lvs`'s Verilog reader
-  ([klayout-tools#2372](https://github.com/2AMLogic/klayout-tools/issues/2372)).
-  **Not used by the current comparison**; they served the #131 pre-CTS
-  comparison.
+- `expand_concat_assigns.py`, `modexp_synth_expanded.v` — **removed** (#225).
+  They expanded the concatenation `assign`s of the frozen pre-CTS synthesis
+  netlist for `klt lvs`'s Verilog reader
+  ([klayout-tools#2372](https://github.com/2AMLogic/klayout-tools/issues/2372))
+  and served only the #131 pre-CTS comparison. Last present at commit
+  `15ae9cb`; append-only records under `verification/records/` that cite them
+  stay replayable from the git revision each record names.
 
 ## Reproducing the current comparison cold
 
