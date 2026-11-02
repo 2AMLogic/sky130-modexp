@@ -7,6 +7,11 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-02
+
+- **PR #289**: feat(signoff): grade T1 item 6 not_applicable via manifest citation
+- **Issue #204** (closed): T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence
+
 ### 2026-11-01
 
 - **PR #286**: Bump Repo Skills 0.24.7 -> 0.25.1
