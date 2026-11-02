@@ -19,6 +19,18 @@
       "file": "verification/records/sta-corner-sweep/artifacts/20261027-013900-98bf55d/sta-corner-sweep-results.json",
       "content_hash": "sha256:9cfbe9ee3774aab9a42ccc2897b8a7b5104c52548e583d034f80769af1b85377"
     },
+    "6": {
+      "not_applicable": {
+        "spec": {
+          "file": "verification/signoff/evidence/modexp-spec-rows.json",
+          "content_hash": "sha256:62537703279bf84e631281a0a7fea66d08f7ae4623f26b65e7e29195782c78ae"
+        },
+        "statement": {
+          "file": "verification/signoff/evidence/item-6-na-statement.json",
+          "content_hash": "sha256:52bd962da0e4f25fd40e93223ef6a9081ffe5140ca22c611f14117f2e5e595a7"
+        }
+      }
+    },
     "7": "verification/records/gate-level-sim/artifacts/20261027-050100-163f791/klt-functional-verification-sdf-run1.json",
     "8": {
       "file": "verification/signoff/evidence/item-8-characterization.json",
