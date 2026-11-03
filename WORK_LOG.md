@@ -9,6 +9,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-02
 
+- **PR #291**: chore(lvs): remove unused concat-expansion script and expanded netlist
+- **Issue #225** (closed): Retire expand_concat_assigns.py LVS workaround: upstream fix is merged and in our klt pin
 - **PR #289**: feat(signoff): grade T1 item 6 not_applicable via manifest citation
 - **Issue #204** (closed): T1 item 6: record the bound not_applicable statement (no statistical spec row) so the grader stops reporting no_evidence
 
