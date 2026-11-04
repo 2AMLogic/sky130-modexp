@@ -7,6 +7,11 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-04
+
+- **PR #293**: fix(ci): exclude daemon-backed merge-pr suites from toolchain-free job
+- **Issue #177** (closed): Build/runtime failure on main: test-merge-pr-workflow-scope-preflight.sh needs loom-daemon but is not in ci-excluded.txt (CI red, 4th recurrence)
+
 ### 2026-11-02
 
 - **PR #291**: chore(lvs): remove unused concat-expansion script and expanded netlist
