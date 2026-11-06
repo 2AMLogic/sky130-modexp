@@ -7,6 +7,11 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-06
+
+- **PR #298**: ci: skip daemon-backed test-merge-pr-release-hold.sh in merge-pr job
+- **Issue #297** (closed): CI red on main: test-merge-pr-release-hold.sh needs loom-daemon, not in ci-excluded.txt
+
 ### 2026-11-04
 
 - **PR #293**: fix(ci): exclude daemon-backed merge-pr suites from toolchain-free job
