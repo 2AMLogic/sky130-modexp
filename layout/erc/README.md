@@ -20,9 +20,18 @@ layout/erc/
 Regenerate the report:
 
 ```bash
-klt erc layout/modexp.gds layout/erc/erc-supply-spec.json --pdk sky130 \
-  --format json > layout/erc/modexp-erc-supply-report.json
+klt erc layout/modexp.gds layout/erc/erc-supply-spec.json \
+  --findings-only --omit-antenna-tables --format json \
+  > layout/erc/modexp-erc-supply-report.json
 ```
+
+**Updated by issue #301**: regenerated with `klt 0.8.0` (klayout `0.30.13`)
+using `--findings-only --omit-antenna-tables` and no `--pdk`, shrinking the
+report from ~5.9 MB to ~79 KB. `erc_findings`, `erc_finding_count`,
+`erc_status`, `erc_coverage`, `nets`, `spec` and the input `content_hash` are
+identical to the report it replaces; the top-level `status` is now
+`not_checked` (was `clean_partial`) and `gates` is empty. The #232 paragraph
+below describes the earlier `--pdk sky130` form.
 
 **Updated by issue #232**: re-run on the regenerated `layout/modexp.gds` with
 `klt 0.7.1.dev1127+gd1dc0fc090d4` (the `scripts/setup-env.sh` pin), klayout
@@ -78,11 +87,14 @@ declaring both would misreport the intended join. The cell-side spelling
 is the stronger test (3095 labels per supply must all stitch into one
 island, not just the one top-level pin text).
 
-The report's antenna verdicts are all `"unchecked"` (`--pdk` deliberately
-omitted, matching the worked example this spec follows): item 11 grades
-the supply findings, not the antenna ratios — an antenna verdict or a
-floating-gate finding would be a real defect but is not this item's
-subject (klayout-tools#1994).
+The report is generated with `--findings-only --omit-antenna-tables` and no
+`--pdk` (klt rejects `--findings-only` together with `--pdk`): the per-gate
+`gates[]` antenna tables are dropped (`gate_count` keeps the real count,
+`antenna_tables_omitted: true`) and the antenna scope reports `not_checked`.
+Item 11 grades the supply findings, not the antenna ratios — an antenna
+verdict or a floating-gate finding would be a real defect but is not this
+item's subject (klayout-tools#1994). `klt erc` exits 4 on this report
+(antenna scope not checked) even though `erc_status` is `clean`.
 
 ## Well ties: `erc.missing_tie` (issue #235)
 
