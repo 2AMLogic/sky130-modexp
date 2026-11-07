@@ -7,6 +7,12 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-07
+
+- **PR #303**: chore(erc): regenerate supply report without per-gate antenna tables
+- **Issue #301** (closed): Shrink committed ERC report: regenerate with --omit-antenna-tables (3.5 MB of ungraded antenna data)
+- **PR #300**: Bump Repo Skills 0.25.1 -> 0.25.10
+
 ### 2026-11-06
 
 - **PR #298**: ci: skip daemon-backed test-merge-pr-release-hold.sh in merge-pr job
