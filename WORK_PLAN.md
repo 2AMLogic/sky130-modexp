@@ -40,7 +40,7 @@ _None._
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#300**: Bump Repo Skills 0.25.1 -> 0.25.10
 
 ## Approved (Awaiting Merge)
 
@@ -57,7 +57,7 @@ Issues carrying `loom:curated`.
 
 ## Proposed (Architect / Hermit)
 
-_None._
+- **#301**: Shrink committed ERC report: regenerate with --omit-antenna-tables (3.5 MB of ungraded antenna data) *(hermit)*
 
 ## Epics
 
@@ -72,9 +72,9 @@ _None._
 | Important | 0 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 2 |
-| Architect / Hermit proposals | 0 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
