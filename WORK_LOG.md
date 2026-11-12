@@ -7,6 +7,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-12
+
+- **PR #306**: Bump Repo Skills 0.25.10 -> 0.26.1
+
 ### 2026-11-07
 
 - **PR #303**: chore(erc): regenerate supply report without per-gate antenna tables
