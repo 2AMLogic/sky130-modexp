@@ -247,12 +247,23 @@ artifact store with `klt artifact put`; git keeps a manifest under
 sha256, `artifact:` URI per object) plus the record `.md`. Evidence bytes are
 private and manifests are public, so a manifest is safe to commit.
 
-- `python3 verification/cross_check.py --mint-record` does this itself for
-  the `width-cross-check` transcripts: it stages them in the git-ignored
-  `.artifact-staging/`, stores them, writes the manifest, and only then writes
-  the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is unset, `klt`
-  lacks `artifact put`, or the broker is unreachable, it exits nonzero and
-  writes no manifest and no record. There is no fallback to committing bytes.
+- `python3 verification/cross_check.py --mint-record --author "NAME (issue #N)"`
+  does this itself for the `width-cross-check` transcripts: it stages them in
+  the git-ignored `.artifact-staging/`, stores them, writes the manifest, and
+  only then writes the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is
+  unset, `klt` lacks `artifact put`, or the broker is unreachable, it exits
+  nonzero and writes no manifest and no record. There is no fallback to
+  committing bytes.
+  - `--author` is required with `--mint-record`: the record's
+    **Timestamp / author** line is evidence provenance, not a constant.
+  - `--supersedes RECORD_ID` retires an existing record of the same
+    experiment, writing that id into both the `record-meta` `supersedes` key
+    and the **Supersedes** bullet. That is what exempts the retired record
+    from `check_records.py`'s hash-freshness check, so it is the only way to
+    replace a live record once a hashed input (`rtl/modexp.v`,
+    `verification/cross_check_tb.py`) has changed. An id with no matching
+    record exits nonzero *before* the simulation runs and before anything is
+    stored -- `klt artifact put` is permanent, so a typo must not get that far.
 - **Hand-run legs** (`flow/run-*.sh`, `verification/gate-level/run-gate-level-sim.sh`,
   `klt drc` / `klt lvs`): do not copy raw outputs into `artifacts/<record-id>/`
   for a new record. Instead, from a fleet worker:
@@ -266,7 +277,25 @@ private and manifests are public, so a manifest is safe to commit.
 - `python3 verification/check_artifact_manifests.py` (part of `npm run lint`)
   validates every manifest: v1 schema, `artifact:` URIs only, no `s3://`,
   `arn:aws:` or `http(s)://` strings (the broker URL is never written into
-  the repo), and no tracked file whose sha256 matches a manifest entry.
+  the repo), and no *newly* committed file whose sha256 matches a manifest
+  entry.
+  - "Newly" means added or modified relative to the merge-base with
+    `--base-ref` (default `origin/main`). The rule is there to stop a new
+    run's raw bytes being committed beside the manifest that replaces them,
+    and that is exactly what the diff covers: a copy or rename of legacy
+    bytes to a new path still fails, because the diff is taken with
+    `--no-renames` and the new path counts as an addition.
+  - Scoping it is what makes a *correct* re-run mintable at all. The legacy
+    `width-cross-check` and `gate-level-sim` transcripts under `artifacts/`
+    predate this convention and are frozen (append-only, below); a pinned-seed
+    re-run reproduces those bytes exactly, so the unscoped rule made every new
+    manifest collide with evidence nobody is allowed to delete.
+  - If the base ref cannot be resolved the checker prints a `NOTICE:` and
+    falls back to checking **every** tracked file. It never silently exempts.
+  - Limit: this is a PR-time gate. On `main` the merge-base with `origin/main`
+    is `HEAD`, so the diff is empty -- the same property `check_records.py`'s
+    append-only check already has. CI's lint job checks out full history
+    (`fetch-depth: 0`) so the merge-base resolves there.
 - Manifest-forward only: evidence already under `artifacts/` and the living
   signoff reports under `layout/` stay where they are (append-only).
 
