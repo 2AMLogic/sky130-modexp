@@ -30,7 +30,7 @@ Usage:
         transcript summary. Exit 0 iff every case at every WIDTH matches.
         This is what `npm run test` invokes.
 
-    python3 verification/cross_check.py --mint-record
+    python3 verification/cross_check.py --mint-record --author "NAME (issue #N)"
         Also write a new append-only evidence record under
         `verification/records/width-cross-check/` (see
         `verification/README.md` for the record convention). The per-WIDTH
@@ -38,7 +38,19 @@ Usage:
         a manifest under `manifests/artifacts/` is committed; fails closed
         (nonzero, nothing written) if the store is unavailable. Only do this
         deliberately -- do not wire --mint-record into CI, which would mint
-        a new record on every PR.
+        a new record on every PR. `--author` is required: the record's
+        author line is evidence provenance, not a constant.
+
+    python3 verification/cross_check.py --mint-record --author ... \
+        --supersedes RECORD_ID
+        As above, but the new record retires `RECORD_ID` -- it is written
+        into the metadata block's `supersedes` and the **Supersedes** prose
+        bullet, which is what exempts the retired record from
+        `check_records.py`'s hash-freshness check. This is the only way to
+        replace a live record after a hashed input (`rtl/modexp.v`,
+        `verification/cross_check_tb.py`) changes. `RECORD_ID` must name an
+        existing record in this experiment; an unknown id exits nonzero
+        before the simulation runs and before anything is stored or written.
 """
 
 from __future__ import annotations
@@ -58,6 +70,8 @@ from _repo_utils import REPO_ROOT, reexec_into_venv_if_needed, run_git, sha256_o
 SCRIPT_DIR = Path(__file__).resolve().parent
 RTL_SOURCE = REPO_ROOT / "rtl" / "modexp.v"
 TESTBENCH_SOURCE = SCRIPT_DIR / "cross_check_tb.py"
+
+EXPERIMENT_SLUG = "width-cross-check"
 
 DEFAULT_WIDTHS = (4, 6, 8, 16)
 DEFAULT_CASES = 500
@@ -89,6 +103,29 @@ def _require_cocotb() -> None:
             file=sys.stderr,
         )
         raise SystemExit(1) from None
+
+
+def records_dir() -> Path:
+    """Directory holding this experiment's `<record-id>.md` records."""
+    return REPO_ROOT / "verification" / "records" / EXPERIMENT_SLUG / "records"
+
+
+def resolve_supersedes(record_id: str) -> Path:
+    """Path of the record `record_id` names, or raise `ValueError`.
+
+    Called from `main()` before the simulation runs so a typo'd id fails
+    before `klt artifact put` stores anything permanently and before any
+    manifest or record file is written.
+    """
+    path = records_dir() / f"{record_id}.md"
+    if not path.is_file():
+        known = sorted(q.stem for q in records_dir().glob("*.md"))
+        raise ValueError(
+            f"--supersedes {record_id!r}: no such record in "
+            f"{records_dir().relative_to(REPO_ROOT)} "
+            f"(known: {', '.join(known) if known else 'none'})"
+        )
+    return path
 
 
 def _git_revision() -> str:
@@ -183,19 +220,32 @@ def run_width(width: int, cases: int, seed: int, build_root: Path) -> dict:
     }
 
 
-def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
+def mint_record(
+    run_summaries: list[dict],
+    tool_versions: dict,
+    *,
+    author: str,
+    supersedes: str | None = None,
+) -> Path:
     """Store this run's transcripts in the artifact store, write a
     manifest under manifests/artifacts/, and write a new append-only .md
     record linking it. Raises `ArtifactStoreError` (writing nothing) if the
     store is unavailable -- raw bytes are never committed. Returns the
-    record's path."""
+    record's path.
+
+    `author` is written verbatim into the record's **Timestamp / author**
+    bullet. `supersedes` is the `record_id` this record retires (`None` for
+    a record that retires nothing); `main()` validates it before calling
+    here.
+    """
     now = datetime.datetime.now(datetime.timezone.utc)
     short_sha = _git_revision()[:7]
     record_id = f"{now:%Y%m%d-%H%M%S}-{short_sha}"
 
-    experiment_dir = REPO_ROOT / "verification" / "records" / "width-cross-check"
-    records_dir = experiment_dir / "records"
-    manifest_rel = f"manifests/artifacts/width-cross-check-{record_id}.manifest.json"
+    out_dir = records_dir()
+    manifest_rel = (
+        f"manifests/artifacts/{EXPERIMENT_SLUG}-{record_id}.manifest.json"
+    )
 
     # Stage in the git-ignored scratch dir, store, and only then write
     # anything tracked: a store failure leaves no manifest and no record.
@@ -206,11 +256,11 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
         for summary in run_summaries:
             dest = staging / summary["transcript_path"].name
             shutil.copyfile(summary["transcript_path"], dest)
-            staged.append((dest, f"width-cross-check/{record_id}/{dest.name}"))
+            staged.append((dest, f"{EXPERIMENT_SLUG}/{record_id}/{dest.name}"))
         entries = store_files(staged, REPO_ROOT / manifest_rel)
     finally:
         shutil.rmtree(staging, ignore_errors=True)
-    records_dir.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     input_hashes = [
         {"path": "rtl/modexp.v", "content_hash": sha256_of(RTL_SOURCE)},
@@ -226,8 +276,8 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
 
     meta = {
         "record_id": record_id,
-        "experiment": "width-cross-check",
-        "supersedes": None,
+        "experiment": EXPERIMENT_SLUG,
+        "supersedes": supersedes,
         "git_revision": _git_revision(),
         "provenance": {
             "klt_version": tool_versions["klt"],
@@ -281,11 +331,11 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
     verify with `klt artifact verify`)
   - Transcripts (name, size, sha256):
 {links_lines}
-- **Timestamp / author**: {now.strftime("%Y-%m-%dT%H:%M:%SZ")}, loom-builder (issue #5)
-- **Supersedes**: none
+- **Timestamp / author**: {now.strftime("%Y-%m-%dT%H:%M:%SZ")}, {author}
+- **Supersedes**: {supersedes if supersedes else "none"}
 """
 
-    record_path = records_dir / f"{record_id}.md"
+    record_path = out_dir / f"{record_id}.md"
     record_path.write_text(body, encoding="utf-8")
     return record_path
 
@@ -321,6 +371,23 @@ def main() -> int:
         help="also write a new evidence record under verification/records/",
     )
     parser.add_argument(
+        "--author",
+        default=None,
+        help=(
+            "author credited in the minted record's `Timestamp / author` "
+            "bullet (required with --mint-record)"
+        ),
+    )
+    parser.add_argument(
+        "--supersedes",
+        default=None,
+        metavar="RECORD_ID",
+        help=(
+            "record id this new record retires; written to the metadata "
+            "block and the **Supersedes** bullet (requires --mint-record)"
+        ),
+    )
+    parser.add_argument(
         "--transcript-dir",
         type=Path,
         default=None,
@@ -332,6 +399,20 @@ def main() -> int:
         ),
     )
     args = parser.parse_args()
+
+    # Validate the record arguments before anything runs: `klt artifact put`
+    # stores objects permanently, so a typo'd --supersedes must fail here,
+    # not after a 2000-case simulation has already published transcripts.
+    if args.mint_record and not args.author:
+        parser.error("--mint-record requires --author (the record's author line)")
+    if not args.mint_record and (args.author or args.supersedes is not None):
+        parser.error("--author/--supersedes are only meaningful with --mint-record")
+    if args.supersedes is not None:
+        try:
+            resolve_supersedes(args.supersedes)
+        except ValueError as exc:
+            print(f"FATAL: {exc}", file=sys.stderr)
+            return 1
 
     if not RTL_SOURCE.exists():
         print(f"FATAL: {RTL_SOURCE} not found", file=sys.stderr)
@@ -406,7 +487,12 @@ def main() -> int:
 
         if overall_ok and args.mint_record:
             try:
-                record_path = mint_record(summaries, tool_versions)
+                record_path = mint_record(
+                    summaries,
+                    tool_versions,
+                    author=args.author,
+                    supersedes=args.supersedes,
+                )
             except ArtifactStoreError as exc:
                 print(f"\nFATAL: no record minted -- {exc}", file=sys.stderr)
                 return 1
