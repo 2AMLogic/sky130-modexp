@@ -16,10 +16,16 @@ case count relative to the RTL claim.
 This script closes that gap for `WIDTH=16` -- the only width the gate-level
 netlist *can* be run at, since it is a fixed physical layout of one
 elaboration, not a parameterized module. It drives Icarus through cocotb's
-own `Runner` API (the same way `verification/cross_check.py` does, and for a
-related reason: `klt functional-verification`'s request schema has no field
-for simulator `+define+` macros, which a run against PDK cell models
-requires -- see `verification/gate-level/README.md`).
+own `Runner` API, because `klt functional-verification`'s request schema had
+no field for the simulator `+define+` macros a run against PDK cell models
+requires -- see `verification/gate-level/README.md`. Note that
+`verification/cross_check.py`, which once used the same bypass for the
+analogous parameter-override gap, no longer does: that gap closed at the
+pinned klt and its runs go through `klt functional-verification`. Whether
+this script's own reason is still current has not been probed -- the pinned
+klt does validate `options.defines`, but not against PDK cell models, so
+treat the reason above as unverified rather than refuted. Tracked as
+`2AMLogic/sky130-modexp#316`.
 
 Determinism and the transcript-equality check
 ---------------------------------------------

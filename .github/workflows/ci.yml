@@ -92,6 +92,16 @@ jobs:
       - name: Install cocotb (pinned -- see docs/environment.md)
         run: python3 -m pip install --disable-pip-version-check "cocotb==2.0.1"
 
+      # `cross_check.py` drives each WIDTH through `klt
+      # functional-verification` (`request.parameters`), so this job needs
+      # klt on $PATH, at the same pin every other leg uses --
+      # `verification/check_pins.py` fails CI if this spec ever names a
+      # version other than `KLT_VERSION` in scripts/setup-env.sh.
+      - name: Install klt at the pinned release (drives the cross-check)
+        run: |
+          python3 -m pip install --disable-pip-version-check "klayout-tools==0.8.0"
+          klt --version
+
       - name: Cross-check WIDTH = 4, 6, 8, 16 (npm run test)
         run: npm run test
 
