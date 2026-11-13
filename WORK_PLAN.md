@@ -16,7 +16,7 @@ _None._
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-_None._
+- **#311**: CI red on main since Loom resync 421e4b5: test-hook-wiring.sh fails 13 assertions
 
 ## Important
 
@@ -34,7 +34,8 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#308**: Retire flow/tie_constants.py: no-op at the pinned klt, and flow/README.md still says it is required
+- **#311**: CI red on main since Loom resync 421e4b5: test-hook-wiring.sh fails 13 assertions
 
 ## PRs Awaiting Review
 
@@ -54,10 +55,11 @@ Issues carrying `loom:curated`.
 
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
+- **#311**: CI red on main since Loom resync 421e4b5: test-hook-wiring.sh fails 13 assertions *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-_None._
+- **#310**: Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py *(hermit)*
 
 ## Epics
 
@@ -68,13 +70,13 @@ _None._
 | Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Very important | 0 |
+| Very important | 1 |
 | Important | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 2 |
-| Architect / Hermit proposals | 0 |
+| Curated | 3 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
