@@ -125,67 +125,27 @@ design-detail-free, at
 — once `klt functional-verification` gains a parameter override, this
 driver script should be retired in favor of a plain klt request per `WIDTH`.
 
-## Gate-level simulation: the netlist derivation gap (and the workaround)
+## Gate-level simulation (`gate-level-sim`)
 
 The `gate-level-sim` experiment re-runs `test_modexp.py` — the same file,
 byte for byte, reached through a git symlink rather than a copy — against a
-gate-level netlist of the **routed layout** instead of against
-`rtl/modexp.v`. That requires a netlist of what P&R actually built, and
-there is no such artifact:
+gate-level netlist of the **routed layout** instead of against `rtl/modexp.v`.
+That netlist is derived from `layout/modexp.gds` itself: the `klt extract
+--abstract-cells` abstraction the LVS flow produces is converted to
+structural `sky130_fd_sc_hd` Verilog by
+`verification/gate-level/spice_to_verilog.py`, which refuses to write output
+disagreeing with `layout/lvs/modexp_layout_extract_report.json`. So the
+simulated design's provenance runs through the drawn geometry, not through
+P&R's own view of what it built — a cross-check of the committed as-built
+netlist `layout/modexp.v`, deliberately kept alongside it rather than
+replaced by it.
 
-- `klt place-and-route`'s response contract carries `def_path` and
-  `gds_path` **only**. There is no `write_verilog`-equivalent netlist export
-  at this repo's pinned `klt` revision, and no SDF export either.
-- The one Verilog artifact #7's run produced,
-  `verification/records/place-and-route/artifacts/20260814-203901-c741877/modexp_synth_tied.v`,
-  is that record's own **"netlist (post-synthesis)"** — the netlist fed
-  *into* P&R. #8 established that the routed layout has 718 instances
-  against its 683 (+1 tie): 35 CTS/timing-fixup insertions and 5 resizes.
-  Simulating it and calling the result "post-route" would be an overclaim
-  that *passes*, so no test failure would ever surface it.
-
-The workaround, and the reason this experiment's netlist has provenance
-worth trusting: **derive the netlist from the layout itself**.
-`verification/gate-level/spice_to_verilog.py` converts #8's
-`layout/lvs/modexp_layout_abstracted.spice` (the `klt extract
---abstract-cells` abstraction of `layout/modexp.gds`) into structural
-Verilog instantiating `sky130_fd_sc_hd` cells, and refuses to write output
-that disagrees with `layout/lvs/modexp_layout_extract_report.json` on
-instance counts (718), cell types (59), pin count (68), or net membership —
-or that contains a two-driver short or a floating cell input.
-
-**What that netlist does and does not model** — restating #8's own scope
-caveat, which carries forward here verbatim, plus what is specific to
-simulation:
-
-- **No parasitic extraction.** No R, no C, no coupling; `klt extract` was
-  run without `--parasitics` and nothing here reads a SPEF.
-- **No timing, and no corner.** Zero-delay logic (the only delay is a 1 ns
-  `UNIT_DELAY` on flop outputs, a race-avoidance device, not a
-  characterized delay). sky130A ships 18 liberty corners but a single,
-  corner-independent set of Verilog cell models, so corner-dependence enters
-  a simulation only via SDF — which is the blocked leg. Timing evidence
-  remains `verification/records/place-and-route/`'s OpenSTA corner sweep.
-- **No power/ground network.** Power pins are dropped (`USE_POWER_PINS`
-  undefined); this GDS has no PDN, so extracted rail connectivity is
-  fragmented per placement row.
-- **Cell-instance granularity, not transistor level** — each cell is the
-  PDK's own behavioural model; its transistors are foundry-qualified library
-  content.
-- **Not an independent check of the extraction.** Extraction and simulation
-  share `klt extract`'s output as a common input.
-
-The upstream gaps are filed:
-[klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)
-(no compile-time defines in the `functional-verification` request),
-[#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
-export / no SDF option — the blocker for delay-annotated runs),
-[#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (testbench
-module must sit next to the request),
-[#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (the accepted
-SDF re-sim recipe needs Icarus >= 13), and
-[#996](https://github.com/2AMLogic/klayout-tools/issues/996) (no as-built
-netlist export — filed by #8, fixed upstream later than this repo's pin).
+[`verification/gate-level/README.md`](gate-level/README.md) is the single
+description of that experiment: what each leg runs and what it showed, the converter's
+provenance guards and the counts they enforce, what the netlist does and
+does not model (no parasitics, no timing, no corner dependence, no modelled
+power network, cell-instance granularity), and the upstream gaps filed along
+the way.
 
 ## Directory / naming convention
 

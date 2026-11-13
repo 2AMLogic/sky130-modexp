@@ -4,20 +4,23 @@ from `klt extract --abstract-cells`'s SPICE abstraction of that layout.
 
 This is the converse of `layout/lvs/build_reference_netlist.py` (which goes
 gate-level Verilog -> SPICE for `klt lvs`), and it exists for the same
-reason: `klt place-and-route` has no post-route gate-level netlist export at
-all (its `--help` offers only `def_path`/`gds_path`), so the only artifact in
-this repo that describes the *actual routed layout*'s cell instances and
-connectivity is the LVS-side extraction `klt extract --abstract-cells`
-produced in issue #8:
+reason the gate-level experiment prefers extracted connectivity to an
+exported netlist: the LVS-side extraction `klt extract --abstract-cells`
+produced in issue #8 describes the *drawn geometry* of the routed layout,
 
-    layout/lvs/modexp_layout_abstracted.spice   (718 instances, 59 cell types)
+    layout/lvs/modexp_layout_abstracted.spice   (3064 instances, 69 cell types)
 
+rather than what P&R's own database says it built. `klt place-and-route`
+does export an as-built post-route netlist now -- committed as
+`layout/modexp.v` -- and the two agree cell for cell once the extraction's
+fill and tap cells are set aside; deriving the simulated netlist from the
+extraction keeps its provenance tied to the GDS that was DRC'd and LVS'd.
 Pointing a gate-level simulation at the *pre*-route synthesis netlist
-(`.../modexp_synth_tied.v`, 683 instances + 1 tie cell) and calling the
-result "post-route" would be an overclaim: that netlist is the input to P&R,
-not its output, and it is missing all 35 CTS/timing-fixup cells and all 5
-gate resizes the routed layout actually contains. So the layout extraction is
-the only honest starting point, and this script turns it into Verilog.
+(`.../modexp_synth_tied.v`) and calling the result "post-route" would still
+be an overclaim: that netlist is the input to P&R, not its output, and it is
+missing the clock-tree, timing-fixup and drive-strength changes P&R makes.
+Exact counts are reported by this script under `--check`, never hard-coded
+here; `verification/gate-level/README.md` carries the regenerated figures.
 
 What the conversion does
 ------------------------
