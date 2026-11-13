@@ -5,17 +5,33 @@ Reproduces the claim `docs/baseline.md` makes: `modexp.v` is bit-exact
 against Python `pow(base, exp, mod)` across `WIDTH` = 4, 6, 8, 16 at 500
 random cases each, 0 mismatches.
 
-Why this script exists instead of another `klt functional-verification`
-invocation: that command's request schema
-(`klt.functional_verification.request/1`) has no field to override a
-Verilog `parameter`, so `verification/request-modexp.json` can only
-elaborate the design's default `WIDTH=16`. This script elaborates each
-`WIDTH` itself via cocotb's own `Runner` API (`cocotb_tools.runner`), which
-*does* support a `parameters=` override, driving Icarus directly. This is
-the documented klt gap -- filed as a friction-protocol issue against
-`2AMLogic/klayout-tools` (generic, no design detail) and linked from
-`verification/README.md`. Nothing here reimplements Yosys/synthesis; `klt
-synthesize` is still used unmodified for the cell-count baseline.
+Every simulator run here goes through `klt functional-verification` -- one
+request per `WIDTH`, each carrying a `request.parameters` object
+(`{"WIDTH": <n>}`) that klt forwards to both `Runner.build(parameters=...)`
+and `Runner.test(parameters=...)`. This script never imports
+`cocotb_tools.runner` itself.
+
+That was not always true. Until the pin in `docs/environment.md` reached
+`klayout-tools==0.8.0`, the `klt.functional_verification.request/1` schema
+had no field to override a Verilog `parameter`, so a checked-in request
+(`verification/request-modexp.json`) could only elaborate the design's
+default `WIDTH=16` and this script drove Icarus directly via cocotb's own
+`Runner` API. That gap was filed under the friction protocol against
+`2AMLogic/klayout-tools` (generic, no design detail), `verification/README.md`
+recorded the stopgap with an explicit exit condition -- retire the bypass
+once `klt` gains a parameter override -- and the pinned klt now has it. The
+bypass is gone; what this script still owns is everything klt's request
+contract has no field for:
+
+- deriving a distinct, deterministic per-`WIDTH` seed from `--seed`;
+- passing the case count and transcript path to the testbench, which travel
+  as `CROSS_CHECK_*` environment variables the klt subprocess inherits;
+- reading the per-vector transcripts back and comparing `got` against
+  `want`;
+- `--mint-record` and the artifact manifests.
+
+Nothing here reimplements Yosys/synthesis; `klt synthesize` is still used
+unmodified for the cell-count baseline.
 
 Reproducibility: every `WIDTH` draws its vectors from a `random.Random`
 seeded with a value derived from `--seed` (default: a pinned constant, never
@@ -73,22 +89,62 @@ sys.path.insert(0, str(SCRIPT_DIR))
 from artifact_store import ArtifactStoreError, store_files  # noqa: E402
 
 
-def _require_cocotb() -> None:
-    """Fail with an actionable message, not an ImportError traceback."""
+class CrossCheckError(RuntimeError):
+    """A `klt functional-verification` run could not be carried out at all.
+
+    Distinct from a run that completed and *failed*: that comes back in the
+    klt response envelope as `status: "fail"` and is reported per-`WIDTH`
+    like any other mismatch. This is "the request never produced a verdict"
+    -- klt missing, the request rejected, or stdout that is not the
+    documented JSON envelope.
+    """
+
+
+def _resolve_klt() -> str:
+    """Path to the `klt` executable this run drives its simulations through.
+
+    Prefers the one *beside the running interpreter* over `$PATH`: the venv
+    `scripts/setup-env.sh` provisions holds the pinned klt **and** the
+    cocotb it imports, and `reexec_into_venv_if_needed` has already put us
+    inside it. Picking `$PATH`'s klt instead could reach a different release
+    whose own interpreter cannot import that cocotb at all.
+
+    Fails with an actionable message, not a `FileNotFoundError` traceback.
+    """
+    beside = Path(sys.executable).parent / "klt"
+    if beside.is_file() and os.access(beside, os.X_OK):
+        return str(beside)
+    found = shutil.which("klt")
+    if found is not None:
+        return found
+    print(
+        "FATAL: no `klt` executable beside "
+        f"{sys.executable} or on $PATH -- the cross-check drives Icarus "
+        "through `klt functional-verification`.\n"
+        "  -> provision the pinned environment first:\n"
+        "       ./scripts/setup-env.sh\n"
+        "     then re-run. See docs/environment.md for the pinned\n"
+        "     klt/cocotb/Python versions and the toolchain this needs.",
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
+
+
+def _klt_error_message(stderr: str, limit: int = 600) -> str:
+    """klt's own diagnostic for a run that produced no verdict.
+
+    Under `--format json` klt writes `{"schema_version": 1, "error":
+    {"command": ..., "message": ...}}` to **stderr**; unwrap it to the bare
+    message so the failure reads as one line instead of a nested document.
+    Anything else (a traceback, a crash before the envelope) is passed
+    through tail-truncated rather than swallowed.
+    """
+    text = (stderr or "").strip()
     try:
-        import cocotb_tools.runner  # noqa: F401
-    except ImportError:
-        print(
-            "FATAL: cocotb is not importable under "
-            f"{sys.executable} (python {sys.version_info.major}."
-            f"{sys.version_info.minor}).\n"
-            "  -> provision the pinned environment first:\n"
-            "       ./scripts/setup-env.sh\n"
-            "     then re-run. See docs/environment.md for the pinned\n"
-            "     cocotb/Python versions and the toolchain this needs.",
-            file=sys.stderr,
-        )
-        raise SystemExit(1) from None
+        message = json.loads(text)["error"]["message"]
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return text[-limit:] if len(text) > limit else text
+    return str(message)
 
 
 def _git_revision() -> str:
@@ -98,7 +154,7 @@ def _git_revision() -> str:
         return "unknown"
 
 
-def _tool_versions() -> dict:
+def _tool_versions(klt: str) -> dict:
     versions = {}
     try:
         out = subprocess.run(
@@ -117,7 +173,7 @@ def _tool_versions() -> dict:
 
     try:
         out = subprocess.run(
-            ["klt", "--version"], capture_output=True, text=True, check=True
+            [klt, "--version"], capture_output=True, text=True, check=True
         ).stdout.strip()
         # `klt --version` prints "klt <version>"; keep just the version.
         versions["klt"] = out.removeprefix("klt ").strip() if out else "unknown"
@@ -127,40 +183,100 @@ def _tool_versions() -> dict:
     return versions
 
 
-def run_width(width: int, cases: int, seed: int, build_root: Path) -> dict:
-    """Elaborate `rtl/modexp.v` at `WIDTH=width` and run the cross-check
-    testbench against it. Returns a summary dict; raises on any mismatch.
+def build_request(width: int, seed: int) -> dict:
+    """The `klt functional-verification` request for one `WIDTH`.
+
+    `parameters` is what retired this script's old direct-`Runner` bypass:
+    klt forwards the mapping verbatim to `Runner.build(parameters=...)` and
+    `Runner.test(parameters=...)`, and cocotb's Icarus backend turns it into
+    `-Pmodexp.WIDTH=<n>` at elaboration. Every path is absolute so the
+    request does not depend on where klt resolves request-relative paths
+    from.
+
+    `options.random_seed` pins cocotb's *own* `random` module seeding and is
+    deliberately set to the same per-`WIDTH` value as `CROSS_CHECK_SEED`,
+    which is a separate knob: the transcript's vectors come from the
+    testbench's own `random.Random(CROSS_CHECK_SEED)` instance, never from
+    cocotb's global state. Pinning both leaves nothing in the run drawing
+    from OS entropy.
     """
-    from cocotb_tools.runner import get_results, get_runner
+    return {
+        "schema": "klt.functional_verification.request/1",
+        "engine": "icarus",
+        "sources": [str(RTL_SOURCE)],
+        "hdl_toplevel": "modexp",
+        "parameters": {"WIDTH": width},
+        "testbench": {
+            "module": TESTBENCH_SOURCE.stem,
+            "testcase": None,
+            "search_path": str(SCRIPT_DIR),
+        },
+        "options": {
+            "coverage": False,
+            "timescale": ["1ns", "1ps"],
+            "random_seed": seed,
+        },
+    }
 
-    build_dir = build_root / f"sim_build_width{width}"
+
+def run_width(
+    width: int, cases: int, seed: int, build_root: Path, klt: str
+) -> dict:
+    """Elaborate `rtl/modexp.v` at `WIDTH=width` through `klt
+    functional-verification` and run the cross-check testbench against it.
+
+    Returns a summary dict. Raises `CrossCheckError` when the run produced
+    no verdict at all; a run that produced a *failing* verdict comes back in
+    the summary with `klt_pass` false.
+    """
+    run_dir = build_root / f"klt-width{width}"
+    run_dir.mkdir(parents=True, exist_ok=True)
     transcript_path = build_root / f"width-{width}.jsonl"
-
-    runner = get_runner("icarus")
-    runner.build(
-        sources=[str(RTL_SOURCE)],
-        hdl_toplevel="modexp",
-        parameters={"WIDTH": width},
-        build_dir=str(build_dir),
-        always=True,
-        clean=True,
-        timescale=("1ns", "1ps"),
+    request_path = run_dir / "request.json"
+    request_path.write_text(
+        json.dumps(build_request(width, seed), indent=2) + "\n", encoding="utf-8"
     )
-    results_xml = runner.test(
-        test_module="cross_check_tb",
-        hdl_toplevel="modexp",
-        seed=seed,
-        extra_env={
+
+    # The case count and the transcript path have no field in the request
+    # contract, so they travel as environment variables: klt sets no
+    # `extra_env` of its own, and cocotb's Runner hands the simulator
+    # subprocess the ambient environment this call constructs.
+    env = dict(os.environ)
+    env.update(
+        {
             "CROSS_CHECK_SEED": str(seed),
             "CROSS_CHECK_CASES": str(cases),
             "CROSS_CHECK_TRANSCRIPT": str(transcript_path),
-        },
-        build_dir=str(build_dir),
-        test_dir=str(build_dir),
-        results_xml=str(build_dir / "results.xml"),
-        timescale=("1ns", "1ps"),
+        }
     )
-    num_tests, num_failures = get_results(results_xml)
+
+    completed = subprocess.run(
+        [
+            klt,
+            "functional-verification",
+            str(request_path),
+            "--format",
+            "json",
+            "-o",
+            str(run_dir),
+        ],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    # klt exits 0 on a passing regression and 3 on a failing one; both print
+    # the response envelope on stdout. Any other exit is a request that never
+    # produced a verdict (bad schema, missing source, no simulator, no
+    # cocotb), and `--format json` puts that error envelope on *stderr*, so
+    # stdout is empty -- hence the diagnostic is recovered from stderr.
+    try:
+        envelope = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        raise CrossCheckError(
+            f"`klt functional-verification` (WIDTH={width}) exited "
+            f"{completed.returncode} without a response envelope on stdout: "
+            f"{_klt_error_message(completed.stderr)}"
+        ) from None
 
     mismatches = 0
     if transcript_path.exists():
@@ -178,7 +294,9 @@ def run_width(width: int, cases: int, seed: int, build_root: Path) -> dict:
         "cases": cases,
         "seed": seed,
         "mismatches": mismatches,
-        "cocotb_pass": num_failures == 0 and num_tests > 0,
+        "klt_pass": envelope.get("status") == "pass"
+        and envelope.get("test_count", 0) > 0,
+        "klt_status": envelope.get("status"),
         "transcript_path": transcript_path,
     }
 
@@ -258,19 +376,19 @@ def mint_record(run_summaries: list[dict], tool_versions: dict) -> Path:
   against Python `pow(base, exp, mod)` across WIDTH = {", ".join(str(w) for w in widths)}
   at {run_summaries[0]["cases"]} random cases each, 0 mismatches.
 - **Design provenance**: rtl (`rtl/modexp.v` @ `{_git_revision()}`)
-- **Run configuration**: `verification/cross_check.py`, cocotb {tool_versions["cocotb"]}
-  + Icarus ({tool_versions["iverilog"]}), one `random.Random` instance per
-  WIDTH seeded from `--seed` (base {PINNED_BASE_SEED}); klt not used to drive
-  this run (see klt provenance below and the parameter-override gap noted
-  in `verification/README.md`).
+- **Run configuration**: `verification/cross_check.py`, which drives one
+  `klt functional-verification` request per WIDTH (klt {tool_versions["klt"]},
+  `request.parameters: {{"WIDTH": <n>}}`) over cocotb {tool_versions["cocotb"]}
+  + Icarus ({tool_versions["iverilog"]}); one `random.Random` instance per
+  WIDTH seeded from `--seed` (base {PINNED_BASE_SEED}).
 - **Statistical convention**: N = {run_summaries[0]["cases"]} random cases per WIDTH,
   drawn deterministically (fixed seed, no repetition), 0-mismatch pass/fail
   (not a distribution claim)
 - **Result**:
 {result_lines}
   - **Overall: PASS** ({total_cases - total_mismatches}/{total_cases} across all WIDTHs)
-- **klt provenance**: klt {tool_versions["klt"]} (informational -- this run
-  bypasses klt for elaboration, see Run configuration); PDK: n/a (no PDK
+- **klt provenance**: klt {tool_versions["klt"]} (the driven entry point for
+  every simulator run in this record, see Run configuration); PDK: n/a (no PDK
   dependency, RTL/behavioral simulation only); deck content_hash: n/a; input
   content_hash(es): see `provenance.inputs` in the metadata block above
 - **Links**:
@@ -337,7 +455,7 @@ def main() -> int:
         print(f"FATAL: {RTL_SOURCE} not found", file=sys.stderr)
         return 1
 
-    _require_cocotb()
+    klt = _resolve_klt()
     if shutil.which("iverilog") is None:
         print(
             "FATAL: `iverilog` is not on $PATH -- the cross-check drives "
@@ -350,7 +468,7 @@ def main() -> int:
         )
         return 1
 
-    tool_versions = _tool_versions()
+    tool_versions = _tool_versions(klt)
     print("== multi-WIDTH cross-check ==", flush=True)
     print(f"git revision: {_git_revision()}", flush=True)
     print(f"tool versions: {tool_versions}", flush=True)
@@ -375,19 +493,28 @@ def main() -> int:
             # seed so different widths never draw identical vector streams.
             width_seed = args.seed * 1000 + width
             try:
-                summary = run_width(width, args.cases, width_seed, build_root)
-            except AssertionError as exc:
+                summary = run_width(width, args.cases, width_seed, build_root, klt)
+            except CrossCheckError as exc:
                 print(f"WIDTH={width}: FAIL -- {exc}")
                 overall_ok = False
                 continue
             summaries.append(summary)
-            status = "PASS" if summary["mismatches"] == 0 and summary["cocotb_pass"] else "FAIL"
+            status = "PASS" if summary["mismatches"] == 0 and summary["klt_pass"] else "FAIL"
             if status == "FAIL":
                 overall_ok = False
+            # A run can be 0-mismatch and still not a pass -- e.g. the
+            # testbench raised before writing every vector. Naming klt's own
+            # verdict keeps that case from reading as a clean result.
+            verdict = (
+                ""
+                if summary["klt_pass"]
+                else f", klt status={summary['klt_status']!r}"
+            )
             print(
                 f"WIDTH={width}: {status} -- "
                 f"{summary['cases'] - summary['mismatches']}/{summary['cases']} "
-                f"match, {summary['mismatches']} mismatches (seed={width_seed})",
+                f"match, {summary['mismatches']} mismatches "
+                f"(seed={width_seed}{verdict})",
                 flush=True,
             )
 
