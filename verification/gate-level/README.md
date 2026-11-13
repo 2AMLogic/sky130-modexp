@@ -24,34 +24,39 @@ mechanically kills a *timing-clean* design — isolation evidence and the two
 upstream filings in "Leg 2" below. The 1,924-entry figures in "Leg 2" describe
 the earlier (issue #133) route.
 
-## The netlist problem, and why the netlist here is derived, not exported
+## Why the netlist here is derived from the layout, not exported by P&R
 
-`klt place-and-route` at this repo's pinned `klt` revision has **no
-post-route gate-level netlist export at all**. Its response contract carries
-`def_path` and `gds_path` and nothing else — verified directly against the
-installed package, transcript frozen in this experiment's artifacts.
-
-The only Verilog artifact #7's P&R run produced is
-`verification/records/place-and-route/artifacts/20260814-203901-c741877/modexp_synth_tied.v`,
-which that record itself labels **"netlist (post-synthesis)"** — the netlist
-*fed into* P&R, not the result of it. Issue #8's LVS work established, cell
-by cell, that the routed layout has **718 instances** against that netlist's
-683 (+1 tie cell): 35 CTS/timing-fixup cells (`clkbuf_*`, `clkload*`,
-`load_slew*`, every one carrying OpenROAD's own DEF `+ SOURCE TIMING`
-annotation) plus 5 drive-strength resizes. Pointing a simulation at
-`modexp_synth_tied.v` and labelling the result "post-route" would therefore
-be a silent overclaim of exactly the kind `CLAUDE.md` forbids — and it would
-*pass*, so no test failure would ever surface it.
-
-So the netlist simulated here is **derived from the routed layout itself**:
+`klt place-and-route` does export an as-built post-route netlist today: it is
+committed as `layout/modexp.v`, and the P&R re-run cited above reproduced it
+byte-for-byte along with the DEF and GDS. Leg 1 nevertheless simulates a
+netlist **derived from the routed layout itself**, and does so deliberately.
+An export describes what the router's database says it built; the extraction
+describes what the drawn geometry actually connects. Keeping the
+extraction-derived path makes Leg 1 a check of `klt extract`'s own reading of
+the GDS that was DRC'd and LVS'd, rather than a second reading of the same
+P&R database the export comes from:
 
 ```
 layout/modexp.gds
   --( klt extract --abstract-cells, issue #8 )-->
-layout/lvs/modexp_layout_abstracted.spice          718 X-cards, 59 cell types
+layout/lvs/modexp_layout_abstracted.spice          3064 X-cards, 69 cell types
   --( verification/gate-level/spice_to_verilog.py )-->
-verification/gate-level/modexp_post_route.v        718 instantiations
+verification/gate-level/modexp_post_route.v        3064 instantiations
 ```
+
+The two views agree where they overlap. Set aside the 2343 `fill_*` and
+`tapvpwrvgnd_1` cells the extraction sees and the P&R netlist export omits,
+and the remaining 721 instances across 64 cell types match `layout/modexp.v`
+type for type and count for count.
+
+Before this repo had either a PDN or an as-built netlist export, the
+*pre*-route synthesis netlist was the only Verilog artifact P&R produced, and
+simulating it would have been a silent overclaim of exactly the kind
+`CLAUDE.md` forbids — it is the input to P&R, missing the clock-tree,
+timing-fixup and drive-strength changes P&R makes, and it would have *passed*.
+The instance-by-instance argument, measured on the layout of the day, is in
+the `verification/records/gate-level-sim/` records that made it; the upstream
+export gap it rested on is in "Known upstream gaps" below, marked fixed.
 
 `spice_to_verilog.py` is the converse of `layout/lvs/build_reference_netlist.py`
 (gate-level Verilog → SPICE, for `klt lvs`) and follows its conventions: it
@@ -59,7 +64,7 @@ binds each positional `X`-card argument to the pin name from that cell type's
 own `.SUBCKT` declaration, the same per-type pin order the reference side
 reuses.
 
-### Provenance guards (the 718 check, and four more)
+### Provenance guards (the instance-count check, and five more)
 
 A plausible-looking-but-wrong netlist is the failure mode this whole
 directory exists to avoid, so the converter validates and, under `--check`,
@@ -67,22 +72,26 @@ refuses to write evidence:
 
 | Guard | What it catches |
 |---|---|
-| per-cell-type instance counts vs `modexp_layout_extract_report.json` | a dropped or duplicated instance (total must be **718**, not 683+1) |
-| `pin_count` vs the report (**68**) | a lost or invented top-level pin |
+| per-cell-type instance counts vs `modexp_layout_extract_report.json` | a dropped or duplicated instance |
+| `pin_count` vs the report | a lost or invented top-level pin |
 | every net named in the netlist appears in the report's `nets[]` | a fabricated net |
 | at most one driver per net | a two-cell-output short in the extraction or the layout |
 | every cell input has a driver | a floating input that would simulate as `x` |
 | `X`-card arity vs `.SUBCKT` arity | a mis-bound positional argument (hard error) |
 
-Measured on the committed artifacts: 718 instances, 59 distinct cell types,
-68 top-level pins, 770 signal nets + 444 power-pin nets = 1214 nets, which is
-exactly the extraction report's own `net_count`. Zero shorts, zero floating
-inputs.
+Regenerated from the committed artifacts by `spice_to_verilog.py … --check`:
+3064 instances, 69 distinct cell types, 70 top-level pins, 775 signal nets +
+2 power-pin nets = 777 nets, which is exactly the extraction report's own
+`net_count`. Zero shorts, zero floating inputs. Those figures are not
+hand-maintained here — re-run the command in "Running it" below to reproduce
+them.
 
-`test_spice_to_verilog.py` is the converter's own self-test (7 cases: a
-synthetic-fixture happy path, one executable negative case per guard above,
-and a consistency check of the **committed** `modexp_post_route.v` against
-the extraction report — which is what catches a stale committed netlist). It
+`test_spice_to_verilog.py` is the converter's own self-test (9 cases: a
+synthetic-fixture happy path; an executable negative case for five of the six
+guards above, the `nets[]`-membership guard having none; a real-PDN
+top-level-power-port case; an internal-bus declaration case; and a
+consistency check of the **committed** `modexp_post_route.v` against the
+extraction report — which is what catches a stale committed netlist). It
 needs no PDK and no simulator, so it runs in CI alongside
 `test_check_records.py`.
 
@@ -110,12 +119,14 @@ needs no PDK and no simulator, so it runs in CI alongside
   **not** a timing model of the routed design.
 - **`USE_POWER_PINS` is deliberately not defined**, and the derived netlist
   carries no `VPWR`/`VGND`/`VPB`/`VNB` connections. This is not a shortcut:
-  the gate-level netlist is signal-only, and the power connectivity
-  extracted from the GDS when this experiment ran was fragmented per
-  placement row (444 distinct "power" nets across 718 cells), not a power
-  network worth simulating. `layout/README.md` now records that the GDS has
-  tapcells, PDN and fillers; that measurement was not redone here. The
-  same scope caveat #8 documented for LVS carries forward here verbatim.
+  the gate-level netlist is signal-only. The layout does have a real PDN
+  (`layout/README.md`: tapcell insertion, power grid and fillers), and the
+  extraction reflects it — `VDD` and `VSS` come through as two genuine
+  top-level power pins, not as the per-placement-row fragments an un-PDN'd
+  layout extracts as. The converter drops them from the emitted module's
+  port list and declares them `supply1`/`supply0` (issue #83), because
+  `USE_POWER_PINS` stays undefined either way. The same scope caveat #8
+  documented for LVS carries forward here verbatim.
 
 ## Running it
 
@@ -279,26 +290,31 @@ attempted here (each would require its own independent P&R re-route, per
 | Zero-delay `INTERCONNECT` onto a physical-only antenna-diode load still fails `Could not find intermodpath` (single-pin destination whose model has no modpaths) | [klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363) (filed by issue #133) — **this is Leg 2's remaining `INTERCONNECT` residual**; worked around by the record's disclosed 4-entry exclusion, each entry provably `(0.000:0.000:0.000)` |
 | `IOPATH` back-annotation on the sky130 `specify`-branch models kills a timing-clean design under Icarus 13 (dead at 1× and 10× clock; `INTERCONNECT`-only passes) — the "all tests fail once `options.sdf` exists" shape is annotation-class-dependent, not purely a timing outcome | [klayout-tools#2364](https://github.com/2AMLogic/klayout-tools/issues/2364) (filed by issue #133) — **this is why Leg 2's passing run annotates net delays only**; the record's isolation table is the discriminating evidence [#1888](https://github.com/2AMLogic/klayout-tools/pull/1888)'s attribution lacked |
 
-A `klt` pin bump is **not** a P&R-reproducibility guarantee: re-running P&R
-with the bumped `klt`, even against the identical frozen netlist/floorplan/
-seed, does not reproduce `layout/modexp.gds` byte-for-byte (see
+P&R reproducibility was **not** a given while those gaps were being closed:
+across the earlier `klt` pin bumps, re-running P&R against the identical
+frozen netlist/floorplan/seed did not reproduce `layout/modexp.gds`
+byte-for-byte (see
 `verification/records/drc-lvs/records/20260909-230959-92e00f2.md`, and
 `verification/records/drc-lvs/records/20260816-174310-5e656e5.md` before
-it). So the as-built netlist export (`#997`) and the earlier Leg 2 SDF attempts
-(`#1007`, `#1069`) both describe a **fresh re-run** of P&R, not the
-committed `layout/modexp.gds`. The extraction-derived Leg 1 path here stays
-the one with provenance tied to the GDS that was actually DRC'd and LVS'd,
-and should be kept as a cross-check.
+it), so the as-built netlist export (`#997`) and the Leg 2 SDF attempts of
+that period (`#1007`, `#1069`) each described a **fresh re-run** of P&R
+rather than the committed GDS. Issue #232 closed that gap, and a P&R re-run
+now reproduces `layout/modexp.{def,gds,v}` byte-for-byte — which is what
+lets the Leg 2 replay above be run against the committed layout. Leg 1 keeps
+the extraction-derived path regardless: its provenance runs through the drawn
+geometry that was actually DRC'd and LVS'd, which is worth having as a
+cross-check even when the export is reproducible.
 
 ## What this does and does not model
 
 **Does:**
 
 - every standard-cell instance actually present in the routed GDS, including
-  all 35 CTS/timing-fixup cells and all 5 resized instances;
+  the clock-tree cells, the timing-fixup buffers and the drive-strength
+  resizes P&R introduced after synthesis;
 - the signal connectivity `klt extract` recovered from the drawn geometry —
   i.e. the routing, not the router's intent;
-- the tie cell (`conb_1`) as a real instance, not a Verilog constant;
+- the tie cells (`conb_1`) as real instances, not Verilog constants;
 - boolean/sequential behaviour of each cell, from the PDK's own models.
 
 **Does not:**
@@ -309,7 +325,10 @@ and should be kept as a cross-check.
   `UNIT_DELAY` on flop outputs, which is a race-avoidance device, not a
   characterized delay. No setup/hold check is exercised. Timing evidence
   remains `verification/records/place-and-route/`'s OpenSTA corner sweep.
-- **no power/ground network.** Power pins are dropped; this GDS has no PDN.
+- **no power/ground network.** The GDS has a PDN, but `USE_POWER_PINS` is
+  undefined, so every cell's power pins are dropped and the top-level
+  `VDD`/`VSS` are simulated as `supply1`/`supply0` constants rather than as a
+  modelled grid.
 - **no corner dependence** (see above).
 - **cell-instance granularity, not transistor level** — carried forward from
   #8: each cell is the PDK's behavioural model, and the transistors inside it
