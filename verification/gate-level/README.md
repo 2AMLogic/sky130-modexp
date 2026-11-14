@@ -158,12 +158,13 @@ is summarized in `run-gate-level-sim.sh`'s own header comment
 
 ### Leg 1a — `klt functional-verification`, unmodified `test_modexp.py`
 
-`test_modexp.py` is **read-only** here. `verification/gate-level/test_modexp.py`
-is a git **symlink** to `../test_modexp.py`, not a copy — `klt
-functional-verification` requires the testbench module to sit next to the
-request document, and copying it would have destroyed the very property the
-run exists to demonstrate (that *one* file passes against both views). Verify
-with `git ls-files -s verification/gate-level/test_modexp.py` (mode `120000`).
+`test_modexp.py` is **read-only** here, and there is no second copy of it:
+the gate-level request reaches `verification/test_modexp.py` itself through
+`testbench.search_path` (`".."`, resolved against the request's own
+directory), so the *one* file is what passes against both views. Copying it
+would have destroyed the very property the run exists to demonstrate. Verify
+with `git ls-files verification/gate-level` — no `test_modexp.py` there — and
+`jq -r '.testbench.search_path' verification/gate-level/request-modexp-gate-level.json`.
 
 Result: `status: "pass"`, 2/2 tests, `failed_count: 0`. The simulated time is
 **identical** to the RTL run's (`test_modexp_known_vectors` 23750.0 ns,
@@ -271,9 +272,9 @@ attempted here (each would require its own independent P&R re-route, per
 |---|---|
 | `klt place-and-route` exports no as-built (post-CTS/post-resize) netlist | [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996) — filed by #8, **fixed** by [#997](https://github.com/2AMLogic/klayout-tools/pull/997) (merged 2026-08-15) — this repo's `klt` pin bumped past it by issue #55 |
 | `klt place-and-route` has no SDF export; `klt functional-verification` has no SDF option | [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) — **fixed** by [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007) (merged 2026-08-15) — this repo's `klt` pin bumped past it by issue #55 |
-| `klt functional-verification` has no compile-time defines / build-args field, so an `ifdef`-gated Verilog cell library cannot be selected through the request | [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001) (open) — worked around by `sky130_fd_sc_hd_sim_defines.v` |
+| `klt functional-verification` has no compile-time defines / build-args field, so an `ifdef`-gated Verilog cell library cannot be selected through the request | [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001) — **fixed** by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as completed 2026-08-15), and this repo's `klt` pin is past it (`options.defines`). `sky130_fd_sc_hd_sim_defines.v` is nevertheless **retained**: the live record `20261027-013940-98bf55d` hashes it as a provenance input, so replacing it with `options.defines` means minting a superseding record — tracked as #322, not done here |
 | The accepted SDF re-sim recipe is conditional on Icarus >= 13; 12.0 has no `-ginterconnect` and cannot simulate `ifdef`-gated timing models at all | [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (filed by this issue) — not a blocker on this repo's host (Icarus 13.0) |
-| `klt functional-verification` requires the testbench module to sit next to the request, so one unmodified testbench cannot serve several requests | [klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (filed by this issue) — worked around by the symlink above |
+| `klt functional-verification` requires the testbench module to sit next to the request, so one unmodified testbench cannot serve several requests | [klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (filed by this issue) — **fixed** by [#1005](https://github.com/2AMLogic/klayout-tools/pull/1005) (closed as completed 2026-08-15), and this repo's `klt` pin is past it; the request now uses `testbench.search_path`, and the committed `verification/gate-level/test_modexp.py` stand-in that worked around it is gone |
 | Icarus `$sdf_annotate` cannot resolve a top-level-port-attached `INTERCONNECT` entry even under `-ginterconnect` | [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056) (filed by issue #55) — **fixed** by [#1069](https://github.com/2AMLogic/klayout-tools/pull/1069) (merged 2026-08-17) — this repo's `klt` pin bumped past it by issue #78; the narrower residual it exposed is klayout-tools#1619 below |
 | Sibling `INTERCONNECT` entries on a port-touching net fail even after `#1069`'s wrapper fix (a driver net fanning out to both a top-level port and internal instance-pin loads: the port entry resolves, its internal siblings do not) | [klayout-tools#1619](https://github.com/2AMLogic/klayout-tools/issues/1619) (filed by issue #78) — **fixed** by [#1857](https://github.com/2AMLogic/klayout-tools/pull/1857) + [#2304](https://github.com/2AMLogic/klayout-tools/pull/2304) — this repo's `klt` pin bumped past both by issue #133 |
 | Zero-delay `INTERCONNECT` onto a physical-only antenna-diode load still fails `Could not find intermodpath` (single-pin destination whose model has no modpaths) | [klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363) (filed by issue #133) — **this is Leg 2's remaining `INTERCONNECT` residual**; worked around by the record's disclosed 4-entry exclusion, each entry provably `(0.000:0.000:0.000)` |

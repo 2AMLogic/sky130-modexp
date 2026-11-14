@@ -250,8 +250,10 @@ relative paths accordingly.
 
 Three further gaps, same format and same friction protocol, found while
 re-running the bit-exact suite against a gate-level netlist of the routed
-layout (`verification/gate-level/`). Unlike the two above, these are **not**
-yet fixed upstream:
+layout (`verification/gate-level/`). Two of the three are now **fixed
+upstream and past this repo's pin** (the defines field and the testbench
+search path, below); what remains unfixed is the SDF half of the first
+bullet, which is what still blocks delay-annotated gate-level simulation:
 
 - **`klt place-and-route` SDF export is missing; the netlist half is
   closed at the current pin (corrected by issue #139).** *Originally written
@@ -272,20 +274,32 @@ yet fixed upstream:
   the netlist from #8's `klt extract --abstract-cells` output — see
   `verification/gate-level/README.md`. There is no local substitute for the
   SDF half.
-- **`klt functional-verification` has no compile-time defines / build-args
-  field** ([klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001),
-  open), so a PDK's `` `ifdef ``-gated Verilog cell library
-  (`USE_POWER_PINS`, `FUNCTIONAL`, `UNIT_DELAY`) cannot be selected through
-  the request. Local substitute: `verification/gate-level/sky130_fd_sc_hd_sim_defines.v`,
-  listed first in `request.sources` so its `` `define ``s are in effect for
-  every later source in the same compilation unit.
-- **`klt functional-verification` requires the cocotb testbench module to sit
+- **`klt functional-verification` had no compile-time defines / build-args
+  field** ([klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)),
+  so a PDK's `` `ifdef ``-gated Verilog cell library
+  (`USE_POWER_PINS`, `FUNCTIONAL`, `UNIT_DELAY`) could not be selected
+  through the request. **Fixed upstream** by
+  [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as
+  completed 2026-08-15); this repo's `klt` pin is past it and carries
+  `options.defines`. The local substitute
+  `verification/gate-level/sky130_fd_sc_hd_sim_defines.v` is **retained**
+  anyway — listed first in `request.sources` so its `` `define ``s are in
+  effect for every later source in the same compilation unit — because a
+  live evidence record hashes that file as a provenance input, so moving the
+  defines into the request means minting a superseding record (#322).
+- **`klt functional-verification` required the cocotb testbench module to sit
   next to the request document**
-  ([klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003),
-  open), so one unmodified testbench cannot serve several requests. Local
-  substitute: `verification/gate-level/test_modexp.py` is a git **symlink**
-  to `../test_modexp.py`, never a copy — copying would have destroyed the
-  property the gate-level run exists to demonstrate.
+  ([klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003)),
+  so one unmodified testbench could not serve several requests. **Fixed
+  upstream** by [#1005](https://github.com/2AMLogic/klayout-tools/pull/1005)
+  (closed as completed 2026-08-15); this repo's `klt` pin is past it, and
+  `verification/gate-level/request-modexp-gate-level.json` now reaches
+  `verification/test_modexp.py` through `testbench.search_path` (`".."`,
+  resolved against the request's own directory). The committed stand-in that
+  used to substitute for the field — a second `test_modexp.py` entry in
+  `verification/gate-level/` pointing at `../test_modexp.py` — is gone.
+  Copying the testbench would have destroyed the property the gate-level run
+  exists to demonstrate, and now nothing has to.
 
 Also filed, environment- rather than klt-shaped:
 [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) —
