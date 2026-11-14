@@ -7,47 +7,42 @@ Ratified specification and decision records.
 - [`decision-records/`](decision-records/) — post-ratification decisions
   that extend `modexp.md` without editing its ratified text (per
   `modexp.md` Decision 3). Each record cites the spec text it extends.
+  The list below indexes every record; each line's status and closing issue
+  are read from the record's own `**Status**:` and `**Decided by**:` header
+  fields, which remain authoritative.
   - [`TEMPLATE.md`](decision-records/TEMPLATE.md) — copy this to start a
     new decision record.
   - [`0001-input-domain-interface-and-corner-matrix.md`](decision-records/0001-input-domain-interface-and-corner-matrix.md)
-    — qualifies the Correctness row's input domain (with a reproducible
-    mismatch measurement), defines out-of-domain behavior, ratifies the
-    port/interface contract, names the `sky130_fd_sc_hd` corner matrix,
-    maps the T1 evidence checklist to this digital block, and ratifies
-    operating conditions. Closes issue #6.
+    — issue #6, status `ratified`.
   - [`0002-slow-corner-timing-closure-and-mm-red-critical-path.md`](decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md)
-    — holds Decision 2's 100 MHz target at the nominal corner as ratified,
-    requires every "closes 100 MHz" claim in this repo to name its corner
-    set, records the measured all-corner Fmax, and recommends (does not
-    mandate) an ordered follow-up on the `mm_red` critical path. Issue #16.
+    — issue #16, status `ratified`.
   - [`0003-lvs-closure-methodology-recommendation.md`](decision-records/0003-lvs-closure-methodology-recommendation.md)
-    — recommends a `sky130` extraction-deck layer-coverage extension as the
-    route to LVS closure; changes neither `spec/modexp.md` nor
-    `docs/signoff-claim.md`'s verdict. Issue #87.
+    — issue #87, status `ratified`.
   - [`0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`](decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md)
-    — discharges `0002` Decision 3's deferred follow-ups with measurements,
-    identifies standard-cell family selection (not logic depth) as the
-    dominant slow-corner lever, ratifies T1 item 5 as a **disclosed,
-    bounded FAIL** carried against an unamended 100 MHz Clock row (10 of 18
-    corners; binding corner `ss_n40C_1v28` at 22.80 MHz), and prices the
-    measured route to 18/18 rather than lowering the target. Closes
-    issue #132. **Its 18/18 claim is withdrawn by `0005`** — see below.
+    — issue #132, status `ratified`.
   - [`0005-the-priced-exit-was-run-and-does-not-reproduce.md`](decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md)
-    — runs `0004` Decision 2's priced exit now that its blocking dependency
-    (klayout-tools#2382) has landed. The reproducibility objection is
-    discharged (`constraints.dont_use` reproduces the frozen script's
-    netlist byte for byte), but the 18/18 does **not** reproduce: 17 of 18
-    corners, `ss_n40C_1v28` at −0.574 ns / 94.57 MHz, with both STA
-    methodologies now agreeing against closure. Withdraws `0004`'s
-    reachability claim, **declines** to supersede `0001` Decision 3's
-    latency formula (the shipped RTL is unchanged), re-prices the exit, and
-    names unpinned Yosys/ABC build identity as a newly-visible obstacle.
-    Lands no layout, RTL, or flow change; no T1 row changes state.
-    Issue #141.
+    — issue #141, status `ratified`.
+  - [`0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md`](decision-records/0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md)
+    — issue #139, status `ratified`.
   - [`0007-the-17-of-18-bit-serial-re-spin-is-declined-not-planned.md`](decision-records/0007-the-17-of-18-bit-serial-re-spin-is-declined-not-planned.md)
-    — records the operator ruling on issue #144: the bit-serial 17/18
-    re-spin (about 8x net throughput loss, still failing `ss_n40C_1v28`) is
-    **not planned**. `0001` Decision 3 stays unamended; the 100 MHz target
-    and eighteen-corner matrix are not relaxed; the search for an
-    all-corner design without the throughput loss stays open. Status
-    `proposed`, pending two-key ratification. Issue #144.
+    — issue #144, status `proposed`.
+  - [`0008-requalification-under-open-pdks-f6eeac7.md`](decision-records/0008-requalification-under-open-pdks-f6eeac7.md)
+    — issue #191, status `proposed`.
+  - [`0009-openroad-legs-requalified-under-open-pdks-f6eeac7.md`](decision-records/0009-openroad-legs-requalified-under-open-pdks-f6eeac7.md)
+    — issue #191, status `proposed`.
+  - [`0010-lvs-evidence-regenerated-with-the-pinned-klt-power-connectivity-measured-mismatch.md`](decision-records/0010-lvs-evidence-regenerated-with-the-pinned-klt-power-connectivity-measured-mismatch.md)
+    — issue #194, status `proposed`.
+  - [`0011-no-microarchitecture-closes-the-binding-corner-at-100-mhz-a-carry-save-montgomery-datapath-is-the-open-lead.md`](decision-records/0011-no-microarchitecture-closes-the-binding-corner-at-100-mhz-a-carry-save-montgomery-datapath-is-the-open-lead.md)
+    — issue #234, status `proposed`.
+  - [`0012-lvs-item-4-met-on-the-as-built-netlist-and-the-vpb-mismatch-was-an-extraction-artifact-of-the-earlier-klt-build.md`](decision-records/0012-lvs-item-4-met-on-the-as-built-netlist-and-the-vpb-mismatch-was-an-extraction-artifact-of-the-earlier-klt-build.md)
+    — issue #233, status `proposed`.
+  - [`0013-the-carry-save-montgomery-kernel-reaches-85-95-mhz-at-the-binding-corner-and-the-flow-merges-duplicated-control.md`](decision-records/0013-the-carry-save-montgomery-kernel-reaches-85-95-mhz-at-the-binding-corner-and-the-flow-merges-duplicated-control.md)
+    — issue #271, status `proposed`.
+  - [`0014-no-quotient-retiming-of-the-carry-save-montgomery-kernel-closes-the-binding-corner.md`](decision-records/0014-no-quotient-retiming-of-the-carry-save-montgomery-kernel-closes-the-binding-corner.md)
+    — issue #271, status `proposed`.
+  - [`0015-depth-levers-on-the-carry-save-montgomery-kernel-do-not-move-the-quotient-recurrence.md`](decision-records/0015-depth-levers-on-the-carry-save-montgomery-kernel-do-not-move-the-quotient-recurrence.md)
+    — issue #271, status `proposed`.
+  - [`0016-q-loop-single-mux2-restructure-does-not-meet-100-mhz-at-the-binding-corner.md`](decision-records/0016-q-loop-single-mux2-restructure-does-not-meet-100-mhz-at-the-binding-corner.md)
+    — issue #271, status `proposed`.
+  - [`0017-pipelined-column-halves-cost-two-cycles-per-montgomery-iteration-a-priced-contingent-supersession-of-the-0001-latency-clause.md`](decision-records/0017-pipelined-column-halves-cost-two-cycles-per-montgomery-iteration-a-priced-contingent-supersession-of-the-0001-latency-clause.md)
+    — issue #280, status `proposed`.
