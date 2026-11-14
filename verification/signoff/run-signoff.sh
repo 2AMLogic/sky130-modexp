@@ -15,13 +15,9 @@
 # CI fails instead of letting the committed verdict rot.
 #
 # Toolchain: this is a tool-light, read-only report leg -- it re-runs no PDK
-# job, it only reads committed JSON envelopes. It therefore pins its OWN klt
-# release (see docs/environment.md -> "Pinned versions", the signoff-report
-# row), newer than the PDK-heavy legs' pin: a git SHA of klayout-tools (merge
-# commit of PR #3200), whose grader binds T1 items 1/2/9/10 to artifact-anchored
-# evidence (klayout-tools#2718) and grades item 6 `not_applicable` (unreleased
-# on PyPI). Locally the runner uses $KLT, else `klt` on PATH, and refuses any
-# build not made from that SHA; CI installs it from git directly.
+# job, it only reads committed JSON envelopes. It runs on the shared klt pin
+# (see docs/environment.md -> "Pinned versions"); the pin itself and how this
+# script resolves it are stated with SIGNOFF_KLT_VERSION below.
 #
 # Exit codes: `klt signoff --manifest` exits 3 when the report rendered fine
 # but at least one T1 item is unmet -- which is this block's honest current
@@ -63,9 +59,7 @@ REPORT="verification/signoff/tier-report.json"
 # refused.
 SIGNOFF_KLT_VERSION="0.8.0"
 
-if [[ -n "${KLT:-}" ]]; then
-  :
-else
+if [[ -z "${KLT:-}" ]]; then
   KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and KLT unset (need klayout-tools==${SIGNOFF_KLT_VERSION})" >&2; exit 1; }
 fi
 KLT_VERSION_LINE="$("$KLT" --version 2>/dev/null || echo 'version unknown')"
