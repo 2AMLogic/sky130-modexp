@@ -13,18 +13,23 @@ Checks, per manifest:
 
 Usage:
     python3 verification/check_artifact_manifests.py [--repo-root DIR]
+`--repo-root` defaults to `_repo_utils.find_repo_root(strict=False)` --
+$REPO_ROOT, else `git rev-parse --show-toplevel` run from that module's
+directory -- so the same bytes work from any depth, and the flag becomes
+required only when neither resolves.
 Exit codes: 0 clean (or no manifests), 1 at least one violation.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+from _repo_utils import find_repo_root, sha256_of
 
 MANIFEST_GLOB = "manifests/artifacts/*.manifest.json"
 REQUIRED = {"sha256", "size", "kind", "producer", "uri"}
@@ -85,7 +90,7 @@ def committed_blob_collisions(root: Path, entries: list[dict]) -> list[str]:
         try:
             if not p.is_file() or p.is_symlink() or p.stat().st_size not in sizes:
                 continue
-            digest = hashlib.sha256(p.read_bytes()).hexdigest()
+            digest = sha256_of(p, prefix=False)
         except OSError:
             continue
         if digest in by_sha:
@@ -95,7 +100,9 @@ def committed_blob_collisions(root: Path, entries: list[dict]) -> list[str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent.parent)
+    default_root = find_repo_root(strict=False)
+    ap.add_argument("--repo-root", type=Path, default=default_root, required=default_root is None,
+                    help="default: $REPO_ROOT, else `git rev-parse --show-toplevel`")
     root = ap.parse_args().repo_root.resolve()
 
     failures = 0

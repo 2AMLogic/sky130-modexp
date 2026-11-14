@@ -43,8 +43,11 @@ legitimate re-pin a lint failure. The rationale prose under the table
 
 Usage:
     python3 verification/check_pins.py [--repo-root DIR]
-`--repo-root` defaults to $REPO_ROOT, else `git rev-parse --show-toplevel`
-(run from this file's directory), so the same bytes work from any depth.
+`--repo-root` defaults to `_repo_utils.find_repo_root(strict=False)` --
+$REPO_ROOT, else `git rev-parse --show-toplevel` run from that module's
+directory -- so the same bytes work from any depth, and the flag becomes
+required only when neither resolves. A vendored copy of this checker must
+carry `_repo_utils.py` beside it.
 Exit codes: 0 consistent, 1 at least one mismatch, 2 a file or section is
 missing / unparseable.
 """
@@ -52,24 +55,11 @@ missing / unparseable.
 from __future__ import annotations
 
 import argparse
-import os
 import re
-import subprocess
 import sys
 from pathlib import Path
 
-
-def default_repo_root() -> Path | None:
-    """$REPO_ROOT, else this file's `git rev-parse --show-toplevel`; None if
-    neither resolves. Independent of how deep this file sits in the tree."""
-    if os.environ.get("REPO_ROOT"):
-        return Path(os.environ["REPO_ROOT"])
-    git = subprocess.run(
-        ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "--show-toplevel"],
-        capture_output=True, text=True,
-    )
-    return Path(git.stdout.strip()) if git.returncode == 0 else None
-
+from _repo_utils import find_repo_root
 
 SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
@@ -240,7 +230,7 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    default_root = default_repo_root()
+    default_root = find_repo_root(strict=False)
     ap.add_argument("--repo-root", type=Path, default=default_root, required=default_root is None,
                     help="default: $REPO_ROOT, else `git rev-parse --show-toplevel`")
     args = ap.parse_args(argv)

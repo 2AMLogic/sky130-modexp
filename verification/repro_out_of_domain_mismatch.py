@@ -30,14 +30,11 @@ docstring) and this reproduction needs `WIDTH=8`, not the request's default
 import os
 import random
 import sys
-from pathlib import Path
 
 import cocotb
 from cocotb.clock import Clock
 from cocotb_tools.runner import get_runner
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-RTL_SOURCE = REPO_ROOT / "rtl" / "modexp.v"
 WIDTH = 8
 NUM_CASES = 400
 SEED = 7
@@ -45,6 +42,9 @@ SEED = 7
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _dut import reset as _reset  # noqa: E402
 from _dut import run_modexp as _run_modexp  # noqa: E402
+from _repo_utils import REPO_ROOT  # noqa: E402
+
+RTL_SOURCE = REPO_ROOT / "rtl" / "modexp.v"
 
 
 @cocotb.test()

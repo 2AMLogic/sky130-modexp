@@ -20,12 +20,17 @@ Standard library only.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+# Locating the sibling helper module is the one thing that must be relative
+# to this file; the repo root itself then comes from `_repo_utils`, so
+# `$REPO_ROOT` is honoured and the path depth of this file is irrelevant.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from _repo_utils import REPO_ROOT, sha256_of  # noqa: E402
+
 REPORT = Path("verification/signoff/evidence/characterization.md")
 ENVELOPE = Path("verification/signoff/evidence/item-8-characterization.json")
 MANIFEST = Path("verification/signoff/block-manifest.json")
@@ -40,7 +45,7 @@ SUMMARY = (
 
 
 def report_hash() -> str:
-    return "sha256:" + hashlib.sha256((ROOT / REPORT).read_bytes()).hexdigest()
+    return sha256_of(REPO_ROOT / REPORT)
 
 
 def build_envelope(content_hash: str) -> dict:
@@ -72,12 +77,12 @@ def main() -> int:
 
     h = report_hash()
     want_env = dump(build_envelope(h))
-    manifest = json.loads((ROOT / MANIFEST).read_text())
+    manifest = json.loads((REPO_ROOT / MANIFEST).read_text())
     pin = {"file": ENVELOPE.as_posix(), "content_hash": h}
 
     if args.check:
         problems = []
-        env_path = ROOT / ENVELOPE
+        env_path = REPO_ROOT / ENVELOPE
         if not env_path.exists() or env_path.read_text() != want_env:
             problems.append(f"{ENVELOPE} does not match the current {REPORT}")
         if manifest.get("evidence", {}).get("8") != pin:
@@ -94,11 +99,11 @@ def main() -> int:
         print(f"OK: item 8 envelope and manifest pin match {REPORT} ({h})")
         return 0
 
-    (ROOT / ENVELOPE).write_text(want_env)
+    (REPO_ROOT / ENVELOPE).write_text(want_env)
     manifest.setdefault("evidence", {})["8"] = pin
     # Keep numeric item order so the manifest diff stays small.
     manifest["evidence"] = dict(sorted(manifest["evidence"].items(), key=lambda kv: int(kv[0])))
-    (ROOT / MANIFEST).write_text(dump(manifest))
+    (REPO_ROOT / MANIFEST).write_text(dump(manifest))
     print(f"wrote {ENVELOPE} and evidence.8 in {MANIFEST} ({h})")
     return 0
 

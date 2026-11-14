@@ -33,6 +33,7 @@ from typing import Callable
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
 CHECKER = SCRIPT_DIR / "check_pins.py"
+REPO_UTILS = SCRIPT_DIR / "_repo_utils.py"
 SCRIPT_REL = Path("scripts/setup-env.sh")
 DOC_REL = Path("docs/environment.md")
 SIGNOFF_REL = Path("verification/signoff/run-signoff.sh")
@@ -291,7 +292,13 @@ def run_case(mutation: Mutation) -> tuple[int, str]:
 def run_nested_copy_case() -> tuple[bool, str]:
     """The checker copied one directory deeper (a vendored `common/` copy),
     run with no `--repo-root`, must check the enclosing git repo; and
-    `$REPO_ROOT` must override that."""
+    `$REPO_ROOT` must override that.
+
+    `_repo_utils.py` is copied beside it because that is where the checker's
+    repo-root resolution now lives (issue #329) -- the vendoring contract is
+    "the pair travels together". The resolver's own branches are covered
+    directly, once, in `test_repo_utils.py`; what this case adds is that
+    `check_pins.py` wires its `--repo-root` default to it, end to end."""
     with tempfile.TemporaryDirectory(prefix="check-pins-selftest-") as tmp:
         root = Path(tmp)
         for rel in (SCRIPT_REL, DOC_REL, SIGNOFF_REL, CI_REL):
@@ -300,6 +307,7 @@ def run_nested_copy_case() -> tuple[bool, str]:
         (root / "common").mkdir()
         nested = root / "common" / "check_pins.py"
         shutil.copyfile(CHECKER, nested)
+        shutil.copyfile(REPO_UTILS, root / "common" / "_repo_utils.py")
         subprocess.run(["git", "init", "--quiet", str(root)], check=True)
         env = {k: v for k, v in os.environ.items() if k != "REPO_ROOT"}
         res = subprocess.run([sys.executable, str(nested)], capture_output=True, text=True, env=env, cwd=tmp)
