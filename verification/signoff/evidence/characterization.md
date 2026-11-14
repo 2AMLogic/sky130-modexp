@@ -45,8 +45,9 @@ unchecked` as not applicable to that form; that form ties `VPB` to `VDD` by
 construction, so it says nothing about `VPB`. `power_connectivity: match` is a
 per-instance pin-to-net consistency verdict, **not** rail continuity and not
 IR drop. Decision records 0006 and 0010 carried the superseded `mismatch`
-reading and are retained on `docs/signoff-claim.md` as struck-through history,
-so this row no longer cites them for the verdict.
+reading; `docs/signoff-claim.md` keeps that history in git and in the records
+rather than on the page (it was removed there in issue #242), so this row no
+longer cites them for the verdict.
 
 The stretch column (Montgomery variant, `WIDTH=32`, 500 MHz, formal
 equivalence) is not claimed; Decisions 1, 2 and 5 of `spec/modexp.md` carry

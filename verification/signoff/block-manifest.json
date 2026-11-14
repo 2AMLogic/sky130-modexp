@@ -34,7 +34,7 @@
     "7": "verification/records/gate-level-sim/artifacts/20261027-050100-163f791/klt-functional-verification-sdf-run1.json",
     "8": {
       "file": "verification/signoff/evidence/item-8-characterization.json",
-      "content_hash": "sha256:e813249f16b14039854f242abb648ae7d8fa5744cf808e8fc11d1e3c669084a3"
+      "content_hash": "sha256:85a8766dc1409b97684a2aa94f35b143f393a5c5bd699cd66e19cfb1cf1e096e"
     },
     "9": {
       "file": "verification/signoff/evidence/item-9-testbenches.json",
