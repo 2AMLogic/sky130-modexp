@@ -383,7 +383,17 @@ CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
   its own pinned `klt` (newer than the PDK-heavy legs' pin — see
   `docs/environment.md`) and reads committed envelopes only; no PDK;
 - basic Python syntax checks over the scripts in this directory, and
-  `bash -n` over `scripts/setup-env.sh`.
+  `bash -n` over `scripts/setup-env.sh` and over the Loom suite-runner
+  (`scripts/run-loom-suites.sh`) and its self-test;
+- the Loom suite-runner's own self-test
+  (`scripts/tests/test-run-loom-suites.sh`, #338). That runner is the single
+  implementation of the suite-classification and two-manifest skip logic
+  (`.loom/scripts/tests/ci-excluded.txt` plus the repo-owned
+  `.github/ci-suites-consumer-skips.txt`, #185) used by the `guard-hooks`
+  and `merge-pr-suites` jobs — i.e. it decides whether those jobs ran
+  anything at all — so it is held to the same self-test standard as the
+  checkers above. Hermetic: synthetic suites and manifests in a `mktemp -d`
+  sandbox, no vendored Loom suite executed.
 
 CI does **not** run `klt synthesize`, `klt place-and-route`, `klt drc`, or
 the gate-level simulation legs under `verification/gate-level/` (those need

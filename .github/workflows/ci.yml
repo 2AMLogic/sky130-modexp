@@ -61,6 +61,16 @@ jobs:
                                    verification/gate-level/gate_level_cross_check.py
           bash -n verification/gate-level/run-gate-level-sim.sh
           bash -n scripts/setup-env.sh
+          bash -n scripts/run-loom-suites.sh
+          bash -n scripts/tests/test-run-loom-suites.sh
+
+      - name: Loom suite-runner self-test (scripts/tests/test-run-loom-suites.sh)
+        # scripts/run-loom-suites.sh decides whether the guard-hooks and
+        # merge-pr-suites jobs below actually ran anything, so it is held to
+        # the same standard as verification/check_*.py: a self-test, run in
+        # CI (#338). It is hermetic -- synthetic suites and manifests in a
+        # mktemp -d sandbox, no vendored Loom suite executed.
+        run: ./scripts/tests/test-run-loom-suites.sh
 
       - name: Record linter, pin-sync checker, and their self-tests (npm run lint)
         run: npm run lint
@@ -174,100 +184,40 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run .loom/hooks/tests/ suites
+        # Runner: scripts/run-loom-suites.sh -- repo-owned (it must stay
+        # outside .loom/, or a resync would overwrite it), with its own
+        # self-test at scripts/tests/test-run-loom-suites.sh run by the
+        # `records` job. It holds the suite-classification algorithm, the
+        # two-manifest skip protocol and the "deliberately NOT set -e"
+        # rationale, stated once there instead of once per job (#338).
+        #
+        # Some upstream hook suites cannot pass on this consumer repo's
+        # runners (#185): test-guard-mcp-tools.sh is daemon-backed and already
+        # tracked in upstream's ci-excluded.txt -- under defaults/hooks/tests/,
+        # which is why this job passes --manifest-prefix -- and two more are
+        # consumer-layout-skewed and tracked in the repo-owned supplement
+        # .github/ci-suites-consumer-skips.txt. Both manifests are consulted by
+        # basename so the skip set self-maintains across resyncs, and every
+        # skip prints its reason, so the gap shows up in the log.
+        #
+        # History behind the runner's "no per-suite rc tolerance" rule: the
+        # resolve-var suite used to be carved out in THIS job, with its cases
+        # (i)/(j) tolerated as a known pre-existing failure (#96). That
+        # carve-out is gone -- #96 established that the ALLOW verdict comes
+        # from wt_write_mktemp_same_command_safe(), a deliberate safety
+        # feature that reached the vendored hook AFTER those assertions were
+        # written, so the suite's own assertions were updated to match and it
+        # now passes outright. Every suite is judged on its exit status alone
+        # again; the only sanctioned skip is a whole-suite one, backed by a
+        # tracked issue via the two manifests above (#185).
         run: |
-          # Deliberately NOT `set -e`: GitHub Actions' default `run:` shell
-          # is `bash -eo pipefail`, so a suite that exits non-zero would make
-          # the `out=$(bash "$f" 2>&1)` assignment abort this whole step
-          # immediately, before the pass/fail classification below ever runs
-          # -- silently turning every suite AFTER the first failing one into
-          # a false "did not run" pass, which is exactly the blind spot this
-          # job exists to close. `set +e` overrides the runner default so
-          # every suite runs and each rc is classified explicitly.
-          set +e -u -o pipefail
-
-          # Some upstream hook suites cannot pass on this consumer repo's
-          # runners (#185): test-guard-mcp-tools.sh is daemon-backed and
-          # already tracked in upstream's ci-excluded.txt (under
-          # defaults/hooks/tests/), and two more are consumer-layout-skewed
-          # and tracked in the repo-owned supplement. Consult both by
-          # basename so the skip set self-maintains across resyncs; every
-          # skip prints its reason, so the gap shows up in the log.
-          excluded_manifest=.loom/scripts/tests/ci-excluded.txt
-          consumer_skips=.github/ci-suites-consumer-skips.txt
-          if [[ ! -f "$excluded_manifest" ]]; then
-            # Fail loudly rather than fall back to "run everything": without
-            # the manifest there's no record of which suites need a binary.
-            echo "::error::missing $excluded_manifest -- cannot tell which suites are daemon-backed"
-            exit 1
-          fi
-          if [[ ! -f "$consumer_skips" ]]; then
-            echo "::error::missing $consumer_skips -- cannot tell which suites are carved out for this repo"
-            exit 1
-          fi
-          # Same parse as check-ci-suite-manifest.sh's manifest_names(); only
-          # defaults/hooks/tests/ entries can name a suite in this job's glob,
-          # so match those by basename.
-          excluded_hooks=$(sed -E 's/#.*$//' "$excluded_manifest" \
-            | awk '$1 ~ /^defaults\/hooks\/tests\// { n = $1; sub(/.*\//, "", n); print n }')
-          consumer_names=$(sed -E 's/#.*$//' "$consumer_skips" | awk 'NF { print $1 }')
-
-          overall_fail=0
-          ran=()
-          skipped=()
-          for f in .loom/hooks/tests/*.sh; do
-            name=${f##*/}
-            if grep -qxF -- "$name" <<<"$excluded_hooks"; then
-              # Print the reason verbatim from the manifest, with the
-              # suite name removed (reasons may contain `#NNNN`, so take
-              # the raw line, not the comment-stripped one).
-              reason=$(awk -v n="defaults/hooks/tests/$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$excluded_manifest")
-              echo "SKIPPED (listed in $excluded_manifest): $name -- ${reason:-<no reason given>}"
-              skipped+=("$name")
-              continue
-            elif grep -qxF -- "$name" <<<"$consumer_names"; then
-              reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$consumer_skips")
-              echo "SKIPPED (listed in $consumer_skips): $name -- ${reason:-<no reason given>}"
-              skipped+=("$name")
-              continue
-            fi
-
-            ran+=("$name")
-            echo "::group::$f"
-            out=$(bash "$f" 2>&1)
-            rc=$?
-            printf '%s\n' "$out"
-            echo "::endgroup::"
-
-            # NOTE: the resolve-var suite used to be carved out here, with
-            # its cases (i)/(j) tolerated as a known pre-existing failure
-            # (#96). That carve-out is gone: #96 established that the ALLOW
-            # verdict comes from wt_write_mktemp_same_command_safe(), a
-            # deliberate safety feature that reached the vendored hook AFTER
-            # those assertions were written, so the suite's own assertions
-            # were updated to match and it now passes outright. Every suite
-            # is judged on its exit status alone again -- the only sanctioned
-            # skip is a whole-suite one, backed by a tracked issue via the
-            # two manifests above (#185); do not reintroduce a per-suite
-            # rc tolerance, since a carve-out also suppresses that suite's
-            # rc entirely.
-            if [[ "$rc" -ne 0 ]]; then
-              echo "FAILED: $f (exit $rc)"
-              overall_fail=1
-            fi
-          done
-
-          echo
-          echo "Summary: ran ${#ran[@]} suite(s), skipped ${#skipped[@]} suite(s) listed in $excluded_manifest or $consumer_skips"
-          for s in ${skipped[@]+"${skipped[@]}"}; do
-            echo "  not run (daemon-backed or consumer carve-out, see #185): $s"
-          done
-          # Don't let the job go green having run nothing (e.g. a resync
-          # that moves every hook suite into a skip list).
-          if [[ "${#ran[@]}" -eq 0 ]]; then
-            echo "::error::no .loom/hooks/tests/*.sh suite was run -- every one is in a skip list"
-            exit 1
-          fi
-          exit "$overall_fail"
+          ./scripts/run-loom-suites.sh \
+            --glob '.loom/hooks/tests/*.sh' \
+            --manifest-prefix 'defaults/hooks/tests/' \
+            --label '.loom/hooks/tests/*.sh' \
+            --missing-manifest-note 'cannot tell which suites are daemon-backed' \
+            --skip-note 'daemon-backed or consumer carve-out, see #185' \
+            --empty-note 'every one is in a skip list'
 
   merge-pr-suites:
     name: Loom merge-pr.sh regression suites
@@ -297,86 +247,32 @@ jobs:
     # Upstream's own manifest of those suites, with one reason per suite, is
     # .loom/scripts/tests/ci-excluded.txt -- it is what upstream's
     # run-ci-suites.sh job uses to leave them out, and each resync keeps it
-    # current. This job reads the same file with the same parsing idiom as
-    # check-ci-suite-manifest.sh (strip `#` comments, first token = suite
-    # name) and prints every skipped suite with its reason, so the gap shows
-    # up in the log. Nothing in require-daemon-bin.sh is changed.
+    # current. The runner reads that file with the same parsing idiom as
+    # check-ci-suite-manifest.sh, plus this repo's own supplement
+    # .github/ci-suites-consumer-skips.txt for suites upstream's manifest
+    # cannot express (#185, symptom #177), and prints every skipped suite
+    # with its reason, so the gap shows up in the log. Nothing in
+    # require-daemon-bin.sh is changed.
     steps:
       - uses: actions/checkout@v4
 
       - name: Run .loom/scripts/tests/test-merge-pr-*.sh suites
+        # Same repo-owned runner as the guard-hooks job above
+        # (scripts/run-loom-suites.sh, #338) -- one implementation of the
+        # classification algorithm and of this repo's reading of the two skip
+        # manifests, so a change to either contract is applied once rather
+        # than replayed across two YAML heredocs.
+        #
+        # No --manifest-prefix here: these suites live in
+        # .loom/scripts/tests/ itself, which is the directory upstream's
+        # ci-excluded.txt names by bare basename.
         run: |
-          # See the "Deliberately NOT set -e" rationale in the guard-hooks
-          # job above -- same reasoning applies here.
-          set +e -u -o pipefail
-
-          excluded_manifest=.loom/scripts/tests/ci-excluded.txt
-          if [[ ! -f "$excluded_manifest" ]]; then
-            # Fail loudly rather than fall back to "run everything": without
-            # the manifest there's no record of which suites need a binary.
-            echo "::error::missing $excluded_manifest -- cannot tell which suites need a built loom-daemon"
-            exit 1
-          fi
-          # Same parse as check-ci-suite-manifest.sh's manifest_names().
-          excluded_names=$(sed -E 's/#.*$//' "$excluded_manifest" | awk 'NF { print $1 }')
-
-          # Repo-owned supplement (#185): suites that cannot pass on this
-          # consumer repo's runners but that upstream's manifests cannot
-          # express -- e.g. a daemon-backed suite missing from upstream's
-          # ci-excluded.txt at this resync vintage (#177). Same parsing
-          # idiom, same "fail loudly if absent" guard.
-          consumer_skips=.github/ci-suites-consumer-skips.txt
-          if [[ ! -f "$consumer_skips" ]]; then
-            echo "::error::missing $consumer_skips -- cannot tell which suites are carved out for this repo"
-            exit 1
-          fi
-          consumer_names=$(sed -E 's/#.*$//' "$consumer_skips" | awk 'NF { print $1 }')
-
-          overall_fail=0
-          ran=()
-          skipped=()
-          for f in .loom/scripts/tests/test-merge-pr-*.sh; do
-            name=${f##*/}
-            if grep -qxF -- "$name" <<<"$excluded_names"; then
-              # Print the reason verbatim from the manifest, with the
-              # suite name removed (reasons may contain `#NNNN`, so take
-              # the raw line, not the comment-stripped one).
-              reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$excluded_manifest")
-              echo "SKIPPED (listed in $excluded_manifest): $name -- ${reason:-<no reason given>}"
-              skipped+=("$name")
-              continue
-            elif grep -qxF -- "$name" <<<"$consumer_names"; then
-              reason=$(awk -v n="$name" '$1 == n { $1 = ""; sub(/^ +/, ""); print; exit }' "$consumer_skips")
-              echo "SKIPPED (listed in $consumer_skips): $name -- ${reason:-<no reason given>}"
-              skipped+=("$name")
-              continue
-            fi
-
-            ran+=("$name")
-            echo "::group::$f"
-            out=$(bash "$f" 2>&1)
-            rc=$?
-            printf '%s\n' "$out"
-            echo "::endgroup::"
-
-            if [[ "$rc" -ne 0 ]]; then
-              echo "FAILED: $f (exit $rc)"
-              overall_fail=1
-            fi
-          done
-
-          echo
-          echo "Summary: ran ${#ran[@]} suite(s), skipped ${#skipped[@]} suite(s) listed in $excluded_manifest or $consumer_skips"
-          for s in ${skipped[@]+"${skipped[@]}"}; do
-            echo "  not run (needs a built loom-daemon, or consumer carve-out per #185): $s"
-          done
-          # Don't let the job go green having run nothing (e.g. a resync
-          # that moves every merge-pr suite into the manifest).
-          if [[ "${#ran[@]}" -eq 0 ]]; then
-            echo "::error::no test-merge-pr-*.sh suite was run -- every one is listed in $excluded_manifest"
-            exit 1
-          fi
-          exit "$overall_fail"
+          ./scripts/run-loom-suites.sh \
+            --glob '.loom/scripts/tests/test-merge-pr-*.sh' \
+            --label 'test-merge-pr-*.sh' \
+            --missing-manifest-note 'cannot tell which suites need a built loom-daemon' \
+            --skip-note 'needs a built loom-daemon, or consumer carve-out per #185' \
+            --empty-note 'every one is listed in .loom/scripts/tests/ci-excluded.txt'
 
   curator-idempotency-suites:
     name: Loom Curator heartbeat-idempotency regression suite
@@ -403,8 +299,10 @@ jobs:
 
       - name: Run the prior-marker read suite
         run: |
-          # See the "Deliberately NOT set -e" rationale in the guard-hooks
-          # job above -- same reasoning applies here.
+          # See the "Deliberately NOT set -e" rationale in
+          # scripts/run-loom-suites.sh -- same reasoning applies here (this
+          # job is a deliberately scoped single-suite runner and does NOT
+          # share that script, #338).
           set +e -u -o pipefail
           f=.loom/scripts/tests/test-dep-recheck-prior-marker.sh
           if [[ ! -f "$f" ]]; then
