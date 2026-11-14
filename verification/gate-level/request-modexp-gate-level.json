@@ -10,6 +10,7 @@
   "hdl_toplevel": "modexp",
   "testbench": {
     "module": "test_modexp",
+    "search_path": "..",
     "testcase": null
   },
   "options": {

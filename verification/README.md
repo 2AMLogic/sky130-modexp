@@ -45,7 +45,8 @@ need a concrete schema to be checkable rather than aspirational:
   cross-check (see "Why a separate cross-check driver" below).
 - `gate-level/` — post-route **gate-level** simulation: the derived netlist
   of the routed layout, the `klt functional-verification` request that runs
-  `test_modexp.py` (unmodified, via a symlink) against it, and the converter
+  `test_modexp.py` (unmodified — this very file, reached through the
+  request's `testbench.search_path`) against it, and the converter
   that produces the netlist. See "Gate-level simulation: the netlist
   derivation gap" below and `verification/gate-level/README.md`.
 - `check_records.py` — the evidence-record linter (see "Enforcement").
@@ -128,7 +129,8 @@ driver script should be retired in favor of a plain klt request per `WIDTH`.
 ## Gate-level simulation: the netlist derivation gap (and the workaround)
 
 The `gate-level-sim` experiment re-runs `test_modexp.py` — the same file,
-byte for byte, reached through a git symlink rather than a copy — against a
+byte for byte, reached through the gate-level request's
+`testbench.search_path` rather than a copy — against a
 gate-level netlist of the **routed layout** instead of against
 `rtl/modexp.v`. That requires a netlist of what P&R actually built, and
 there is no such artifact:
@@ -177,11 +179,19 @@ simulation:
 
 The upstream gaps are filed:
 [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)
-(no compile-time defines in the `functional-verification` request),
+(no compile-time defines in the `functional-verification` request — **fixed**
+by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006), closed as
+completed 2026-08-15, and this repo's pin is past it; the local
+`sky130_fd_sc_hd_sim_defines.v` is retained anyway because a live record
+hashes it as a provenance input, so replacing it means minting a superseding
+record — #322),
 [#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
 export / no SDF option — the blocker for delay-annotated runs),
 [#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (testbench
-module must sit next to the request),
+module must sit next to the request — **fixed** by
+[#1005](https://github.com/2AMLogic/klayout-tools/pull/1005), closed as
+completed 2026-08-15, and this repo's pin is past it; the gate-level request
+now uses `testbench.search_path`),
 [#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (the accepted
 SDF re-sim recipe needs Icarus >= 13), and
 [#996](https://github.com/2AMLogic/klayout-tools/issues/996) (no as-built
