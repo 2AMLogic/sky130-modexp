@@ -438,17 +438,26 @@ The flow and verification scripts (`flow/run-par.sh`,
 `flow/run-sta-corner-sweep.sh`, `verification/gate-level/run-gate-level-sim.sh`,
 `verification/gate-level/spice_to_verilog.py`,
 `layout/lvs/build_reference_netlist.py`, `verification/_repo_utils.py`,
-`verification/check_pins.py`, `scripts/openroad-*.sh`) are written so a
-byte-identical copy works from any directory depth. They take these inputs,
-all optional here:
+`verification/check_pins.py`, `scripts/design-env.sh`,
+`scripts/openroad-*.sh`) are written so a byte-identical copy works from any
+directory depth. They take these inputs, all optional here:
 
 | Variable | Meaning | Default |
 |---|---|---|
 | `REPO_ROOT` | Root of the repository the script operates on | `git rev-parse --show-toplevel`, run from the script's own directory (`check_pins.py --repo-root` beats it) |
 | `DESIGN` | Design name used for file names and the top cell/module | The stem of the repo's single `rtl/*.v`; with zero or several RTL files there is no default and the script fails |
+| `KLT` | The `klt` executable the shell runners invoke. Set it to run a leg against a specific `klayout-tools` pin (e.g. `uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools==<version>"`, then `KLT=/tmp/v/bin/klt`) | `<repo root>/.venv/bin/klt`, else `klt` on `$PATH`, else the script fails. `verification/signoff/run-signoff.sh` honours `KLT` but deliberately skips the `.venv` leg -- its `SIGNOFF_KLT_VERSION` assertion must refuse a `.venv/bin/klt` of any other version rather than silently prefer it |
 | `OPENROAD_PIN_FILE` | File holding the `CIEL_SKY130_VERSION="<rev>"` PDK pin that `openroad-docker.sh` checks | `setup-env.sh` next to the script; if that is absent too, the check is skipped with a notice. An explicit but unreadable file is fatal |
 | `OPENROAD_SMOKE_DIR` | Directory holding `smoke.tcl` and `smoke_top.v` | `openroad-smoke/` next to `openroad-smoke-test.sh` |
 | `SPICE_LEF_PARSING_DIR` | Directory holding `spice_lef_parsing.py` | `<repo root>/scripts` |
+
+`DESIGN` and `KLT` have exactly one implementation between them:
+`scripts/design-env.sh`, which the three shell runners source after the
+one-line `REPO_ROOT` resolution each still has to do itself (a sourced file
+cannot resolve the root by which it is being located). It is the shell
+counterpart of `verification/_repo_utils.py` and carries the same constraint
+-- the pair travels together, so a vendored `common/` copy of any of those
+runners needs `scripts/design-env.sh` alongside it (issue #337).
 
 In this repo the defaults resolve to `DESIGN=modexp`, so existing invocations
 are unchanged. `flow/run-corner-sweep.sh` is not yet parametrized: a live

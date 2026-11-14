@@ -22,9 +22,12 @@
 #
 # <design> below is $DESIGN, else the stem of the repo's single rtl/*.v file.
 # The repo root is $REPO_ROOT, else `git rev-parse --show-toplevel`, so the
-# same bytes work from any directory depth. The per-design request
-# (request-<design>-gate-level.json) and netlist (<design>_post_route.v) sit
-# next to this script.
+# same bytes work from any directory depth. `klt` is $KLT, else
+# <repo root>/.venv/bin/klt, else whatever is on $PATH -- set $KLT to run this
+# leg against a specific klayout-tools pin. All three contracts are resolved
+# by scripts/design-env.sh, which must travel with this script. The per-design
+# request (request-<design>-gate-level.json) and netlist
+# (<design>_post_route.v) sit next to this script.
 #
 # Exit code is `klt functional-verification`'s own.
 #
@@ -75,17 +78,12 @@ set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${REPO_ROOT:-$(git -C "${HERE}" rev-parse --show-toplevel)}"
 
-# Design name: $DESIGN, else the stem of the repo's one rtl/*.v file; with
-# zero or several RTL files there is no unambiguous default, so fail loudly.
-if [ -z "${DESIGN:-}" ]; then
-  _rtl=("${REPO_ROOT}"/rtl/*.v)
-  if [ "${#_rtl[@]}" -eq 1 ] && [ -f "${_rtl[0]}" ]; then
-    DESIGN="$(basename "${_rtl[0]}" .v)"
-  else
-    echo "FATAL: DESIGN not set and ${REPO_ROOT}/rtl does not hold exactly one .v file." >&2
-    exit 1
-  fi
-fi
+# shellcheck source=../../scripts/design-env.sh
+. "${REPO_ROOT}/scripts/design-env.sh" || {
+  echo "FATAL: cannot source ${REPO_ROOT}/scripts/design-env.sh -- it must travel with this script." >&2
+  exit 2
+}
+design_env_require_design
 
 FORMAT="json"
 REGEN=1
@@ -93,22 +91,12 @@ for arg in "$@"; do
   case "${arg}" in
     --no-regen) REGEN=0 ;;
     --format=*) FORMAT="${arg#--format=}" ;;
-    -h|--help) sed -n '2,65p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help) sed -n '2,68p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "unknown option: ${arg}" >&2; exit 1 ;;
   esac
 done
 
-KLT="${KLT:-}"
-if [ -z "${KLT}" ]; then
-  if [ -x "${REPO_ROOT}/.venv/bin/klt" ]; then
-    KLT="${REPO_ROOT}/.venv/bin/klt"
-  elif command -v klt >/dev/null 2>&1; then
-    KLT="$(command -v klt)"
-  else
-    echo "FATAL: no 'klt' found -- run ./scripts/setup-env.sh first." >&2
-    exit 1
-  fi
-fi
+design_env_require_klt
 
 PY="${REPO_ROOT}/.venv/bin/python3"
 [ -x "${PY}" ] || PY="$(command -v python3)"
