@@ -28,8 +28,25 @@ ratified bound**; it is not graded pass or fail.
 | Correctness | bit-exact vs `pow(b, e, m)`, randomized | RTL: 2000/2000 match, 0 mismatches (500 per `WIDTH`). Zero-delay gate-level (on the as-built `layout/modexp.v`): 2/2 tests pass. SDF-annotated gate-level: pass (partial annotation, see item 7) | pass | `verification/records/width-cross-check/records/20260815-073109-564b598.md`, `verification/records/gate-level-sim/records/20260923-054800-e26f603.md`, `verification/records/gate-level-sim/records/20261016-010100-713829b.md`, `verification/records/gate-level-sim/records/20261027-013940-98bf55d.md` |
 | Cell count @ `WIDTH=16` | none (Decision 3) | 717 instances / 7144.352 µm² from `klt synthesize` under the pinned klt; the routed layout follows the same 717-cell netlist | reported, no ratified bound | `verification/records/synthesis-baseline/records/20261015-205100-4d8d397.md`, `verification/records/synthesis-baseline/records/20261015-210722-a4653a5.md` |
 | Clock | 100 MHz (Phase 2 target) | Closes at 10 of 18 corners; binding corner `ss_n40C_1v28` at 24.79 MHz (section 2) | **fail**, disclosed | `verification/records/sta-corner-sweep/records/20261027-013950-98bf55d.md` |
-| Signoff | DRC + LVS clean on the OpenROAD-produced GDS | DRC: `status: clean`, 0 violations. LVS: `status: mismatch` | DRC pass, LVS **fail** | `layout/drc/modexp-drc-report.json`, `layout/lvs/modexp_lvs_report.json`, `spec/decision-records/0006-lvs-item-4-stays-unmet-for-the-current-pin-and-every-pr-run-commits-its-as-built-netlist.md`, `spec/decision-records/0010-lvs-evidence-regenerated-with-the-pinned-klt-power-connectivity-measured-mismatch.md` |
+| Signoff | DRC + LVS clean on the OpenROAD-produced GDS | DRC: `status: clean`, 0 violations. LVS (klayout engine, against the as-built netlist `layout/modexp.v`): `status: match`, 0 errors, `power_connectivity.status: match`; 2 mismatches, both severity `warning`, listed with the claim — `topology.power_only_pruned` (5 physical-only masters pruned before comparing: `fill_{1,2,4,8}`, `tapvpwrvgnd_1`) and `topology.top_level_pins_anchored` (68 top-level pins anchored by name). Engine and scope caveats below the table | DRC pass, LVS pass | `layout/drc/modexp-drc-report.json`, `layout/lvs/modexp_lvs_report.json`, `spec/decision-records/0012-lvs-item-4-met-on-the-as-built-netlist-and-the-vpb-mismatch-was-an-extraction-artifact-of-the-earlier-klt-build.md`, `verification/records/drc-lvs/records/20261027-030000-1c651cc.md` |
 | Area | none (Decision 4) | Section 3 | reported, no ratified bound | `verification/records/place-and-route/records/20261027-013900-98bf55d.md` |
+
+The Signoff row's LVS verdict is the klayout engine's, mirrored from
+`docs/signoff-claim.md` (the single authoritative statement of what this
+repo's DRC/LVS evidence establishes) and record `20261027-030000-1c651cc`,
+and it carries that record's caveats rather than dropping them. The netgen
+gate-level cross-check against the same signal-only reference is still
+`mismatch` (3 mismatches / 2 errors, `matched: 0`): netgen is handed layout
+cells carrying `VGND/VPB/VPWR` ports against a reference whose cells have
+none, so it cannot pair a single instance. The independent-engine concurrence
+is therefore taken on a power-bearing SPICE form of the same as-built netlist,
+where netgen is `match` (777/777 nets, 70/70 pins) with `power_connectivity:
+unchecked` as not applicable to that form; that form ties `VPB` to `VDD` by
+construction, so it says nothing about `VPB`. `power_connectivity: match` is a
+per-instance pin-to-net consistency verdict, **not** rail continuity and not
+IR drop. Decision records 0006 and 0010 carried the superseded `mismatch`
+reading and are retained on `docs/signoff-claim.md` as struck-through history,
+so this row no longer cites them for the verdict.
 
 The stretch column (Montgomery variant, `WIDTH=32`, 500 MHz, formal
 equivalence) is not claimed; Decisions 1, 2 and 5 of `spec/modexp.md` carry
