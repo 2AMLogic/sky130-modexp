@@ -9,6 +9,12 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-17
 
+- **PR #364**: gate-level: supply cell-model defines via options.defines, drop the sim-defines side file
+- **PR #363**: docs: drop hard-coded instance/cell-type counts the docstring claims it never hard-codes
+- **PR #358**: docs: mark klayout-tools#1002 (SDF) fixed in flow and verification gap lists
+- **PR #356**: docs(flow): record the per-corner-rebuild half of the multi-corner gap as closed at pin 0.8.0
+- **PR #342**: refactor: extract the duplicated Loom suite runner from ci.yml to a tested script
+- **PR #323**: docs: align gate-level netlist figures with the committed artifacts
 - **PR #348**: chore(loom): resync installed Loom to v0.19.1306
 - **PR #344**: docs: replace run-signoff.sh's stale git-SHA toolchain header with the shared PyPI pin
 - **PR #343**: docs: state current item 4/5/6/8/11 grading in signoff citation policy
@@ -18,6 +24,12 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 - **PR #318**: fix(verification): scope the committed-blob check to the merge-base diff
 - **PR #313**: fix: route six Loom hook entries in settings.json through hook-wiring.sh
 - **PR #309**: docs(flow): record klayout-tools#854 closed at the current klt pin
+- **Issue #362** (closed): spice_to_verilog.py docstring claims counts are "never hard-coded here" while hard-coding two
+- **Issue #355** (closed): flow/README.md and verification/README.md still call klayout-tools#1002 (SDF) open, and say it blocks delay-annotated gate-level sim
+- **Issue #352** (closed): flow/README.md: the multi-corner gap bullet never records that the per-corner physical rebuild is closed too (only the STA half is)
+- **Issue #338** (closed): Deduplicate the two identical Loom suite-runners in ci.yml: 43 of ~50 code lines are byte-identical across guard-hooks and merge-pr-suites
+- **Issue #322** (closed): Replace the gate-level sim-defines file with options.defines (supersedes a signoff-cited gate-level-sim record)
+- **Issue #319** (closed): Correct verification/gate-level/README.md: stale 718-instance / 'no PDN' / 'no netlist export' claims contradict the committed netlist
 - **Issue #341** (closed): Remove the stale klt-0.7.0 citation-policy bullet in verification/signoff/README.md: it reports items 6/8 as unmet/no_evidence against its own graded table
 - **Issue #340** (closed): Remove the stale git-SHA toolchain paragraph from run-signoff.sh: it contradicts the live PyPI pin 29 lines below it
 - **Issue #330** (closed): Remove spec/README.md's per-record prose index: 11 of 17 decision records unlisted, stale since 0007
