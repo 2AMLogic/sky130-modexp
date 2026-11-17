@@ -343,13 +343,16 @@ capability:
   (`USE_POWER_PINS`, `FUNCTIONAL`, `UNIT_DELAY`) could not be selected
   through the request. **Fixed upstream** by
   [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as
-  completed 2026-08-15); this repo's `klt` pin is past it and carries
-  `options.defines`. The local substitute
-  `verification/gate-level/sky130_fd_sc_hd_sim_defines.v` is **retained**
-  anyway — listed first in `request.sources` so its `` `define ``s are in
-  effect for every later source in the same compilation unit — because a
-  live evidence record hashes that file as a provenance input, so moving the
-  defines into the request means minting a superseding record (#322).
+  completed 2026-08-15); this repo's `klt` pin is past it and the gate-level
+  request carries `options.defines` (`{"FUNCTIONAL": null, "UNIT_DELAY":
+  "#1"}`), with `gate_level_cross_check.py` passing the same two defines
+  through cocotb's own Runner API. The local substitute
+  `verification/gate-level/sky130_fd_sc_hd_sim_defines.v` — which used to be
+  listed first in `request.sources` so its `` `define ``s were in effect for
+  every later source in the same compilation unit — is gone; a live evidence
+  record hashed that file as a provenance input, so removing it minted a
+  superseding record (`20261027-013940-98bf55d` →
+  `20261117-112523-2abccc2`, #322).
 - **`klt functional-verification` required the cocotb testbench module to sit
   next to the request document**
   ([klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003)),

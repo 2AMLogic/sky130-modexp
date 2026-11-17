@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """Self-test for `gate_level_cross_check.py`'s `klt` resolution.
 
-`resolve_pdk_verilog()` must resolve `klt` as `$KLT` if set and non-empty,
-else `<repo>/.venv/bin/klt` if it exists, else `klt` on `$PATH` -- the same
-precedence the shell runners implement (`docs/environment.md`'s `KLT` row,
-PR #345). Each leg is exercised by a stub `klt` whose `pdk find` JSON
-carries a distinguishable sentinel `version`, so the test can tell which
-candidate actually ran. A `$KLT` pointing at a nonexistent path must raise
-rather than silently fall through to `.venv` or `$PATH` -- the silent
-fallback is the bug this pins against.
+`_resolve_klt()` must resolve `klt` as `$KLT` if set and non-empty (even
+when the path does not exist -- the invocation must fail loudly, not
+silently fall back), else the `klt` beside the running interpreter (in
+production the venv `scripts/setup-env.sh` provisions, entered by
+`reexec_into_venv_if_needed`), else `klt` on `$PATH` -- the same precedence
+the shell runners implement (`docs/environment.md`'s `KLT` row, PR #345).
+`resolve_pdk_verilog()` must drive the `klt pdk find` query through
+whatever binary the resolver returned. Each leg is exercised by a stub
+`klt` whose `pdk find` JSON carries a distinguishable sentinel `version`,
+so the test can tell which candidate actually ran. A `$KLT` pointing at a
+nonexistent path must raise rather than silently fall through to the
+interpreter-beside or `$PATH` candidates -- the silent fallback is the bug
+this pins against.
 
-The module's own `REPO_ROOT` is redirected to a throwaway directory so the
-`.venv` leg is under the test's control (the real repo root may or may not
-have `.venv/bin/klt`), and no real `klt` is ever invoked.
+The interpreter's `sys.executable` is redirected into a throwaway
+directory so the interpreter-beside leg (the production `.venv` leg) is
+under the test's control, and no real `klt` is ever invoked.
 
 Usage: python3 verification/test_gate_level_klt_resolution.py
 Exit codes: 0 all pass, 1 otherwise.
@@ -64,23 +69,27 @@ def _write_klt_stub(path: Path, libs_ref: Path, version: str) -> Path:
 
 
 def _resolve(klt: str | None, fake_root: Path, env: dict[str, str]):
-    """Call the real `resolve_pdk_verilog()` with `REPO_ROOT` redirected to
-    `fake_root`, `KLT` set to `klt` (or removed when None), and `env` (e.g. a
-    stub-first `$PATH`) layered over the current environment."""
+    """Call the real `_resolve_klt()` + `resolve_pdk_verilog()` pair with
+    `sys.executable` pointed at `fake_root`'s `.venv` python (the resolver
+    looks beside the running interpreter, which in production is the
+    provisioned venv's bin), `KLT` set to `klt` (or removed when None), and
+    `env` (e.g. a stub-first `$PATH`) layered over the current environment."""
     saved_env = dict(os.environ)
-    saved_root = gl.REPO_ROOT
-    gl.REPO_ROOT = fake_root
+    saved_executable = sys.executable
     try:
         os.environ.update(env)
         if klt is None:
             os.environ.pop("KLT", None)
         else:
             os.environ["KLT"] = klt
-        return gl.resolve_pdk_verilog()
+        sys.executable = str(fake_root / ".venv" / "bin" / "python")
+        resolved = gl._resolve_klt()
+        assert resolved is not None, "_resolve_klt() returned None"
+        return gl.resolve_pdk_verilog(resolved)
     finally:
         os.environ.clear()
         os.environ.update(saved_env)
-        gl.REPO_ROOT = saved_root
+        sys.executable = saved_executable
 
 
 def main() -> int:
@@ -149,7 +158,7 @@ def main() -> int:
             check(
                 "nonexistent $KLT raises instead of falling back",
                 False,
-                "resolve_pdk_verilog() returned without raising",
+                "resolved and ran without raising",
             )
 
     print()
