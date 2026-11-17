@@ -108,7 +108,9 @@ def _mint(root: Path, klt: Path, **kwargs) -> Path:
         t.write_text(json.dumps({"width": width, "got": 1, "want": 1}) + "\n")
         summaries.append(
             {"width": width, "cases": 500, "seed": 1, "mismatches": 0,
-             "klt_pass": True, "klt_status": "pass", "transcript_path": t}
+             "klt_pass": True, "klt_status": "pass", "transcript_path": t,
+             "klt_run_dir": t.parent / f"klt-width{width}",
+             "klt_failing_tests": [], "klt_stderr_tail": ""}
         )
     missing = _run_width_keys() - set(summaries[0])
     check("mint fixture keys cover run_width() keys", not missing,

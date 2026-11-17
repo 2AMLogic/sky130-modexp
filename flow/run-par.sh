@@ -20,22 +20,21 @@
 # <design> is $DESIGN, else the stem of the repo's single rtl/*.v file (no
 # default when there are zero or several). The repo root is $REPO_ROOT, else
 # `git rev-parse --show-toplevel`, so the same bytes work from any depth.
+# `klt` is $KLT, else <repo root>/.venv/bin/klt, else whatever is on $PATH --
+# set $KLT to run this leg against a specific klayout-tools pin. All three
+# contracts are resolved by scripts/design-env.sh, which must travel with
+# this script.
 #
 # Prereqs: flow/README.md's cold start steps 1-2 (synthesize + tie_constants).
 set -euo pipefail
 
 REPO_ROOT="${REPO_ROOT:-$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)}"
-# Design name: $DESIGN, else the stem of the repo's one rtl/*.v file; with
-# zero or several RTL files there is no unambiguous default, so fail loudly.
-if [ -z "${DESIGN:-}" ]; then
-  _rtl=("${REPO_ROOT}"/rtl/*.v)
-  if [ "${#_rtl[@]}" -eq 1 ] && [ -f "${_rtl[0]}" ]; then
-    DESIGN="$(basename "${_rtl[0]}" .v)"
-  else
-    echo "FATAL: DESIGN not set and ${REPO_ROOT}/rtl does not hold exactly one .v file." >&2
-    exit 2
-  fi
-fi
+# shellcheck source=../scripts/design-env.sh
+. "${REPO_ROOT}/scripts/design-env.sh" || {
+  echo "FATAL: cannot source ${REPO_ROOT}/scripts/design-env.sh -- it must travel with this script." >&2
+  exit 2
+}
+design_env_require_design
 
 if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
   echo "usage: $0 <out_dir> [request.json]" >&2
@@ -44,10 +43,14 @@ fi
 out_dir="$1"
 request="${2:-${REPO_ROOT}/flow/par-${DESIGN}.json}"
 
+# Resolve klt before creating anything, so a host with no klt fails without
+# leaving an empty output directory behind.
+design_env_require_klt
+
 mkdir -p "${out_dir}"
 envelope="${out_dir}/par-output.json"
 
-PDK="${PDK:-sky130A}" klt place-and-route "${request}" --format json > "${envelope}"
+PDK="${PDK:-sky130A}" "${KLT}" place-and-route "${request}" --format json > "${envelope}"
 
 python3 - "${envelope}" "${out_dir}" "${DESIGN}" <<'PYEOF'
 import json
