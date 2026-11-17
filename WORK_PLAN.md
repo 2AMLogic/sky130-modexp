@@ -34,13 +34,13 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#382**: Consolidate duplicated _resolve_klt() (and its twin self-tests) into _repo_utils
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#384**: refactor(verification): consolidate duplicated klt resolution + error unwrap into _repo_utils
 
 ## Approved (Awaiting Merge)
 
@@ -61,7 +61,6 @@ Issues carrying `loom:curated`.
 - **#310**: Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py *(hermit)* *(held)*
 - **#336**: Make evidence-record `supersedes` a list: the twin-record workaround now needs five records per re-run *(hermit)* *(held)*
 - **#369**: Remove flow/run-corner-sweep.sh: superseded by klt sta sweep, frozen copy already in evidence *(hermit)* *(held)*
-- **#382**: Consolidate duplicated _resolve_klt() (and its twin self-tests) into _repo_utils *(hermit)*
 
 ## Epics
 
@@ -75,10 +74,10 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 3 |
-| Architect / Hermit proposals | 4 |
+| Architect / Hermit proposals | 3 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
