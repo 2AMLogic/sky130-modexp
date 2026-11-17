@@ -1,11 +1,12 @@
 """cocotb testbench module for the deterministic multi-`WIDTH` cross-check.
 
-Driven directly by `verification/cross_check.py` via cocotb's own `Runner`
-API (`cocotb_tools.runner`), **not** by `klt functional-verification` --
-the checked-in klt request (`verification/request-modexp.json`) only
-elaborates the default `WIDTH=16`, because the `functional-verification`
-request contract has no Verilog parameter override. That gap is filed as a
-friction-protocol issue against `klayout-tools`; see `verification/README.md`.
+Driven through `klt functional-verification` by both of its callers:
+`verification/cross_check.py` runs it once per `WIDTH` (each request
+carrying a `request.parameters` override, e.g. `{"WIDTH": 8}`), and
+`verification/gate-level/gate_level_cross_check.py` runs it at the fixed
+`WIDTH=16` against the post-route gate-level netlist (cell-model defines
+under `options.defines`, the shared `verification/` directory reached via
+`testbench.search_path`).
 
 One test, `test_cross_check`: draws `CROSS_CHECK_CASES` randomized
 `(base, exp, mod)` vectors from a `random.Random(CROSS_CHECK_SEED)` instance
