@@ -3,7 +3,7 @@
 Human-readable context for T1 item 9; the graded artifact is
 `../inventory-item9.json` (attested by `klt signoff --attest 9`), not this file.
 Paths are repo-root-relative. Environment: `./scripts/setup-env.sh &&
-source .venv/bin/activate` (cocotb 2.0.1, Icarus Verilog), per
+source .venv/bin/activate` (cocotb 2.1.0, Icarus Verilog), per
 `docs/environment.md`, which also pins the PDK revision (`sky130A`,
 `open_pdks` `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`).
 

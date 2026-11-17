@@ -44,8 +44,8 @@ source .venv/bin/activate
 | T1 tier checklist (`verification/signoff/design-evidence-tiers.md`) | upstream doc at tag [`v0.8.0`](https://github.com/2AMLogic/klayout-tools/blob/v0.8.0/docs/design-evidence-tiers.md) (sha256 `a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7`), the tag the signoff klt is pinned to | committed byte-identical copy, passed to `klt signoff --tiers-doc` by `verification/signoff/run-signoff.sh` (never resolved from the installed `klt`) |
 | Yosys + its embedded ABC | PyPI `yowasp-yosys==0.68.0.0.post1208`, verified by content: `yowasp_yosys/yosys.wasm` = `sha256:e37a7e65e3fa4efbbd64a9c1b0e906be16cdc6c4d5273109d17537f78449f38c` | `pip install "yowasp-yosys==0.68.0.0.post1208"` into `.venv`, then `.venv/bin/yosys -> yowasp-yosys` (what `scripts/setup-env.sh` step 3 runs; it **fails the whole provision** if the digest does not match) |
 | `sky130A` PDK | `open_pdks` commit `f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` | `pip install ciel==2.6.1`, then `ciel enable --pdk-root ~/.ciel --pdk-family sky130 -l sky130_fd_pr -l sky130_fd_sc_hd f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`; `ciel` itself is pinned `2.6.1` (what `scripts/setup-env.sh` step 4 runs, and it fails if the tree's `SOURCES` names another revision or `libs.ref/sky130_fd_sc_hd` is absent) |
-| `cocotb` | 2.0.1 (pulled in as a `klayout-tools` dependency) | installed alongside `klt` by `scripts/setup-env.sh` |
-| Python | <= 3.13 (cocotb 2.0.1 refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
+| `cocotb` | `2.1.0` (the floor `klayout-tools==0.8.0`'s own `functional-verification` extra declares: `cocotb>=2.1.0,<2.2`) | `pip install "cocotb==2.1.0"` alongside `klt` by `scripts/setup-env.sh` (`COCOTB_VERSION`); CI installs the same pin. 2.1.0 is also what makes `request.options.defines` usable: it passes define values raw (`-DNAME=value`), whereas 2.0.1 quoted every value as an SV literal, which turned `` `UNIT_DELAY #1 `` into a quoted macro body that breaks the sky130 cell models |
+| Python | <= 3.13 (the pinned cocotb refuses to build on 3.14+) | `scripts/setup-env.sh` auto-selects `python3.13` > `3.12` > `3.11` > `3.10` > `python3`, whichever is the newest compatible interpreter found on `$PATH` |
 
 `scripts/setup-env.sh`'s pin constants and this table are kept in sync by
 `verification/check_pins.py` (run by `npm run lint` and the CI `records`
@@ -483,9 +483,11 @@ is a real, recurring cost this repo has chosen not to pay per-PR. Instead:
 
 - CI runs the tool-light legs only: the multi-`WIDTH` cross-check
   (Icarus/cocotb, no PDK) and the evidence-record linter. CI installs
-  `iverilog` from the runner's distro packages and `cocotb` at the version
-  pinned above; the `iverilog` version there is therefore whatever the
-  runner image ships, not the version in the table above. That is
+  `iverilog` from the runner's distro packages, and `cocotb` plus `klt` at
+  the versions pinned above -- `verification/cross_check.py` drives each
+  `WIDTH` through `klt functional-verification`, so that leg needs `klt` on
+  `$PATH` even though it touches no PDK. The `iverilog` version there is
+  whatever the runner image ships, not the version in the table above. That is
   deliberate — the cross-check is a bit-exactness claim about the RTL, and
   a *second* simulator build agreeing is corroboration, not drift. Records
   are only ever minted locally against the pinned versions above.

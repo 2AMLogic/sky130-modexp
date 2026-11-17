@@ -20,7 +20,8 @@ Checks, all pure text -- no network, no PDK, no tools:
    "## Pinned versions" table. A pin bumped in the script but not the doc
    fails here.
 3. Every git-revision / sha256-shaped hex token, and every
-   `yowasp-yosys==<version>` / `klayout-tools==<version>` spec, in that table equals some pin constant.
+   `yowasp-yosys==<version>` / `klayout-tools==<version>` /
+   `cocotb==<version>` spec, in that table equals some pin constant.
    A pin bumped in the doc but not the script -- or bumped in one table row
    but left stale in another -- fails here. Rows whose component is pinned
    somewhere other than `scripts/setup-env.sh` (`EXTERNALLY_PINNED_ROWS`)
@@ -30,7 +31,9 @@ Checks, all pure text -- no network, no PDK, no tools:
    `KLT_VERSION`, and every `klayout-tools==<version>` install in
    `.github/workflows/ci.yml` must name `KLT_VERSION`, with at least one
    present. A leftover git-SHA install in CI also fails (it reports a dev
-   version that cannot satisfy the `==` pin, klayout-tools#2823).
+   version that cannot satisfy the `==` pin, klayout-tools#2823). Every
+   `cocotb==<version>` install in that workflow must likewise name
+   `COCOTB_VERSION`, with at least one present (issue #365).
 
 Deliberately OUT of scope: frozen evidence artifacts that restate a pin,
 e.g. the `rerun-pinned-synthesis.sh` scripts under
@@ -78,10 +81,12 @@ CI_REL = Path(".github/workflows/ci.yml")
 SIGNOFF_ASSIGN = re.compile(r'^SIGNOFF_KLT_VERSION="([0-9][0-9A-Za-z.+_-]*)"', re.MULTILINE)
 CI_KLT_INSTALL = re.compile(r"klayout-tools==([0-9][0-9A-Za-z.+_-]*)")
 CI_KLT_GIT_INSTALL = re.compile(r"klayout-tools\s*@\s*git\+")
+CI_COCOTB_INSTALL = re.compile(r"cocotb==([0-9][0-9A-Za-z.+_-]*)")
 
 REQUIRED_PINS = (
     "KLT_VERSION",
     "CIEL_VERSION",
+    "COCOTB_VERSION",
     "CIEL_SKY130_VERSION",
     "YOWASP_YOSYS_VERSION",
     "YOWASP_YOSYS_WASM_SHA256",
@@ -102,6 +107,7 @@ TABLE_HEADING = re.compile(r"^##\s+Pinned versions\s*$")
 HEX_TOKEN = re.compile(r"(?<![0-9A-Za-z])(?:[0-9a-f]{64}|[0-9a-f]{40})(?![0-9A-Za-z])")
 KLT_SPEC = re.compile(r"klayout-tools==([0-9][0-9A-Za-z.+_-]*[0-9A-Za-z])")
 YOWASP_SPEC = re.compile(r"yowasp-yosys==([0-9A-Za-z.+_-]*[0-9A-Za-z])")
+COCOTB_SPEC = re.compile(r"cocotb==([0-9][0-9A-Za-z.+_-]*[0-9A-Za-z])")
 
 
 class ParseError(Exception):
@@ -211,6 +217,16 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
     if CI_KLT_GIT_INSTALL.search(ci_text):
         errors.append(f"{CI_REL}: klayout-tools git install found; pin the PyPI release klayout-tools=={klt_version}")
 
+    cocotb_version = pins.get("COCOTB_VERSION")
+    ci_cocotb_versions = CI_COCOTB_INSTALL.findall(ci_text)
+    if not ci_cocotb_versions:
+        errors.append(f"{CI_REL}: no cocotb=={cocotb_version} install")
+    for ver in sorted(set(ci_cocotb_versions)):
+        if ver != cocotb_version:
+            errors.append(
+                f"{CI_REL}: cocotb=={ver} install does not match COCOTB_VERSION={cocotb_version} (stale or unsynced pin)"
+            )
+
     pin_values = set(pins.values())
     for row in rows:
         component = _first_cell(row)
@@ -234,6 +250,13 @@ def check(repo_root: Path) -> tuple[list[str], list[str]]:
                     f"{DOC_REL}: row '{component}' names yowasp-yosys=={ver}, but "
                     f"{SCRIPT_REL} pins YOWASP_YOSYS_VERSION="
                     f"{pins.get('YOWASP_YOSYS_VERSION')!r}"
+                )
+        for ver in sorted(set(COCOTB_SPEC.findall(row))):
+            if ver != pins.get("COCOTB_VERSION"):
+                errors.append(
+                    f"{DOC_REL}: row '{component}' names cocotb=={ver}, but "
+                    f"{SCRIPT_REL} pins COCOTB_VERSION="
+                    f"{pins.get('COCOTB_VERSION')!r}"
                 )
     return errors, notes
 

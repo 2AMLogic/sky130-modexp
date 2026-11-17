@@ -42,6 +42,7 @@ cd "${REPO_ROOT}" || exit 1
 # table. Keep assignments in plain NAME="value" form so it can parse them.
 KLT_VERSION="0.8.0"
 CIEL_VERSION="2.6.1"
+COCOTB_VERSION="2.1.0"
 CIEL_PDK_FAMILY="sky130"
 CIEL_SKY130_VERSION="f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
 # Yosys is pinned as a YoWASP PyPI wheel, not as a host package. The wheel is
@@ -83,7 +84,7 @@ done
 status=0
 
 echo "== 1/4 python venv =="
-# cocotb 2.0.1 (pinned by klt) refuses to build on Python > 3.13 with a
+# cocotb (COCOTB_VERSION below) refuses to build on Python > 3.13 with a
 # RuntimeError, not a graceful skip -- pick a compatible interpreter up
 # front so that failure surfaces here, as an actionable message, rather
 # than as a pip build-backend traceback in step 2.
@@ -104,7 +105,7 @@ done
 
 if [ -z "${PYTHON_BIN}" ]; then
   echo "FATAL: no Python <= 3.13 interpreter found on \$PATH."
-  echo "  cocotb 2.0.1 (the version klt/verification/cross_check.py pin)"
+  echo "  cocotb ${COCOTB_VERSION} (the version this script pins)"
   echo "  refuses to build on Python 3.14+."
   echo "  -> install a compatible interpreter, e.g.:"
   echo "       brew install python@3.13   (macOS/Homebrew)"
@@ -151,7 +152,7 @@ if ! "${VENV_PIP}" install --quiet --upgrade pip; then
 fi
 
 if ! "${VENV_PIP}" install --quiet \
-    "klayout-tools==${KLT_VERSION}" cocotb "ciel==${CIEL_VERSION}"; then
+    "klayout-tools==${KLT_VERSION}" "cocotb==${COCOTB_VERSION}" "ciel==${CIEL_VERSION}"; then
   echo "FATAL: failed to install klayout-tools/cocotb/ciel into ${VENV_DIR}."
   echo "  -> common causes: no network access to PyPI, or no C/C++"
   echo "     toolchain for a dependency's native build (install Xcode CLI"
