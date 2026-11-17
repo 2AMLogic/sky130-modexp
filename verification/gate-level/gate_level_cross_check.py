@@ -61,8 +61,7 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-REPO_ROOT = HERE.parent.parent
-VERIFICATION_DIR = REPO_ROOT / "verification"
+VERIFICATION_DIR = HERE.parent
 
 NETLIST = HERE / "modexp_post_route.v"
 
@@ -82,9 +81,12 @@ CELL_MODEL_DEFINES: dict[str, str | None] = {
     "UNIT_DELAY": "#1",
 }
 
+# Locating the sibling helper module is the one thing that must be relative
+# to this file; the repo root itself then comes from `_repo_utils`, so
+# `$REPO_ROOT` is honoured and the path depth of this file is irrelevant.
 sys.path.insert(0, str(VERIFICATION_DIR))
 
-from _repo_utils import reexec_into_venv_if_needed  # noqa: E402
+from _repo_utils import REPO_ROOT, reexec_into_venv_if_needed  # noqa: E402
 
 
 def _resolve_klt() -> str | None:

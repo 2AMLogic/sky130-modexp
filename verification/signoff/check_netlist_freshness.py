@@ -19,37 +19,43 @@ embedded ABC build"). What it does prove, offline and deterministically:
 
 Usage: check_netlist_freshness.py <key>   (key from netlist-derivations.json)
 """
-import hashlib
 import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-PINS = ROOT / "verification/signoff/netlist-derivations.json"
+# Locating the sibling helper module is the one thing that must be relative
+# to this file; the repo root itself then comes from `_repo_utils`, so
+# `$REPO_ROOT` is honoured and the path depth of this file is irrelevant.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from _repo_utils import REPO_ROOT, sha256_of  # noqa: E402
 
-def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+PINS = REPO_ROOT / "verification/signoff/netlist-derivations.json"
 
 
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
         print(__doc__, file=sys.stderr)
         return 2
+    # Reachable since the root honours `$REPO_ROOT` (issue #329): a root
+    # pointed at the wrong checkout should say so, not raise.
+    if not PINS.exists():
+        print(f"FAIL: no pins file at {PINS}", file=sys.stderr)
+        return 2
     pins = json.loads(PINS.read_text())
     entry = pins["derived"].get(argv[1])
     if entry is None:
         print(f"FAIL: no derivation pinned for {argv[1]!r}", file=sys.stderr)
         return 1
-    rtl_now = sha256(ROOT / pins["rtl"])
-    net_now = sha256(ROOT / entry["path"])
+    rtl_now = sha256_of(REPO_ROOT / pins["rtl"], prefix=False)
+    net_now = sha256_of(REPO_ROOT / entry["path"], prefix=False)
     bad = []
     if rtl_now != entry["rtl_sha256"]:
         bad.append(f"{pins['rtl']} is {rtl_now}, netlist was derived from {entry['rtl_sha256']}")
     if net_now != entry["netlist_sha256"]:
         bad.append(f"{entry['path']} is {net_now}, pinned {entry['netlist_sha256']}")
     if entry.get("record_envelope"):
-        env = json.loads((ROOT / entry["record_envelope"]).read_text())
+        env = json.loads((REPO_ROOT / entry["record_envelope"]).read_text())
         rec = env["provenance"]["input"]["content_hash"].removeprefix("sha256:")
         if rec != rtl_now:
             bad.append(f"{entry['record_envelope']} records input {rec}, RTL is {rtl_now}")
