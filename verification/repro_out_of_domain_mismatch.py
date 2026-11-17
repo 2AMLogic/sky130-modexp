@@ -20,11 +20,17 @@ Usage (from the repo root, with `iverilog` and `cocotb` on `PATH`):
 
     python3 verification/repro_out_of_domain_mismatch.py
 
-Runs directly against cocotb's `Runner` API (not through `klt
-functional-verification`) because the `klt` request schema does not yet
-plumb a Verilog parameter override (see `test_modexp.py`'s module
-docstring) and this reproduction needs `WIDTH=8`, not the request's default
-`WIDTH=16`.
+Runs directly against cocotb's `Runner` API rather than through `klt
+functional-verification`. That started as a necessity -- this reproduction
+needs `WIDTH=8`, not `request-modexp.json`'s default `WIDTH=16`, and the
+`klt` request schema had no Verilog parameter override at the time. It no
+longer is one: `request.parameters` exists at the pinned klt, and
+`verification/cross_check.py` drives every `WIDTH` of the correctness gate
+through it. This harness has simply not been ported -- it is a frozen
+one-off measurement tool for the decision record above, deliberately
+outside the correctness-gating regression, so it carries none of that
+gate's "drive engines through klt" weight. Porting it is tracked as
+`2AMLogic/sky130-modexp#316`.
 """
 
 import os

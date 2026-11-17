@@ -39,8 +39,9 @@ a different regime entirely, and the one that reaches thousands of cells.
 Correctness at the time of measurement: `test_modexp.py` passes 2/2 through
 `klt functional-verification`, and `modexp.v` is bit-exact against Python
 `pow(base, exp, mod)` across `WIDTH` = 4, 6, 8, 16 at 500 random cases each,
-0 mismatches, via a deterministic Icarus cross-check outside the cocotb
-harness.
+0 mismatches, via a deterministic Icarus cross-check that runs one `klt
+functional-verification` request per `WIDTH`
+(`verification/cross_check.py`).
 
 ## Reproducing it
 
@@ -626,9 +627,11 @@ The klt leg's simulated time also matches the RTL run's to the nanosecond
 (23750.0 ns / 180480.0 ns), i.e. the routed design is cycle-for-cycle
 identical to the RTL, not merely functionally equivalent.
 
-`test_modexp.py` was not edited, and was not copied: it is reached through a
-git symlink (`git ls-files -s verification/gate-level/test_modexp.py` → mode
-`120000`).
+`test_modexp.py` was not edited, and was not copied: the gate-level request
+reaches `verification/test_modexp.py` itself through
+`testbench.search_path` (`jq -r '.testbench.search_path'
+verification/gate-level/request-modexp-gate-level.json` → `..`, resolved
+against the request's own directory).
 
 ### What this run does not claim
 

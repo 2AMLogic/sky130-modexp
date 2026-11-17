@@ -34,11 +34,11 @@
     "7": "verification/records/gate-level-sim/artifacts/20261027-050100-163f791/klt-functional-verification-sdf-run1.json",
     "8": {
       "file": "verification/signoff/evidence/item-8-characterization.json",
-      "content_hash": "sha256:85a8766dc1409b97684a2aa94f35b143f393a5c5bd699cd66e19cfb1cf1e096e"
+      "content_hash": "sha256:936452a17010a68e59e99d7c3ee8b45928471060c0c02ccd816710422e26eae9"
     },
     "9": {
       "file": "verification/signoff/evidence/item-9-testbenches.json",
-      "content_hash": "sha256:53119a858c3beb9b4f281cddcab8b1b6e6b06386d8590a6ee7e683b8f806edd4"
+      "content_hash": "sha256:4328437d11e51c2609c2f798232f5b579d328edc7ae0b3a6fa34d2c48bb49d42"
     },
     "10": {
       "file": "verification/signoff/evidence/item-10-repo-hygiene.json",

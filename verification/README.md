@@ -45,9 +45,10 @@ need a concrete schema to be checkable rather than aspirational:
   cross-check (see "Why a separate cross-check driver" below).
 - `gate-level/` — post-route **gate-level** simulation: the derived netlist
   of the routed layout, the `klt functional-verification` request that runs
-  `test_modexp.py` (unmodified, via a symlink) against it, and the converter
-  that produces the netlist. See "Gate-level simulation: the netlist
-  derivation gap" below and `verification/gate-level/README.md`.
+  `test_modexp.py` (unmodified — this very file, reached through the
+  request's `testbench.search_path`) against it, and the converter
+  that produces the netlist. See "Gate-level simulation (`gate-level-sim`)"
+  below and `verification/gate-level/README.md`.
 - `check_records.py` — the evidence-record linter (see "Enforcement").
 - `test_check_records.py` — the linter's own self-test: one executable
   negative case per violation class named below, run against a throwaway
@@ -70,8 +71,8 @@ need a concrete schema to be checkable rather than aspirational:
   the manifest and report are living artifacts, regenerated in-step with
   the evidence they cite.
 
-Run the klt-driven suite (default `WIDTH=16`, 2 directed + randomized tests)
-with:
+Run the single-request suite (default `WIDTH=16`, 2 directed + randomized
+tests) with:
 
 ```bash
 klt functional-verification verification/request-modexp.json --format json
@@ -101,91 +102,74 @@ See `docs/baseline.md` for the full reproduction recipe, including the
 synthesis cell-count measurement, and `docs/environment.md` for the pinned
 tool/PDK versions.
 
-## Why a separate cross-check driver (the klt gap)
+## Why a separate cross-check driver (and the klt gap that is now closed)
 
-`klt functional-verification`'s request schema
-(`klt.functional_verification.request/1`) has no field to override a
-Verilog `parameter`, so a checked-in request can only elaborate a design's
-*default* parameterization — `request-modexp.json` only ever exercises
-`WIDTH=16`. `modexp.v`'s bit-exactness at `WIDTH` = 4, 6, 8, 16 (the claim in
-`docs/baseline.md` and the revisit trigger in `spec/modexp.md`) therefore
-cannot be reproduced through `klt` alone today.
+`modexp.v`'s bit-exactness at `WIDTH` = 4, 6, 8, 16 (the claim in
+`docs/baseline.md` and the revisit trigger in `spec/modexp.md`) needs the
+design elaborated at four different parameterizations.
+`request-modexp.json` pins no `parameters` object, so it only ever exercises
+the default `WIDTH=16`; the remaining widths come from
+`verification/cross_check.py`, which synthesizes **one `klt
+functional-verification` request per `WIDTH`** — each carrying
+`"parameters": {"WIDTH": <n>}`, which the pinned klt validates and forwards
+to both `Runner.build(parameters=...)` and `Runner.test(parameters=...)` —
+and runs `cross_check_tb.py` (a purpose-built cocotb test module, distinct
+from `test_modexp.py`) against each one. Every simulator run in this repo
+therefore goes through `klt`, per `CLAUDE.md`'s "drive engines through klt"
+rule.
 
-`verification/cross_check.py` closes that gap the same way any client of
-cocotb's own `Runner` API would: it drives Icarus directly via
-`cocotb_tools.runner`, which *does* accept a `parameters=` mapping, to
-elaborate `rtl/modexp.v` at each `WIDTH` and run `cross_check_tb.py`
-(a purpose-built cocotb test module, distinct from `test_modexp.py`) against
-it. This is a stopgap, not a preferred pattern — `klt` is still the driven
-entry point for synthesis and for the default-parameterization functional
-run, per `CLAUDE.md`'s "drive engines through klt" rule. The missing
-parameter override itself is filed as a friction-protocol issue, generic and
+That was not always so, and the history is the point of the friction
+protocol rather than a footnote. Until the pin in `docs/environment.md`
+reached `klayout-tools==0.8.0`, the `klt.functional_verification.request/1`
+schema had **no** field to override a Verilog `parameter`, so this driver
+elaborated each `WIDTH` itself through cocotb's own `Runner` API
+(`cocotb_tools.runner`), driving Icarus directly. That bypass was recorded
+here as a stopgap with an explicit exit condition — retire it once `klt`
+gains a parameter override — and the gap was filed, generic and
 design-detail-free, at
-[`2AMLogic/klayout-tools#610`](https://github.com/2AMLogic/klayout-tools/issues/610)
-— once `klt functional-verification` gains a parameter override, this
-driver script should be retired in favor of a plain klt request per `WIDTH`.
+[`2AMLogic/klayout-tools#610`](https://github.com/2AMLogic/klayout-tools/issues/610),
+which is now closed as completed. The exit condition is met and the bypass
+is gone: `cross_check.py` no longer imports `cocotb_tools.runner` at all.
 
-## Gate-level simulation: the netlist derivation gap (and the workaround)
+What the script still owns is everything the request contract has no field
+for, which is why "retire the driver entirely" was never the exit condition:
+
+| Concern | Where it lives |
+|---|---|
+| `WIDTH` override | `request.parameters` (klt) |
+| cocotb's own seeding | `request.options.random_seed` (klt) |
+| per-`WIDTH` seed derivation from `--seed` | `cross_check.py` |
+| case count, transcript path | `CROSS_CHECK_CASES` / `CROSS_CHECK_TRANSCRIPT` env vars the klt subprocess inherits |
+| `got`-vs-`want` comparison, `--mint-record`, artifact manifests | `cross_check.py` |
+
+`options.random_seed` and the testbench's own `CROSS_CHECK_SEED` are
+separate knobs: the recorded vectors are drawn from
+`random.Random(CROSS_CHECK_SEED)` inside the testbench, never from cocotb's
+global `random` state. `cross_check.py` pins both to the same per-`WIDTH`
+value so nothing in a run draws from OS entropy.
+
+## Gate-level simulation (`gate-level-sim`)
 
 The `gate-level-sim` experiment re-runs `test_modexp.py` — the same file,
-byte for byte, reached through a git symlink rather than a copy — against a
-gate-level netlist of the **routed layout** instead of against
-`rtl/modexp.v`. That requires a netlist of what P&R actually built, and
-there is no such artifact:
+byte for byte, reached through the gate-level request's
+`testbench.search_path` rather than a copy — against a
+gate-level netlist of the **routed layout** instead of against `rtl/modexp.v`.
+That netlist is derived from `layout/modexp.gds` itself: the `klt extract
+--abstract-cells` abstraction the LVS flow produces is converted to
+structural `sky130_fd_sc_hd` Verilog by
+`verification/gate-level/spice_to_verilog.py`, which refuses to write output
+disagreeing with `layout/lvs/modexp_layout_extract_report.json`. So the
+simulated design's provenance runs through the drawn geometry, not through
+P&R's own view of what it built — a cross-check of the committed as-built
+netlist `layout/modexp.v`, deliberately kept alongside it rather than
+replaced by it.
 
-- `klt place-and-route`'s response contract carries `def_path` and
-  `gds_path` **only**. There is no `write_verilog`-equivalent netlist export
-  at this repo's pinned `klt` revision, and no SDF export either.
-- The one Verilog artifact #7's run produced,
-  `verification/records/place-and-route/artifacts/20260814-203901-c741877/modexp_synth_tied.v`,
-  is that record's own **"netlist (post-synthesis)"** — the netlist fed
-  *into* P&R. #8 established that the routed layout has 718 instances
-  against its 683 (+1 tie): 35 CTS/timing-fixup insertions and 5 resizes.
-  Simulating it and calling the result "post-route" would be an overclaim
-  that *passes*, so no test failure would ever surface it.
-
-The workaround, and the reason this experiment's netlist has provenance
-worth trusting: **derive the netlist from the layout itself**.
-`verification/gate-level/spice_to_verilog.py` converts #8's
-`layout/lvs/modexp_layout_abstracted.spice` (the `klt extract
---abstract-cells` abstraction of `layout/modexp.gds`) into structural
-Verilog instantiating `sky130_fd_sc_hd` cells, and refuses to write output
-that disagrees with `layout/lvs/modexp_layout_extract_report.json` on
-instance counts (718), cell types (59), pin count (68), or net membership —
-or that contains a two-driver short or a floating cell input.
-
-**What that netlist does and does not model** — restating #8's own scope
-caveat, which carries forward here verbatim, plus what is specific to
-simulation:
-
-- **No parasitic extraction.** No R, no C, no coupling; `klt extract` was
-  run without `--parasitics` and nothing here reads a SPEF.
-- **No timing, and no corner.** Zero-delay logic (the only delay is a 1 ns
-  `UNIT_DELAY` on flop outputs, a race-avoidance device, not a
-  characterized delay). sky130A ships 18 liberty corners but a single,
-  corner-independent set of Verilog cell models, so corner-dependence enters
-  a simulation only via SDF — which is the blocked leg. Timing evidence
-  remains `verification/records/place-and-route/`'s OpenSTA corner sweep.
-- **No power/ground network.** Power pins are dropped (`USE_POWER_PINS`
-  undefined); this GDS has no PDN, so extracted rail connectivity is
-  fragmented per placement row.
-- **Cell-instance granularity, not transistor level** — each cell is the
-  PDK's own behavioural model; its transistors are foundry-qualified library
-  content.
-- **Not an independent check of the extraction.** Extraction and simulation
-  share `klt extract`'s output as a common input.
-
-The upstream gaps are filed:
-[klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)
-(no compile-time defines in the `functional-verification` request),
-[#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
-export / no SDF option — the blocker for delay-annotated runs),
-[#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (testbench
-module must sit next to the request),
-[#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (the accepted
-SDF re-sim recipe needs Icarus >= 13), and
-[#996](https://github.com/2AMLogic/klayout-tools/issues/996) (no as-built
-netlist export — filed by #8, fixed upstream later than this repo's pin).
+[`verification/gate-level/README.md`](gate-level/README.md) is the single
+description of that experiment: what each leg runs and what it showed, the converter's
+provenance guards and the counts they enforce, what the netlist does and
+does not model (no parasitics, no timing, no corner dependence, no modelled
+power network, cell-instance granularity), and the upstream gaps filed along
+the way.
 
 ## Directory / naming convention
 
@@ -247,12 +231,23 @@ artifact store with `klt artifact put`; git keeps a manifest under
 sha256, `artifact:` URI per object) plus the record `.md`. Evidence bytes are
 private and manifests are public, so a manifest is safe to commit.
 
-- `python3 verification/cross_check.py --mint-record` does this itself for
-  the `width-cross-check` transcripts: it stages them in the git-ignored
-  `.artifact-staging/`, stores them, writes the manifest, and only then writes
-  the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is unset, `klt`
-  lacks `artifact put`, or the broker is unreachable, it exits nonzero and
-  writes no manifest and no record. There is no fallback to committing bytes.
+- `python3 verification/cross_check.py --mint-record --author "NAME (issue #N)"`
+  does this itself for the `width-cross-check` transcripts: it stages them in
+  the git-ignored `.artifact-staging/`, stores them, writes the manifest, and
+  only then writes the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is
+  unset, `klt` lacks `artifact put`, or the broker is unreachable, it exits
+  nonzero and writes no manifest and no record. There is no fallback to
+  committing bytes.
+  - `--author` is required with `--mint-record`: the record's
+    **Timestamp / author** line is evidence provenance, not a constant.
+  - `--supersedes RECORD_ID` retires an existing record of the same
+    experiment, writing that id into both the `record-meta` `supersedes` key
+    and the **Supersedes** bullet. That is what exempts the retired record
+    from `check_records.py`'s hash-freshness check, so it is the only way to
+    replace a live record once a hashed input (`rtl/modexp.v`,
+    `verification/cross_check_tb.py`) has changed. An id with no matching
+    record exits nonzero *before* the simulation runs and before anything is
+    stored -- `klt artifact put` is permanent, so a typo must not get that far.
 - **Hand-run legs** (`flow/run-*.sh`, `verification/gate-level/run-gate-level-sim.sh`,
   `klt drc` / `klt lvs`): do not copy raw outputs into `artifacts/<record-id>/`
   for a new record. Instead, from a fleet worker:
@@ -266,7 +261,25 @@ private and manifests are public, so a manifest is safe to commit.
 - `python3 verification/check_artifact_manifests.py` (part of `npm run lint`)
   validates every manifest: v1 schema, `artifact:` URIs only, no `s3://`,
   `arn:aws:` or `http(s)://` strings (the broker URL is never written into
-  the repo), and no tracked file whose sha256 matches a manifest entry.
+  the repo), and no *newly* committed file whose sha256 matches a manifest
+  entry.
+  - "Newly" means added or modified relative to the merge-base with
+    `--base-ref` (default `origin/main`). The rule is there to stop a new
+    run's raw bytes being committed beside the manifest that replaces them,
+    and that is exactly what the diff covers: a copy or rename of legacy
+    bytes to a new path still fails, because the diff is taken with
+    `--no-renames` and the new path counts as an addition.
+  - Scoping it is what makes a *correct* re-run mintable at all. The legacy
+    `width-cross-check` and `gate-level-sim` transcripts under `artifacts/`
+    predate this convention and are frozen (append-only, below); a pinned-seed
+    re-run reproduces those bytes exactly, so the unscoped rule made every new
+    manifest collide with evidence nobody is allowed to delete.
+  - If the base ref cannot be resolved the checker prints a `NOTICE:` and
+    falls back to checking **every** tracked file. It never silently exempts.
+  - Limit: this is a PR-time gate. On `main` the merge-base with `origin/main`
+    is `HEAD`, so the diff is empty -- the same property `check_records.py`'s
+    append-only check already has. CI's lint job checks out full history
+    (`fetch-depth: 0`) so the merge-base resolves there.
 - Manifest-forward only: evidence already under `artifacts/` and the living
   signoff reports under `layout/` stay where they are (append-only).
 
@@ -359,9 +372,11 @@ twin `20260817-002415-4dd3bfa.md` for the worked example.
 
 CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
 
-- the multi-`WIDTH` cross-check (`verification/cross_check.py`) under
-  Icarus/cocotb — no PDK required, since RTL/behavioral simulation has no
-  standard-cell dependency;
+- the multi-`WIDTH` cross-check (`verification/cross_check.py`), which runs
+  one `klt functional-verification` request per `WIDTH` over Icarus/cocotb —
+  no PDK required, since RTL/behavioral simulation has no standard-cell
+  dependency, but the job does install `klt` at the pinned release because
+  it is the driven entry point;
 - a re-run of the cross-check at a reduced case count with
   `--transcript-dir`, asserting the two runs' vector transcripts are
   byte-identical — the pinned seed is verified, not just asserted;
@@ -383,7 +398,17 @@ CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
   its own pinned `klt` (newer than the PDK-heavy legs' pin — see
   `docs/environment.md`) and reads committed envelopes only; no PDK;
 - basic Python syntax checks over the scripts in this directory, and
-  `bash -n` over `scripts/setup-env.sh`.
+  `bash -n` over `scripts/setup-env.sh` and over the Loom suite-runner
+  (`scripts/run-loom-suites.sh`) and its self-test;
+- the Loom suite-runner's own self-test
+  (`scripts/tests/test-run-loom-suites.sh`, #338). That runner is the single
+  implementation of the suite-classification and two-manifest skip logic
+  (`.loom/scripts/tests/ci-excluded.txt` plus the repo-owned
+  `.github/ci-suites-consumer-skips.txt`, #185) used by the `guard-hooks`
+  and `merge-pr-suites` jobs — i.e. it decides whether those jobs ran
+  anything at all — so it is held to the same self-test standard as the
+  checkers above. Hermetic: synthetic suites and manifests in a `mktemp -d`
+  sandbox, no vendored Loom suite executed.
 
 CI does **not** run `klt synthesize`, `klt place-and-route`, `klt drc`, or
 the gate-level simulation legs under `verification/gate-level/` (those need
@@ -470,7 +495,9 @@ this convention was introduced) illustrate the format:
   envelope.
 - `verification/records/width-cross-check/records/<record-id>.md` —
   reproduces the `WIDTH` = 4/6/8/16 x 500-case bit-exact cross-check, driven
-  by `cross_check.py` (bypassing klt for the reason above).
+  by `cross_check.py`. Records minted before the parameter-override gap
+  closed (see above) say klt was bypassed for elaboration, and are frozen
+  that way — they are append-only evidence of the run they measured.
   `provenance.pdk` is `"n/a"` — an Icarus/cocotb-only run has no PDK
   dependency — and `provenance.inputs` covers both `rtl/modexp.v` and
   `cross_check_tb.py`, since the testbench's own content is part of what
