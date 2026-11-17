@@ -42,6 +42,7 @@ from __future__ import annotations
 import argparse
 import filecmp
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -67,9 +68,17 @@ from _repo_utils import reexec_into_venv_if_needed  # noqa: E402
 
 
 def resolve_pdk_verilog() -> tuple[Path, Path, str]:
-    """Return (primitives.v, sky130_fd_sc_hd.v, pdk_version) via `klt pdk find`."""
-    klt = REPO_ROOT / ".venv" / "bin" / "klt"
-    klt_cmd = str(klt) if klt.exists() else "klt"
+    """Return (primitives.v, sky130_fd_sc_hd.v, pdk_version) via `klt pdk find`.
+
+    `klt` is $KLT if set and non-empty (even when the path does not exist --
+    a typo'd pin must fail loudly here, not silently fall through), else
+    <repo>/.venv/bin/klt if it exists, else `klt` on $PATH -- the same
+    precedence the shell runners implement (docs/environment.md's `KLT`
+    row)."""
+    klt_cmd = os.environ.get("KLT") or None
+    if klt_cmd is None:
+        venv_klt = REPO_ROOT / ".venv" / "bin" / "klt"
+        klt_cmd = str(venv_klt) if venv_klt.exists() else "klt"
     out = subprocess.run(
         [klt_cmd, "pdk", "find", "--pdk", "sky130A", "--format", "json"],
         capture_output=True,
