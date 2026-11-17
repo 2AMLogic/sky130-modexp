@@ -186,7 +186,10 @@ completed 2026-08-15, and this repo's pin is past it; the local
 hashes it as a provenance input, so replacing it means minting a superseding
 record — #322),
 [#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
-export / no SDF option — the blocker for delay-annotated runs),
+export / no SDF option — **fixed** by
+[#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged
+2026-08-15, and this repo's pin is past it; the gate-level request now
+annotates delay through `options.sdf`),
 [#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (testbench
 module must sit next to the request — **fixed** by
 [#1005](https://github.com/2AMLogic/klayout-tools/pull/1005), closed as
