@@ -50,6 +50,8 @@ def _pin(name: str) -> str:
 
 KLT_VER = _pin("KLT_VERSION")
 FAKE_VER = "0.9.9"
+COCOTB_VER = _pin("COCOTB_VERSION")
+COCOTB_OLDER = "2.0.1"
 CIEL_REV = _pin("CIEL_SKY130_VERSION")
 YW_VER = _pin("YOWASP_YOSYS_VERSION")
 YW_SHA = _pin("YOWASP_YOSYS_WASM_SHA256")
@@ -127,6 +129,17 @@ def _frozen_artifact(root: Path) -> None:
     )
 
 
+def _mint_stub(root: Path) -> None:
+    """A `TOOL_VERSIONS`-shaped stub dict (as in `test_cross_check_mint.py`)
+    naming an old cocotb without an `==` spec: the checker must not scan it."""
+    stub = root / "verification/test_cross_check_mint.py"
+    stub.parent.mkdir(parents=True, exist_ok=True)
+    stub.write_text(
+        'TOOL_VERSIONS = {"klt": "0.0-stub", "cocotb": "2.0.1", "iverilog": "stub"}\n',
+        encoding="utf-8",
+    )
+
+
 # (name, mutation, expected exit code, substring expected in output or None)
 CASES: list[tuple[str, Mutation, int, str | None]] = [
     ("baseline: committed files are consistent", lambda r: None, 0, None),
@@ -171,6 +184,62 @@ CASES: list[tuple[str, Mutation, int, str | None]] = [
         _mut_file(CI_REL, lambda s: s + f'\n      - run: pip install "klayout-tools @ git+https://example.invalid/klt@{FAKE_REV}"\n'),
         1,
         "git install found",
+    ),
+    (
+        "ci.yml cocotb install stale in one of the two jobs",
+        _mut_file(CI_REL, lambda s: s.replace(f'"cocotb=={COCOTB_VER}"', f'"cocotb=={COCOTB_OLDER}"', 1)),
+        1,
+        f"cocotb=={COCOTB_OLDER} install does not match",
+    ),
+    (
+        "ci.yml cocotb install removed (both jobs)",
+        _mut_file(CI_REL, lambda s: s.replace(f'"cocotb=={COCOTB_VER}"', '"cocotb"')),
+        1,
+        "no cocotb==",
+    ),
+    (
+        "cocotb spec stale in the doc table row",
+        _mut_doc(lambda d: _edit_row(d, "| `cocotb` |", lambda ln: ln.replace(f"cocotb=={COCOTB_VER}", f"cocotb=={COCOTB_OLDER}"))),
+        1,
+        f"cocotb=={COCOTB_OLDER}",
+    ),
+    (
+        "COCOTB_VERSION removed from the script's pin block",
+        _mut_script(lambda s: re.sub(r'^COCOTB_VERSION="[^"]*"\n', "", s, flags=re.MULTILINE)),
+        1,
+        "required pin COCOTB_VERSION",
+    ),
+    (
+        "positive: consistent re-pin of every cocotb location passes",
+        _both(
+            _mut_script(lambda s: _set_script(s, "COCOTB_VERSION", "2.1.1")),
+            _mut_file(CI_REL, lambda s: s.replace(f'"cocotb=={COCOTB_VER}"', '"cocotb==2.1.1"')),
+            _mut_doc(lambda d: _edit_row(d, "| `cocotb` |", lambda ln: ln.replace(COCOTB_VER, "2.1.1"))),
+        ),
+        0,
+        None,
+    ),
+    (
+        "positive: pre-release-shaped cocotb pin passes everywhere",
+        _both(
+            _mut_script(lambda s: _set_script(s, "COCOTB_VERSION", "2.2.0.dev4")),
+            _mut_file(CI_REL, lambda s: s.replace(f'"cocotb=={COCOTB_VER}"', '"cocotb==2.2.0.dev4"')),
+            _mut_doc(lambda d: _edit_row(d, "| `cocotb` |", lambda ln: ln.replace(f"cocotb=={COCOTB_VER}", "cocotb==2.2.0.dev4"))),
+        ),
+        0,
+        None,
+    ),
+    (
+        "positive: ci.yml prose naming an old cocotb without '==' is not matched",
+        _mut_file(CI_REL, lambda s: s + f"\n# cocotb {COCOTB_OLDER} was the previous pin; the spec floor cocotb>={COCOTB_VER},<2.2 is a doc concern\n"),
+        0,
+        None,
+    ),
+    (
+        "positive: a TOOL_VERSIONS-shaped stub naming cocotb without '==' is not scanned",
+        _mint_stub,
+        0,
+        None,
     ),
     (
         "positive: consistent re-pin of every klt location passes",

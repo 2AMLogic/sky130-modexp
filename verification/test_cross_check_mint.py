@@ -23,6 +23,7 @@ Exit codes: 0 all pass, 1 otherwise.
 
 from __future__ import annotations
 
+import ast
 import json
 import os
 import stat
@@ -74,6 +75,21 @@ def _init_repo(root: Path) -> None:
     subprocess.run(git + ["commit", "-qm", "base"], check=True)
 
 
+def _run_width_keys() -> set[str]:
+    """Keys `run_width()` returns, extracted statically from `cross_check.py`
+    so the check costs no simulation run."""
+    tree = ast.parse((SCRIPT_DIR / "cross_check.py").read_text(encoding="utf-8"))
+    keys: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name == "run_width":
+            for sub in ast.walk(node):
+                if isinstance(sub, ast.Return) and isinstance(sub.value, ast.Dict):
+                    keys |= {k.value for k in sub.value.keys if isinstance(k, ast.Constant)}
+    if not keys:
+        raise AssertionError("no returned dict literal found in run_width()")
+    return keys
+
+
 def _mint(root: Path, klt: Path, **kwargs) -> Path:
     """Run `mint_record` with the module's repo-root globals pointed at
     `root` and `klt` first on `$PATH`, then restore the real ones."""
@@ -92,8 +108,11 @@ def _mint(root: Path, klt: Path, **kwargs) -> Path:
         t.write_text(json.dumps({"width": width, "got": 1, "want": 1}) + "\n")
         summaries.append(
             {"width": width, "cases": 500, "seed": 1, "mismatches": 0,
-             "cocotb_pass": True, "transcript_path": t}
+             "klt_pass": True, "klt_status": "pass", "transcript_path": t}
         )
+    missing = _run_width_keys() - set(summaries[0])
+    check("mint fixture keys cover run_width() keys", not missing,
+          f"fixture is missing {sorted(missing)}")
     try:
         cross_check.REPO_ROOT = root
         cross_check.RTL_SOURCE = root / "rtl" / "modexp.v"

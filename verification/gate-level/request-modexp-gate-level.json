@@ -2,7 +2,6 @@
   "schema": "klt.functional_verification.request/1",
   "engine": "icarus",
   "sources": [
-    "sky130_fd_sc_hd_sim_defines.v",
     "pdk-primitives.v",
     "pdk-sky130_fd_sc_hd.v",
     "modexp_post_route.v"
@@ -19,6 +18,10 @@
       "1ns",
       "1ps"
     ],
-    "random_seed": 1
+    "random_seed": 1,
+    "defines": {
+      "FUNCTIONAL": null,
+      "UNIT_DELAY": "#1"
+    }
   }
 }

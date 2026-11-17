@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/cross_check.py",
         "passed": true,
-        "content_hash": "sha256:46f185f91c1a915d73169581c274f8de89efb363cc713599b81525a4fc11b437"
+        "content_hash": "sha256:91fdc3f6f7b50137bf7993f30d8877ad18a42d60271f91b89558cda68d4800cd"
       },
       {
         "check": "present",
@@ -45,7 +45,7 @@
         "role": "testbench",
         "path": "verification/test_check_pins.py",
         "passed": true,
-        "content_hash": "sha256:6dffb8a70315986e2b8cc571f843346a6b0a0fc5081d787500478bcebaa69097"
+        "content_hash": "sha256:ebfe26d54b494f2e64a78dd9e0a747dd16fcf62eed19889c0f3d9a69257bd8a9"
       },
       {
         "check": "present",
@@ -93,7 +93,7 @@
         "passed": true,
         "value": {
           "ciel": "2.6.1",
-          "cocotb": "2.0.1",
+          "cocotb": "2.1.0",
           "klt": "0.8.0",
           "yowasp-yosys": "0.68.0.0.post1208"
         }
@@ -110,7 +110,7 @@
         "path": "verification/signoff/inventory-item9.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:53119a858c3beb9b4f281cddcab8b1b6e6b06386d8590a6ee7e683b8f806edd4"
+      "content_hash": "sha256:4328437d11e51c2609c2f798232f5b579d328edc7ae0b3a6fa34d2c48bb49d42"
     }
   }
 }

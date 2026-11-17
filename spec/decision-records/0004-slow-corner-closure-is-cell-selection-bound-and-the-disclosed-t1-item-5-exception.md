@@ -5,6 +5,9 @@
 - **Decided by**: Builder (issue #132), discharging
   `spec/decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md`
   Decision 3's named follow-up, and extending record `0001` Decision 5 item 5
+- **Withdrawn claim**: row 6's 18/18 reachability claim is withdrawn by
+  `0005` Decision 1
+  (`spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`)
 
 ## Context
 

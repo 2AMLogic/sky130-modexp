@@ -71,8 +71,8 @@ need a concrete schema to be checkable rather than aspirational:
   the manifest and report are living artifacts, regenerated in-step with
   the evidence they cite.
 
-Run the klt-driven suite (default `WIDTH=16`, 2 directed + randomized tests)
-with:
+Run the single-request suite (default `WIDTH=16`, 2 directed + randomized
+tests) with:
 
 ```bash
 klt functional-verification verification/request-modexp.json --format json
@@ -102,29 +102,51 @@ See `docs/baseline.md` for the full reproduction recipe, including the
 synthesis cell-count measurement, and `docs/environment.md` for the pinned
 tool/PDK versions.
 
-## Why a separate cross-check driver (the klt gap)
+## Why a separate cross-check driver (and the klt gap that is now closed)
 
-`klt functional-verification`'s request schema
-(`klt.functional_verification.request/1`) has no field to override a
-Verilog `parameter`, so a checked-in request can only elaborate a design's
-*default* parameterization — `request-modexp.json` only ever exercises
-`WIDTH=16`. `modexp.v`'s bit-exactness at `WIDTH` = 4, 6, 8, 16 (the claim in
-`docs/baseline.md` and the revisit trigger in `spec/modexp.md`) therefore
-cannot be reproduced through `klt` alone today.
+`modexp.v`'s bit-exactness at `WIDTH` = 4, 6, 8, 16 (the claim in
+`docs/baseline.md` and the revisit trigger in `spec/modexp.md`) needs the
+design elaborated at four different parameterizations.
+`request-modexp.json` pins no `parameters` object, so it only ever exercises
+the default `WIDTH=16`; the remaining widths come from
+`verification/cross_check.py`, which synthesizes **one `klt
+functional-verification` request per `WIDTH`** — each carrying
+`"parameters": {"WIDTH": <n>}`, which the pinned klt validates and forwards
+to both `Runner.build(parameters=...)` and `Runner.test(parameters=...)` —
+and runs `cross_check_tb.py` (a purpose-built cocotb test module, distinct
+from `test_modexp.py`) against each one. Every simulator run in this repo
+therefore goes through `klt`, per `CLAUDE.md`'s "drive engines through klt"
+rule.
 
-`verification/cross_check.py` closes that gap the same way any client of
-cocotb's own `Runner` API would: it drives Icarus directly via
-`cocotb_tools.runner`, which *does* accept a `parameters=` mapping, to
-elaborate `rtl/modexp.v` at each `WIDTH` and run `cross_check_tb.py`
-(a purpose-built cocotb test module, distinct from `test_modexp.py`) against
-it. This is a stopgap, not a preferred pattern — `klt` is still the driven
-entry point for synthesis and for the default-parameterization functional
-run, per `CLAUDE.md`'s "drive engines through klt" rule. The missing
-parameter override itself is filed as a friction-protocol issue, generic and
+That was not always so, and the history is the point of the friction
+protocol rather than a footnote. Until the pin in `docs/environment.md`
+reached `klayout-tools==0.8.0`, the `klt.functional_verification.request/1`
+schema had **no** field to override a Verilog `parameter`, so this driver
+elaborated each `WIDTH` itself through cocotb's own `Runner` API
+(`cocotb_tools.runner`), driving Icarus directly. That bypass was recorded
+here as a stopgap with an explicit exit condition — retire it once `klt`
+gains a parameter override — and the gap was filed, generic and
 design-detail-free, at
-[`2AMLogic/klayout-tools#610`](https://github.com/2AMLogic/klayout-tools/issues/610)
-— once `klt functional-verification` gains a parameter override, this
-driver script should be retired in favor of a plain klt request per `WIDTH`.
+[`2AMLogic/klayout-tools#610`](https://github.com/2AMLogic/klayout-tools/issues/610),
+which is now closed as completed. The exit condition is met and the bypass
+is gone: `cross_check.py` no longer imports `cocotb_tools.runner` at all.
+
+What the script still owns is everything the request contract has no field
+for, which is why "retire the driver entirely" was never the exit condition:
+
+| Concern | Where it lives |
+|---|---|
+| `WIDTH` override | `request.parameters` (klt) |
+| cocotb's own seeding | `request.options.random_seed` (klt) |
+| per-`WIDTH` seed derivation from `--seed` | `cross_check.py` |
+| case count, transcript path | `CROSS_CHECK_CASES` / `CROSS_CHECK_TRANSCRIPT` env vars the klt subprocess inherits |
+| `got`-vs-`want` comparison, `--mint-record`, artifact manifests | `cross_check.py` |
+
+`options.random_seed` and the testbench's own `CROSS_CHECK_SEED` are
+separate knobs: the recorded vectors are drawn from
+`random.Random(CROSS_CHECK_SEED)` inside the testbench, never from cocotb's
+global `random` state. `cross_check.py` pins both to the same per-`WIDTH`
+value so nothing in a run draws from OS entropy.
 
 ## Gate-level simulation (`gate-level-sim`)
 
@@ -148,7 +170,6 @@ provenance guards and the counts they enforce, what the netlist does and
 does not model (no parasitics, no timing, no corner dependence, no modelled
 power network, cell-instance granularity), and the upstream gaps filed along
 the way.
-
 
 ## Directory / naming convention
 
@@ -351,9 +372,11 @@ twin `20260817-002415-4dd3bfa.md` for the worked example.
 
 CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
 
-- the multi-`WIDTH` cross-check (`verification/cross_check.py`) under
-  Icarus/cocotb — no PDK required, since RTL/behavioral simulation has no
-  standard-cell dependency;
+- the multi-`WIDTH` cross-check (`verification/cross_check.py`), which runs
+  one `klt functional-verification` request per `WIDTH` over Icarus/cocotb —
+  no PDK required, since RTL/behavioral simulation has no standard-cell
+  dependency, but the job does install `klt` at the pinned release because
+  it is the driven entry point;
 - a re-run of the cross-check at a reduced case count with
   `--transcript-dir`, asserting the two runs' vector transcripts are
   byte-identical — the pinned seed is verified, not just asserted;
@@ -472,7 +495,9 @@ this convention was introduced) illustrate the format:
   envelope.
 - `verification/records/width-cross-check/records/<record-id>.md` —
   reproduces the `WIDTH` = 4/6/8/16 x 500-case bit-exact cross-check, driven
-  by `cross_check.py` (bypassing klt for the reason above).
+  by `cross_check.py`. Records minted before the parameter-override gap
+  closed (see above) say klt was bypassed for elaboration, and are frozen
+  that way — they are append-only evidence of the run they measured.
   `provenance.pdk` is `"n/a"` — an Icarus/cocotb-only run has no PDK
   dependency — and `provenance.inputs` covers both `rtl/modexp.v` and
   `cross_check_tb.py`, since the testbench's own content is part of what
