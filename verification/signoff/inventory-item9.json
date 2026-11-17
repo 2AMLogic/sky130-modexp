@@ -19,7 +19,7 @@
     "pdk": {"name": "sky130A", "revision": "f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"},
     "tools": {
       "klt": "0.8.0",
-      "cocotb": "2.0.1",
+      "cocotb": "2.1.0",
       "ciel": "2.6.1",
       "yowasp-yosys": "0.68.0.0.post1208"
     }

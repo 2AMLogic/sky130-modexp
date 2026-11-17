@@ -43,7 +43,7 @@ duplicating it.
   (`schema_version: 1`) for items 1, 9 and 10. The envelopes
   `evidence/item-{1,9,10}-*.json` are **produced by**
   `klt signoff --attest N --inventory inventory-itemN.json -o <envelope>`
-  (run from the repo root, on klt 0.8.0 with `cocotb==2.0.1` and `iverilog` on
+  (run from the repo root, on klt 0.8.0 with `cocotb==2.1.0` and `iverilog` on
   the path for item 9's cold start); do not hand-edit them. CI re-attests each
   with `--check` (the `signoff` job), so a changed inventoried file or a
   changed check outcome fails the build. Re-attest after editing any

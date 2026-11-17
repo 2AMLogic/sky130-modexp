@@ -181,10 +181,11 @@ The upstream gaps are filed:
 [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)
 (no compile-time defines in the `functional-verification` request — **fixed**
 by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006), closed as
-completed 2026-08-15, and this repo's pin is past it; the local
-`sky130_fd_sc_hd_sim_defines.v` is retained anyway because a live record
-hashes it as a provenance input, so replacing it means minting a superseding
-record — #322),
+completed 2026-08-15, and this repo's pin is past it; defines now flow
+through `options.defines`, and the local `sky130_fd_sc_hd_sim_defines.v`
+that used to substitute for the field is gone — removing it superseded the
+record that hashed it (`20261027-013940-98bf55d` →
+`20261117-112523-2abccc2`, issue #322)),
 [#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
 export / no SDF option — **fixed** by
 [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged

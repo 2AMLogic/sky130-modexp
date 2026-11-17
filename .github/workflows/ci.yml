@@ -90,7 +90,7 @@ jobs:
           iverilog -V | head -1
 
       - name: Install cocotb (pinned -- see docs/environment.md)
-        run: python3 -m pip install --disable-pip-version-check "cocotb==2.0.1"
+        run: python3 -m pip install --disable-pip-version-check "cocotb==2.1.0"
 
       - name: Cross-check WIDTH = 4, 6, 8, 16 (npm run test)
         run: npm run test
@@ -137,7 +137,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends iverilog
-          python3 -m pip install --disable-pip-version-check "cocotb==2.0.1"
+          python3 -m pip install --disable-pip-version-check "cocotb==2.1.0"
 
       - name: Regenerate and compare the tier report
         run: ./verification/signoff/run-signoff.sh --check

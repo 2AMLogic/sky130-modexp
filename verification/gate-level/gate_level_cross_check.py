@@ -16,10 +16,12 @@ case count relative to the RTL claim.
 This script closes that gap for `WIDTH=16` -- the only width the gate-level
 netlist *can* be run at, since it is a fixed physical layout of one
 elaboration, not a parameterized module. It drives Icarus through cocotb's
-own `Runner` API (the same way `verification/cross_check.py` does, and for a
-related reason: `klt functional-verification`'s request schema has no field
-for simulator `+define+` macros, which a run against PDK cell models
-requires -- see `verification/gate-level/README.md`).
+own `Runner` API (the same way `verification/cross_check.py` does), passing
+the two cell-model defines through the Runner API (`defines=` /
+`build_args`) exactly the way `klt functional-verification`'s
+`options.defines` does -- see `verification/gate-level/README.md`. Routing
+this driver itself through a `klt` request is tracked as issue #316 and is
+deliberately out of scope here.
 
 Determinism and the transcript-equality check
 ---------------------------------------------
@@ -53,7 +55,6 @@ REPO_ROOT = HERE.parent.parent
 VERIFICATION_DIR = REPO_ROOT / "verification"
 
 NETLIST = HERE / "modexp_post_route.v"
-DEFINES = HERE / "sky130_fd_sc_hd_sim_defines.v"
 
 # Kept deliberately identical to verification/cross_check.py's constants so
 # the two runs draw the same vector stream at the same WIDTH.
@@ -144,13 +145,22 @@ def main() -> int:
 
     try:
         runner = get_runner("icarus")
+        # The same two defines the request carries under `options.defines`
+        # ({"FUNCTIONAL": null, "UNIT_DELAY": "#1"}), translated the way klt
+        # 0.8.0 itself translates them for cocotb's Runner (its _run_build):
+        # a valueless macro cannot be serialised by cocotb, which quotes every
+        # defines value as an SV literal (klayout-tools#2884), so it goes as a
+        # plain -DNAME build arg; the valued macro goes through defines= raw
+        # (cocotb 2.1+). Same effective iverilog command either way.
         runner.build(
-            sources=[str(DEFINES), str(primitives_v), str(cells_v), str(NETLIST)],
+            sources=[str(primitives_v), str(cells_v), str(NETLIST)],
             hdl_toplevel="modexp",
             build_dir=str(build_dir),
             always=True,
             clean=True,
             timescale=("1ns", "1ps"),
+            build_args=["-DFUNCTIONAL"],
+            defines={"UNIT_DELAY": "#1"},
         )
         results_xml = runner.test(
             test_module="cross_check_tb",
