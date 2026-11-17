@@ -304,10 +304,11 @@ relative paths accordingly.
 
 Three further gaps, same format and same friction protocol, found while
 re-running the bit-exact suite against a gate-level netlist of the routed
-layout (`verification/gate-level/`). Two of the three are now **fixed
-upstream and past this repo's pin** (the defines field and the testbench
-search path, below); what remains unfixed is the SDF half of the first
-bullet, which is what still blocks delay-annotated gate-level simulation:
+layout (`verification/gate-level/`). All three are now **fixed upstream and
+past this repo's pin** (the SDF export/option, the defines field, and the
+testbench search path, below); what remains on delay-annotated gate-level
+simulation is the residual caveats noted on the first bullet, not a missing
+capability:
 
 - **`klt place-and-route` SDF export is missing; the netlist half is
   closed at the current pin (corrected by issue #139).** *Originally written
@@ -321,13 +322,21 @@ bullet, which is what still blocks delay-annotated gate-level simulation:
   2026-08-15 — later than this repo's pin, and in any case describing a
   *re-run* of P&R rather than the committed `layout/modexp.gds`). The SDF
   half is [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002)
-  (open), which also covers the missing `options.sdf` on `klt
-  functional-verification`. **This is what blocks delay-annotated
-  (per-corner) gate-level simulation entirely.** Local substitute for the
-  netlist half: `verification/gate-level/spice_to_verilog.py`, which derives
+  (**fixed** by
+  [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged
+  2026-08-15 — this repo's `klt` pin bumped past it by issue #55, and the
+  fix also wired `options.sdf` onto `klt functional-verification`).
+  Delay-annotated (per-corner) gate-level simulation therefore runs on the
+  current pin; two residual caveats remain —
+  [klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363)'s
+  zero-delay `INTERCONNECT` residual (worked around by the record's
+  disclosed 4-entry exclusion) and the fact that an SDF run still describes
+  a fresh *re-run* of P&R, not byte-reproducible against the committed
+  `layout/modexp.gds` — see `verification/gate-level/README.md`. Local
+  substitute for the netlist half:
+  `verification/gate-level/spice_to_verilog.py`, which derives
   the netlist from #8's `klt extract --abstract-cells` output — see
-  `verification/gate-level/README.md`. There is no local substitute for the
-  SDF half.
+  `verification/gate-level/README.md`.
 - **`klt functional-verification` had no compile-time defines / build-args
   field** ([klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)),
   so a PDK's `` `ifdef ``-gated Verilog cell library
