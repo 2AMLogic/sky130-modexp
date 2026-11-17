@@ -42,7 +42,10 @@
 #
 # <design> (flow/sta-<design>.json, layout/<design>.def) is $DESIGN, else the
 # stem of the repo's single rtl/*.v file; the repo root is $REPO_ROOT, else
-# `git rev-parse --show-toplevel`.
+# `git rev-parse --show-toplevel`. `klt` is $KLT, else
+# <repo root>/.venv/bin/klt, else whatever is on $PATH -- set $KLT to run
+# this sweep against a specific klayout-tools pin. All three contracts are
+# resolved by scripts/design-env.sh, which must travel with this script.
 #
 # Requires: an `openroad` binary on $PATH (docs/environment.md's "OpenROAD"
 # section -- scripts/openroad-docker.sh is the pinned route) and a resolvable
@@ -57,17 +60,12 @@
 set -euo pipefail
 
 REPO_ROOT="${REPO_ROOT:-$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel)}"
-# Design name: $DESIGN, else the stem of the repo's one rtl/*.v file; with
-# zero or several RTL files there is no unambiguous default, so fail loudly.
-if [ -z "${DESIGN:-}" ]; then
-  _rtl=("${REPO_ROOT}"/rtl/*.v)
-  if [ "${#_rtl[@]}" -eq 1 ] && [ -f "${_rtl[0]}" ]; then
-    DESIGN="$(basename "${_rtl[0]}" .v)"
-  else
-    echo "FATAL: DESIGN not set and ${REPO_ROOT}/rtl does not hold exactly one .v file." >&2
-    exit 2
-  fi
-fi
+# shellcheck source=../scripts/design-env.sh
+. "${REPO_ROOT}/scripts/design-env.sh" || {
+  echo "FATAL: cannot source ${REPO_ROOT}/scripts/design-env.sh -- it must travel with this script." >&2
+  exit 2
+}
+design_env_require_design
 FLOW_DIR="${REPO_ROOT}/flow"
 REQUEST="${FLOW_DIR}/sta-${DESIGN}.json"
 ROUTED_DEF="${REPO_ROOT}/layout/${DESIGN}.def"
@@ -90,11 +88,7 @@ if [ ! -f "${REQUEST}" ]; then
   exit 1
 fi
 
-if [ -x "${REPO_ROOT}/.venv/bin/klt" ]; then
-  KLT="${REPO_ROOT}/.venv/bin/klt"
-else
-  KLT="$(command -v klt)" || { echo "FATAL: no klt on PATH and no .venv/bin/klt" >&2; exit 1; }
-fi
+design_env_require_klt
 
 echo "klt:  ${KLT}" >&2
 echo "def:  ${ROUTED_DEF}" >&2
