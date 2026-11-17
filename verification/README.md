@@ -149,7 +149,6 @@ does not model (no parasitics, no timing, no corner dependence, no modelled
 power network, cell-instance granularity), and the upstream gaps filed along
 the way.
 
-
 ## Directory / naming convention
 
 Each distinct claim being verified gets its own experiment directory under

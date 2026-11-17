@@ -100,23 +100,34 @@ needs no PDK and no simulator, so it runs in CI alongside
 | What | Value |
 |---|---|
 | Library | `<sky130A>/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v` (+ `primitives.v` for the UDPs) |
-| Defines | `` `define FUNCTIONAL ``, `` `define UNIT_DELAY #1 `` (see `sky130_fd_sc_hd_sim_defines.v`) |
+| Defines | `` `define FUNCTIONAL ``, `` `define UNIT_DELAY #1 `` — supplied through `options.defines` in `request-modexp-gate-level.json` (`{"FUNCTIONAL": null, "UNIT_DELAY": "#1"}`) |
 | `USE_POWER_PINS` | **not** defined |
 | PDK | sky130A, `open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` (the pin in `docs/environment.md`) |
 
-- **`FUNCTIONAL` is required, not preferred.** The `` `ifndef FUNCTIONAL ``
+- **`FUNCTIONAL` is required, not preferred.** It selects each cell's
+  *functional* (behavioural) model instead of its `specify`-block timing
+  model. The `` `ifndef FUNCTIONAL ``
   branch is the `specify`-block *timing* model, and Icarus does not implement
   the delayed-signal output arguments of `$setuphold`/`$recrem`. Compiling
   those models emits `warning: Timing checks are not supported and delayed
   signal "D_delayed" will not be driven.` — 620 of them for this netlist —
   and since those `_delayed` nets are what each cell's UDP is wired to, the
-  entire design then simulates as `x`. Measured both ways; the transcript is
-  in this experiment's artifacts.
+  entire design then simulates as `x`; under `FUNCTIONAL` the same cells are
+  plain UDP/primitive models and compile with zero warnings. Measured both
+  ways; the transcript is in this experiment's artifacts.
 - **`UNIT_DELAY #1`** gives the sequential UDPs a 1 ns output delay (the
   models are `timescale 1ns/1ps`; the design's clock period is 10 ns).
   Combinational cells are unaffected. This is the standard way to keep a
   zero-delay gate-level netlist free of D/Q races at the clock edge. It is
   **not** a timing model of the routed design.
+- **How the defines reach the compiler.** Through the request:
+  `options.defines` is `{"FUNCTIONAL": null, "UNIT_DELAY": "#1"}` — a `null`
+  value is a valueless macro (klt emits a plain `-DNAME` build arg, because
+  cocotb serialises every *valued* define as an SV literal and cannot
+  serialise `None` at all, klayout-tools#2884), and a string value is passed
+  raw to iverilog. This replaced the former `sky130_fd_sc_hd_sim_defines.v`
+  side file, which existed only because the request schema had no defines
+  field (issue #322 minted the superseding record that removed it).
 - **`USE_POWER_PINS` is deliberately not defined**, and the derived netlist
   carries no `VPWR`/`VGND`/`VPB`/`VNB` connections. This is not a shortcut:
   the gate-level netlist is signal-only. The layout does have a real PDN
@@ -283,7 +294,7 @@ attempted here (each would require its own independent P&R re-route, per
 |---|---|
 | `klt place-and-route` exports no as-built (post-CTS/post-resize) netlist | [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996) — filed by #8, **fixed** by [#997](https://github.com/2AMLogic/klayout-tools/pull/997) (merged 2026-08-15) — this repo's `klt` pin bumped past it by issue #55 |
 | `klt place-and-route` has no SDF export; `klt functional-verification` has no SDF option | [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) — **fixed** by [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007) (merged 2026-08-15) — this repo's `klt` pin bumped past it by issue #55 |
-| `klt functional-verification` has no compile-time defines / build-args field, so an `ifdef`-gated Verilog cell library cannot be selected through the request | [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001) — **fixed** by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as completed 2026-08-15), and this repo's `klt` pin is past it (`options.defines`). `sky130_fd_sc_hd_sim_defines.v` is nevertheless **retained**: the live record `20261027-013940-98bf55d` hashes it as a provenance input, so replacing it with `options.defines` means minting a superseding record — tracked as #322, not done here |
+| `klt functional-verification` has no compile-time defines / build-args field, so an `ifdef`-gated Verilog cell library cannot be selected through the request | [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001) — **fixed** by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as completed 2026-08-15), and this repo's `klt` pin is past it. The gate-level request now carries `options.defines` (`{"FUNCTIONAL": null, "UNIT_DELAY": "#1"}`) and `gate_level_cross_check.py` passes the same two defines through cocotb's own Runner API, so the `sky130_fd_sc_hd_sim_defines.v` side file that used to substitute for the field is gone — removing it superseded the record that hashed it as a provenance input (`20261027-013940-98bf55d` → `20261117-112523-2abccc2`, issue #322) |
 | The accepted SDF re-sim recipe is conditional on Icarus >= 13; 12.0 has no `-ginterconnect` and cannot simulate `ifdef`-gated timing models at all | [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (filed by this issue) — not a blocker on this repo's host (Icarus 13.0) |
 | `klt functional-verification` requires the testbench module to sit next to the request, so one unmodified testbench cannot serve several requests | [klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (filed by this issue) — **fixed** by [#1005](https://github.com/2AMLogic/klayout-tools/pull/1005) (closed as completed 2026-08-15), and this repo's `klt` pin is past it; the request now uses `testbench.search_path`, and the committed `verification/gate-level/test_modexp.py` stand-in that worked around it is gone |
 | Icarus `$sdf_annotate` cannot resolve a top-level-port-attached `INTERCONNECT` entry even under `-ginterconnect` | [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056) (filed by issue #55) — **fixed** by [#1069](https://github.com/2AMLogic/klayout-tools/pull/1069) (merged 2026-08-17) — this repo's `klt` pin bumped past it by issue #78; the narrower residual it exposed is klayout-tools#1619 below |
