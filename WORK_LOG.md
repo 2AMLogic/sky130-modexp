@@ -9,6 +9,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-17
 
+- **PR #384**: refactor(verification): consolidate duplicated klt resolution + error unwrap into _repo_utils
+- **Issue #382** (closed): Consolidate duplicated _resolve_klt() (and its twin self-tests) into _repo_utils
 - **PR #353**: fix(verification): honour $KLT in gate-level cross-check klt resolution
 - **Issue #350** (closed): gate_level_cross_check.py ignores $KLT when resolving the klt binary, so the documented pin-check recipe does not reach that leg
 - **PR #380**: docs(environment): extend depth-reuse section to the Python entry points
