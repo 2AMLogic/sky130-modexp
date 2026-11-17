@@ -9,6 +9,19 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-17
 
+- **PR #377**: fix: honour $KLT ahead of the venv/$PATH probe in cross_check.py klt resolution
+- **PR #375**: docs: correct klayout-tools#996 pin status in flow/README gate-level gaps
+- **PR #373**: fix: surface and keep failing-run evidence when the cross-check gate goes red
+- **PR #372**: gate-level: drive the 500-case deep run through klt functional-verification
+- **PR #371**: docs(spec): add withdrawn-claim forward pointer from 0004 to 0005 Decision 1
+- **PR #345**: refactor(shell): give $DESIGN and $KLT one implementation in scripts/design-env.sh
+- **Issue #378** (closed): gate_level_cross_check.py's $KLT leg silently falls back on a nonexistent pin; cross_check.py and design-env.sh do not
+- **Issue #376** (closed): verification/cross_check.py ignores $KLT when resolving the klt binary, so the documented pin-check recipe does not reach the correctness gate
+- **Issue #361** (closed): A failing WIDTH in the cross-check gate reports counts only: klt's own output and the run dir are discarded
+- **Issue #359** (closed): flow/README.md and verification/README.md still say klayout-tools#996 was fixed 'later than this repo's pin', contradicting the gate-level gap table
+- **Issue #354** (closed): Record 0004 carries no forward pointer to 0005's withdrawal of its 18/18 claim
+- **Issue #337** (closed): Consolidate the duplicated DESIGN/REPO_ROOT preamble in the three shell runners, and reconcile their three different klt resolutions
+- **Issue #316** (closed): Two drivers still bypass klt via cocotb's Runner API: re-check whether their stated reasons are stale
 - **PR #368**: fix: align mint-test fixture with run_width's klt_pass/klt_status keys
 - **PR #366**: feat(verification): enforce COCOTB_VERSION pin in ci.yml and doc table
 - **PR #332**: docs(signoff): item 8 report states the DR-0012 LVS match, warnings and engine caveats
