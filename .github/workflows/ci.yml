@@ -58,7 +58,8 @@ jobs:
                                    verification/test_modexp.py \
                                    verification/gate-level/spice_to_verilog.py \
                                    verification/gate-level/test_spice_to_verilog.py \
-                                   verification/gate-level/gate_level_cross_check.py
+                                   verification/gate-level/gate_level_cross_check.py \
+                                   verification/test_gate_level_klt_resolution.py
           bash -n verification/gate-level/run-gate-level-sim.sh
           bash -n scripts/setup-env.sh
 

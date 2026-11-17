@@ -98,9 +98,7 @@ def main() -> int:
         stub_path = {"PATH": f"{tmp / 'path-bin'}{os.pathsep}{os.environ['PATH']}"}
 
         # $KLT wins over both an existing .venv klt and one on $PATH.
-        prim, cells, ver = _resolve(
-            str(env_klt), fake_root, stub_path
-        )
+        prim, cells, ver = _resolve(str(env_klt), fake_root, stub_path)
         check(
             "$KLT stub's version is reported",
             ver == VERSION_ENV,
@@ -142,7 +140,7 @@ def main() -> int:
         # a working `klt` is available on $PATH -- no silent fallback.
         try:
             _resolve(str(tmp / "no-such" / "klt"), fake_root, stub_path)
-        except (OSError, subprocess.SubprocessError) as exc:
+        except (OSError, subprocess.SubprocessError):
             check(
                 "nonexistent $KLT raises instead of falling back",
                 True,
