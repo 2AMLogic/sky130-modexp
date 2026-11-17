@@ -16,6 +16,7 @@ source .venv/bin/activate` (cocotb 2.1.0, Icarus Verilog), per
 | Same suite, unmodified, against the gate-level netlist derived from the routed layout, with net-delay SDF back-annotation | `verification/test_modexp.py` via `verification/gate-level/` (`gate_level_cross_check.py`, `request-modexp-gate-level.json`) | `./verification/gate-level/run-gate-level-sim.sh` (local; needs the sky130A PDK) |
 | The gate-level netlist converter | `verification/gate-level/test_spice_to_verilog.py` | `python3 verification/gate-level/test_spice_to_verilog.py` (in `npm run lint`) |
 | Evidence-record linter and pin-sync checker | `verification/test_check_records.py`, `verification/test_check_pins.py` | `npm run lint` (CI job `records`) |
+| `$KLT`/`.venv`/`$PATH` resolution in the gate-level cross-check | `verification/test_gate_level_klt_resolution.py` | `npm run lint` (CI job `records`) |
 | `$KLT`/`.venv`/`$PATH` `klt` resolution in the RTL cross-check gate (the documented pin-check recipe reaching `npm run test`) | `verification/test_cross_check_klt_resolution.py` | `npm run lint` (CI job `records`) |
 
 ## Claimed measurements with no testbench in the cocotb sense

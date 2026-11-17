@@ -92,18 +92,19 @@ from _repo_utils import REPO_ROOT, reexec_into_venv_if_needed  # noqa: E402
 def _resolve_klt() -> str | None:
     """Resolve the `klt` binary this run drives its simulation through.
 
-    `$KLT` wins when set (the documented pin-check recipe in
-    `docs/environment.md`), then the one *beside the running interpreter*
-    (the venv `scripts/setup-env.sh` provisions holds the pinned klt **and**
-    the cocotb it imports -- `reexec_into_venv_if_needed` has already put us
-    inside it), then `$PATH`. Returns `None` when nothing resolves; `main()`
-    turns that into the pre-flight FATAL.
+    `$KLT` wins when set and non-empty -- even when the path does not
+    exist, so a typo'd pin fails loudly at the `klt` invocation it drives
+    instead of silently falling back to another binary (issue #350; the
+    same precedence the shell runners implement, `docs/environment.md`'s
+    `KLT` row). Then the one *beside the running interpreter* (the venv
+    `scripts/setup-env.sh` provisions holds the pinned klt **and** the
+    cocotb it imports -- `reexec_into_venv_if_needed` has already put us
+    inside it), then `$PATH`. Returns `None` when nothing resolves;
+    `main()` turns that into the pre-flight FATAL.
     """
     override = os.environ.get("KLT")
     if override:
-        candidate = Path(override)
-        if candidate.is_file() and os.access(candidate, os.X_OK):
-            return str(candidate)
+        return override
     beside = Path(sys.executable).parent / "klt"
     if beside.is_file() and os.access(beside, os.X_OK):
         return str(beside)

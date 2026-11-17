@@ -11,6 +11,7 @@
     "verification/gate-level/test_spice_to_verilog.py",
     "verification/test_check_records.py",
     "verification/test_check_pins.py",
+    "verification/test_gate_level_klt_resolution.py",
     "verification/test_cross_check_klt_resolution.py"
   ],
   "cold_start": {
