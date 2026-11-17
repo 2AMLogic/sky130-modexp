@@ -157,8 +157,59 @@ def _klt_error_message(stderr: str, limit: int = 600) -> str:
     try:
         message = json.loads(text)["error"]["message"]
     except (json.JSONDecodeError, KeyError, TypeError):
-        return text[-limit:] if len(text) > limit else text
+        return _tail(text, limit)
     return str(message)
+
+
+def _tail(text: str, limit: int) -> str:
+    """`text` tail-truncated to `limit` characters.
+
+    The bound `_klt_error_message` applies to stderr; shared so every
+    diagnostic this script prints on a red gate stays bounded the same way.
+    The *end* is what survives because simulator diagnostics put the actual
+    failure at the bottom of their output.
+    """
+    return text[-limit:] if len(text) > limit else text
+
+
+def _failing_test_entries(envelope: dict) -> list[dict]:
+    """The response envelope's failed testcase entries, trimmed to what a
+    red gate must surface: the testcase name, cocotb's `error_type` and the
+    assertion `error_message`. Passing and skipped entries are dropped --
+    they are not the reason the run went red.
+    """
+    return [
+        {
+            "name": test.get("name"),
+            "error_type": test.get("error_type"),
+            "error_message": test.get("error_message"),
+        }
+        for test in (envelope.get("tests") or [])
+        if test.get("status") == "failed"
+    ]
+
+
+def _failing_tests_block(
+    entries: list[dict], limit: int = 600, per_entry: int = 300
+) -> str:
+    """The failed testcases as printable lines, bounded to `limit`.
+
+    Rendered here rather than printed inline in `run_width()` so the caller
+    owns the output shape and a test can assert on the rendering without
+    running any simulation. Each entry's message is tail-truncated to
+    `per_entry` *first* so a single huge assertion cannot push earlier
+    entries' names out of the block; the whole block is then tail-truncated
+    to `limit` like every other diagnostic this script prints.
+    """
+    lines = []
+    for test in entries:
+        line = test.get("name") or "<unnamed testcase>"
+        if test.get("error_type"):
+            line += f": {test['error_type']}"
+        if test.get("error_message"):
+            line += f": {_tail(test['error_message'], per_entry)}"
+        lines.append(line)
+    return _tail("\n".join(lines), limit)
 
 
 def records_dir() -> Path:
@@ -326,6 +377,13 @@ def run_width(
                 if vec["got"] != vec["want"]:
                     mismatches += 1
 
+    # Diagnosability (issue #361): a verdict that is not a pass must not
+    # come back as bare counts. The failing testcases (names + cocotb's
+    # assertion text), klt's stderr tail and the run dir travel out of this
+    # function so `main()` can print the bounded detail and keep the run's
+    # evidence instead of deleting it with the build root. On a pass these
+    # are empty -- the gate's output for a green run is unchanged.
+    not_pass = envelope.get("status") != "pass"
     return {
         "width": width,
         "cases": cases,
@@ -335,6 +393,9 @@ def run_width(
         and envelope.get("test_count", 0) > 0,
         "klt_status": envelope.get("status"),
         "transcript_path": transcript_path,
+        "klt_run_dir": run_dir,
+        "klt_failing_tests": _failing_test_entries(envelope) if not_pass else [],
+        "klt_stderr_tail": _klt_error_message(completed.stderr) if not_pass else "",
     }
 
 
@@ -568,6 +629,11 @@ def main() -> int:
         keep_build = os.environ.get("CROSS_CHECK_KEEP_BUILD") == "1"
     summaries = []
     overall_ok = True
+    # Run dirs + transcripts of the WIDTHs that did not pass (issue #361):
+    # the `finally` below deletes everything else in the temp build root but
+    # keeps these, so a red gate leaves evidence to diagnose instead of
+    # counts only. Empty on an all-pass run -> cleanup is unchanged.
+    failed_artifacts: set[Path] = set()
     try:
         for width in args.widths:
             # Distinct, deterministic per-width seed derived from the base
@@ -578,11 +644,28 @@ def main() -> int:
             except CrossCheckError as exc:
                 print(f"WIDTH={width}: FAIL -- {exc}")
                 overall_ok = False
+                # No verdict at all -- keep what the attempt left behind
+                # (request.json, whatever klt wrote first) for the same
+                # diagnosability reason as a failing verdict.
+                failed_artifacts.add(build_root / f"klt-width{width}")
                 continue
             summaries.append(summary)
             status = "PASS" if summary["mismatches"] == 0 and summary["klt_pass"] else "FAIL"
             if status == "FAIL":
                 overall_ok = False
+                failed_artifacts.add(summary["klt_run_dir"])
+                failed_artifacts.add(summary["transcript_path"])
+                # klt's own verdict detail, bounded: the failing testcase
+                # name(s) and cocotb's assertion text -- the two things a
+                # counts-only report used to swallow -- plus any stderr klt
+                # logged outside the envelope.
+                block = _failing_tests_block(summary["klt_failing_tests"])
+                if block:
+                    print("  failing testcase(s):")
+                    print("    " + block.replace("\n", "\n    "))
+                if summary["klt_stderr_tail"]:
+                    print("  klt stderr (bounded tail):")
+                    print("    " + summary["klt_stderr_tail"].replace("\n", "\n    "))
             # A run can be 0-mismatch and still not a pass -- e.g. the
             # testbench raised before writing every vector. Naming klt's own
             # verdict keeps that case from reading as a clean result.
@@ -627,6 +710,22 @@ def main() -> int:
     finally:
         if keep_build:
             print(f"\n(build artifacts kept at {build_root})")
+        elif failed_artifacts:
+            # A red gate keeps the failing runs' own evidence (issue #361).
+            # Safe with --mint-record: that path only runs when the gate is
+            # all-pass (`overall_ok`), so it has either already copied the
+            # transcripts it stores or was skipped entirely -- and the
+            # staging dir lives under REPO_ROOT, never inside build_root.
+            for entry in build_root.iterdir():
+                if entry in failed_artifacts:
+                    continue
+                if entry.is_dir():
+                    shutil.rmtree(entry, ignore_errors=True)
+                else:
+                    entry.unlink(missing_ok=True)
+            print("\n(failing-run artifacts kept -- diagnose before deleting):")
+            for path in sorted(failed_artifacts, key=str):
+                print(f"  {path}")
         else:
             shutil.rmtree(build_root, ignore_errors=True)
 
