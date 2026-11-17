@@ -141,6 +141,7 @@ for, which is why "retire the driver entirely" was never the exit condition:
 | per-`WIDTH` seed derivation from `--seed` | `cross_check.py` |
 | case count, transcript path | `CROSS_CHECK_CASES` / `CROSS_CHECK_TRANSCRIPT` env vars the klt subprocess inherits |
 | `got`-vs-`want` comparison, `--mint-record`, artifact manifests | `cross_check.py` |
+| failing-run diagnosability: bounded failing-testcase detail, klt stderr tail, and keeping the failed WIDTH's run dir + transcript instead of deleting them with the build root | `cross_check.py` |
 
 `options.random_seed` and the testbench's own `CROSS_CHECK_SEED` are
 separate knobs: the recorded vectors are drawn from
