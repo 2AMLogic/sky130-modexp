@@ -23,10 +23,13 @@ source .venv/bin/activate
 #    docs/baseline.md's 682 is the klt 0.2.0 figure)
 PDK=sky130A klt synthesize flow/synthesize-modexp.json --format json
 
-# 2. Work around klayout-tools#854 (see "Known upstream gaps" below) --
-#    turns the synthesized netlist's bare constant-tie literals into a real
-#    sky130_fd_sc_hd__conb_1 tie-cell instance, which OpenROAD's router can
-#    route (the untouched netlist fails detailed_route with DRT-0305).
+# 2. Retained no-op at the current pin (issue #308). klayout-tools#854 is
+#    fixed in the pinned klt, which emits real sky130_fd_sc_hd__conb_1 tie
+#    cells itself, so this finds no bare literal and copies the netlist
+#    through unchanged. Still run it: flow/par-modexp.json names the
+#    _tied.v path as its input (as does flow/run-corner-sweep.sh), and
+#    those bytes are hashed by live evidence records. See "Known upstream
+#    gaps" below.
 python3 flow/tie_constants.py \
   flow/.klt/synthesize/modexp_synth.v \
   flow/.klt/synthesize/modexp_synth_tied.v
@@ -176,14 +179,18 @@ yet a fully signoff-ready macro.
 
 ## Known upstream gaps (friction protocol, `CLAUDE.md`)
 
-Both gaps below are already filed and **fixed upstream** at
-`2AMLogic/klayout-tools`, but in commits later than this repo's pinned `klt`
-revision (`docs/environment.md`: `af5791b557fc7c669c3981335a294256ccf37e6f`,
-2026-08-04) — so this repo still needs the local workarounds below until
-that pin is bumped past both fixes (tracked as a natural follow-up, not
-undertaken by this issue: bumping a pinned tool revision that every existing
-evidence record's `provenance.klt_version` cites is its own decision, out of
-this issue's scope).
+Both gaps below were filed and **fixed upstream** at
+`2AMLogic/klayout-tools`, in commits later than the pin that was in force
+when they were written (`af5791b557fc7c669c3981335a294256ccf37e6f`,
+2026-08-04) — so each bullet describes a local workaround this repo needed
+at *that* pin.
+
+**Both gaps are now closed at the current pin.** `docs/environment.md` pins
+`klt` to PyPI release `0.8.0` (commit `c572046be644`), several re-pins past
+both fixes. The per-bullet `Update` notes below record what that means for
+each workaround; neither workaround is still required for correctness. Read
+the rest of each bullet as the historical account of the gap, not as a
+current requirement.
 
 - **`klt synthesize` emits unroutable bare constant-tie literals**
   ([klayout-tools#854](https://github.com/2AMLogic/klayout-tools/issues/854),
@@ -196,11 +203,31 @@ this issue's scope).
   classifies it as an inferred power/ground *special* net and refuses to
   route it (`[ERROR DRT-0305] Net zero_ of signal type GROUND is not
   routable by TritonRoute`) — four stages after the netlist that caused it,
-  with no pointer back to the actual cause. `flow/tie_constants.py` is the
+  with no pointer back to the actual cause. `flow/tie_constants.py` was the
   local, interim substitute for the now-merged upstream fix: it rewrites
   every bare literal into a reference to a real
   `sky130_fd_sc_hd__conb_1` tie-cell instance, bit by bit, before the
   netlist reaches `klt place-and-route`.
+
+  **Update (issue #308, 2026-11-13): this gap is closed at the current pin.**
+  `klt synthesize` emits real `sky130_fd_sc_hd__conb_1` tie cells itself at
+  `klt` 0.8.0, so `flow/tie_constants.py` has nothing left to rewrite. Run
+  against the netlist behind the committed layout
+  (`verification/records/place-and-route/artifacts/20261027-013900-98bf55d/modexp_synth_tied.v`)
+  it prints "no bare literal constants found, copied unchanged" and writes a
+  byte-identical file; that netlist carries four `sky130_fd_sc_hd__conb_1`
+  instances and none of the script's `_tie_cell_` / `_tie_zero_` /
+  `_tie_one_` markers. `layout/README.md` and
+  `verification/signoff/evidence/design-sources.md` record the same finding
+  for the run that produced it. The DRT-0305 failure described above is
+  therefore no longer reachable from this flow, and cold-start step 2 is a
+  no-op. The script is retained for now not because the flow needs it, but
+  because live evidence records hash its bytes and because
+  `flow/par-modexp.json` and `flow/run-corner-sweep.sh` name the
+  `modexp_synth_tied.v` path it writes: dropping it means re-pointing those
+  at `modexp_synth.v`, which stales every live record that hashes them, so
+  it waits for the next record re-mint rather than a run of its own.
+
 - **No multi-corner timing sweep in `klt place-and-route`**
   ([klayout-tools Epic #700](https://github.com/2AMLogic/klayout-tools/issues/700)
   Phase 3, [klayout-tools#949](https://github.com/2AMLogic/klayout-tools/issues/949),
@@ -231,6 +258,33 @@ this issue's scope).
   later than this repo's pin, so only a hold *violation count* is available
   here.
 
+  **Update (issue #352, 2026-11-17): the per-corner-rebuild half is closed
+  at the current pin too.** The #86 note above closed the re-timing half
+  (`klt sta` against one physical build); the other half — the
+  N-independent-full-builds loop this bullet describes — is now also
+  expressible natively at the pinned `klt` (`klayout-tools==0.8.0`): one
+  `klt place-and-route` request carrying `pdk.rebuild_corners` (a corner
+  list, mutually exclusive with `pdk.corner`) re-runs the whole flow once
+  per named corner into one aggregated `corner_runs[]` report, and
+  `--backend batch` sends those units to the Spot batch fleet. Verified
+  against the `0.8.0` release's `docs/cli/place-and-route.md` ("Physical
+  rebuild per corner"), not `--help`; `docs/environment.md` records the
+  lineage (the field from
+  [klayout-tools#3550](https://github.com/2AMLogic/klayout-tools/pull/3550);
+  the pin then moved past
+  [klayout-tools#3605](https://github.com/2AMLogic/klayout-tools/pull/3605)'s
+  merge specifically so #201's rebuild could go to the batch fleet).
+  `flow/run-corner-sweep.sh`'s loop is therefore an interim substitute
+  whose exit condition is met — no equivalence between the native sweep
+  and the script's loop is claimed here. The migration and the re-run stay
+  with #201 (the 18-corner rebuild re-qualification), and the script stays
+  byte-identical until then: live record
+  `verification/records/place-and-route/records/20260816-072918-d8eafca.md`
+  hashes its content. One caveat for whoever migrates, unverified here:
+  the aggregated `rebuild_corners` response may lack per-unit wall-clock —
+  the script computes `elapsed_s` itself (`run-corner-sweep.sh:152`) — so
+  per-corner timing may surface as a friction-protocol item.
+
 Also fixed in the same window, load-bearing for this run but owned by this
 repo rather than `klayout-tools`: `scripts/openroad-docker.sh` (from issue
 #13) originally bind-mounted the host working directory at a fixed
@@ -250,8 +304,11 @@ relative paths accordingly.
 
 Three further gaps, same format and same friction protocol, found while
 re-running the bit-exact suite against a gate-level netlist of the routed
-layout (`verification/gate-level/`). Unlike the two above, these are **not**
-yet fixed upstream:
+layout (`verification/gate-level/`). All three are now **fixed upstream and
+past this repo's pin** (the SDF export/option, the defines field, and the
+testbench search path, below); what remains on delay-annotated gate-level
+simulation is the residual caveats noted on the first bullet, not a missing
+capability:
 
 - **`klt place-and-route` SDF export is missing; the netlist half is
   closed at the current pin (corrected by issue #139).** *Originally written
@@ -265,27 +322,47 @@ yet fixed upstream:
   2026-08-15 — later than this repo's pin, and in any case describing a
   *re-run* of P&R rather than the committed `layout/modexp.gds`). The SDF
   half is [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002)
-  (open), which also covers the missing `options.sdf` on `klt
-  functional-verification`. **This is what blocks delay-annotated
-  (per-corner) gate-level simulation entirely.** Local substitute for the
-  netlist half: `verification/gate-level/spice_to_verilog.py`, which derives
+  (**fixed** by
+  [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged
+  2026-08-15 — this repo's `klt` pin bumped past it by issue #55, and the
+  fix also wired `options.sdf` onto `klt functional-verification`).
+  Delay-annotated (per-corner) gate-level simulation therefore runs on the
+  current pin; two residual caveats remain —
+  [klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363)'s
+  zero-delay `INTERCONNECT` residual (worked around by the record's
+  disclosed 4-entry exclusion) and the fact that an SDF run still describes
+  a fresh *re-run* of P&R, not byte-reproducible against the committed
+  `layout/modexp.gds` — see `verification/gate-level/README.md`. Local
+  substitute for the netlist half:
+  `verification/gate-level/spice_to_verilog.py`, which derives
   the netlist from #8's `klt extract --abstract-cells` output — see
-  `verification/gate-level/README.md`. There is no local substitute for the
-  SDF half.
-- **`klt functional-verification` has no compile-time defines / build-args
-  field** ([klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001),
-  open), so a PDK's `` `ifdef ``-gated Verilog cell library
-  (`USE_POWER_PINS`, `FUNCTIONAL`, `UNIT_DELAY`) cannot be selected through
-  the request. Local substitute: `verification/gate-level/sky130_fd_sc_hd_sim_defines.v`,
-  listed first in `request.sources` so its `` `define ``s are in effect for
-  every later source in the same compilation unit.
-- **`klt functional-verification` requires the cocotb testbench module to sit
+  `verification/gate-level/README.md`.
+- **`klt functional-verification` had no compile-time defines / build-args
+  field** ([klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)),
+  so a PDK's `` `ifdef ``-gated Verilog cell library
+  (`USE_POWER_PINS`, `FUNCTIONAL`, `UNIT_DELAY`) could not be selected
+  through the request. **Fixed upstream** by
+  [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as
+  completed 2026-08-15); this repo's `klt` pin is past it and carries
+  `options.defines`. The local substitute
+  `verification/gate-level/sky130_fd_sc_hd_sim_defines.v` is **retained**
+  anyway — listed first in `request.sources` so its `` `define ``s are in
+  effect for every later source in the same compilation unit — because a
+  live evidence record hashes that file as a provenance input, so moving the
+  defines into the request means minting a superseding record (#322).
+- **`klt functional-verification` required the cocotb testbench module to sit
   next to the request document**
-  ([klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003),
-  open), so one unmodified testbench cannot serve several requests. Local
-  substitute: `verification/gate-level/test_modexp.py` is a git **symlink**
-  to `../test_modexp.py`, never a copy — copying would have destroyed the
-  property the gate-level run exists to demonstrate.
+  ([klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003)),
+  so one unmodified testbench could not serve several requests. **Fixed
+  upstream** by [#1005](https://github.com/2AMLogic/klayout-tools/pull/1005)
+  (closed as completed 2026-08-15); this repo's `klt` pin is past it, and
+  `verification/gate-level/request-modexp-gate-level.json` now reaches
+  `verification/test_modexp.py` through `testbench.search_path` (`".."`,
+  resolved against the request's own directory). The committed stand-in that
+  used to substitute for the field — a second `test_modexp.py` entry in
+  `verification/gate-level/` pointing at `../test_modexp.py` — is gone.
+  Copying the testbench would have destroyed the property the gate-level run
+  exists to demonstrate, and now nothing has to.
 
 Also filed, environment- rather than klt-shaped:
 [klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) —

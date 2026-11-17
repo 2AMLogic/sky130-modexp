@@ -45,7 +45,8 @@ need a concrete schema to be checkable rather than aspirational:
   cross-check (see "Why a separate cross-check driver" below).
 - `gate-level/` — post-route **gate-level** simulation: the derived netlist
   of the routed layout, the `klt functional-verification` request that runs
-  `test_modexp.py` (unmodified, via a symlink) against it, and the converter
+  `test_modexp.py` (unmodified — this very file, reached through the
+  request's `testbench.search_path`) against it, and the converter
   that produces the netlist. See "Gate-level simulation: the netlist
   derivation gap" below and `verification/gate-level/README.md`.
 - `check_records.py` — the evidence-record linter (see "Enforcement").
@@ -128,7 +129,8 @@ driver script should be retired in favor of a plain klt request per `WIDTH`.
 ## Gate-level simulation: the netlist derivation gap (and the workaround)
 
 The `gate-level-sim` experiment re-runs `test_modexp.py` — the same file,
-byte for byte, reached through a git symlink rather than a copy — against a
+byte for byte, reached through the gate-level request's
+`testbench.search_path` rather than a copy — against a
 gate-level netlist of the **routed layout** instead of against
 `rtl/modexp.v`. That requires a netlist of what P&R actually built, and
 there is no such artifact:
@@ -177,11 +179,22 @@ simulation:
 
 The upstream gaps are filed:
 [klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)
-(no compile-time defines in the `functional-verification` request),
+(no compile-time defines in the `functional-verification` request — **fixed**
+by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006), closed as
+completed 2026-08-15, and this repo's pin is past it; the local
+`sky130_fd_sc_hd_sim_defines.v` is retained anyway because a live record
+hashes it as a provenance input, so replacing it means minting a superseding
+record — #322),
 [#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
-export / no SDF option — the blocker for delay-annotated runs),
+export / no SDF option — **fixed** by
+[#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged
+2026-08-15, and this repo's pin is past it; the gate-level request now
+annotates delay through `options.sdf`),
 [#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (testbench
-module must sit next to the request),
+module must sit next to the request — **fixed** by
+[#1005](https://github.com/2AMLogic/klayout-tools/pull/1005), closed as
+completed 2026-08-15, and this repo's pin is past it; the gate-level request
+now uses `testbench.search_path`),
 [#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (the accepted
 SDF re-sim recipe needs Icarus >= 13), and
 [#996](https://github.com/2AMLogic/klayout-tools/issues/996) (no as-built
@@ -247,12 +260,23 @@ artifact store with `klt artifact put`; git keeps a manifest under
 sha256, `artifact:` URI per object) plus the record `.md`. Evidence bytes are
 private and manifests are public, so a manifest is safe to commit.
 
-- `python3 verification/cross_check.py --mint-record` does this itself for
-  the `width-cross-check` transcripts: it stages them in the git-ignored
-  `.artifact-staging/`, stores them, writes the manifest, and only then writes
-  the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is unset, `klt`
-  lacks `artifact put`, or the broker is unreachable, it exits nonzero and
-  writes no manifest and no record. There is no fallback to committing bytes.
+- `python3 verification/cross_check.py --mint-record --author "NAME (issue #N)"`
+  does this itself for the `width-cross-check` transcripts: it stages them in
+  the git-ignored `.artifact-staging/`, stores them, writes the manifest, and
+  only then writes the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is
+  unset, `klt` lacks `artifact put`, or the broker is unreachable, it exits
+  nonzero and writes no manifest and no record. There is no fallback to
+  committing bytes.
+  - `--author` is required with `--mint-record`: the record's
+    **Timestamp / author** line is evidence provenance, not a constant.
+  - `--supersedes RECORD_ID` retires an existing record of the same
+    experiment, writing that id into both the `record-meta` `supersedes` key
+    and the **Supersedes** bullet. That is what exempts the retired record
+    from `check_records.py`'s hash-freshness check, so it is the only way to
+    replace a live record once a hashed input (`rtl/modexp.v`,
+    `verification/cross_check_tb.py`) has changed. An id with no matching
+    record exits nonzero *before* the simulation runs and before anything is
+    stored -- `klt artifact put` is permanent, so a typo must not get that far.
 - **Hand-run legs** (`flow/run-*.sh`, `verification/gate-level/run-gate-level-sim.sh`,
   `klt drc` / `klt lvs`): do not copy raw outputs into `artifacts/<record-id>/`
   for a new record. Instead, from a fleet worker:
@@ -266,7 +290,25 @@ private and manifests are public, so a manifest is safe to commit.
 - `python3 verification/check_artifact_manifests.py` (part of `npm run lint`)
   validates every manifest: v1 schema, `artifact:` URIs only, no `s3://`,
   `arn:aws:` or `http(s)://` strings (the broker URL is never written into
-  the repo), and no tracked file whose sha256 matches a manifest entry.
+  the repo), and no *newly* committed file whose sha256 matches a manifest
+  entry.
+  - "Newly" means added or modified relative to the merge-base with
+    `--base-ref` (default `origin/main`). The rule is there to stop a new
+    run's raw bytes being committed beside the manifest that replaces them,
+    and that is exactly what the diff covers: a copy or rename of legacy
+    bytes to a new path still fails, because the diff is taken with
+    `--no-renames` and the new path counts as an addition.
+  - Scoping it is what makes a *correct* re-run mintable at all. The legacy
+    `width-cross-check` and `gate-level-sim` transcripts under `artifacts/`
+    predate this convention and are frozen (append-only, below); a pinned-seed
+    re-run reproduces those bytes exactly, so the unscoped rule made every new
+    manifest collide with evidence nobody is allowed to delete.
+  - If the base ref cannot be resolved the checker prints a `NOTICE:` and
+    falls back to checking **every** tracked file. It never silently exempts.
+  - Limit: this is a PR-time gate. On `main` the merge-base with `origin/main`
+    is `HEAD`, so the diff is empty -- the same property `check_records.py`'s
+    append-only check already has. CI's lint job checks out full history
+    (`fetch-depth: 0`) so the merge-base resolves there.
 - Manifest-forward only: evidence already under `artifacts/` and the living
   signoff reports under `layout/` stay where they are (append-only).
 
@@ -383,7 +425,17 @@ CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
   its own pinned `klt` (newer than the PDK-heavy legs' pin — see
   `docs/environment.md`) and reads committed envelopes only; no PDK;
 - basic Python syntax checks over the scripts in this directory, and
-  `bash -n` over `scripts/setup-env.sh`.
+  `bash -n` over `scripts/setup-env.sh` and over the Loom suite-runner
+  (`scripts/run-loom-suites.sh`) and its self-test;
+- the Loom suite-runner's own self-test
+  (`scripts/tests/test-run-loom-suites.sh`, #338). That runner is the single
+  implementation of the suite-classification and two-manifest skip logic
+  (`.loom/scripts/tests/ci-excluded.txt` plus the repo-owned
+  `.github/ci-suites-consumer-skips.txt`, #185) used by the `guard-hooks`
+  and `merge-pr-suites` jobs — i.e. it decides whether those jobs ran
+  anything at all — so it is held to the same self-test standard as the
+  checkers above. Hermetic: synthetic suites and manifests in a `mktemp -d`
+  sandbox, no vendored Loom suite executed.
 
 CI does **not** run `klt synthesize`, `klt place-and-route`, `klt drc`, or
 the gate-level simulation legs under `verification/gate-level/` (those need

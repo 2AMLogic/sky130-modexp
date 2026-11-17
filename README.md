@@ -8,9 +8,10 @@ open-source digital flow — cocotb + Icarus for verification, Yosys for
 synthesis, OpenROAD for place-and-route.
 
 **Status: early.** The RTL and its bit-exact testbench exist, a synthesis
-baseline is measured, and the design has been placed and routed to a GDS
-with DRC and LVS run against it; nothing has taped out or been measured in
-silicon. See the maturity ladder below for where things currently stand.
+baseline is measured, and the design has been placed and routed to a GDS that
+is DRC clean and LVS `match` against its as-built netlist; multi-corner timing
+closure is still open, and nothing has taped out or been measured in silicon.
+See the maturity ladder below for where things currently stand.
 
 **Built agent-native.** Every line of RTL, every testbench, every decision
 record and line of documentation in this repo was produced by AI agents
@@ -74,14 +75,22 @@ question, lives in [`spec/modexp.md`](spec/modexp.md).
 
 Maturity ladder: RTL + bit-exact verification → synthesis baseline →
 place-and-route with timing closure → DRC/LVS-clean GDS → shuttle seat →
-measured silicon. **Current position: routed GDS with DRC/LVS run against it,
-the bit-exact suite re-run at gate level against a netlist derived from that
-routed layout, and a delay-annotated (SDF) gate-level regression now passing;
-slow-corner (`ss`) timing closure (17/18 corners) and a fully clean DRC/LVS
-verdict remain open** (see
+measured silicon. **Current position: routed GDS that is DRC clean and LVS
+`match` against its as-built netlist, with the bit-exact suite re-run at gate
+level against that netlist and a delay-annotated (SDF) gate-level regression
+passing; multi-corner timing is the one open item — 100 MHz closes at 10 of
+the 18 ratified corners on the committed layout, binding corner
+`ss_n40C_1v28` at 24.79 MHz (setup WNS −30.332 ns), with hold non-negative at
+all 18.** The SDF annotation is `partial`: Icarus back-annotates net delays
+but drops every `TIMINGCHECK` section, so setup/hold verification is part of
+the open timing item rather than something that regression establishes (see
 [`spec/decision-records/0002`](spec/decision-records/0002-slow-corner-timing-closure-and-mm-red-critical-path.md),
-[`docs/signoff-claim.md`](docs/signoff-claim.md), and
+[`docs/signoff-claim.md`](docs/signoff-claim.md),
+[`verification/signoff/tier-report.json`](verification/signoff/tier-report.json),
+[`verification/signoff/README.md`](verification/signoff/README.md), and
 [`verification/gate-level/README.md`](verification/gate-level/README.md)).
+What the evidence has to do next is laid out in the T1→T4 ladder at
+[`verification/signoff/design-evidence-tiers.md`](verification/signoff/design-evidence-tiers.md).
 
 ## Reproducing it
 
