@@ -438,13 +438,26 @@ The flow and verification scripts (`flow/run-par.sh`,
 `flow/run-sta-corner-sweep.sh`, `verification/gate-level/run-gate-level-sim.sh`,
 `verification/gate-level/spice_to_verilog.py`,
 `layout/lvs/build_reference_netlist.py`, `verification/_repo_utils.py`,
-`verification/check_pins.py`, `scripts/design-env.sh`,
-`scripts/openroad-*.sh`) are written so a byte-identical copy works from any
-directory depth. They take these inputs, all optional here:
+`verification/check_pins.py`, `verification/check_records.py`,
+`verification/cross_check.py`, `verification/check_artifact_manifests.py`,
+`verification/repro_out_of_domain_mismatch.py`,
+`verification/gate-level/gate_level_cross_check.py`,
+`verification/signoff/check_netlist_freshness.py`,
+`verification/signoff/gen_characterization_envelope.py`,
+`scripts/design-env.sh`, `scripts/openroad-*.sh`) are written so a
+byte-identical copy works from any directory depth. The Python entry points
+among them take that depth-independence from `verification/_repo_utils.py`,
+so a vendored copy of any of them must carry `_repo_utils.py` beside it, or
+one directory up as the in-repo layout has it -- the pair travels together
+(`verification/test_check_pins.py`'s nested-copy case asserts exactly this).
+The two deliberate exceptions, `verification/gate-level/spice_to_verilog.py`
+and `layout/lvs/build_reference_netlist.py`, keep their own
+`find_repo_root()` precisely so a single-file copy vendors cleanly. They
+take these inputs, all optional here:
 
 | Variable | Meaning | Default |
 |---|---|---|
-| `REPO_ROOT` | Root of the repository the script operates on | `git rev-parse --show-toplevel`, run from the script's own directory (`check_pins.py --repo-root` beats it) |
+| `REPO_ROOT` | Root of the repository the script operates on | `git rev-parse --show-toplevel`, run from the script's own directory -- for the Python entry points, from `_repo_utils.py`'s directory (`find_repo_root()` is `$REPO_ROOT` if set, else the git lookup from the module's own dir); `check_pins.py --repo-root` and `check_artifact_manifests.py --repo-root` beat it |
 | `DESIGN` | Design name used for file names and the top cell/module | The stem of the repo's single `rtl/*.v`; with zero or several RTL files there is no default and the script fails |
 | `KLT` | The `klt` executable the shell runners invoke. Set it to run a leg against a specific `klayout-tools` pin (e.g. `uv venv /tmp/v && uv pip install --python /tmp/v/bin/python "klayout-tools==<version>"`, then `KLT=/tmp/v/bin/klt`) | `<repo root>/.venv/bin/klt`, else `klt` on `$PATH`, else the script fails. `verification/signoff/run-signoff.sh` honours `KLT` but deliberately skips the `.venv` leg -- its `SIGNOFF_KLT_VERSION` assertion must refuse a `.venv/bin/klt` of any other version rather than silently prefer it |
 | `OPENROAD_PIN_FILE` | File holding the `CIEL_SKY130_VERSION="<rev>"` PDK pin that `openroad-docker.sh` checks | `setup-env.sh` next to the script; if that is absent too, the check is skipped with a notice. An explicit but unreadable file is fatal |
