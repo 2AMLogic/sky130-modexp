@@ -29,8 +29,8 @@ longer is one: `request.parameters` exists at the pinned klt, and
 through it. This harness has simply not been ported -- it is a frozen
 one-off measurement tool for the decision record above, deliberately
 outside the correctness-gating regression, so it carries none of that
-gate's "drive engines through klt" weight. Porting it is tracked as
-`2AMLogic/sky130-modexp#316`.
+gate's "drive engines through klt" weight -- `2AMLogic/sky130-modexp#316`
+settled it as deliberately *not ported*, not merely deferred.
 """
 
 import os
