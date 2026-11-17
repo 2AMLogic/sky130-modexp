@@ -119,8 +119,15 @@ fails.
   decision record 0006).
 - For item 2 `status: pass` is the attestation of the audit, not a tool
   measurement (it is still a hand-written envelope; no `--attest` producer exists for it). A borrowed native envelope is never used for them.
-- **Items 6 and 8** are unaffected by 0.7.0 and stay `unmet`/`no_evidence`
-  (reasons in the table). **Items 4, 5, 11** are as before.
+- **Items 6 and 8** are both cited now, each pinned by `content_hash` in
+  `block-manifest.json`: item 6 by a `not_applicable` block naming
+  `evidence/modexp-spec-rows.json` and `evidence/item-6-na-statement.json`,
+  item 8 by `evidence/item-8-characterization.json`. They grade
+  `not_applicable` and **met** respectively — `not_applicable` is not `met`,
+  and `tier` stays `null` while other items are unmet. **Items 4 and 11**
+  grade **met**; **item 5** is `unmet` (`check_failed`) on its own cited
+  evidence, not on an absence of it. Reasons for all five are in the table
+  above.
 
 Freshness pins (`content_hash`) are set on every citation whose envelope
 carries a checkable input hash. Item 3 pins the DRC report's input layout
