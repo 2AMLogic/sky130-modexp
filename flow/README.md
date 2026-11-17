@@ -258,6 +258,33 @@ current requirement.
   later than this repo's pin, so only a hold *violation count* is available
   here.
 
+  **Update (issue #352, 2026-11-17): the per-corner-rebuild half is closed
+  at the current pin too.** The #86 note above closed the re-timing half
+  (`klt sta` against one physical build); the other half — the
+  N-independent-full-builds loop this bullet describes — is now also
+  expressible natively at the pinned `klt` (`klayout-tools==0.8.0`): one
+  `klt place-and-route` request carrying `pdk.rebuild_corners` (a corner
+  list, mutually exclusive with `pdk.corner`) re-runs the whole flow once
+  per named corner into one aggregated `corner_runs[]` report, and
+  `--backend batch` sends those units to the Spot batch fleet. Verified
+  against the `0.8.0` release's `docs/cli/place-and-route.md` ("Physical
+  rebuild per corner"), not `--help`; `docs/environment.md` records the
+  lineage (the field from
+  [klayout-tools#3550](https://github.com/2AMLogic/klayout-tools/pull/3550);
+  the pin then moved past
+  [klayout-tools#3605](https://github.com/2AMLogic/klayout-tools/pull/3605)'s
+  merge specifically so #201's rebuild could go to the batch fleet).
+  `flow/run-corner-sweep.sh`'s loop is therefore an interim substitute
+  whose exit condition is met — no equivalence between the native sweep
+  and the script's loop is claimed here. The migration and the re-run stay
+  with #201 (the 18-corner rebuild re-qualification), and the script stays
+  byte-identical until then: live record
+  `verification/records/place-and-route/records/20260816-072918-d8eafca.md`
+  hashes its content. One caveat for whoever migrates, unverified here:
+  the aggregated `rebuild_corners` response may lack per-unit wall-clock —
+  the script computes `elapsed_s` itself (`run-corner-sweep.sh:152`) — so
+  per-corner timing may surface as a friction-protocol item.
+
 Also fixed in the same window, load-bearing for this run but owned by this
 repo rather than `klayout-tools`: `scripts/openroad-docker.sh` (from issue
 #13) originally bind-mounted the host working directory at a fixed
