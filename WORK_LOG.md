@@ -9,6 +9,14 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-17
 
+- **PR #368**: fix: align mint-test fixture with run_width's klt_pass/klt_status keys
+- **PR #366**: feat(verification): enforce COCOTB_VERSION pin in ci.yml and doc table
+- **PR #332**: docs(signoff): item 8 report states the DR-0012 LVS match, warnings and engine caveats
+- **PR #317**: refactor(verification): drive each cross-check WIDTH through klt functional-verification
+- **Issue #365** (closed): check_pins.py does not cross-check ci.yml's cocotb installs against COCOTB_VERSION
+- **Issue #360** (closed): cross_check mint test fixture still carries the removed cocotb_pass key
+- **Issue #327** (closed): Item 8 characterization report still says LVS `mismatch`: update the Signoff row to the DR-0012 verdict and regenerate the envelope
+- **Issue #314** (closed): Route verification/cross_check.py's per-WIDTH runs through klt functional-verification: the parameter-override gap is closed at the pinned klt
 - **PR #364**: gate-level: supply cell-model defines via options.defines, drop the sim-defines side file
 - **PR #363**: docs: drop hard-coded instance/cell-type counts the docstring claims it never hard-codes
 - **PR #358**: docs: mark klayout-tools#1002 (SDF) fixed in flow and verification gap lists
