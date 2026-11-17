@@ -3,14 +3,14 @@
   "kind": "generic",
   "status": "pass",
   "t1_item": 9,
-  "summary": "T1 item 9 (Testbenches shipped): 12/12 attestation checks passed (klt signoff --attest)",
+  "summary": "T1 item 9 (Testbenches shipped): 13/13 attestation checks passed (klt signoff --attest)",
   "source": "verification/signoff/inventory-item9.json",
   "attestation": {
     "producer": "klt signoff --attest",
     "inventory_schema_version": 1,
     "hash_algorithm": "sha256-raw-bytes",
-    "check_count": 12,
-    "passed_count": 12,
+    "check_count": 13,
+    "passed_count": 13,
     "checks": [
       {
         "check": "present",
@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/cross_check.py",
         "passed": true,
-        "content_hash": "sha256:5fdbff67861966b6471acfe751c2fc03dccf103d0b60c8be139ca39df720cef1"
+        "content_hash": "sha256:caf45ba8d0f6ef2068f75ca69f4c9f0d28b9b7f3d7364ff805e2dcd1c3532cf2"
       },
       {
         "check": "present",
@@ -59,14 +59,14 @@
         "role": "testbench",
         "path": "verification/test_cross_check_klt_resolution.py",
         "passed": true,
-        "content_hash": "sha256:2cd6206812b5b89755584b38c9ae90ccf24c68632ada686f8ed311e2c0eec53a"
+        "content_hash": "sha256:fab7a48b9cd67d8ab72f0f24eb8a3ea06f6bd7c4fd55aa040b4d2605e0850bed"
       },
       {
         "check": "present",
         "role": "testbench",
         "path": "verification/test_gate_level_klt_resolution.py",
         "passed": true,
-        "content_hash": "sha256:4ef058d53425e566f4142d56c8491ea87d9d4f1b25978a649a10f68464bfbd8b"
+        "content_hash": "sha256:cb8b53e7dfc0753c1c42c6b10cf3f9dd80a4d48b3ffe5f5b92bfba547ceea0b1"
       },
       {
         "check": "present",
@@ -74,6 +74,13 @@
         "path": "verification/test_modexp.py",
         "passed": true,
         "content_hash": "sha256:d5993783035bad3f8299a5e378c9e8334e4e4cedd86bb86e23a8fe0bb29e4acd"
+      },
+      {
+        "check": "present",
+        "role": "testbench",
+        "path": "verification/test_repo_utils.py",
+        "passed": true,
+        "content_hash": "sha256:c8edb38f763c66a68b6c441c25371d6f46e511f11258eed49dfd85592f644093"
       },
       {
         "check": "command",
@@ -124,7 +131,7 @@
         "path": "verification/signoff/inventory-item9.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:be79303f2f4fe6f6c86ac7a6ab159e32e0998ab2b8c73e76d3c4c226173604e1"
+      "content_hash": "sha256:34284cc9846113193f60a0e333f99f243abc358d25412198f58cb417c698afe3"
     }
   }
 }
