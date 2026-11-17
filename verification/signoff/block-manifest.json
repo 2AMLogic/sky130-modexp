@@ -38,7 +38,7 @@
     },
     "9": {
       "file": "verification/signoff/evidence/item-9-testbenches.json",
-      "content_hash": "sha256:75b3e4108d4e75e2e5dbdacc183139956f91b11d9a8ef23b9bff2fa9876455fd"
+      "content_hash": "sha256:55aaa2795dfa5d33f9b805a4fddab0fc7ddfc751f1b3b3e182ed7e79d0df96bb"
     },
     "10": {
       "file": "verification/signoff/evidence/item-10-repo-hygiene.json",

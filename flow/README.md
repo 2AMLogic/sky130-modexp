@@ -310,7 +310,7 @@ testbench search path, below); what remains on delay-annotated gate-level
 simulation is the residual caveats noted on the first bullet, not a missing
 capability:
 
-- **`klt place-and-route` SDF export is missing; the netlist half is
+- **`klt place-and-route` SDF export was missing; the netlist half is
   closed at the current pin (corrected by issue #139).** *Originally written
   as "no post-route netlist export: the response carries `def_path` and
   `gds_path` only" — that is stale: the envelope also carries `verilog_path`
@@ -319,8 +319,9 @@ capability:
   [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996)
   (filed by #8, **fixed** by
   [#997](https://github.com/2AMLogic/klayout-tools/pull/997), merged
-  2026-08-15 — later than this repo's pin, and in any case describing a
-  *re-run* of P&R rather than the committed `layout/modexp.gds`). The SDF
+  2026-08-15 — this repo's `klt` pin bumped past it by issue #55, and in
+  any case describing a *re-run* of P&R rather than the committed
+  `layout/modexp.gds`). The SDF
   half is [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002)
   (**fixed** by
   [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged

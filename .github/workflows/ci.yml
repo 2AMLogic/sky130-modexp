@@ -55,12 +55,22 @@ jobs:
                                    verification/test_check_records.py \
                                    verification/check_pins.py \
                                    verification/test_check_pins.py \
+                                   verification/_repo_utils.py \
+                                   verification/test_repo_utils.py \
+                                   verification/check_artifact_manifests.py \
+                                   verification/repro_out_of_domain_mismatch.py \
                                    verification/test_modexp.py \
                                    verification/gate-level/spice_to_verilog.py \
                                    verification/gate-level/test_spice_to_verilog.py \
                                    verification/gate-level/gate_level_cross_check.py \
-                                   verification/test_gate_level_klt_resolution.py
+                                   verification/test_gate_level_klt_resolution.py \
+                                   verification/signoff/check_netlist_freshness.py \
+                                   verification/signoff/gen_characterization_envelope.py
           bash -n verification/gate-level/run-gate-level-sim.sh
+          bash -n flow/run-par.sh
+          bash -n flow/run-sta-corner-sweep.sh
+          bash -n scripts/design-env.sh
+          bash -n scripts/test-design-env.sh
           bash -n scripts/setup-env.sh
           bash -n scripts/run-loom-suites.sh
           bash -n scripts/tests/test-run-loom-suites.sh
@@ -73,7 +83,7 @@ jobs:
         # mktemp -d sandbox, no vendored Loom suite executed.
         run: ./scripts/tests/test-run-loom-suites.sh
 
-      - name: Record linter, pin-sync checker, and their self-tests (npm run lint)
+      - name: Record linter, pin-sync checker, design-env suite, self-tests (npm run lint)
         run: npm run lint
 
       - name: Record linter, strict append-only against origin/main

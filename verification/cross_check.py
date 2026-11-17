@@ -117,14 +117,23 @@ class CrossCheckError(RuntimeError):
 def _resolve_klt() -> str:
     """Path to the `klt` executable this run drives its simulations through.
 
-    Prefers the one *beside the running interpreter* over `$PATH`: the venv
-    `scripts/setup-env.sh` provisions holds the pinned klt **and** the
-    cocotb it imports, and `reexec_into_venv_if_needed` has already put us
-    inside it. Picking `$PATH`'s klt instead could reach a different release
-    whose own interpreter cannot import that cocotb at all.
+    `$KLT` wins when set and non-empty -- even when the path does not
+    exist, so a typo'd pin fails loudly at the `klt` invocation it drives
+    instead of silently falling back to another binary (issue #376; the
+    same precedence `gate_level_cross_check.py` implements, issue #350,
+    and the shell runners document, `docs/environment.md`'s `KLT` row --
+    the documented pin-check recipe). Then the one *beside the running
+    interpreter* (the venv `scripts/setup-env.sh` provisions holds the
+    pinned klt **and** the cocotb it imports, and
+    `reexec_into_venv_if_needed` has already put us inside it; picking
+    `$PATH`'s klt instead could reach a different release whose own
+    interpreter cannot import that cocotb at all), then `$PATH`.
 
     Fails with an actionable message, not a `FileNotFoundError` traceback.
     """
+    override = os.environ.get("KLT")
+    if override:
+        return override
     beside = Path(sys.executable).parent / "klt"
     if beside.is_file() and os.access(beside, os.X_OK):
         return str(beside)

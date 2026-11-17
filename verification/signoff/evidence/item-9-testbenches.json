@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/cross_check.py",
         "passed": true,
-        "content_hash": "sha256:d8c709e5d83f3ca356bac89da075a8a958b6ba535831bf2048d70591b2179ff6"
+        "content_hash": "sha256:5fdbff67861966b6471acfe751c2fc03dccf103d0b60c8be139ca39df720cef1"
       },
       {
         "check": "present",
@@ -45,7 +45,7 @@
         "role": "testbench",
         "path": "verification/test_check_pins.py",
         "passed": true,
-        "content_hash": "sha256:e67f6110ce83303ada6245bc454ed4fde247f3bca9a56658c565dca2f595d14b"
+        "content_hash": "sha256:ebfe26d54b494f2e64a78dd9e0a747dd16fcf62eed19889c0f3d9a69257bd8a9"
       },
       {
         "check": "present",
@@ -57,9 +57,9 @@
       {
         "check": "present",
         "role": "testbench",
-        "path": "verification/test_gate_level_klt_resolution.py",
+        "path": "verification/test_cross_check_klt_resolution.py",
         "passed": true,
-        "content_hash": "sha256:4ef058d53425e566f4142d56c8491ea87d9d4f1b25978a649a10f68464bfbd8b"
+        "content_hash": "sha256:2cd6206812b5b89755584b38c9ae90ccf24c68632ada686f8ed311e2c0eec53a"
       },
       {
         "check": "present",
@@ -117,7 +117,7 @@
         "path": "verification/signoff/inventory-item9.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:75b3e4108d4e75e2e5dbdacc183139956f91b11d9a8ef23b9bff2fa9876455fd"
+      "content_hash": "sha256:55aaa2795dfa5d33f9b805a4fddab0fc7ddfc751f1b3b3e182ed7e79d0df96bb"
     }
   }
 }
