@@ -9,6 +9,11 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-17
 
+- **PR #380**: docs(environment): extend depth-reuse section to the Python entry points
+- **PR #333**: refactor(verification): resolve the repo root and content hashes through _repo_utils
+- **Issue #349** (closed): _repo_utils.py's new coverage sentence overstates completeness: two find_repo_root() copies remain unnamed in its exception list
+- **Issue #334** (closed): docs(environment): extend the depth-reuse section to the verification Python entry points
+- **Issue #329** (closed): Consolidate the last path-depth repo roots and duplicate sha256 helpers onto verification/_repo_utils.py
 - **PR #377**: fix: honour $KLT ahead of the venv/$PATH probe in cross_check.py klt resolution
 - **PR #375**: docs: correct klayout-tools#996 pin status in flow/README gate-level gaps
 - **PR #373**: fix: surface and keep failing-run evidence when the cross-check gate goes red
