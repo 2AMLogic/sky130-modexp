@@ -46,8 +46,8 @@ need a concrete schema to be checkable rather than aspirational:
 - `gate-level/` — post-route **gate-level** simulation: the derived netlist
   of the routed layout, the `klt functional-verification` request that runs
   `test_modexp.py` (unmodified, via a symlink) against it, and the converter
-  that produces the netlist. See "Gate-level simulation: the netlist
-  derivation gap" below and `verification/gate-level/README.md`.
+  that produces the netlist. See "Gate-level simulation (`gate-level-sim`)"
+  below and `verification/gate-level/README.md`.
 - `check_records.py` — the evidence-record linter (see "Enforcement").
 - `test_check_records.py` — the linter's own self-test: one executable
   negative case per violation class named below, run against a throwaway
