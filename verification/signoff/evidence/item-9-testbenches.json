@@ -45,7 +45,7 @@
         "role": "testbench",
         "path": "verification/test_check_pins.py",
         "passed": true,
-        "content_hash": "sha256:669e69847285333a84c5dae353dec3fdf8798cc956f5f80180703ac89191f064"
+        "content_hash": "sha256:e67f6110ce83303ada6245bc454ed4fde247f3bca9a56658c565dca2f595d14b"
       },
       {
         "check": "present",
