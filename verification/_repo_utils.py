@@ -20,6 +20,18 @@ preamble locates the *sibling module* by relative path, which is
 unavoidable; the *repo root* still comes from `find_repo_root()` below, so
 `$REPO_ROOT` is honoured no matter how deep the importing script sits.
 
+The deliberate exceptions, named so the next duplication pass does not
+re-file them (issue #349): `gate-level/spice_to_verilog.py` keeps its own
+`find_repo_root()` because it is built to be vendored *outside* the repo --
+a copy resolves its `spice_lef_parsing` import through
+`$SPICE_LEF_PARSING_DIR`, and importing this module would hard-code a
+`../` relationship vendoring breaks -- and its bytes are pinned in T1
+item 9 signoff evidence, so even a mechanical edit costs a re-attestation.
+Outside `verification/`, `layout/lvs/build_reference_netlist.py` carries
+the same vendorable-single-file rationale (#310 proposes removing it
+outright). Those two are the complete `def find_repo_root` census beyond
+this file; every other consumer imports from here.
+
 `VENV_PYTHON` and `reexec_into_venv_if_needed()` are the analogous shared
 home for the "re-exec under `.venv/bin/python3` when the ambient interpreter
 can't import cocotb" handshake used by both `cross_check.py` and
@@ -104,9 +116,19 @@ def __getattr__(name: str):
 def run_git(*args: str) -> str:
     """Run `git <args>` with cwd=REPO_ROOT; raise `CalledProcessError` on
     non-zero exit (`check=True`). Returns stdout with trailing whitespace
-    stripped."""
+    stripped.
+
+    The cwd is read from the module attribute *before* falling back to the
+    memoized resolver: PEP 562 `__getattr__` is consulted only when normal
+    lookup fails, so a read of `_repo_root()` alone made an assignment like
+    `test_cross_check_mint.py`'s fixture isolation
+    (`_repo_utils.REPO_ROOT = root`) silently inert -- the module dict got
+    the patch while `run_git` kept running against the real repo
+    (PR #333 review). `globals().get(...)` is an in-dict lookup and never
+    triggers the lazy resolution."""
     return subprocess.run(
-        ["git", *args], cwd=_repo_root(), capture_output=True, text=True, check=True
+        ["git", *args], cwd=globals().get("REPO_ROOT") or _repo_root(),
+        capture_output=True, text=True, check=True
     ).stdout.strip()
 
 
@@ -139,6 +161,10 @@ def reexec_into_venv_if_needed(script_path: Path, no_reexec_env: str) -> None:
     environment variable this call uses as its own re-exec guard; callers
     must pass a name distinct from any other script sharing this helper
     (e.g. `"CROSS_CHECK_NO_REEXEC"`) so each script's guard is independent.
+
+    Like `run_git()`, the venv path reads the module attribute first so a
+    patched `_repo_utils.VENV_PYTHON` override is honoured, falling back to
+    the memoized resolver only when the attribute is unset.
     """
     try:
         import cocotb_tools.runner  # noqa: F401
@@ -147,7 +173,7 @@ def reexec_into_venv_if_needed(script_path: Path, no_reexec_env: str) -> None:
     except ImportError:
         pass
 
-    venv_python = _repo_root() / ".venv" / "bin" / "python3"
+    venv_python = globals().get("VENV_PYTHON") or _repo_root() / ".venv" / "bin" / "python3"
     if not venv_python.exists():
         return
     # Compare the interpreter *directory*, not the resolved binary: a venv's

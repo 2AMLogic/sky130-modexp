@@ -24,6 +24,10 @@ testing anything checker-specific. So the contracts live here, once:
 5. `sha256_of()` hashes file bytes, `sha256:`-prefixed by default and bare
    hex under `prefix=False` -- the two forms the committed pins files and
    artifact manifests compare against, from one implementation.
+6. The lazily resolved attributes stay patchable: assigning
+   `_repo_utils.REPO_ROOT` redirects `run_git()` -- the fixture-isolation
+   contract `test_cross_check_mint.py` depends on, and exactly what a
+   cache-only read silently deadened (PR #333 review).
 
 Usage: python3 verification/test_repo_utils.py
 Exit codes: 0 all cases behave as specified, 1 at least one did not.
@@ -201,6 +205,53 @@ def case_strict_modes_outside_a_git_tree() -> None:
         )
 
 
+def case_patching_repo_root_redirects_run_git() -> None:
+    """`_repo_utils.REPO_ROOT = fixture` must redirect `run_git()`.
+
+    `run_git` reads the module attribute before the memoized resolver, so
+    assigning the attribute stays the fixture-isolation mechanism
+    `test_cross_check_mint.py` uses. A read that only consults
+    `_repo_root()` keeps running git against the real repo while the patch
+    looks effective -- the regression PR #333's review caught, invisible
+    to a test that never asserts on the value.
+    """
+    real = subprocess.run(
+        ["git", "-C", str(MODULE.parent), "rev-parse", "--show-toplevel"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    with tempfile.TemporaryDirectory(prefix="repo-utils-selftest-") as tmp:
+        repo = Path(tmp) / "fixture"
+        repo.mkdir()
+        subprocess.run(["git", "init", "--quiet", str(repo)], check=True)
+        want = subprocess.run(
+            ["git", "-C", str(repo), "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        record("fixture root differs from this checkout's root (precondition)",
+               want != real, f"fixture {want}, real {real}")
+        rc, out = run_probe(
+            MODULE.parent,
+            "import _repo_utils\n"
+            f"_repo_utils.REPO_ROOT = {str(repo)!r}\n"
+            "print(_repo_utils.run_git('rev-parse', '--show-toplevel'))\n",
+            cwd=Path(tmp),  # outside the fixture repo, like the real callers
+            repo_root=None,
+        )
+        record("patching _repo_utils.REPO_ROOT redirects run_git()",
+               rc == 0 and out.strip() == want, f"exit {rc}, want {want}: {out}")
+        # Control, the direction the regression was measured in: without the
+        # patch the same probe resolves this checkout, not the fixture.
+        rc2, out2 = run_probe(
+            MODULE.parent,
+            "import _repo_utils\n"
+            "print(_repo_utils.run_git('rev-parse', '--show-toplevel'))\n",
+            cwd=Path(tmp),
+            repo_root=None,
+        )
+        record("unpatched run_git() resolves the real repo, not the fixture",
+               rc2 == 0 and out2.strip() == real, f"exit {rc2}, want {real}: {out2}")
+
+
 def case_sha256_prefix_contract() -> None:
     """One algorithm, two serializations: prefixed and bare hex."""
     sys.path.insert(0, str(MODULE.parent))
@@ -236,6 +287,7 @@ def main() -> int:
     case_env_wins_and_is_resolved()
     case_nested_copy_uses_its_own_git_toplevel()
     case_strict_modes_outside_a_git_tree()
+    case_patching_repo_root_redirects_run_git()
     case_sha256_prefix_contract()
     print(f"test_repo_utils: {len(failures)} failure(s)")
     return 1 if failures else 0
