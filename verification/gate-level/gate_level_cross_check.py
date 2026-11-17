@@ -86,29 +86,12 @@ CELL_MODEL_DEFINES: dict[str, str | None] = {
 # `$REPO_ROOT` is honoured and the path depth of this file is irrelevant.
 sys.path.insert(0, str(VERIFICATION_DIR))
 
-from _repo_utils import REPO_ROOT, reexec_into_venv_if_needed  # noqa: E402
-
-
-def _resolve_klt() -> str | None:
-    """Resolve the `klt` binary this run drives its simulation through.
-
-    `$KLT` wins when set and non-empty -- even when the path does not
-    exist, so a typo'd pin fails loudly at the `klt` invocation it drives
-    instead of silently falling back to another binary (issue #350; the
-    same precedence the shell runners implement, `docs/environment.md`'s
-    `KLT` row). Then the one *beside the running interpreter* (the venv
-    `scripts/setup-env.sh` provisions holds the pinned klt **and** the
-    cocotb it imports -- `reexec_into_venv_if_needed` has already put us
-    inside it), then `$PATH`. Returns `None` when nothing resolves;
-    `main()` turns that into the pre-flight FATAL.
-    """
-    override = os.environ.get("KLT")
-    if override:
-        return override
-    beside = Path(sys.executable).parent / "klt"
-    if beside.is_file() and os.access(beside, os.X_OK):
-        return str(beside)
-    return shutil.which("klt")
+from _repo_utils import (  # noqa: E402
+    REPO_ROOT,
+    klt_error_message,
+    reexec_into_venv_if_needed,
+    resolve_klt,
+)
 
 
 def resolve_pdk_verilog(klt: str) -> tuple[Path, Path, str]:
@@ -153,23 +136,6 @@ def build_request(primitives_v: Path, cells_v: Path, seed: int) -> dict:
     }
 
 
-def _klt_error_message(stderr: str, limit: int = 600) -> str:
-    """klt's own diagnostic for a run that produced no verdict.
-
-    Under `--format json` klt writes `{"schema_version": 1, "error":
-    {"command": ..., "message": ...}}` to **stderr**; unwrap it to the bare
-    message so the failure reads as one line instead of a nested document.
-    Anything else (a traceback, a crash before the envelope) is passed
-    through tail-truncated rather than swallowed.
-    """
-    text = (stderr or "").strip()
-    try:
-        message = json.loads(text)["error"]["message"]
-    except (json.JSONDecodeError, KeyError, TypeError):
-        return text[-limit:] if len(text) > limit else text
-    return str(message)
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cases", type=int, default=DEFAULT_CASES)
@@ -186,7 +152,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    klt = _resolve_klt()
+    klt = resolve_klt()
     if klt is None:
         print(
             "FATAL: no `klt` executable beside "
@@ -281,7 +247,7 @@ def main() -> int:
             print(
                 f"FATAL: `klt functional-verification` exited "
                 f"{completed.returncode} without a response envelope on "
-                f"stdout: {_klt_error_message(completed.stderr)}",
+                f"stdout: {klt_error_message(completed.stderr)}",
                 file=sys.stderr,
             )
             return 1

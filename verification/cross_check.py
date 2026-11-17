@@ -81,7 +81,15 @@ import sys
 import tempfile
 from pathlib import Path
 
-from _repo_utils import REPO_ROOT, reexec_into_venv_if_needed, run_git, sha256_of
+from _repo_utils import (
+    REPO_ROOT,
+    klt_error_message,
+    reexec_into_venv_if_needed,
+    resolve_klt,
+    run_git,
+    sha256_of,
+    tail,
+)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 RTL_SOURCE = REPO_ROOT / "rtl" / "modexp.v"
@@ -112,73 +120,6 @@ class CrossCheckError(RuntimeError):
     -- klt missing, the request rejected, or stdout that is not the
     documented JSON envelope.
     """
-
-
-def _resolve_klt() -> str:
-    """Path to the `klt` executable this run drives its simulations through.
-
-    `$KLT` wins when set and non-empty -- even when the path does not
-    exist, so a typo'd pin fails loudly at the `klt` invocation it drives
-    instead of silently falling back to another binary (issue #376; the
-    same precedence `gate_level_cross_check.py` implements, issue #350,
-    and the shell runners document, `docs/environment.md`'s `KLT` row --
-    the documented pin-check recipe). Then the one *beside the running
-    interpreter* (the venv `scripts/setup-env.sh` provisions holds the
-    pinned klt **and** the cocotb it imports, and
-    `reexec_into_venv_if_needed` has already put us inside it; picking
-    `$PATH`'s klt instead could reach a different release whose own
-    interpreter cannot import that cocotb at all), then `$PATH`.
-
-    Fails with an actionable message, not a `FileNotFoundError` traceback.
-    """
-    override = os.environ.get("KLT")
-    if override:
-        return override
-    beside = Path(sys.executable).parent / "klt"
-    if beside.is_file() and os.access(beside, os.X_OK):
-        return str(beside)
-    found = shutil.which("klt")
-    if found is not None:
-        return found
-    print(
-        "FATAL: no `klt` executable beside "
-        f"{sys.executable} or on $PATH -- the cross-check drives Icarus "
-        "through `klt functional-verification`.\n"
-        "  -> provision the pinned environment first:\n"
-        "       ./scripts/setup-env.sh\n"
-        "     then re-run. See docs/environment.md for the pinned\n"
-        "     klt/cocotb/Python versions and the toolchain this needs.",
-        file=sys.stderr,
-    )
-    raise SystemExit(1)
-
-
-def _klt_error_message(stderr: str, limit: int = 600) -> str:
-    """klt's own diagnostic for a run that produced no verdict.
-
-    Under `--format json` klt writes `{"schema_version": 1, "error":
-    {"command": ..., "message": ...}}` to **stderr**; unwrap it to the bare
-    message so the failure reads as one line instead of a nested document.
-    Anything else (a traceback, a crash before the envelope) is passed
-    through tail-truncated rather than swallowed.
-    """
-    text = (stderr or "").strip()
-    try:
-        message = json.loads(text)["error"]["message"]
-    except (json.JSONDecodeError, KeyError, TypeError):
-        return _tail(text, limit)
-    return str(message)
-
-
-def _tail(text: str, limit: int) -> str:
-    """`text` tail-truncated to `limit` characters.
-
-    The bound `_klt_error_message` applies to stderr; shared so every
-    diagnostic this script prints on a red gate stays bounded the same way.
-    The *end* is what survives because simulator diagnostics put the actual
-    failure at the bottom of their output.
-    """
-    return text[-limit:] if len(text) > limit else text
 
 
 def _failing_test_entries(envelope: dict) -> list[dict]:
@@ -216,9 +157,9 @@ def _failing_tests_block(
         if test.get("error_type"):
             line += f": {test['error_type']}"
         if test.get("error_message"):
-            line += f": {_tail(test['error_message'], per_entry)}"
+            line += f": {tail(test['error_message'], per_entry)}"
         lines.append(line)
-    return _tail("\n".join(lines), limit)
+    return tail("\n".join(lines), limit)
 
 
 def records_dir() -> Path:
@@ -372,7 +313,7 @@ def run_width(
         raise CrossCheckError(
             f"`klt functional-verification` (WIDTH={width}) exited "
             f"{completed.returncode} without a response envelope on stdout: "
-            f"{_klt_error_message(completed.stderr)}"
+            f"{klt_error_message(completed.stderr)}"
         ) from None
 
     mismatches = 0
@@ -404,7 +345,7 @@ def run_width(
         "transcript_path": transcript_path,
         "klt_run_dir": run_dir,
         "klt_failing_tests": _failing_test_entries(envelope) if not_pass else [],
-        "klt_stderr_tail": _klt_error_message(completed.stderr) if not_pass else "",
+        "klt_stderr_tail": klt_error_message(completed.stderr) if not_pass else "",
     }
 
 
@@ -606,7 +547,19 @@ def main() -> int:
         print(f"FATAL: {RTL_SOURCE} not found", file=sys.stderr)
         return 1
 
-    klt = _resolve_klt()
+    klt = resolve_klt()
+    if klt is None:
+        print(
+            "FATAL: no `klt` executable beside "
+            f"{sys.executable} or on $PATH -- the cross-check drives Icarus "
+            "through `klt functional-verification`.\n"
+            "  -> provision the pinned environment first:\n"
+            "       ./scripts/setup-env.sh\n"
+            "     then re-run. See docs/environment.md for the pinned\n"
+            "     klt/cocotb/Python versions and the toolchain this needs.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
     if shutil.which("iverilog") is None:
         print(
             "FATAL: `iverilog` is not on $PATH -- the cross-check drives "

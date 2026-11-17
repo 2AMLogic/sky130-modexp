@@ -28,6 +28,17 @@ testing anything checker-specific. So the contracts live here, once:
    `_repo_utils.REPO_ROOT` redirects `run_git()` -- the fixture-isolation
    contract `test_cross_check_mint.py` depends on, and exactly what a
    cache-only read silently deadened (PR #333 review).
+7. `resolve_klt()` implements the documented `klt` precedence (issue #382,
+   consolidating the two drivers' private copies, issues #350/#376): `$KLT`
+   verbatim when set and non-empty -- even when the path does not exist, so
+   a typo'd pin fails loudly at the `klt` invocation it drives instead of
+   silently falling back -- then the `klt` beside the running interpreter,
+   then `klt` on `$PATH`, then `None` (each caller owns its own FATAL
+   wording for the `None` case, pinned in the callers' own self-tests).
+8. `klt_error_message()` unwraps klt's `--format json` stderr error
+   envelope to the bare message and passes anything else (a traceback, a
+   crash before the envelope) through tail-truncated via `tail()`, which
+   keeps the *end* -- where simulator diagnostics put the actual failure.
 
 Usage: python3 verification/test_repo_utils.py
 Exit codes: 0 all cases behave as specified, 1 at least one did not.
@@ -36,8 +47,10 @@ Exit codes: 0 all cases behave as specified, 1 at least one did not.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -280,6 +293,122 @@ def _rejects_positional(fn, arg) -> bool:
     return False
 
 
+def case_resolve_klt_precedence() -> None:
+    """`resolve_klt()` precedence: `$KLT` verbatim (even nonexistent) ->
+    beside-interpreter -> `$PATH` -> `None`.
+
+    These are the legs both cross-check drivers used to carry as private
+    `_resolve_klt()` copies kept in sync by prose (issues #350/#376); one
+    implementation means one place to test them (issue #382). Exercised
+    against stub binaries -- the resolver only ever checks existence,
+    never executes -- with `sys.executable` redirected into a throwaway
+    directory so the interpreter-beside leg is under the test's control.
+    """
+    sys.path.insert(0, str(MODULE.parent))
+    from _repo_utils import resolve_klt
+
+    def _write_exec_stub(path: Path) -> Path:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("#!/bin/sh\nexit 111  # stub klt; never meant to run\n")
+        path.chmod(path.stat().st_mode | stat.S_IXUSR)
+        return path
+
+    def _resolve(klt: str | None, fake_root: Path, path_env: str) -> str | None:
+        saved_env = dict(os.environ)
+        saved_executable = sys.executable
+        try:
+            os.environ["PATH"] = path_env
+            if klt is None:
+                os.environ.pop("KLT", None)
+            else:
+                os.environ["KLT"] = klt
+            sys.executable = str(fake_root / ".venv" / "bin" / "python")
+            return resolve_klt()
+        finally:
+            os.environ.clear()
+            os.environ.update(saved_env)
+            sys.executable = saved_executable
+
+    with tempfile.TemporaryDirectory(prefix="repo-utils-resolve-klt-") as td:
+        tmp = Path(td)
+        fake_root = tmp / "repo"
+        env_klt = _write_exec_stub(tmp / "env-bin" / "klt")
+        venv_klt = _write_exec_stub(fake_root / ".venv" / "bin" / "klt")
+        path_klt = _write_exec_stub(tmp / "path-bin" / "klt")
+        stub_path = f"{tmp / 'path-bin'}{os.pathsep}{os.environ['PATH']}"
+
+        # $KLT wins over both an interpreter-adjacent klt and one on $PATH.
+        resolved = _resolve(str(env_klt), fake_root, stub_path)
+        record("$KLT is returned verbatim, ahead of the venv and $PATH",
+               resolved == str(env_klt), f"got {resolved!r}")
+
+        # A nonexistent $KLT is still returned verbatim: no existence
+        # check, no silent fallback. The failure belongs to the klt
+        # invocation it drives, so a typo'd pin fails loudly instead of
+        # quietly running whatever else happens to be installed.
+        resolved = _resolve(str(tmp / "no-such" / "klt"), fake_root, stub_path)
+        record("nonexistent $KLT is returned verbatim (no fallback)",
+               resolved == str(tmp / "no-such" / "klt"), f"got {resolved!r}")
+
+        # Empty $KLT is treated as unset: interpreter-adjacent leg wins.
+        resolved = _resolve("", fake_root, stub_path)
+        record('KLT="" is treated as unset (interpreter-adjacent leg used)',
+               resolved == str(venv_klt), f"got {resolved!r}")
+
+        # $KLT unset, interpreter-adjacent present: it wins over $PATH.
+        resolved = _resolve(None, fake_root, stub_path)
+        record("unset KLT prefers the interpreter-adjacent klt over $PATH",
+               resolved == str(venv_klt), f"got {resolved!r}")
+
+        # $KLT unset, no interpreter-adjacent klt: `klt` on $PATH.
+        resolved = _resolve(None, tmp / "repo-no-venv", stub_path)
+        record("unset KLT with no interpreter-adjacent klt falls to $PATH",
+               resolved == str(path_klt), f"got {resolved!r}")
+
+        # Nothing anywhere: the helper contract is `None`; each caller
+        # turns that into its own actionable FATAL (kept pinned by the
+        # callers' own self-tests).
+        (tmp / "empty-bin").mkdir()
+        resolved = _resolve(None, tmp / "repo-no-venv", str(tmp / "empty-bin"))
+        record("nothing anywhere resolves to None (callers own the FATAL)",
+               resolved is None, f"got {resolved!r}")
+
+
+def case_klt_error_message_unwrap_and_tail() -> None:
+    """`klt_error_message()` unwraps klt's stderr error envelope to the
+    bare message; anything else passes through tail-truncated via
+    `tail()`, which keeps the end where the failure text is."""
+    sys.path.insert(0, str(MODULE.parent))
+    from _repo_utils import klt_error_message, tail
+
+    envelope = json.dumps({
+        "schema_version": 1,
+        "error": {"command": "functional-verification",
+                  "message": "boom: no simulator"},
+    })
+    record("klt stderr error envelope unwraps to the bare message",
+           klt_error_message(envelope) == "boom: no simulator",
+           klt_error_message(envelope))
+
+    not_json = "traceback " + "x" * 2000 + "the-actual-failure"
+    got = klt_error_message(not_json)
+    record("non-envelope stderr passes through tail-truncated",
+           got == tail(not_json, 600) and got.endswith("the-actual-failure"),
+           got[-60:])
+
+    record("empty stderr yields an empty diagnostic",
+           klt_error_message("") == "", repr(klt_error_message("")))
+
+    no_error = json.dumps({"schema_version": 1, "status": "pass"})
+    record("valid JSON without an error envelope passes through",
+           klt_error_message(no_error) == no_error, klt_error_message(no_error))
+
+    record("tail bounds the length and keeps the end",
+           tail("a" * 5000 + "end", 600) == "a" * 597 + "end"
+           and tail("short", 600) == "short",
+           tail("a" * 5000 + "end", 600)[-60:])
+
+
 def main() -> int:
     if not MODULE.exists():
         print(f"FATAL: {MODULE} not found", file=sys.stderr)
@@ -289,6 +418,8 @@ def main() -> int:
     case_strict_modes_outside_a_git_tree()
     case_patching_repo_root_redirects_run_git()
     case_sha256_prefix_contract()
+    case_resolve_klt_precedence()
+    case_klt_error_message_unwrap_and_tail()
     print(f"test_repo_utils: {len(failures)} failure(s)")
     return 1 if failures else 0
 

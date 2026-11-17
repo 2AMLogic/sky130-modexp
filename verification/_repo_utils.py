@@ -42,6 +42,19 @@ near-identical copies were consolidated here. The guard env-var name is a
 required parameter so each caller keeps its own distinct opt-out
 (`CROSS_CHECK_NO_REEXEC` / `GATE_LEVEL_NO_REEXEC`).
 
+`resolve_klt()`, `klt_error_message()` and `tail()` are the same
+consolidation for the two cross-check drivers' `klt` plumbing (issue #382):
+the binary-resolution precedence (`$KLT` -> beside-interpreter -> `$PATH`,
+revised once per driver already, issues #350/#376, and until now kept in
+sync across the two files by prose) and the stderr error-envelope unwrap
+both drivers report a no-verdict failure through. Each caller keeps its
+own "nothing resolved" FATAL wording -- the resolver returns `None`
+instead of owning the message -- and `cross_check.py` imports `tail()`
+for its red-gate diagnostics, which bound exactly like
+`klt_error_message()`. The precedence and unwrap contracts are tested in
+`verification/test_repo_utils.py`; the callers' own self-tests pin their
+script-specific legs.
+
 This module is a plain sibling import (`from _repo_utils import REPO_ROOT,
 run_git, sha256_of`), not a cocotb test module or a standalone entry point.
 
@@ -56,7 +69,9 @@ this module's remit for the same reason.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -198,3 +213,63 @@ def reexec_into_venv_if_needed(script_path: Path, no_reexec_env: str) -> None:
         flush=True,
     )
     os.execv(str(venv_python), [str(venv_python), str(script_path.resolve()), *sys.argv[1:]])
+
+
+def resolve_klt() -> str | None:
+    """Path to the `klt` executable this run drives its simulations
+    through, or `None` when nothing resolves.
+
+    `$KLT` wins when set and non-empty -- even when the path does not
+    exist, so a typo'd pin fails loudly at the `klt` invocation it drives
+    instead of silently falling back to another binary (issue #376; the
+    same precedence the shell runners document, `docs/environment.md`'s
+    `KLT` row -- the documented pin-check recipe). Then the one *beside
+    the running interpreter* (the venv `scripts/setup-env.sh` provisions
+    holds the pinned klt **and** the cocotb it imports, and
+    `reexec_into_venv_if_needed` has already put us inside it; picking
+    `$PATH`'s klt instead could reach a different release whose own
+    interpreter cannot import that cocotb at all), then `$PATH`.
+
+    Returns `None` rather than exiting so each caller owns its own
+    actionable "nothing found" FATAL (`cross_check.py` raises
+    `SystemExit(1)` with its provisioning recipe,
+    `gate_level_cross_check.py` returns 1 from `main()`) -- the wording
+    differs deliberately, so the message is not flattened into a shared
+    lowest common denominator (issue #382). The precedence legs are
+    tested in `verification/test_repo_utils.py`.
+    """
+    override = os.environ.get("KLT")
+    if override:
+        return override
+    beside = Path(sys.executable).parent / "klt"
+    if beside.is_file() and os.access(beside, os.X_OK):
+        return str(beside)
+    return shutil.which("klt")
+
+
+def tail(text: str, limit: int) -> str:
+    """`text` tail-truncated to `limit` characters.
+
+    The bound `klt_error_message()` applies to stderr; imported by
+    `cross_check.py` so every diagnostic it prints on a red gate stays
+    bounded the same way. The *end* is what survives because simulator
+    diagnostics put the actual failure at the bottom of their output.
+    """
+    return text[-limit:] if len(text) > limit else text
+
+
+def klt_error_message(stderr: str, limit: int = 600) -> str:
+    """klt's own diagnostic for a run that produced no verdict.
+
+    Under `--format json` klt writes `{"schema_version": 1, "error":
+    {"command": ..., "message": ...}}` to **stderr**; unwrap it to the bare
+    message so the failure reads as one line instead of a nested document.
+    Anything else (a traceback, a crash before the envelope) is passed
+    through tail-truncated rather than swallowed.
+    """
+    text = (stderr or "").strip()
+    try:
+        message = json.loads(text)["error"]["message"]
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return tail(text, limit)
+    return str(message)

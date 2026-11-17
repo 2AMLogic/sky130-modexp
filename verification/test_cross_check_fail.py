@@ -16,8 +16,9 @@ a stubbed `klt` (+ stub `iverilog`, so nothing simulates) and asserts:
 2. An all-pass run exits 0 with no extra output and removes the whole build
    root, exactly as before.
 3. `_failing_tests_block` stays bounded: a huge assertion message is
-   tail-truncated to the same limit `_klt_error_message` uses, keeping the
-   end where the actual failure text is.
+   tail-truncated to the same limit `klt_error_message` (in
+   `_repo_utils`, issue #382) uses, keeping the end where the actual
+   failure text is.
 
 `--mint-record` is intentionally not exercised here: it runs only on an
 all-pass gate (`overall_ok`), so the keep-failing-artifacts cleanup path can
@@ -233,7 +234,7 @@ def test_all_pass_cleans_up_unchanged() -> None:
 
 
 def test_failing_tests_block_is_bounded() -> None:
-    """`_failing_tests_block` tail-truncates to `_klt_error_message`'s limit."""
+    """`_failing_tests_block` tail-truncates to `klt_error_message`'s limit."""
     huge = "x" * 5000 + "the-actual-failure"
     entries = [{
         "name": "cross_check_tb.cross_check",
