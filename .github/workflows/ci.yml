@@ -55,10 +55,16 @@ jobs:
                                    verification/test_check_records.py \
                                    verification/check_pins.py \
                                    verification/test_check_pins.py \
+                                   verification/_repo_utils.py \
+                                   verification/test_repo_utils.py \
+                                   verification/check_artifact_manifests.py \
+                                   verification/repro_out_of_domain_mismatch.py \
                                    verification/test_modexp.py \
                                    verification/gate-level/spice_to_verilog.py \
                                    verification/gate-level/test_spice_to_verilog.py \
-                                   verification/gate-level/gate_level_cross_check.py
+                                   verification/gate-level/gate_level_cross_check.py \
+                                   verification/signoff/check_netlist_freshness.py \
+                                   verification/signoff/gen_characterization_envelope.py
           bash -n verification/gate-level/run-gate-level-sim.sh
           bash -n flow/run-par.sh
           bash -n flow/run-sta-corner-sweep.sh
