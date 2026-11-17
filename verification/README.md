@@ -47,8 +47,8 @@ need a concrete schema to be checkable rather than aspirational:
   of the routed layout, the `klt functional-verification` request that runs
   `test_modexp.py` (unmodified — this very file, reached through the
   request's `testbench.search_path`) against it, and the converter
-  that produces the netlist. See "Gate-level simulation: the netlist
-  derivation gap" below and `verification/gate-level/README.md`.
+  that produces the netlist. See "Gate-level simulation (`gate-level-sim`)"
+  below and `verification/gate-level/README.md`.
 - `check_records.py` — the evidence-record linter (see "Enforcement").
 - `test_check_records.py` — the linter's own self-test: one executable
   negative case per violation class named below, run against a throwaway
@@ -126,80 +126,28 @@ design-detail-free, at
 — once `klt functional-verification` gains a parameter override, this
 driver script should be retired in favor of a plain klt request per `WIDTH`.
 
-## Gate-level simulation: the netlist derivation gap (and the workaround)
+## Gate-level simulation (`gate-level-sim`)
 
 The `gate-level-sim` experiment re-runs `test_modexp.py` — the same file,
 byte for byte, reached through the gate-level request's
 `testbench.search_path` rather than a copy — against a
-gate-level netlist of the **routed layout** instead of against
-`rtl/modexp.v`. That requires a netlist of what P&R actually built, and
-there is no such artifact:
+gate-level netlist of the **routed layout** instead of against `rtl/modexp.v`.
+That netlist is derived from `layout/modexp.gds` itself: the `klt extract
+--abstract-cells` abstraction the LVS flow produces is converted to
+structural `sky130_fd_sc_hd` Verilog by
+`verification/gate-level/spice_to_verilog.py`, which refuses to write output
+disagreeing with `layout/lvs/modexp_layout_extract_report.json`. So the
+simulated design's provenance runs through the drawn geometry, not through
+P&R's own view of what it built — a cross-check of the committed as-built
+netlist `layout/modexp.v`, deliberately kept alongside it rather than
+replaced by it.
 
-- `klt place-and-route`'s response contract carries `def_path` and
-  `gds_path` **only**. There is no `write_verilog`-equivalent netlist export
-  at this repo's pinned `klt` revision, and no SDF export either.
-- The one Verilog artifact #7's run produced,
-  `verification/records/place-and-route/artifacts/20260814-203901-c741877/modexp_synth_tied.v`,
-  is that record's own **"netlist (post-synthesis)"** — the netlist fed
-  *into* P&R. #8 established that the routed layout has 718 instances
-  against its 683 (+1 tie): 35 CTS/timing-fixup insertions and 5 resizes.
-  Simulating it and calling the result "post-route" would be an overclaim
-  that *passes*, so no test failure would ever surface it.
-
-The workaround, and the reason this experiment's netlist has provenance
-worth trusting: **derive the netlist from the layout itself**.
-`verification/gate-level/spice_to_verilog.py` converts #8's
-`layout/lvs/modexp_layout_abstracted.spice` (the `klt extract
---abstract-cells` abstraction of `layout/modexp.gds`) into structural
-Verilog instantiating `sky130_fd_sc_hd` cells, and refuses to write output
-that disagrees with `layout/lvs/modexp_layout_extract_report.json` on
-instance counts (718), cell types (59), pin count (68), or net membership —
-or that contains a two-driver short or a floating cell input.
-
-**What that netlist does and does not model** — restating #8's own scope
-caveat, which carries forward here verbatim, plus what is specific to
-simulation:
-
-- **No parasitic extraction.** No R, no C, no coupling; `klt extract` was
-  run without `--parasitics` and nothing here reads a SPEF.
-- **No timing, and no corner.** Zero-delay logic (the only delay is a 1 ns
-  `UNIT_DELAY` on flop outputs, a race-avoidance device, not a
-  characterized delay). sky130A ships 18 liberty corners but a single,
-  corner-independent set of Verilog cell models, so corner-dependence enters
-  a simulation only via SDF — which is the blocked leg. Timing evidence
-  remains `verification/records/place-and-route/`'s OpenSTA corner sweep.
-- **No power/ground network.** Power pins are dropped (`USE_POWER_PINS`
-  undefined); this GDS has no PDN, so extracted rail connectivity is
-  fragmented per placement row.
-- **Cell-instance granularity, not transistor level** — each cell is the
-  PDK's own behavioural model; its transistors are foundry-qualified library
-  content.
-- **Not an independent check of the extraction.** Extraction and simulation
-  share `klt extract`'s output as a common input.
-
-The upstream gaps are filed:
-[klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)
-(no compile-time defines in the `functional-verification` request — **fixed**
-by [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006), closed as
-completed 2026-08-15, and this repo's pin is past it; defines now flow
-through `options.defines`, and the local `sky130_fd_sc_hd_sim_defines.v`
-that used to substitute for the field is gone — removing it superseded the
-record that hashed it (`20261027-013940-98bf55d` →
-`20261117-112523-2abccc2`, issue #322)),
-[#1002](https://github.com/2AMLogic/klayout-tools/issues/1002) (no SDF
-export / no SDF option — **fixed** by
-[#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged
-2026-08-15, and this repo's pin is past it; the gate-level request now
-annotates delay through `options.sdf`),
-[#1003](https://github.com/2AMLogic/klayout-tools/issues/1003) (testbench
-module must sit next to the request — **fixed** by
-[#1005](https://github.com/2AMLogic/klayout-tools/pull/1005), closed as
-completed 2026-08-15, and this repo's pin is past it; the gate-level request
-now uses `testbench.search_path`),
-[#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) (the accepted
-SDF re-sim recipe needs Icarus >= 13), and
-[#996](https://github.com/2AMLogic/klayout-tools/issues/996) (no as-built
-netlist export — filed by #8, fixed upstream later than this repo's pin).
+[`verification/gate-level/README.md`](gate-level/README.md) is the single
+description of that experiment: what each leg runs and what it showed, the converter's
+provenance guards and the counts they enforce, what the netlist does and
+does not model (no parasitics, no timing, no corner dependence, no modelled
+power network, cell-instance granularity), and the upstream gaps filed along
+the way.
 
 ## Directory / naming convention
 
@@ -426,7 +374,17 @@ CI (`.github/workflows/ci.yml`) runs the **tool-light legs only**:
   its own pinned `klt` (newer than the PDK-heavy legs' pin — see
   `docs/environment.md`) and reads committed envelopes only; no PDK;
 - basic Python syntax checks over the scripts in this directory, and
-  `bash -n` over `scripts/setup-env.sh`.
+  `bash -n` over `scripts/setup-env.sh` and over the Loom suite-runner
+  (`scripts/run-loom-suites.sh`) and its self-test;
+- the Loom suite-runner's own self-test
+  (`scripts/tests/test-run-loom-suites.sh`, #338). That runner is the single
+  implementation of the suite-classification and two-manifest skip logic
+  (`.loom/scripts/tests/ci-excluded.txt` plus the repo-owned
+  `.github/ci-suites-consumer-skips.txt`, #185) used by the `guard-hooks`
+  and `merge-pr-suites` jobs — i.e. it decides whether those jobs ran
+  anything at all — so it is held to the same self-test standard as the
+  checkers above. Hermetic: synthetic suites and manifests in a `mktemp -d`
+  sandbox, no vendored Loom suite executed.
 
 CI does **not** run `klt synthesize`, `klt place-and-route`, `klt drc`, or
 the gate-level simulation legs under `verification/gate-level/` (those need
