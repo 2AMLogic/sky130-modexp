@@ -9,6 +9,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-17
 
+- **PR #353**: fix(verification): honour $KLT in gate-level cross-check klt resolution
+- **Issue #350** (closed): gate_level_cross_check.py ignores $KLT when resolving the klt binary, so the documented pin-check recipe does not reach that leg
 - **PR #380**: docs(environment): extend depth-reuse section to the Python entry points
 - **PR #333**: refactor(verification): resolve the repo root and content hashes through _repo_utils
 - **Issue #349** (closed): _repo_utils.py's new coverage sentence overstates completeness: two find_repo_root() copies remain unnamed in its exception list
