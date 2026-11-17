@@ -45,7 +45,8 @@ need a concrete schema to be checkable rather than aspirational:
   cross-check (see "Why a separate cross-check driver" below).
 - `gate-level/` — post-route **gate-level** simulation: the derived netlist
   of the routed layout, the `klt functional-verification` request that runs
-  `test_modexp.py` (unmodified, via a symlink) against it, and the converter
+  `test_modexp.py` (unmodified — this very file, reached through the
+  request's `testbench.search_path`) against it, and the converter
   that produces the netlist. See "Gate-level simulation (`gate-level-sim`)"
   below and `verification/gate-level/README.md`.
 - `check_records.py` — the evidence-record linter (see "Enforcement").
@@ -128,7 +129,8 @@ driver script should be retired in favor of a plain klt request per `WIDTH`.
 ## Gate-level simulation (`gate-level-sim`)
 
 The `gate-level-sim` experiment re-runs `test_modexp.py` — the same file,
-byte for byte, reached through a git symlink rather than a copy — against a
+byte for byte, reached through the gate-level request's
+`testbench.search_path` rather than a copy — against a
 gate-level netlist of the **routed layout** instead of against `rtl/modexp.v`.
 That netlist is derived from `layout/modexp.gds` itself: the `klt extract
 --abstract-cells` abstraction the LVS flow produces is converted to
@@ -146,6 +148,7 @@ provenance guards and the counts they enforce, what the netlist does and
 does not model (no parasitics, no timing, no corner dependence, no modelled
 power network, cell-instance granularity), and the upstream gaps filed along
 the way.
+
 
 ## Directory / naming convention
 

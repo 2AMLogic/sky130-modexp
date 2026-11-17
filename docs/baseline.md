@@ -626,9 +626,11 @@ The klt leg's simulated time also matches the RTL run's to the nanosecond
 (23750.0 ns / 180480.0 ns), i.e. the routed design is cycle-for-cycle
 identical to the RTL, not merely functionally equivalent.
 
-`test_modexp.py` was not edited, and was not copied: it is reached through a
-git symlink (`git ls-files -s verification/gate-level/test_modexp.py` → mode
-`120000`).
+`test_modexp.py` was not edited, and was not copied: the gate-level request
+reaches `verification/test_modexp.py` itself through
+`testbench.search_path` (`jq -r '.testbench.search_path'
+verification/gate-level/request-modexp-gate-level.json` → `..`, resolved
+against the request's own directory).
 
 ### What this run does not claim
 
