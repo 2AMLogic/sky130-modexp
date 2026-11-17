@@ -8,7 +8,7 @@ reason the gate-level experiment prefers extracted connectivity to an
 exported netlist: the LVS-side extraction `klt extract --abstract-cells`
 produced in issue #8 describes the *drawn geometry* of the routed layout,
 
-    layout/lvs/modexp_layout_abstracted.spice   (3064 instances, 69 cell types)
+    layout/lvs/modexp_layout_abstracted.spice
 
 rather than what P&R's own database says it built. `klt place-and-route`
 does export an as-built post-route netlist now -- committed as
