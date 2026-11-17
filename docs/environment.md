@@ -474,9 +474,11 @@ is a real, recurring cost this repo has chosen not to pay per-PR. Instead:
 
 - CI runs the tool-light legs only: the multi-`WIDTH` cross-check
   (Icarus/cocotb, no PDK) and the evidence-record linter. CI installs
-  `iverilog` from the runner's distro packages and `cocotb` at the version
-  pinned above; the `iverilog` version there is therefore whatever the
-  runner image ships, not the version in the table above. That is
+  `iverilog` from the runner's distro packages, and `cocotb` plus `klt` at
+  the versions pinned above -- `verification/cross_check.py` drives each
+  `WIDTH` through `klt functional-verification`, so that leg needs `klt` on
+  `$PATH` even though it touches no PDK. The `iverilog` version there is
+  whatever the runner image ships, not the version in the table above. That is
   deliberate — the cross-check is a bit-exactness claim about the RTL, and
   a *second* simulator build agreeing is corroboration, not drift. Records
   are only ever minted locally against the pinned versions above.
