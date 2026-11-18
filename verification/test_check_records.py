@@ -14,6 +14,14 @@ it as a subprocess exactly the way `npm run lint` and CI do. Nothing is
 monkeypatched, so this exercises the shipped entry point rather than a
 stand-in.
 
+Merge-queue cases (issue #390): a `merge_group` event supplies the
+append-only base as an explicit full sha
+(`github.event.merge_group.base_sha`), which `ci.yml` passes to
+`--base-ref`. Those cases pin that contract: an explicit-sha base must
+resolve and diff exactly like the ref name does, and an empty or
+unresolvable base must FAIL under `--require-append-only` (never SKIP,
+never silently pass).
+
 Zero dependencies beyond the Python 3 standard library and `git`.
 
 Usage:
@@ -149,13 +157,13 @@ def build_fixture_repo(tmp: Path) -> Path:
     return repo
 
 
-def run_linter(repo: Path) -> tuple[int, str]:
+def run_linter(repo: Path, base_ref: str = BASE_REF) -> tuple[int, str]:
     result = subprocess.run(
         [
             sys.executable,
             str(repo / "verification" / "check_records.py"),
             "--base-ref",
-            BASE_REF,
+            base_ref,
             "--require-append-only",
         ],
         cwd=repo,
@@ -163,6 +171,13 @@ def run_linter(repo: Path) -> tuple[int, str]:
         text=True,
     )
     return result.returncode, result.stdout + result.stderr
+
+
+def base_commit_sha(repo: Path) -> str:
+    """The fixture base as an explicit full sha -- the shape a merge_group
+    event hands the workflow via `github.event.merge_group.base_sha` and
+    `ci.yml` forwards to `--base-ref` (issue #390)."""
+    return _git(repo, "rev-parse", BASE_REF).strip()
 
 
 def record_path(repo: Path, experiment: str, record_id: str) -> Path:
@@ -360,6 +375,37 @@ CASES = [
         0,
         "no append-only violations",
     ),
+    # Merge-queue cases (issue #390): the optional 5th element selects the
+    # `--base-ref` value the case runs with, standing in for the
+    # base-selection `if` in ci.yml's records job.
+    (
+        "explicit-sha base (merge_group shape) passes a clean repo",
+        case_valid,
+        0,
+        "no append-only violations",
+        base_commit_sha,
+    ),
+    (
+        "explicit-sha base (merge_group shape) still catches an edit",
+        case_edited_existing_record,
+        1,
+        "append-only violation",
+        base_commit_sha,
+    ),
+    (
+        "empty merge-group base fails closed",
+        case_valid,
+        1,
+        "could not resolve base ref",
+        lambda repo: "",
+    ),
+    (
+        "unresolvable merge-group base sha fails closed",
+        case_valid,
+        1,
+        "could not resolve base ref",
+        lambda repo: "0" * 40,
+    ),
 ]
 
 
@@ -414,11 +460,12 @@ def main() -> int:
 
     print(f"== check_records.py self-test ({len(CASES)} cases) ==")
     failures = 0
-    for name, mutate, expected_exit, expected_substring in CASES:
+    for name, mutate, expected_exit, expected_substring, *base_selector in CASES:
         with tempfile.TemporaryDirectory(prefix="record-linter-selftest-") as tmpdir:
             repo = build_fixture_repo(Path(tmpdir))
             mutate(repo)
-            exit_code, output = run_linter(repo)
+            base_ref = base_selector[0](repo) if base_selector else BASE_REF
+            exit_code, output = run_linter(repo, base_ref)
 
             problems = []
             if exit_code != expected_exit:
