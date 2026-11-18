@@ -7,6 +7,11 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-18
+
+- **PR #388**: docs: mark run-corner-sweep.sh archived/frozen in flow README
+- **Issue #369** (closed): Remove flow/run-corner-sweep.sh: superseded by klt sta sweep, frozen copy already in evidence
+
 ### 2026-11-17
 
 - **PR #384**: refactor(verification): consolidate duplicated klt resolution + error unwrap into _repo_utils
