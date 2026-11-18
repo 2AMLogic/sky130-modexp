@@ -34,13 +34,13 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-- **#382**: Consolidate duplicated _resolve_klt() (and its twin self-tests) into _repo_utils
+_None._
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#384**: refactor(verification): consolidate duplicated klt resolution + error unwrap into _repo_utils
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -74,8 +74,8 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 1 |
+| In Progress (`loom:building`) | 0 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 3 |
 | Architect / Hermit proposals | 3 |
