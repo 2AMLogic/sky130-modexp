@@ -72,7 +72,12 @@ The committed copies of the routed DEF/GDS (with their provenance) live in
 holds the 100 MHz Phase 2 target to. `flow/run-corner-sweep.sh` runs the
 *same* IO/clock/seed request at every corner in that record's Decision 4
 corner matrix (all eighteen installed `sky130_fd_sc_hd` liberty corners), or
-at whichever corner names you pass it. **Floorplan note (issue #56):** the
+at whichever corner names you pass it. **Archived/frozen:** this script is
+kept deliberately but is no longer the recommended path — `klt sta`
+(`flow/run-sta-corner-sweep.sh` + `flow/sta-modexp.json`, next section) now
+answers the corner question for the committed `layout/modexp.def`. See
+"Both scripts are kept, deliberately" below for the frozen evidence copy.
+**Floorplan note (issue #56):** the
 script's `floorplan` block is no longer byte-identical to
 `flow/par-modexp.json`'s — as of issue #56 it carries a revised, mapping-
 only floorplan (utilization 55%, `core_margin_um` 2) explored per
@@ -90,6 +95,9 @@ floorplan produced, and how much of the slow-corner gap it closes:
 ./flow/run-corner-sweep.sh tt_025C_1v80         # just the nominal corner
 ./flow/run-corner-sweep.sh ss_100C_1v40 ff_100C_1v65   # a named subset
 ```
+
+Archived/frozen — this usage is kept for the record; `klt sta`
+(`flow/run-sta-corner-sweep.sh`, next section) is the current path.
 
 Each corner gets its own `flow/corners/<corner>/` scratch directory (request
 JSON + `klt` output, gitignored) so runs never clobber each other. The
@@ -141,10 +149,17 @@ the corner list lives in the committed request rather than in the script's
 argv, there is no longer a per-corner-subset CLI form; edit the request (or
 point `-o` somewhere scratch) if you want a subset.
 
-Both scripts are kept, deliberately: `run-corner-sweep.sh` is how issue
-#56's "how much of the slow-corner gap is mapping-attributable" question
-was answered (that one genuinely needs per-corner rebuilds), and its
-evidence record stays live and unedited. Results:
+Both scripts are kept, deliberately, but `run-corner-sweep.sh` is
+**archived/frozen**: kept for the record, not the recommended path —
+`klt sta` (`run-sta-corner-sweep.sh` + `flow/sta-modexp.json` above) is
+the current answer to the corner question for the committed
+`layout/modexp.def`. `run-corner-sweep.sh` is how issue #56's "how much
+of the slow-corner gap is mapping-attributable" question was answered
+(that one genuinely needs per-corner rebuilds), and its evidence record
+stays live and unedited; the live script is byte-identical to its frozen
+copy at
+[`verification/records/place-and-route/artifacts/20260816-072918-d8eafca/run-corner-sweep.sh`](../verification/records/place-and-route/artifacts/20260816-072918-d8eafca/run-corner-sweep.sh).
+Results:
 [`verification/records/sta-corner-sweep/`](../verification/records/sta-corner-sweep/)
 and `docs/baseline.md`.
 
