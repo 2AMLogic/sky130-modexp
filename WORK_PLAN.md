@@ -60,7 +60,6 @@ Issues carrying `loom:curated`.
 
 - **#310**: Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py *(hermit)* *(held)*
 - **#336**: Make evidence-record `supersedes` a list: the twin-record workaround now needs five records per re-run *(hermit)* *(held)*
-- **#369**: Remove flow/run-corner-sweep.sh: superseded by klt sta sweep, frozen copy already in evidence *(hermit)* *(held)*
 
 ## Epics
 
@@ -78,6 +77,6 @@ Issues carrying `loom:curated`.
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 3 |
-| Architect / Hermit proposals | 3 |
+| Architect / Hermit proposals | 2 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
