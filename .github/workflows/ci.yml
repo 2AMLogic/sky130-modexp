@@ -20,6 +20,12 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Merge queue (issue #390): lets this workflow report on the queue's
+  # trial-merge commits (gh-readonly-queue/... refs), which is what the
+  # fleet's ruleset tooling requires before it will enable a queue on this
+  # repo. Bare (no branches/paths filters): queue entries are not on main
+  # yet, so any filter would exclude exactly the runs the queue needs.
+  merge_group:
   workflow_dispatch:
 
 concurrency:
@@ -44,7 +50,13 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Ensure origin/main is available for the append-only base ref
+      - name: Ensure origin/main is available for the lint base refs
+        # Under merge_group the append-only step below diffs against the
+        # event's own base sha instead, but origin/main stays load-bearing:
+        # check_artifact_manifests.py (via `npm run lint`) keeps its
+        # origin/main default, and if that base were ever unresolvable its
+        # fallback is strict (it checks every tracked file), so it fails
+        # safe rather than silently pass.
         run: git fetch --no-tags --quiet origin +refs/heads/main:refs/remotes/origin/main
 
       - name: Syntax-check the verification scripts and setup script
@@ -86,8 +98,30 @@ jobs:
       - name: Record linter, pin-sync checker, design-env suite, self-tests (npm run lint)
         run: npm run lint
 
-      - name: Record linter, strict append-only against origin/main
-        run: python3 verification/check_records.py --require-append-only --base-ref origin/main
+      - name: Record linter, strict append-only against the event base
+        # Merge queue (issue #390): a merge_group checkout is the trial
+        # merge, and its append-only base is the group's own base sha
+        # (github.event.merge_group.base_sha), not origin/main -- main can
+        # advance between group creation and this run, and a stale
+        # merge-base would attribute another group's record edits to this
+        # one. An empty base_sha FAILS here rather than claim append-only
+        # was verified; an unresolvable one is failed by check_records.py
+        # itself under --require-append-only. Other events are
+        # byte-unchanged: base stays origin/main.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MG_BASE_SHA: ${{ github.event.merge_group.base_sha }}
+        run: |
+          set -euo pipefail
+          base_ref="origin/main"
+          if [[ "$EVENT_NAME" == "merge_group" ]]; then
+            base_ref="$MG_BASE_SHA"
+            if [[ -z "$base_ref" ]]; then
+              echo "FAIL: merge_group event has an empty merge_group.base_sha -- cannot determine the append-only base; refusing to claim append-only was verified" >&2
+              exit 1
+            fi
+          fi
+          python3 verification/check_records.py --require-append-only --base-ref "$base_ref"
 
   cross-check:
     name: multi-WIDTH cross-check (cocotb + Icarus)
