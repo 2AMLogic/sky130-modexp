@@ -9,6 +9,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-18
 
+- **PR #391**: ci: report on merge_group events with an explicit queue base
+- **Issue #390** (closed): Merge queue: add the merge_group trigger to the required-check workflow(s)
 - **PR #388**: docs: mark run-corner-sweep.sh archived/frozen in flow README
 - **Issue #369** (closed): Remove flow/run-corner-sweep.sh: superseded by klt sta sweep, frozen copy already in evidence
 
