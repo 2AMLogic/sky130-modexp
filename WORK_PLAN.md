@@ -1,9 +1,10 @@
 # Work Plan
 
-Prioritized roadmap generated from current GitHub label state, maintained
-automatically by the Guide triage agent. Everything between the markers below
-is machine-generated and overwritten wholesale on each update; do not
-hand-edit that region.
+Backlog snapshot from current GitHub label state, maintained by the Guide role.
+
+The body below is a snapshot of GitHub label state as of the last merged docs-maintenance PR — it may lag live labels until the next one merges. Date the snapshot with `git log -1 -- WORK_PLAN.md`.
+
+<!-- Maintained automatically by the Guide triage agent. Manual edits are fine but may be overwritten. -->
 
 <!-- guide:plan-body:start -->
 ## Operator Attention: Merge-Risk-Hold Pileup
@@ -26,7 +27,7 @@ _None._
 
 ## Ready
 
-Human-approved issues ready for implementation (`loom:issue`).
+Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
 - **#321**: Remove two retired entries from .github/ci-suites-consumer-skips.txt: upstream ci-excluded.txt now lists both suites
 
@@ -34,7 +35,7 @@ Human-approved issues ready for implementation (`loom:issue`).
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#390**: Merge queue: add the merge_group trigger to the required-check workflow(s)
 
 ## PRs Awaiting Review
 
@@ -55,6 +56,7 @@ Issues carrying `loom:curated`.
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)* *(held)*
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)* *(held)*
 - **#374**: cross_check_tb.py docstring still says it is driven by cocotb's Runner API, not klt *(curated)* *(held)*
+- **#390**: Merge queue: add the merge_group trigger to the required-check workflow(s) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -72,11 +74,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 1 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 0 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 1 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 3 |
+| Curated | 4 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
