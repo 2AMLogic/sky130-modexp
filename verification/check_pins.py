@@ -85,8 +85,9 @@ REQUIRED_PINS = (
 # Table rows (matched by a prefix of the first cell) whose hex tokens are
 # pinned outside scripts/setup-env.sh, so check 3 does not apply to them.
 EXTERNALLY_PINNED_ROWS = (
-    # Pinned by the committed byte-identical copy of the checklist; see
-    # verification/signoff/README.md.
+    # The tier checklist's digest is pinned upstream, not here: the graded
+    # copy is the one bundled inside the pinned klayout-tools wheel, so it
+    # moves with KLT_VERSION; see verification/signoff/README.md.
     "T1 tier checklist",
 )
 

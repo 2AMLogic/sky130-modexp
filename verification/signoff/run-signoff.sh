@@ -26,24 +26,26 @@
 # doc, usage error) fail this script.
 #
 # The report embeds its producing klt's build block (`build.git_commit`,
-# `grading_ruleset_id`) and the tier doc's content hash, so the committed
-# tier-report.json is reproducible byte-for-byte only on the pinned klt
-# revision and committed doc -- bumping either pin requires regenerating the
-# report with this script on the new pin (the `--check` CI leg enforces
-# exactly that).
+# `grading_ruleset_id`) and the bundled checklist's content hash. When the
+# klt pin changes, regenerate tier-report.json with this script. CI uses
+# `--check` to compare the result byte-for-byte.
 #
 # Paths inside block-manifest.json are relative to the repository root, so
 # this script always runs `klt signoff` from the root (never from this
-# directory). `--tiers-doc` is likewise passed as a root-relative literal so
-# the report's echoed `source_doc` field is checkout-independent and the
-# `--check` byte comparison is stable across machines.
+# directory). The tier checklist is the copy bundled inside the pinned klt
+# wheel -- the same bytes as upstream `docs/design-evidence-tiers.md` at the
+# pinned tag -- so no `--tiers-doc` is passed; the runner also clears an
+# inherited `KLT_TIERS_DOC` for the graded invocation (see run_report) so an
+# unrelated environment override cannot point it at another checklist. klt
+# echoes the bundled copy's canonical `source_doc`
+# (`docs/design-evidence-tiers.md`) and its content hash, so the `--check`
+# byte comparison stays stable across machines.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 
 MANIFEST="verification/signoff/block-manifest.json"
-TIERS_DOC="verification/signoff/design-evidence-tiers.md"
 REPORT="verification/signoff/tier-report.json"
 
 # The signoff-report leg runs on the same klt release as the evidence legs
@@ -99,7 +101,13 @@ check_item6_evidence
 
 run_report() { # $1 = output file
   set +e
-  "$KLT" signoff --manifest "$MANIFEST" --tiers-doc "$TIERS_DOC" --format json > "$1"
+  # Grade against the checklist bundled inside the pinned klt wheel (klt's
+  # own default resolution). `env -u` clears an inherited `KLT_TIERS_DOC`
+  # first: that variable is klt's documented override, so letting it through
+  # would let an unrelated environment silently change the rulebook the
+  # verdict is graded against. klt still echoes the resolved doc's canonical
+  # label and content hash, so the committed report remains reproducible.
+  env -u KLT_TIERS_DOC "$KLT" signoff --manifest "$MANIFEST" --format json > "$1"
   rc=$?
   set -e
   # 0 = every T1 item met; 3 = rendered fine but >=1 item unmet (the normal
@@ -131,8 +139,9 @@ if [[ "${1:-}" == "--check" ]]; then
     summarize "$TMP" >&2
   else
     echo "FAIL: committed tier-report.json does not match a fresh klt signoff run." >&2
-    echo "  The manifest, a cited evidence envelope, or the tier doc changed without" >&2
-    echo "  regenerating the report (or an evidence pin went stale). Re-run" >&2
+    echo "  The manifest or a cited evidence envelope changed without regenerating" >&2
+    echo "  the report, or the pinned klt (hence its bundled tier checklist)" >&2
+    echo "  changed (or an evidence pin went stale). Re-run" >&2
     echo "  ./verification/signoff/run-signoff.sh and commit the refreshed report." >&2
     diff <(python3 -m json.tool "$REPORT") <(python3 -m json.tool "$TMP") >&2 || true
     exit 1

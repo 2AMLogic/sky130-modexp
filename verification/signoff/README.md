@@ -2,9 +2,10 @@
 
 This directory holds **the machine-readable verdict of record for this
 block's gap to T1** (issue #130): a `klt signoff --manifest` block manifest,
-the pinned tier checklist it grades against, and the committed tier-verdict
-report it renders. The fleet roll-up (2AMLogic/2am#956) consumes the
-manifest's `block` field to identify this repo's row.
+and the committed tier-verdict report it renders against the tier checklist
+bundled inside the pinned klt wheel (below). The fleet roll-up
+(2AMLogic/2am#956) consumes the manifest's `block` field to identify this
+repo's row.
 
 It replaces the hand-maintained T1 checkbox list that used to live in issue
 #12 — a hand-read checklist cannot survive the checklist itself changing
@@ -19,25 +20,23 @@ duplicating it.
   reads: `block: sky130-modexp`, `kind: digital` (this is a digital
   RTL→GDS block — RTL, synthesis, P&R; no schematic capture, no analog
   partition), and the per-item evidence citations (below).
-- `design-evidence-tiers.md` — the pinned copy of
-  `2AMLogic/klayout-tools`'s `docs/design-evidence-tiers.md` the report
-  grades against, byte-identical to the doc at the klayout-tools tag
-  [`v0.8.0`](https://github.com/2AMLogic/klayout-tools/blob/v0.8.0/docs/design-evidence-tiers.md)
-  — the tag the signoff klt is pinned to (sha256
-  `a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7`). The
-  earlier copy (upstream revision `0882541`) predated the artifact-anchored
-  and `--attest` rules for items 1/2/9/10 (klayout-tools#2718, #2844).
-  Pinned — rather than resolved from the installed `klt` — because the
-  tier list moves upstream (item 11 again) and a pinned copy makes each
-  checklist revision a reviewable change in this repo, on the same pin
-  discipline as the PDK and toolchain pins in `docs/environment.md`.
-  **Bumping it**: copy the new upstream revision over this file, re-run
-  `./run-signoff.sh`, and commit the refreshed report together with the
-  doc; the CI `--check` leg fails until the report is regenerated.
+- **The tier checklist is not vendored here.** `klt signoff` grades against
+  the copy of `2AMLogic/klayout-tools`'s
+  [`docs/design-evidence-tiers.md`](https://github.com/2AMLogic/klayout-tools/blob/v0.8.0/docs/design-evidence-tiers.md)
+  **bundled inside the pinned `klayout-tools==0.8.0` wheel**
+  (`klayout_tools/data/design-evidence-tiers.md`, sha256
+  `a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7` — the
+  same bytes this directory used to vendor as `design-evidence-tiers.md`,
+  retained in Git history). `run-signoff.sh` passes no `--tiers-doc` and
+  clears an inherited `KLT_TIERS_DOC` override, so the graded invocation
+  always reads the pinned wheel's copy. The report's
+  `source_doc_content_hash` pins the graded checklist bytes either way.
+  A checklist revision now arrives with a klt pin bump — re-run
+  `./run-signoff.sh` on the new pin and commit the refreshed report — rather
+  than as a doc edit in this repo.
 - `tier-report.json` — the committed output of `klt signoff --manifest
-  block-manifest.json --tiers-doc design-evidence-tiers.md --format json`
-  on the pinned klt (`klayout-tools==0.8.0`, see
-  `docs/environment.md`). Regenerate with
+  block-manifest.json --format json` on the pinned klt
+  (`klayout-tools==0.8.0`, see `docs/environment.md`). Regenerate with
   `KLT=<path to a klt 0.8.0> ./run-signoff.sh`.
 - `inventory-item{1,9,10}.json` — the versioned attestation inventories
   (`schema_version: 1`) for items 1, 9 and 10. The envelopes

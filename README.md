@@ -90,7 +90,10 @@ the open timing item rather than something that regression establishes (see
 [`verification/signoff/README.md`](verification/signoff/README.md), and
 [`verification/gate-level/README.md`](verification/gate-level/README.md)).
 What the evidence has to do next is laid out in the T1→T4 ladder at
-[`verification/signoff/design-evidence-tiers.md`](verification/signoff/design-evidence-tiers.md).
+[`2AMLogic/klayout-tools`'s `docs/design-evidence-tiers.md`
+(v0.8.0)](https://github.com/2AMLogic/klayout-tools/blob/v0.8.0/docs/design-evidence-tiers.md),
+bundled inside the pinned `klayout-tools==0.8.0` wheel that grades
+[`verification/signoff/tier-report.json`](verification/signoff/tier-report.json).
 
 ## Reproducing it
 
