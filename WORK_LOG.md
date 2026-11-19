@@ -7,6 +7,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-19
+
+- **Issue #335** (closed): Decide whether test_repo_utils.py belongs in T1 item 9's attestation inventory
+
 ### 2026-11-18
 
 - **PR #391**: ci: report on merge_group events with an explicit queue base
