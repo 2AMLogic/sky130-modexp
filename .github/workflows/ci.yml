@@ -177,7 +177,7 @@ jobs:
     runs-on: ubuntu-latest
     # The graded gap-to-T1 verdict of record (issue #130): re-renders
     # `klt signoff --manifest verification/signoff/block-manifest.json`
-    # against the committed tier doc and byte-compares with the committed
+    # against the pinned wheel's tier checklist and byte-compares with the committed
     # tier-report.json. A manifest citing an artifact that has since changed
     # (its content_hash pin no longer matches the envelope) flips rows to
     # stale_evidence, the diff goes non-empty, and CI fails instead of

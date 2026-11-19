@@ -63,9 +63,9 @@ need a concrete schema to be checkable rather than aspirational:
   calibrated against the shipped `rtl/modexp.v` and record `0001`'s latency
   formula (issue #280). Not RTL; run with `verification/cycle-price/run.sh`.
 - `records/` — the append-only evidence records this convention produces.
-- `signoff/` — the `klt signoff --manifest` block manifest, the pinned
-  T1 tier checklist it grades against, the committed tier-verdict report,
-  and the runner/CI gate that keeps them from rotting. This is the
+- `signoff/` — the `klt signoff --manifest` block manifest, the committed
+  tier-verdict report, and the runner that checks it in CI against the T1
+  checklist bundled in the pinned klt wheel. This is the
   **machine-readable verdict of record for the block's gap to T1**
   (issue #130) — see `signoff/README.md`. Not append-only like `records/`:
   the manifest and report are living artifacts, regenerated in-step with

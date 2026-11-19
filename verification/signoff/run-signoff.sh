@@ -26,11 +26,9 @@
 # doc, usage error) fail this script.
 #
 # The report embeds its producing klt's build block (`build.git_commit`,
-# `grading_ruleset_id`) and the tier doc's content hash, so the committed
-# tier-report.json is reproducible byte-for-byte only on the pinned klt
-# revision and committed doc -- bumping either pin requires regenerating the
-# report with this script on the new pin (the `--check` CI leg enforces
-# exactly that).
+# `grading_ruleset_id`) and the bundled checklist's content hash. When the
+# klt pin changes, regenerate tier-report.json with this script. CI uses
+# `--check` to compare the result byte-for-byte.
 #
 # Paths inside block-manifest.json are relative to the repository root, so
 # this script always runs `klt signoff` from the root (never from this
