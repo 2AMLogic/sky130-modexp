@@ -9,6 +9,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-19
 
+- **PR #397**: Grade T1 signoff against the wheel-bundled tier checklist
+- **Issue #395** (closed): Use the pinned klayout-tools checklist for T1 signoff
 - **Issue #335** (closed): Decide whether test_repo_utils.py belongs in T1 item 9's attestation inventory
 
 ### 2026-11-18
