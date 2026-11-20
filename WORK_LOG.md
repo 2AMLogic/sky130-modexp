@@ -7,6 +7,11 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-20
+
+- **PR #324**: ci: drop retired consumer carve-outs for two daemon-backed merge-pr suites
+- **Issue #321** (closed): Remove two retired entries from .github/ci-suites-consumer-skips.txt: upstream ci-excluded.txt now lists both suites
+
 ### 2026-11-19
 
 - **PR #397**: Grade T1 signoff against the wheel-bundled tier checklist
