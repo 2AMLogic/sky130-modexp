@@ -46,3 +46,5 @@ Ratified specification and decision records.
     — issue #271, status `proposed`.
   - [`0017-pipelined-column-halves-cost-two-cycles-per-montgomery-iteration-a-priced-contingent-supersession-of-the-0001-latency-clause.md`](decision-records/0017-pipelined-column-halves-cost-two-cycles-per-montgomery-iteration-a-priced-contingent-supersession-of-the-0001-latency-clause.md)
     — issue #280, status `ratified`.
+  - [`0018-derive-the-montgomery-entry-constant-by-split-modular-doubling.md`](decision-records/0018-derive-the-montgomery-entry-constant-by-split-modular-doubling.md)
+    — issue #401, status `proposed`.
