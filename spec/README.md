@@ -45,6 +45,6 @@ Ratified specification and decision records.
   - [`0016-q-loop-single-mux2-restructure-does-not-meet-100-mhz-at-the-binding-corner.md`](decision-records/0016-q-loop-single-mux2-restructure-does-not-meet-100-mhz-at-the-binding-corner.md)
     — issue #271, status `proposed`.
   - [`0017-pipelined-column-halves-cost-two-cycles-per-montgomery-iteration-a-priced-contingent-supersession-of-the-0001-latency-clause.md`](decision-records/0017-pipelined-column-halves-cost-two-cycles-per-montgomery-iteration-a-priced-contingent-supersession-of-the-0001-latency-clause.md)
-    — issue #280, status `proposed`.
+    — issue #280, status `ratified`.
   - [`0018-derive-the-montgomery-entry-constant-by-split-modular-doubling.md`](decision-records/0018-derive-the-montgomery-entry-constant-by-split-modular-doubling.md)
     — issue #401, status `proposed`.
