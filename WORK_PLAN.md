@@ -7,12 +7,12 @@ The body below is a snapshot of GitHub label state as of the last merged docs-ma
 <!-- Maintained automatically by the Guide triage agent. Manual edits are fine but may be overwritten. -->
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-20T22:10:02Z (snapshot; compare against live labels)_
+_Generated: 2026-11-21T09:55:03Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-_None._
+- **#402**: DR-0017 ratification awaits the operator’s decision on `931e180`. The EE reviewer approved. The market reviewer escalated the increase in worst-case latency.
 
 ## Very Important
 
@@ -25,7 +25,6 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(held)*
-- **#401**: T1 item 5: price the source of R^2 mod m for the Montgomery entry conversions (DR-0017's unpriced input) as a proposed decision record
 
 ## Ready
 
@@ -38,7 +37,6 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#400**: T1 item 5: open the ratification PR for DR-0017 (status flip only) so the EE key, market key and operator have a PR to act on
-- **#401**: T1 item 5: price the source of R^2 mod m for the Montgomery entry conversions (DR-0017's unpriced input) as a proposed decision record
 
 ## PRs Awaiting Review
 
@@ -50,7 +48,7 @@ _None._
 
 PRs that passed Judge review (`loom:pr`).
 
-- **#402**: docs: ratify DR-0017 via the two-key step (status-only flip) *(ratification requires the EE key, then the market key, then operator approval on the current head)*
+- **#402**: docs: ratify DR-0017 via the two-key step (status-only flip) *(held for operator decision)*
 
 ## Proposed
 
@@ -60,7 +58,6 @@ Issues carrying `loom:curated`.
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)* *(held)*
 - **#374**: cross_check_tb.py docstring still says it is driven by cocotb's Runner API, not klt *(curated)* *(held)*
 - **#400**: T1 item 5: open the ratification PR for DR-0017 (status flip only) so the EE key, market key and operator have a PR to act on *(curated)*
-- **#401**: T1 item 5: price the source of R^2 mod m for the Montgomery entry conversions (DR-0017's unpriced input) as a proposed decision record *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -75,14 +72,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 0 |
+| Operator merge-risk holds | 1 |
 | Very important | 0 |
-| Important | 2 |
+| Important | 1 |
 | Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 5 |
+| Curated | 4 |
 | Architect / Hermit proposals | 2 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
