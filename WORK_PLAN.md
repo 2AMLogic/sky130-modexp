@@ -7,12 +7,12 @@ The body below is a snapshot of GitHub label state as of the last merged docs-ma
 <!-- Maintained automatically by the Guide triage agent. Manual edits are fine but may be overwritten. -->
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-21T09:55:03Z (snapshot; compare against live labels)_
+_Generated: 2026-11-22T23:25:19Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#402**: DR-0017 ratification awaits the operator’s decision on `931e180`. The EE reviewer approved. The market reviewer escalated the increase in worst-case latency.
+- **#402**: docs: ratify DR-0017 via the two-key step (status-only flip)
 
 ## Very Important
 
