@@ -7,6 +7,7 @@ The body below is a snapshot of GitHub label state as of the last merged docs-ma
 <!-- Maintained automatically by the Guide triage agent. Manual edits are fine but may be overwritten. -->
 
 <!-- guide:plan-body:start -->
+_Generated: 2026-11-22T23:25:19Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -23,11 +24,11 @@ _None._
 
 `loom:important`; taken before unlabelled work.
 
-- **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191)
+- **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(held)*
 
 ## Ready
 
-Human-approved issues ready for implementation (`loom:issue`).
+Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
 _None._
 
@@ -45,23 +46,23 @@ _None._
 
 ## Approved (Awaiting Merge)
 
-PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
+PRs that passed Judge review (`loom:pr`).
 
-- **#402**: docs: ratify DR-0017 via the two-key step (status-only flip)
+- **#402**: docs: ratify DR-0017 via the two-key step (status-only flip) *(held for operator decision)*
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
-- **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
-- **#374**: cross_check_tb.py docstring still says it is driven by cocotb's Runner API, not klt *(curated)*
+- **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)* *(held)*
+- **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)* *(held)*
+- **#374**: cross_check_tb.py docstring still says it is driven by cocotb's Runner API, not klt *(curated)* *(held)*
 - **#400**: T1 item 5: open the ratification PR for DR-0017 (status flip only) so the EE key, market key and operator have a PR to act on *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#310**: Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py *(hermit)*
-- **#336**: Make evidence-record `supersedes` a list: the twin-record workaround now needs five records per re-run *(hermit)*
+- **#310**: Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py *(hermit)* *(held)*
+- **#336**: Make evidence-record `supersedes` a list: the twin-record workaround now needs five records per re-run *(hermit)* *(held)*
 
 ## Epics
 
@@ -74,7 +75,7 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 1 |
 | Very important | 0 |
 | Important | 1 |
-| Ready (`loom:issue`) | 0 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
