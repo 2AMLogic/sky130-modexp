@@ -171,6 +171,20 @@ else
   no "run-sta-corner-sweep.sh --help works with no klt present" "exit ${rc}"
 fi
 
+# The gate-level Leg 1 wrapper's --help slices its header by sentinel (up to
+# `set -uo pipefail`), not by a hardcoded line range, so header edits cannot
+# silently truncate it again (issue #407). Assert the slice reaches the END of
+# the header, not just line 2: the Leg 2 pointer is its final block.
+out="$(env -u KLT PATH="/usr/bin:/bin" \
+  "${REPO_ROOT}/verification/gate-level/run-gate-level-sim.sh" --help 2>&1)"
+rc=$?
+if [ "${rc}" -eq 0 ] && printf '%s' "${out}" | grep -q 'run-gate-level-sim.sh' \
+  && printf '%s' "${out}" | grep -q 'current evidence'; then
+  ok "run-gate-level-sim.sh --help prints its full header with no klt present"
+else
+  no "run-gate-level-sim.sh --help prints its full header with no klt present" "exit ${rc}"
+fi
+
 echo
 printf '%d passed, %d failed\n' "${PASS}" "${FAIL}"
 [ "${FAIL}" -eq 0 ]
