@@ -58,7 +58,7 @@ Usage:
         author line is evidence provenance, not a constant.
 
     python3 verification/cross_check.py --mint-record --author ... \
-        --supersedes RECORD_ID
+        --supersedes RECORD_ID [--supersedes RECORD_ID_2 ...]
         As above, but the new record retires `RECORD_ID` -- it is written
         into the metadata block's `supersedes` and the **Supersedes** prose
         bullet, which is what exempts the retired record from
@@ -354,7 +354,7 @@ def mint_record(
     tool_versions: dict,
     *,
     author: str,
-    supersedes: str | None = None,
+    supersedes: str | list[str] | None = None,
 ) -> Path:
     """Store this run's transcripts in the artifact store, write a
     manifest under manifests/artifacts/, and write a new append-only .md
@@ -364,9 +364,12 @@ def mint_record(
 
     `author` is written verbatim into the record's **Timestamp / author**
     bullet. `supersedes` is the `record_id` this record retires (`None` for
-    a record that retires nothing); `main()` validates it before calling
-    here.
+    a record that retires nothing), or a list of ids when it retires several
+    live ancestors at once (a one-element list is emitted as the legacy
+    scalar); `main()` validates it before calling here.
     """
+    if isinstance(supersedes, list):
+        supersedes = supersedes[0] if len(supersedes) == 1 else (supersedes or None)
     now = datetime.datetime.now(datetime.timezone.utc)
     short_sha = _git_revision()[:7]
     record_id = f"{now:%Y%m%d-%H%M%S}-{short_sha}"
@@ -461,7 +464,7 @@ def mint_record(
   - Transcripts (name, size, sha256):
 {links_lines}
 - **Timestamp / author**: {now.strftime("%Y-%m-%dT%H:%M:%SZ")}, {author}
-- **Supersedes**: {supersedes if supersedes else "none"}
+- **Supersedes**: {", ".join(supersedes) if isinstance(supersedes, list) else (supersedes or "none")}
 """
 
     record_path = out_dir / f"{record_id}.md"
@@ -509,11 +512,13 @@ def main() -> int:
     )
     parser.add_argument(
         "--supersedes",
+        action="append",
         default=None,
         metavar="RECORD_ID",
         help=(
-            "record id this new record retires; written to the metadata "
-            "block and the **Supersedes** bullet (requires --mint-record)"
+            "record id this new record retires; repeat to retire several live "
+            "records at once. Written to the metadata block and the "
+            "**Supersedes** bullet (requires --mint-record)"
         ),
     )
     parser.add_argument(
@@ -537,11 +542,15 @@ def main() -> int:
     if not args.mint_record and (args.author or args.supersedes is not None):
         parser.error("--author/--supersedes are only meaningful with --mint-record")
     if args.supersedes is not None:
-        try:
-            resolve_supersedes(args.supersedes)
-        except ValueError as exc:
-            print(f"FATAL: {exc}", file=sys.stderr)
+        if len(set(args.supersedes)) != len(args.supersedes):
+            print("FATAL: --supersedes given the same record id twice", file=sys.stderr)
             return 1
+        for rid in args.supersedes:
+            try:
+                resolve_supersedes(rid)
+            except ValueError as exc:
+                print(f"FATAL: {exc}", file=sys.stderr)
+                return 1
 
     if not RTL_SOURCE.exists():
         print(f"FATAL: {RTL_SOURCE} not found", file=sys.stderr)

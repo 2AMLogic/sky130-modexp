@@ -177,6 +177,19 @@ def test_mint_with_supersedes() -> None:
               "other (issue #315)" in text2)
         check("superseding mint: prior record untouched", record.exists())
 
+        # Several live ancestors at once -> list form; one id stays scalar.
+        id2 = meta2["record_id"]
+        multi = _mint(root, klt, author="third (issue #336)", supersedes=[prior_id, id2])
+        meta3 = _meta(multi)
+        text3 = multi.read_text(encoding="utf-8")
+        check("multi-supersede mint: metadata carries a list",
+              meta3["supersedes"] == [prior_id, id2], repr(meta3["supersedes"]))
+        check("multi-supersede mint: bullet lists both ids",
+              f"- **Supersedes**: {prior_id}, {id2}" in text3)
+        single = _meta(_mint(root, klt, author="fourth (issue #336)", supersedes=[prior_id]))
+        check("one-element list mints the legacy scalar",
+              single["supersedes"] == prior_id, repr(single["supersedes"]))
+
         # resolve_supersedes is what main() calls; exercise both answers.
         saved = (cross_check.REPO_ROOT, _repo_utils.REPO_ROOT)
         try:

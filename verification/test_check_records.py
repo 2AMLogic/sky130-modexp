@@ -81,7 +81,7 @@ def make_record(
     experiment: str,
     *,
     inputs: list[tuple[str, str]],
-    supersedes: str | None = None,
+    supersedes: object = None,
     omit_field: str | None = None,
     omit_provenance_key: str | None = None,
 ) -> str:
@@ -115,7 +115,12 @@ def make_record(
         ("klt provenance", "klt 0.0.0-selftest; PDK: n/a; deck content_hash: n/a"),
         ("Links", "Design under test: `rtl/dut.v`"),
         ("Timestamp / author", "2026-01-01T00:00:00Z, selftest"),
-        ("Supersedes", supersedes or "none"),
+        (
+            "Supersedes",
+            ", ".join(str(x) for x in supersedes)
+            if isinstance(supersedes, list) and supersedes
+            else (supersedes or "none"),
+        ),
     ]
     bullets = "\n".join(
         f"- **{name}**: {value}" for name, value in fields if name != omit_field
@@ -304,6 +309,71 @@ def case_dangling_supersedes(repo: Path) -> None:
     _git(repo, "commit", "--quiet", "-m", "fixture: supersedes a nonexistent record")
 
 
+def _add_record(repo: Path, rid: str, supersedes, msg: str, rtl: str = DUMMY_RTL) -> None:
+    record_path(repo, "demo", rid).write_text(
+        make_record(
+            rid, "demo", inputs=[("rtl/dut.v", _sha256_text(rtl))], supersedes=supersedes
+        ),
+        encoding="utf-8",
+    )
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "--quiet", "-m", msg)
+
+
+def case_list_supersedes_valid(repo: Path) -> None:
+    _add_record(repo, "20260106-000000-abc1234", ["20260101-000000-abc1234"], "fixture: list")
+
+
+def case_list_supersedes_dangling(repo: Path) -> None:
+    _add_record(
+        repo,
+        "20260107-000000-abc1234",
+        ["20260101-000000-abc1234", "20250101-000000-deadbee"],
+        "fixture: list with dangling id",
+    )
+
+
+def case_list_supersedes_duplicate(repo: Path) -> None:
+    _add_record(
+        repo,
+        "20260108-000000-abc1234",
+        ["20260101-000000-abc1234", "20260101-000000-abc1234"],
+        "fixture: duplicate ids",
+    )
+
+
+def case_list_supersedes_non_string(repo: Path) -> None:
+    _add_record(repo, "20260109-000000-abc1234", [42], "fixture: non-string element")
+
+
+def case_list_supersedes_none_element(repo: Path) -> None:
+    _add_record(repo, "20260110-000000-abc1234", ["none"], "fixture: none in list")
+
+
+def case_supersedes_wrong_type(repo: Path) -> None:
+    _add_record(repo, "20260111-000000-abc1234", 7, "fixture: int supersedes")
+
+
+def case_supersedes_self(repo: Path) -> None:
+    rid = "20260112-000000-abc1234"
+    _add_record(repo, rid, [rid], "fixture: self supersedes")
+
+
+def case_empty_list_supersedes(repo: Path) -> None:
+    _add_record(repo, "20260113-000000-abc1234", [], "fixture: empty list")
+
+
+def case_list_supersedes_exempts_freshness(repo: Path) -> None:
+    """A record named only inside a list is frozen history, so a changed
+    cited source does not fail it."""
+    new_rtl = DUMMY_RTL + "// v3\n"
+    (repo / "rtl" / "dut.v").write_text(new_rtl, encoding="utf-8")
+    _add_record(
+        repo, "20260114-000000-abc1234", ["20260101-000000-abc1234"],
+        "fixture: list supersedes with changed source", rtl=new_rtl,
+    )
+
+
 def case_new_record_is_a_pure_addition(repo: Path) -> None:
     """Adding a record must NOT trip the append-only check -- otherwise the
     convention would forbid the very thing it exists to allow."""
@@ -368,6 +438,60 @@ CASES = [
         case_dangling_supersedes,
         1,
         "which has no record",
+    ),
+    (
+        "list supersedes passes",
+        case_list_supersedes_valid,
+        0,
+        "PASS: all records valid",
+    ),
+    (
+        "empty list supersedes passes (treated as none)",
+        case_empty_list_supersedes,
+        0,
+        "PASS: all records valid",
+    ),
+    (
+        "list supersedes naming a nonexistent record fails",
+        case_list_supersedes_dangling,
+        1,
+        "which has no record",
+    ),
+    (
+        "duplicate ids in one supersedes list fail",
+        case_list_supersedes_duplicate,
+        1,
+        "more than once",
+    ),
+    (
+        "non-string supersedes list element fails",
+        case_list_supersedes_non_string,
+        1,
+        "invalid `supersedes`",
+    ),
+    (
+        "`none` inside a supersedes list fails",
+        case_list_supersedes_none_element,
+        1,
+        "invalid `supersedes`",
+    ),
+    (
+        "wrong-typed supersedes fails without crashing",
+        case_supersedes_wrong_type,
+        1,
+        "invalid `supersedes`",
+    ),
+    (
+        "self-supersession fails",
+        case_supersedes_self,
+        1,
+        "supersedes itself",
+    ),
+    (
+        "record named only inside a list is exempt from freshness",
+        case_list_supersedes_exempts_freshness,
+        0,
+        "PASS: all records valid",
     ),
     (
         "adding a new record is allowed",
