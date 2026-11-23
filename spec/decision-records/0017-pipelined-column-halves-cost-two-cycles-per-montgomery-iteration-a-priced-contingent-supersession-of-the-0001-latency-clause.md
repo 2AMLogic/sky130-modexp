@@ -1,11 +1,12 @@
 # 0017: Pipelined column halves cost two cycles per Montgomery iteration; a priced, contingent supersession of the record 0001 latency clause
 
-- **Status**: proposed
+- **Status**: ratified
 - **Date**: 2026-10-29
 - **Decided by**: Builder proposal on issue #280 (the operator's 2026-10-29
-  ruling on #271, branch (c)). Ratification is pending the two-key step (EE key,
-  then market key, then the operator), not a direct status flip. This record
-  edits no spec text; `spec/modexp.md` and record `0001` are unchanged.
+  ruling on #271, branch (c)). The two-key step (EE key, then market key)
+  precedes the operator's approval of this PR's head.
+  Merging this PR ratifies this record. This record edits no spec text;
+  `spec/modexp.md` and record `0001` are unchanged.
 
 ## Context
 
