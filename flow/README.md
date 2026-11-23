@@ -43,18 +43,13 @@ flow/run-par.sh <out_dir>
 
 **Commit the as-built netlist (issue #139, decision record 0006).** Every
 P&R run whose DEF/GDS may be committed must commit its `verilog_path`
-netlist (`modexp.v`) and the raw `par-output.json` envelope alongside them.
-The run behind the current `layout/modexp.gds` wrote such a netlist but it
-was left in scratch and lost, and the run cannot be reproduced (issue #55),
-so that GDS has no LVS-able reference. `flow/run-par.sh` makes the capture
-mechanical; do not bypass it for a run you intend to pin.
-
-**Update (issue #232):** the committed `layout/modexp.{def,gds,v}` were
-regenerated this way and the flow was shown reproducible — two sequential
-`flow/run-par.sh` runs gave byte-identical outputs (record
+netlist (`modexp.v`) and the raw `par-output.json` envelope alongside them,
+so always run `flow/run-par.sh` for a run you intend to pin: it captures
+the DEF, GDS, as-built netlist and envelope into one directory and fails if
+any is missing. The committed `layout/modexp.{def,gds,v}` were produced
+that way and the flow was shown reproducible — two sequential
+`flow/run-par.sh` runs gave byte-identical outputs (issue #232, record
 `verification/records/place-and-route/records/20261027-013900-98bf55d.md`).
-The paragraph above describes the state before that; the as-built netlist is
-now committed next to the DEF and GDS.
 
 Step 3's artifacts land in `flow/.klt/place-and-route/` (gitignored scratch,
 like every other `klt` working directory — see `.gitignore`'s `.klt/`
@@ -177,20 +172,17 @@ The response lands in `flow/sta-corner-sweep-results.json` (gitignored;
 
 ## What this flow does *not* produce
 
-**Updated, issue #81 (2026-09-11)**: `flow/par-modexp.json` now carries a
-`power` block, driving `klt place-and-route`'s `request.power` field
-(tapcell + PDN + filler-cell insertion, added upstream by
-[klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120))
-— the routed DEF/GDS this flow produces for the committed nominal-corner
-recipe now has all three. `flow/run-corner-sweep.sh`'s separate 18-corner
-sweep recipe does **not** carry this block (unaffected by issue #81) and
-still produces layouts with none of the three. **Still absent either way**:
-metal (density) fill (a routing-layer CMP-density pass, not the same thing
-as standard-cell row fillers) and `DONT_USE_CELLS` exclusion — core-only
-floorplanning, no IO ring. It is evidence toward Decision 2/4's revisit
-triggers (`spec/modexp.md`); DRC is now clean against the committed
-nominal-corner GDS (`docs/signoff-claim.md`), but LVS is not, so it is not
-yet a fully signoff-ready macro.
+`flow/par-modexp.json` carries a `power` block (tapcell + PDN + filler-cell
+insertion, added upstream by
+[klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120)),
+so the committed nominal-corner DEF/GDS has all three;
+`flow/run-corner-sweep.sh`'s archived sweep recipe does **not** carry the
+block and its layouts have none of them. Also absent from this flow:
+routing-layer CMP metal (density) fill — not the same thing as
+standard-cell row fillers — plus `DONT_USE_CELLS` exclusion, and
+core-only floorplanning means no IO ring. The current DRC/LVS verdict for
+the committed GDS is stated once in `docs/signoff-claim.md`; this page does
+not restate it.
 
 ## Known upstream gaps (friction protocol, `CLAUDE.md`)
 
@@ -247,144 +239,33 @@ current requirement.
   ([klayout-tools Epic #700](https://github.com/2AMLogic/klayout-tools/issues/700)
   Phase 3, [klayout-tools#949](https://github.com/2AMLogic/klayout-tools/issues/949),
   fixed by [klayout-tools#955](https://github.com/2AMLogic/klayout-tools/pull/955),
-  merged 2026-08-14). At this repo's pinned revision, one `klt
-  place-and-route` request resolves exactly one liberty corner
-  (`request.pdk.corner`) and there is no way to re-run only the post-route
-  STA stage against an already-routed design at a different corner —
-  `report_worst_slack_metric -setup` has no `-hold` counterpart either, so
-  there is no `worst_hold_slack_ns` field at all pre-#955. `flow/run-
-  corner-sweep.sh`'s N-independent-full-builds approach is the local,
-  interim substitute for the now-merged upstream native sweep (which does
-  this in one OpenSTA session against one physical build, and adds the
-  missing hold-slack field) — expect a large wall-clock/engineering-cost
-  reduction once this repo's pin moves past #955.
-
-  **Update (issue #86, 2026-09-15): this gap is closed at the current pin.**
-  `docs/environment.md`'s pin has since moved to `f77036bf...`
-  (2026-09-09), well past #955, and separately gained `klt sta`
-  (klayout-tools#1099) — a standalone OpenSTA analysis of an already-routed
-  DEF. `flow/run-sta-corner-sweep.sh` (above) uses it; the eighteen-corner
-  analysis it drives takes seconds per corner instead of minutes, and needs
-  no rebuild. The remaining residue is smaller and separately filed:
-  `klt sta` still analyses one corner per invocation
-  ([klayout-tools#1871](https://github.com/2AMLogic/klayout-tools/issues/1871)),
-  and hold-side WNS/TNS landed upstream
-  ([klayout-tools#1634](https://github.com/2AMLogic/klayout-tools/pull/1634))
-  later than this repo's pin, so only a hold *violation count* is available
-  here.
-
-  **Update (issue #352, 2026-11-17): the per-corner-rebuild half is closed
-  at the current pin too.** The #86 note above closed the re-timing half
-  (`klt sta` against one physical build); the other half — the
-  N-independent-full-builds loop this bullet describes — is now also
-  expressible natively at the pinned `klt` (`klayout-tools==0.8.0`): one
-  `klt place-and-route` request carrying `pdk.rebuild_corners` (a corner
-  list, mutually exclusive with `pdk.corner`) re-runs the whole flow once
-  per named corner into one aggregated `corner_runs[]` report, and
-  `--backend batch` sends those units to the Spot batch fleet. Verified
-  against the `0.8.0` release's `docs/cli/place-and-route.md` ("Physical
-  rebuild per corner"), not `--help`; `docs/environment.md` records the
-  lineage (the field from
+  merged 2026-08-14). One `klt
+  place-and-route` request used to resolve exactly one liberty corner
+  (`request.pdk.corner`), with no way to re-run only the post-route STA
+  stage against an already-routed design at a different corner, so
+  `flow/run-corner-sweep.sh`'s N-independent-full-builds loop (each corner
+  a full `floorplan → place → cts → route` run) was the local interim
+  substitute. **Closed at the current pin** (`klayout-tools==0.8.0`) on
+  both halves: `klt sta`'s `pdk.corners` list re-times one physical build
+  at N corners in a single request (`flow/run-sta-corner-sweep.sh` +
+  `flow/sta-modexp.json` above), and one `klt place-and-route` request
+  carrying `pdk.rebuild_corners` (from
   [klayout-tools#3550](https://github.com/2AMLogic/klayout-tools/pull/3550);
-  the pin then moved past
-  [klayout-tools#3605](https://github.com/2AMLogic/klayout-tools/pull/3605)'s
-  merge specifically so #201's rebuild could go to the batch fleet).
-  `flow/run-corner-sweep.sh`'s loop is therefore an interim substitute
-  whose exit condition is met — no equivalence between the native sweep
-  and the script's loop is claimed here. The migration and the re-run stay
-  with #201 (the 18-corner rebuild re-qualification), and the script stays
-  byte-identical until then: live record
+  verified against the `0.8.0` release's `docs/cli/place-and-route.md`,
+  "Physical rebuild per corner") re-runs the whole flow once per named
+  corner into one aggregated `corner_runs[]` report, with `--backend batch`
+  sending those units to the Spot fleet. The script's loop is therefore an
+  interim substitute whose exit condition is met — no equivalence between
+  the native sweep and the script's loop is claimed here. The migration and
+  the re-run stay with #201 (the 18-corner rebuild re-qualification); the
+  script stays byte-identical until then, because live record
   `verification/records/place-and-route/records/20260816-072918-d8eafca.md`
-  hashes its content. One caveat for whoever migrates, unverified here:
-  the aggregated `rebuild_corners` response may lack per-unit wall-clock —
-  the script computes `elapsed_s` itself (`run-corner-sweep.sh:152`) — so
+  hashes its content. One caveat for whoever migrates, unverified here: the
+  aggregated `rebuild_corners` response may lack per-unit wall-clock — the
+  script computes `elapsed_s` itself (`run-corner-sweep.sh:152`) — so
   per-corner timing may surface as a friction-protocol item.
 
-Also fixed in the same window, load-bearing for this run but owned by this
-repo rather than `klayout-tools`: `scripts/openroad-docker.sh` (from issue
-#13) originally bind-mounted the host working directory at a fixed
-container-internal `/workspace`, which works for a relative-path-only
-script but silently breaks any `klt place-and-route` run, since every stage
-script `klt` generates bakes in **absolute host paths** (the netlist, the
-LEF/liberty deck — which for the PDK lives *outside* the repo entirely at
-`~/.ciel` — and every stage's `write_db`/`write_def`/`-metrics` output
-path). This issue's PR fixes the wrapper to bind-mount both the repo tree
-and the resolved PDK root at their own identical absolute paths, so those
-paths resolve the same way inside the container as they do on the host; see
-that script's own header comment for the detail. `scripts/openroad-smoke-
-test.sh`'s fixture (`scripts/openroad-smoke/smoke.tcl`) was updated to use
-relative paths accordingly.
-
-### Gaps found by the post-route gate-level re-simulation (issue #9)
-
-Three further gaps, same format and same friction protocol, found while
-re-running the bit-exact suite against a gate-level netlist of the routed
-layout (`verification/gate-level/`). All three are now **fixed upstream and
-past this repo's pin** (the SDF export/option, the defines field, and the
-testbench search path, below); what remains on delay-annotated gate-level
-simulation is the residual caveats noted on the first bullet, not a missing
-capability:
-
-- **`klt place-and-route` SDF export was missing; the netlist half is
-  closed at the current pin (corrected by issue #139).** *Originally written
-  as "no post-route netlist export: the response carries `def_path` and
-  `gds_path` only" — that is stale: the envelope also carries `verilog_path`
-  (see `verification/records/place-and-route/artifacts/20260911-052542-d5e43d3/par-nominal-output.json`),
-  and `flow/run-par.sh` now commits it on every run.* The netlist half is
-  [klayout-tools#996](https://github.com/2AMLogic/klayout-tools/issues/996)
-  (filed by #8, **fixed** by
-  [#997](https://github.com/2AMLogic/klayout-tools/pull/997), merged
-  2026-08-15 — this repo's `klt` pin bumped past it by issue #55, and in
-  any case describing a *re-run* of P&R rather than the committed
-  `layout/modexp.gds`). The SDF
-  half is [klayout-tools#1002](https://github.com/2AMLogic/klayout-tools/issues/1002)
-  (**fixed** by
-  [#1007](https://github.com/2AMLogic/klayout-tools/pull/1007), merged
-  2026-08-15 — this repo's `klt` pin bumped past it by issue #55, and the
-  fix also wired `options.sdf` onto `klt functional-verification`).
-  Delay-annotated (per-corner) gate-level simulation therefore runs on the
-  current pin; two residual caveats remain —
-  [klayout-tools#2363](https://github.com/2AMLogic/klayout-tools/issues/2363)'s
-  zero-delay `INTERCONNECT` residual (worked around by the record's
-  disclosed 4-entry exclusion) and the fact that an SDF run still describes
-  a fresh *re-run* of P&R, not byte-reproducible against the committed
-  `layout/modexp.gds` — see `verification/gate-level/README.md`. Local
-  substitute for the netlist half:
-  `verification/gate-level/spice_to_verilog.py`, which derives
-  the netlist from #8's `klt extract --abstract-cells` output — see
-  `verification/gate-level/README.md`.
-- **`klt functional-verification` had no compile-time defines / build-args
-  field** ([klayout-tools#1001](https://github.com/2AMLogic/klayout-tools/issues/1001)),
-  so a PDK's `` `ifdef ``-gated Verilog cell library
-  (`USE_POWER_PINS`, `FUNCTIONAL`, `UNIT_DELAY`) could not be selected
-  through the request. **Fixed upstream** by
-  [#1006](https://github.com/2AMLogic/klayout-tools/pull/1006) (closed as
-  completed 2026-08-15); this repo's `klt` pin is past it and the gate-level
-  request carries `options.defines` (`{"FUNCTIONAL": null, "UNIT_DELAY":
-  "#1"}`), with `gate_level_cross_check.py` passing the same two defines
-  through cocotb's own Runner API. The local substitute
-  `verification/gate-level/sky130_fd_sc_hd_sim_defines.v` — which used to be
-  listed first in `request.sources` so its `` `define ``s were in effect for
-  every later source in the same compilation unit — is gone; a live evidence
-  record hashed that file as a provenance input, so removing it minted a
-  superseding record (`20261027-013940-98bf55d` →
-  `20261117-112523-2abccc2`, #322).
-- **`klt functional-verification` required the cocotb testbench module to sit
-  next to the request document**
-  ([klayout-tools#1003](https://github.com/2AMLogic/klayout-tools/issues/1003)),
-  so one unmodified testbench could not serve several requests. **Fixed
-  upstream** by [#1005](https://github.com/2AMLogic/klayout-tools/pull/1005)
-  (closed as completed 2026-08-15); this repo's `klt` pin is past it, and
-  `verification/gate-level/request-modexp-gate-level.json` now reaches
-  `verification/test_modexp.py` through `testbench.search_path` (`".."`,
-  resolved against the request's own directory). The committed stand-in that
-  used to substitute for the field — a second `test_modexp.py` entry in
-  `verification/gate-level/` pointing at `../test_modexp.py` — is gone.
-  Copying the testbench would have destroyed the property the gate-level run
-  exists to demonstrate, and now nothing has to.
-
-Also filed, environment- rather than klt-shaped:
-[klayout-tools#1004](https://github.com/2AMLogic/klayout-tools/issues/1004) —
-the accepted SDF re-simulation recipe is conditional on Icarus >= 13, and
-Icarus 12.0 (what the current Debian/Ubuntu archive ships) cannot simulate
-`ifdef`-gated standard-cell *timing* models at all.
+The gate-level re-simulation (issue #9) found further upstream gaps —
+netlist/SDF export, compile-time defines, testbench search path, and the
+Icarus version — and their residuals; those filings are documented once,
+in `verification/gate-level/README.md`'s "Known upstream gaps" table.
