@@ -8,6 +8,13 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-23
+
+- **PR #408**: docs: drop stale Leg 2 block from run-gate-level-sim.sh, slice --help by sentinel
+- **PR #402**: docs: ratify DR-0017 via the two-key step (status-only flip)
+- **Issue #407** (closed): Closed by PR #408
+- **Issue #400** (closed): Closed by PR #402
+
 ### 2026-11-20
 
 - **PR #404**: docs: price Montgomery entry setup with split doubling and kernel reuse
