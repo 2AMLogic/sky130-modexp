@@ -409,6 +409,30 @@ def case_klt_error_message_unwrap_and_tail() -> None:
            tail("a" * 5000 + "end", 600)[-60:])
 
 
+def case_read_transcript_counts_and_completeness() -> None:
+    """`read_transcript()` / `transcript_completeness_error()` (issue #418):
+    a missing file is None (never zero mismatches); rows are counted once;
+    only an exact expected count is complete."""
+    sys.path.insert(0, str(MODULE.parent))
+    from _repo_utils import read_transcript, transcript_completeness_error
+
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp) / "t.jsonl"
+        record("missing transcript reads as None", read_transcript(t) is None)
+        record("missing transcript is incomplete",
+               transcript_completeness_error(None, 3) is not None)
+        rows = [{"got": "a", "want": "a"}, {"got": "b", "want": "a"},
+                {"got": "a", "want": "a"}]
+        t.write_text("\n".join(json.dumps(r) for r in rows) + "\n\n")
+        got = read_transcript(t)
+        record("counts rows and mismatches, skips blank lines",
+               got is not None and got["total"] == 3 and got["mismatches"] == 1
+               and got["examples"] == [rows[1]], repr(got))
+        record("exact count is complete", transcript_completeness_error(got, 3) is None)
+        record("short is incomplete", transcript_completeness_error(got, 4) is not None)
+        record("overlong is incomplete", transcript_completeness_error(got, 2) is not None)
+
+
 def main() -> int:
     if not MODULE.exists():
         print(f"FATAL: {MODULE} not found", file=sys.stderr)
@@ -420,6 +444,7 @@ def main() -> int:
     case_sha256_prefix_contract()
     case_resolve_klt_precedence()
     case_klt_error_message_unwrap_and_tail()
+    case_read_transcript_counts_and_completeness()
     print(f"test_repo_utils: {len(failures)} failure(s)")
     return 1 if failures else 0
 

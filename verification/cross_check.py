@@ -84,11 +84,13 @@ from pathlib import Path
 from _repo_utils import (
     REPO_ROOT,
     klt_error_message,
+    read_transcript,
     reexec_into_venv_if_needed,
     resolve_klt,
     run_git,
     sha256_of,
     tail,
+    transcript_completeness_error,
 )
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -270,6 +272,9 @@ def run_width(
     run_dir = build_root / f"klt-width{width}"
     run_dir.mkdir(parents=True, exist_ok=True)
     transcript_path = build_root / f"width-{width}.jsonl"
+    # A reused --transcript-dir may hold a prior run's transcript; only one
+    # written by *this* run may count (issue #418).
+    transcript_path.unlink(missing_ok=True)
     request_path = run_dir / "request.json"
     request_path.write_text(
         json.dumps(build_request(width, seed), indent=2) + "\n", encoding="utf-8"
@@ -316,16 +321,9 @@ def run_width(
             f"{klt_error_message(completed.stderr)}"
         ) from None
 
-    mismatches = 0
-    if transcript_path.exists():
-        with open(transcript_path, encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                vec = json.loads(line)
-                if vec["got"] != vec["want"]:
-                    mismatches += 1
+    observed = read_transcript(transcript_path)
+    incomplete = transcript_completeness_error(observed, cases)
+    mismatches = observed["mismatches"] if observed else 0
 
     # Diagnosability (issue #361): a verdict that is not a pass must not
     # come back as bare counts. The failing testcases (names + cocotb's
@@ -339,6 +337,8 @@ def run_width(
         "cases": cases,
         "seed": seed,
         "mismatches": mismatches,
+        "observed": observed["total"] if observed else 0,
+        "transcript_error": incomplete,
         "klt_pass": envelope.get("status") == "pass"
         and envelope.get("test_count", 0) > 0,
         "klt_status": envelope.get("status"),
@@ -621,7 +621,13 @@ def main() -> int:
                 failed_artifacts.add(build_root / f"klt-width{width}")
                 continue
             summaries.append(summary)
-            status = "PASS" if summary["mismatches"] == 0 and summary["klt_pass"] else "FAIL"
+            status = (
+                "PASS"
+                if summary["mismatches"] == 0
+                and summary["klt_pass"]
+                and summary["transcript_error"] is None
+                else "FAIL"
+            )
             if status == "FAIL":
                 overall_ok = False
                 failed_artifacts.add(summary["klt_run_dir"])
@@ -645,9 +651,11 @@ def main() -> int:
                 if summary["klt_pass"]
                 else f", klt status={summary['klt_status']!r}"
             )
+            if summary["transcript_error"] is not None:
+                verdict += f", INCOMPLETE: {summary['transcript_error']}"
             print(
                 f"WIDTH={width}: {status} -- "
-                f"{summary['cases'] - summary['mismatches']}/{summary['cases']} "
+                f"{summary['observed'] - summary['mismatches']}/{summary['cases']} "
                 f"match, {summary['mismatches']} mismatches "
                 f"(seed={width_seed}{verdict})",
                 flush=True,
@@ -657,7 +665,9 @@ def main() -> int:
             print("\nFATAL: no WIDTH runs completed")
             return 1
 
-        total_cases = sum(s["cases"] for s in summaries)
+        # Measured, not requested: an incomplete transcript must not be
+        # reported as the requested case count (issue #418).
+        total_cases = sum(s["observed"] for s in summaries)
         total_mismatches = sum(s["mismatches"] for s in summaries)
         print()
         print(

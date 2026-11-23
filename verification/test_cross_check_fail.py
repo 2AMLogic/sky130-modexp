@@ -83,10 +83,16 @@ else:
     verdict = verdict_spec
 mismatch_at = int(os.environ.get("STUB_MISMATCH_AT", "-1"))
 
-with open(transcript, "w") as f:
-    for i in range(cases):
+tmode = os.environ.get("STUB_TRANSCRIPT", "full")  # full|none|short|long
+rows = {"full": cases, "none": -1, "short": max(cases - 2, 0), "long": cases + 2}[tmode]
+if tmode == "none":
+    rows = 0
+f = open(transcript, "w") if tmode != "none" else None
+if f is not None:
+    for i in range(rows):
         got = f"mismatch-{i}" if (verdict == "fail" and i == mismatch_at) else "ok"
         f.write(json.dumps({"width": width, "case": i, "got": got, "want": "ok"}) + "\n")
+    f.close()
 
 base = {
     "schema_version": 1, "engine": "icarus", "hdl_toplevel": "modexp",
@@ -233,6 +239,46 @@ def test_all_pass_cleans_up_unchanged() -> None:
         check("build root fully removed on a green run", _build_root(scratch) is None)
 
 
+def test_incomplete_transcripts_fail() -> None:
+    """Missing / short / overlong transcripts fail the RTL driver (issue #418)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        stub_bin = Path(tmp) / "stub-bin"
+        stub_bin.mkdir()
+        _write_exec(stub_bin / "klt", STUB_KLT)
+        _write_exec(stub_bin / "iverilog", STUB_IVERILOG)
+        for mode, needle in (
+            ("none", "no transcript written"),
+            ("short", "transcript has 1 vectors, expected 3"),
+            ("long", "transcript has 5 vectors, expected 3"),
+        ):
+            scratch = Path(tmp) / f"scratch-{mode}"
+            scratch.mkdir()
+            proc = _cli(["--widths", "4", "--cases", "3"], stub_bin, scratch,
+                        extra_env={"STUB_TRANSCRIPT": mode})
+            check(f"{mode} transcript exits 1", proc.returncode == 1, f"rc={proc.returncode}")
+            check(f"{mode} transcript names the gap", needle in proc.stdout, proc.stdout[-300:])
+            check(f"{mode} transcript is not reported as 3/3",
+                  "3/3 match" not in proc.stdout, proc.stdout[-300:])
+        # Complete transcript still passes.
+        scratch = Path(tmp) / "scratch-full"
+        scratch.mkdir()
+        proc = _cli(["--widths", "4", "--cases", "3"], stub_bin, scratch)
+        check("complete transcript exits 0", proc.returncode == 0, proc.stdout[-300:])
+        # Reused dir: a prior run's transcript must not satisfy a run that writes none.
+        reuse = Path(tmp) / "reuse"
+        reuse.mkdir()
+        scratch = Path(tmp) / "scratch-reuse"
+        scratch.mkdir()
+        proc = _cli(["--widths", "4", "--cases", "3", "--transcript-dir", str(reuse)],
+                    stub_bin, scratch)
+        check("reuse: first run passes", proc.returncode == 0, proc.stdout[-300:])
+        check("reuse: prior transcript left on disk", (reuse / "width-4.jsonl").is_file())
+        proc = _cli(["--widths", "4", "--cases", "3", "--transcript-dir", str(reuse)],
+                    stub_bin, scratch, extra_env={"STUB_TRANSCRIPT": "none"})
+        check("reuse: stale transcript rejected", proc.returncode == 1 and
+              "no transcript written" in proc.stdout, proc.stdout[-300:])
+
+
 def test_failing_tests_block_is_bounded() -> None:
     """`_failing_tests_block` tail-truncates to `klt_error_message`'s limit."""
     huge = "x" * 5000 + "the-actual-failure"
@@ -255,6 +301,7 @@ def test_failing_tests_block_is_bounded() -> None:
 def main() -> int:
     test_failing_width_keeps_evidence_and_prints_detail()
     test_all_pass_cleans_up_unchanged()
+    test_incomplete_transcripts_fail()
     test_failing_tests_block_is_bounded()
     return 1 if failures else 0
 
