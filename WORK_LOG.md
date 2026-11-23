@@ -10,6 +10,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-23
 
+- **PR #413**: docs(flow): dedupe gate-level gap list and drop superseded update layers
+- **Issue #412** (closed): Remove duplicated gate-level gap list and superseded Update layers from flow/README.md
 - **PR #408**: docs: drop stale Leg 2 block from run-gate-level-sim.sh, slice --help by sentinel
 - **PR #402**: docs: ratify DR-0017 via the two-key step (status-only flip)
 - **Issue #407** (closed): Remove the stale Leg 2 FAIL block from run-gate-level-sim.sh: 4 supersessions old and truncated by --help

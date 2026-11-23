@@ -7,7 +7,7 @@ The body below is a snapshot of GitHub label state as of the last merged docs-ma
 <!-- Maintained automatically by the Guide triage agent. Manual edits are fine but may be overwritten. -->
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-23T09:55:12Z (snapshot; compare against live labels)_
+_Generated: 2026-11-23T12:45:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -37,13 +37,11 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#310**: Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py
-- **#412**: Remove duplicated gate-level gap list and superseded Update layers from flow/README.md
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#413**: docs(flow): dedupe gate-level gap list and drop superseded update layers
 - **#414**: chore: remove the retired plain-element LVS control leg (modexp_reference.spice, build_reference_netlist.py)
 
 ## Approved (Awaiting Merge)
@@ -77,8 +75,8 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 2 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 4 |
 | Architect / Hermit proposals | 1 |
