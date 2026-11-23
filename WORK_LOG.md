@@ -12,8 +12,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - **PR #408**: docs: drop stale Leg 2 block from run-gate-level-sim.sh, slice --help by sentinel
 - **PR #402**: docs: ratify DR-0017 via the two-key step (status-only flip)
-- **Issue #407** (closed): Closed by PR #408
-- **Issue #400** (closed): Closed by PR #402
+- **Issue #407** (closed): Remove the stale Leg 2 FAIL block from run-gate-level-sim.sh: 4 supersessions old and truncated by --help
+- **Issue #400** (closed): T1 item 5: open the ratification PR for DR-0017 (status flip only) so the EE key, market key and operator have a PR to act on
 
 ### 2026-11-20
 
