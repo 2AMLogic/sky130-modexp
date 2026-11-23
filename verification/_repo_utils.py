@@ -20,17 +20,17 @@ preamble locates the *sibling module* by relative path, which is
 unavoidable; the *repo root* still comes from `find_repo_root()` below, so
 `$REPO_ROOT` is honoured no matter how deep the importing script sits.
 
-The deliberate exceptions, named so the next duplication pass does not
-re-file them (issue #349): `gate-level/spice_to_verilog.py` keeps its own
+The deliberate exception, named so the next duplication pass does not
+re-file it (issue #349): `gate-level/spice_to_verilog.py` keeps its own
 `find_repo_root()` because it is built to be vendored *outside* the repo --
 a copy resolves its `spice_lef_parsing` import through
 `$SPICE_LEF_PARSING_DIR`, and importing this module would hard-code a
 `../` relationship vendoring breaks -- and its bytes are pinned in T1
 item 9 signoff evidence, so even a mechanical edit costs a re-attestation.
-Outside `verification/`, `layout/lvs/build_reference_netlist.py` carries
-the same vendorable-single-file rationale (#310 proposes removing it
-outright). Those two are the complete `def find_repo_root` census beyond
-this file; every other consumer imports from here.
+(`layout/lvs/build_reference_netlist.py`, outside `verification/`, used to
+carry the same vendorable-single-file rationale; #310 removed it.) That
+exception is the complete `def find_repo_root` census beyond this file;
+every other consumer imports from here.
 
 `VENV_PYTHON` and `reexec_into_venv_if_needed()` are the analogous shared
 home for the "re-exec under `.venv/bin/python3` when the ambient interpreter

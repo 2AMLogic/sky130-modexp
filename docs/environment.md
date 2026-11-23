@@ -437,7 +437,7 @@ under `verification/` or `layout/`. Run it with:
 The flow and verification scripts (`flow/run-par.sh`,
 `flow/run-sta-corner-sweep.sh`, `verification/gate-level/run-gate-level-sim.sh`,
 `verification/gate-level/spice_to_verilog.py`,
-`layout/lvs/build_reference_netlist.py`, `verification/_repo_utils.py`,
+`verification/_repo_utils.py`,
 `verification/check_pins.py`, `verification/check_records.py`,
 `verification/cross_check.py`, `verification/check_artifact_manifests.py`,
 `verification/repro_out_of_domain_mismatch.py`,
@@ -450,10 +450,9 @@ among them take that depth-independence from `verification/_repo_utils.py`,
 so a vendored copy of any of them must carry `_repo_utils.py` beside it, or
 one directory up as the in-repo layout has it -- the pair travels together
 (`verification/test_check_pins.py`'s nested-copy case asserts exactly this).
-The two deliberate exceptions, `verification/gate-level/spice_to_verilog.py`
-and `layout/lvs/build_reference_netlist.py`, keep their own
-`find_repo_root()` precisely so a single-file copy vendors cleanly. They
-take these inputs, all optional here:
+The one deliberate exception, `verification/gate-level/spice_to_verilog.py`,
+keeps its own `find_repo_root()` precisely so a single-file copy vendors
+cleanly. It takes these inputs, all optional here:
 
 | Variable | Meaning | Default |
 |---|---|---|
