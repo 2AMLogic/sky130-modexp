@@ -166,15 +166,14 @@ an earlier step produces).
 
 **Leg 2 (SDF) is not run by that script, or by any script here** — it needs a
 fresh `klt place-and-route` re-run (`post_route_spef`/`post_route_sdf`, and
-`openroad`) rather than the committed layout. Its literal,
-copy-pasteable cold-start sequence — `./scripts/setup-env.sh` → the P&R
-request carrying `post_route_spef`/`post_route_sdf` → the SDF subset filter
-(the disclosed IOPATH/antenna exclusion) → the `klt
-functional-verification` request carrying `options.sdf` — is the
-**"Run configuration"** section of
-`verification/records/gate-level-sim/records/20260923-054800-e26f603.md`, and
-is summarized in `run-gate-level-sim.sh`'s own header comment
-(`./verification/gate-level/run-gate-level-sim.sh --help`).
+`openroad`). Its literal, copy-pasteable cold-start sequence —
+`./scripts/setup-env.sh` → the P&R request carrying
+`post_route_spef`/`post_route_sdf` → the SDF subset filter (the disclosed
+IOPATH/antenna exclusion) → the `klt functional-verification` request
+carrying `options.sdf` — is the **"Run configuration"** section of
+`verification/records/gate-level-sim/records/20260923-054800-e26f603.md`. The
+live T1-item-7 run, on the committed layout, is
+`verification/records/gate-level-sim/records/20261027-050100-163f791.md`.
 
 ## What was run, and what it showed
 
