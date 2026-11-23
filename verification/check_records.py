@@ -18,8 +18,11 @@ Checks, per record `verification/records/<experiment>/records/<record-id>.md`:
    must be valid JSON with the required keys (see `REQUIRED_META_KEYS`), and
    every field in `REQUIRED_PROSE_FIELDS` must appear as a non-empty
    top-level markdown bullet (`- **Field**: <non-empty value>`).
-3. **Supersedes integrity** -- a non-null `supersedes` value must name a
-   record that exists in the same experiment directory.
+3. **Supersedes integrity** -- `supersedes` is `null`/`"none"`, a single
+   record id (legacy scalar spelling), or a list of record ids (one fresh
+   record clearing several live ancestors). Every id must name a record
+   that exists in the same experiment directory, must not repeat within
+   the list, and must not be the record itself.
 4. **Provenance hash freshness** -- for every record that is *not*
    superseded by another record (a "live" record), every
    `provenance.inputs[].content_hash` is recomputed from the working tree
@@ -53,6 +56,30 @@ from pathlib import Path
 from _repo_utils import REPO_ROOT, run_git, sha256_of
 
 RECORDS_ROOT = REPO_ROOT / "verification" / "records"
+
+def normalize_supersedes(value) -> list[str]:
+    """Return the ids a record supersedes as a list.
+
+    `None`/`"none"` -> `[]`, `str` -> `[str]`, `list` -> itself (an empty list
+    means none). Anything else, or a non-string/empty element, raises
+    `ValueError` so callers report a lint error rather than crash.
+    """
+    if value is None or value == "none":
+        return []
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, list):
+        for item in value:
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError(f"list elements must be non-empty strings, got {item!r}")
+            if item == "none":
+                raise ValueError("`none` is not valid inside a supersedes list")
+        return list(value)
+    raise ValueError(
+        f"must be null, \"none\", a record id, or a list of record ids, "
+        f"got {type(value).__name__}"
+    )
+
 
 RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
 
@@ -189,12 +216,22 @@ def lint_record(path: Path, all_record_ids_by_experiment: dict) -> list[str]:
         elif value.strip().lower() in _PLACEHOLDER_VALUES:
             errors.append(f"{path}: required field `{field}` is empty/placeholder")
 
-    supersedes = meta.get("supersedes")
-    if supersedes not in (None, "none"):
-        known_ids = all_record_ids_by_experiment.get(experiment, set())
-        if supersedes not in known_ids:
+    try:
+        supersedes = normalize_supersedes(meta.get("supersedes"))
+    except ValueError as exc:
+        errors.append(f"{path}: invalid `supersedes`: {exc}")
+        supersedes = []
+    known_ids = all_record_ids_by_experiment.get(experiment, set())
+    seen: set[str] = set()
+    for target in supersedes:
+        if target in seen:
+            errors.append(f"{path}: supersedes lists `{target}` more than once")
+        seen.add(target)
+        if target == path.stem:
+            errors.append(f"{path}: supersedes itself (`{target}`)")
+        elif target not in known_ids:
             errors.append(
-                f"{path}: supersedes `{supersedes}`, which has no record "
+                f"{path}: supersedes `{target}`, which has no record "
                 f"in `{experiment}/records/`"
             )
 
@@ -321,11 +358,12 @@ def main() -> int:
         except LintError:
             metas_by_path[path] = {}
 
-    superseded_ids = {
-        meta["supersedes"]
-        for meta in metas_by_path.values()
-        if meta.get("supersedes") not in (None, "none")
-    }
+    superseded_ids: set[str] = set()
+    for meta in metas_by_path.values():
+        try:
+            superseded_ids.update(normalize_supersedes(meta.get("supersedes")))
+        except ValueError:
+            pass  # reported by lint_record
 
     for path in record_files:
         errors = lint_record(path, all_ids_by_experiment)

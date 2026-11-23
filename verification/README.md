@@ -243,7 +243,9 @@ private and manifests are public, so a manifest is safe to commit.
     **Timestamp / author** line is evidence provenance, not a constant.
   - `--supersedes RECORD_ID` retires an existing record of the same
     experiment, writing that id into both the `record-meta` `supersedes` key
-    and the **Supersedes** bullet. That is what exempts the retired record
+    and the **Supersedes** bullet. Repeat the flag to retire several live
+    records with one fresh record (one id is written as the scalar spelling,
+    several as a JSON list and a comma-separated bullet). That is what exempts the retired record
     from `check_records.py`'s hash-freshness check, so it is the only way to
     replace a live record once a hashed input (`rtl/modexp.v`,
     `verification/cross_check_tb.py`) has changed. An id with no matching
@@ -294,8 +296,12 @@ Each record is a markdown file, `records/<record-id>.md`, with two parts:
 
    - `record_id` — must equal the filename stem.
    - `experiment` — the experiment-slug this record belongs to.
-   - `supersedes` — `null`, or the `record_id` of a prior record in the
-     same experiment directory this one corrects/replaces.
+   - `supersedes` — `null`, the `record_id` of a prior record in the
+     same experiment directory this one corrects/replaces (scalar spelling,
+     used by every record committed before issue #336), or a list of such
+     `record_id`s when one record retires several live ancestors. Ids in a
+     list must be distinct, must exist in the same experiment, and must not
+     name the record itself; `[]` means none.
    - `git_revision` — the full design git revision this record was
      produced against.
    - `provenance` — the klt provenance block:
@@ -332,7 +338,8 @@ Each record is a markdown file, `records/<record-id>.md`, with two parts:
      test, and the raw artifacts under `artifacts/<record-id>/`.
    - **Timestamp / author** — ISO-8601 UTC timestamp and who (human or
      agent) minted the record.
-   - **Supersedes** — `none`, or the prior `<record-id>` this corrects.
+   - **Supersedes** — `none`, the prior `<record-id>` this corrects, or a
+     comma-separated list of prior `<record-id>`s.
 
 ## Append-only rule
 
@@ -354,20 +361,25 @@ be trusted at `HEAD` and a fresh record is required. Superseded records are
 exempt from this re-check: they are frozen history describing what was true
 at the commit they cite, not a live claim about the current tree.
 
-**Semantic-merge races and the "twin record" pattern.** Two PRs that edit
+**Semantic-merge races and list-valued `supersedes`.** Two PRs that edit
 the *same* source file in non-overlapping regions can merge cleanly (no
 textual conflict) while each PR's own evidence record — minted against its
 single-PR branch tip — pins a `content_hash` that matches neither the
-merged file nor the other PR's record. This can leave **two independent
+merged file nor the other PR's record. This can leave **several independent
 live records** simultaneously stale on the same shared-file hash (#69 is
-the worked example). Because a record's `supersedes` field names exactly
-one prior record, one new record cannot supersede both stale records by
-itself. The fix is a **pair of twin records**, minted together against the
-same (already-merged) working tree, each naming one of the two stale
-records in its own `supersedes` field and cross-linking to the other via
-"Links" — not a schema change to make `supersedes` a list. See
+the worked example). Mint **one** fresh record against the merged working
+tree and name every live ancestor it clears in `supersedes` as a list
+(`cross_check.py --mint-record --supersedes A --supersedes B`, or by hand:
+`"supersedes": ["A", "B"]` and `- **Supersedes**: A, B`). Records already
+committed keep their scalar spelling; the linter accepts both, and the
+append-only rule means no existing record is rewritten.
+
+*Legacy workaround (history, issue #336).* Before `supersedes` accepted a
+list, the fix was a **pair of twin records** minted together, each naming one
+stale record and cross-linking via "Links" — which left N live records again
+and forced N twins on the next run. Do not mint new twins. See
 `verification/records/drc-lvs/records/20260817-002327-4dd3bfa.md` and its
-twin `20260817-002415-4dd3bfa.md` for the worked example.
+twin `20260817-002415-4dd3bfa.md` for the worked example of the old form.
 
 ## What CI runs vs. what stays local (explicit split)
 
@@ -436,8 +448,10 @@ Python 3 and `git`, reads tracked files only, and fails on:
   a placeholder/empty value;
 - a filename or metadata `record_id` that is not a well-formed
   `<record-id>`, or the two disagreeing;
-- a `supersedes` value naming a record that does not exist in the same
-  experiment directory;
+- a `supersedes` value (scalar or list element) naming a record that does
+  not exist in the same experiment directory, a duplicate or self-reference
+  within a list, or a value that is not `null`/`"none"`/a record id/a list of
+  record ids;
 - a live record whose `provenance.inputs[].content_hash` no longer matches
   the current working tree (see "Provenance staleness" above);
 - **append-only violations**: any file under `verification/records/`
