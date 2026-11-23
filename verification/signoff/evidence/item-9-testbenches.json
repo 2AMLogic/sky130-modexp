@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/cross_check.py",
         "passed": true,
-        "content_hash": "sha256:caf45ba8d0f6ef2068f75ca69f4c9f0d28b9b7f3d7364ff805e2dcd1c3532cf2"
+        "content_hash": "sha256:185bc25716f2b8a10831bae503e9c3ec5c18db039363c8304a709ee5846ea59a"
       },
       {
         "check": "present",
@@ -80,7 +80,7 @@
         "role": "testbench",
         "path": "verification/test_repo_utils.py",
         "passed": true,
-        "content_hash": "sha256:c8edb38f763c66a68b6c441c25371d6f46e511f11258eed49dfd85592f644093"
+        "content_hash": "sha256:e0b07ae3870719a4475f70c224f90ff74339d7114e8bbb828f0439dfc8686410"
       },
       {
         "check": "command",

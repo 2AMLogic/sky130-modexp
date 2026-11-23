@@ -89,8 +89,10 @@ sys.path.insert(0, str(VERIFICATION_DIR))
 from _repo_utils import (  # noqa: E402
     REPO_ROOT,
     klt_error_message,
+    read_transcript,
     reexec_into_venv_if_needed,
     resolve_klt,
+    transcript_completeness_error,
 )
 
 
@@ -202,6 +204,8 @@ def main() -> int:
 
     try:
         run_dir.mkdir(parents=True, exist_ok=True)
+        # Only a transcript written by this run may count (issue #418).
+        transcript.unlink(missing_ok=True)
         request_path = run_dir / "request.json"
         request_path.write_text(
             json.dumps(build_request(primitives_v, cells_v, seed), indent=2) + "\n",
@@ -252,7 +256,9 @@ def main() -> int:
             )
             return 1
 
-        if not transcript.is_file():
+        observed = read_transcript(transcript)
+        incomplete = transcript_completeness_error(observed, args.cases)
+        if observed is None:
             print(
                 f"FATAL: klt reported status={envelope.get('status')!r} but "
                 f"wrote no transcript at {transcript}",
@@ -262,26 +268,19 @@ def main() -> int:
 
         num_tests = envelope.get("test_count", 0)
         num_failures = envelope.get("failed_count", 0)
-
-        mismatches = 0
-        total = 0
-        with open(transcript, encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                total += 1
-                vec = json.loads(line)
-                if vec["got"] != vec["want"]:
-                    mismatches += 1
-                    if mismatches <= 5:
-                        print(f"  MISMATCH: {vec}")
+        total = observed["total"]
+        mismatches = observed["mismatches"]
+        for vec in observed["examples"]:
+            print(f"  MISMATCH: {vec}")
+        if incomplete is not None:
+            print(f"  INCOMPLETE: {incomplete}", file=sys.stderr)
 
         ok = (
             envelope.get("status") == "pass"
             and num_tests > 0
             and num_failures == 0
             and mismatches == 0
-            and total == args.cases
+            and incomplete is None
         )
         print()
         print(

@@ -273,3 +273,47 @@ def klt_error_message(stderr: str, limit: int = 600) -> str:
     except (json.JSONDecodeError, KeyError, TypeError):
         return tail(text, limit)
     return str(message)
+
+
+def read_transcript(path: Path, *, example_limit: int = 5) -> dict | None:
+    """Count the per-vector JSONL transcript a cross-check run wrote.
+
+    The one reader both cross-check drivers (`cross_check.py`,
+    `gate-level/gate_level_cross_check.py`) use, so "how many vectors did the
+    testbench actually observe" is counted once (issue #418). Returns `None`
+    when `path` is not a file -- the caller must treat that as an incomplete
+    run, never as zero mismatches. Otherwise returns `{"total": rows,
+    "mismatches": rows whose got != want, "examples": the first
+    `example_limit` mismatching rows}`.
+    """
+    if not path.is_file():
+        return None
+    total = 0
+    mismatches = 0
+    examples: list[dict] = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            total += 1
+            vec = json.loads(line)
+            if vec["got"] != vec["want"]:
+                mismatches += 1
+                if len(examples) < example_limit:
+                    examples.append(vec)
+    return {"total": total, "mismatches": mismatches, "examples": examples}
+
+
+def transcript_completeness_error(observed: dict | None, expected: int) -> str | None:
+    """Why a transcript does not prove a complete run, or `None` if it does.
+
+    Complete means the file exists and holds exactly `expected` vectors.
+    """
+    if observed is None:
+        return f"no transcript written (expected {expected} vectors)"
+    if observed["total"] != expected:
+        return (
+            f"transcript has {observed['total']} vectors, "
+            f"expected {expected}"
+        )
+    return None
