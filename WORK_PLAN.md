@@ -7,7 +7,7 @@ The body below is a snapshot of GitHub label state as of the last merged docs-ma
 <!-- Maintained automatically by the Guide triage agent. Manual edits are fine but may be overwritten. -->
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-23T02:53:00Z (snapshot; compare against live labels)_
+_Generated: 2026-11-23T02:55:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
