@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/cross_check.py",
         "passed": true,
-        "content_hash": "sha256:caf45ba8d0f6ef2068f75ca69f4c9f0d28b9b7f3d7364ff805e2dcd1c3532cf2"
+        "content_hash": "sha256:26eac87ae93ecae5538089cc3abc9108cd015dc2d92d70c7dd494f2c7b3b8457"
       },
       {
         "check": "present",
@@ -52,7 +52,7 @@
         "role": "testbench",
         "path": "verification/test_check_records.py",
         "passed": true,
-        "content_hash": "sha256:e8c1c2b86684a93bb3fe4f5e9ceebfd48ccf138b8f98a1ff7fcb7695c231c902"
+        "content_hash": "sha256:32344c81f62ea6be8a784b80723321f3a96419cda861ad3c8c726e6bfda6ff3d"
       },
       {
         "check": "present",
