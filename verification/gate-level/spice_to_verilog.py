@@ -2,8 +2,9 @@
 """Derive a simulatable, structural Verilog netlist of the **routed layout**
 from `klt extract --abstract-cells`'s SPICE abstraction of that layout.
 
-This is the converse of `layout/lvs/build_reference_netlist.py` (which goes
-gate-level Verilog -> SPICE for `klt lvs`), and it exists for the same
+This is the converse of `layout/lvs/build_reference_netlist.py` (which went
+gate-level Verilog -> SPICE for `klt lvs`; removed in #310), and it exists
+for the same
 reason the gate-level experiment prefers extracted connectivity to an
 exported netlist: the LVS-side extraction `klt extract --abstract-cells`
 produced in issue #8 describes the *drawn geometry* of the routed layout,
@@ -27,7 +28,7 @@ What the conversion does
 * Reads the `.SUBCKT modexp ... .ENDS` block's `X<instance>` cards, binding
   each positional argument to the pin name from that cell type's own
   `.SUBCKT <cell> <pins...>` declaration (the same per-type pin order
-  `build_reference_netlist.py` reuses on the reference side).
+  `build_reference_netlist.py` reused on the reference side).
 * Emits one named-port `sky130_fd_sc_hd__<cell>` instantiation per `X` card,
   against the PDK's own behavioural/timing Verilog cell models.
 * **Drops the power pins** (`VPWR`/`VGND`/`VPB`/`VNB`). The sky130_fd_sc_hd

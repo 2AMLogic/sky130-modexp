@@ -64,8 +64,10 @@ duplicating it.
   spec. `run-signoff.sh` fails if the spec, index and statement disagree. Cited
   by the manifest (item 6) — see the item 6 row below.
 - `run-signoff.sh` — the runner (and the `--check` gate CI runs). Uses `$KLT`,
-  else `klt` on `PATH`, and refuses any build not made from the pinned SHA (the
-  PDK-heavy legs' `.venv` klt is an older pin).
+  else `klt` on `PATH`, and refuses any build whose `--version` is not
+  `klt 0.8.0` (`SIGNOFF_KLT_VERSION` — the shared PyPI release pin, the same
+  `KLT_VERSION` as `scripts/setup-env.sh`; a `.devN+g<sha>` git build is
+  refused too).
 
 ## Current verdict (2026-10-27, this manifest)
 
@@ -77,15 +79,15 @@ nothing here inflates a row to green.
 |---|---|---|
 | 3 DRC clean | **met** | `layout/drc/modexp-drc-report.json`: `status: clean`, 0 violations, input pinned by `content_hash` (freshness verified by the grader). Coverage disclosure below. |
 | 4 LVS clean | **met** | `layout/lvs/modexp_lvs_report.json`: `status: match`, `power_connectivity.status: match` (issue #233, against the as-built netlist). The envelope pins its netlist input by `provenance.input.content_hash`; see "Citation policy" below. |
-| 7 Post-layout verification | **met** | The cited gate-level `klt functional-verification` run (record `20260923-054800-e26f603`) passes **with** `environment.sdf.annotated: true` — the SDF-annotated post-layout regression item 7 requires (issue #138). Its own disclosure rides with it: the annotation is `partial`, because Icarus implements SDF `IOPATH`/`INTERCONNECT` but not `TIMINGCHECK`, so all 129 `TIMINGCHECK` sections are dropped and `$setup`/`$hold` run against the cell library's placeholder limits. **This is net-delay back-annotation, not timing-check verification** — the setup/hold question is item 5's, and item 5 is `unmet` below. |
-| 5 Corner verification | unmet (`check_failed`) | **Now cited, and failing on its own evidence rather than on an absence of it** (issue #132): `verification/records/sta-corner-sweep/artifacts/20261027-013900-98bf55d/sta-corner-sweep-results.json` (re-run by issue #232 on the regenerated DEF; the figures below are from the previous layout, the current binding corner is −30.332 ns / 24.79 MHz, still 10 of 18), one `klt sta` envelope covering all 18 ratified corners of the committed layout, pinned by the analysed DEF's `content_hash`. The grader's rule is that every reported corner must be `timing_status: "constrained"` with non-negative setup **and** hold slack; **100 MHz closes at 10 of 18** — binding corner `ss_n40C_1v28` at **22.80 MHz**, setup WNS −33.867 ns. Hold is clean at all 18. This is a disclosed, bounded FAIL carried against an unamended ratified Clock row, ratified as `spec/decision-records/0004-…`; it is deliberately **not** closed by lowering the target, and the decision record prices the measured route to 18/18. **Update (issue #141):** that route was run through committed `klt` requests and reaches **17 of 18** (`ss_n40C_1v28` at −0.574 ns / 94.57 MHz), not eighteen — `spec/decision-records/0005-…` and record `20260924-134500-1a8313b`. This row's cited evidence and verdict are unchanged: no layout, RTL or flow request moved. |
+| 7 Post-layout verification | **met** | The cited gate-level `klt functional-verification` run (record `20261027-050100-163f791`, issue #236, on the committed layout) passes **with** `environment.sdf.annotated: true` — the SDF-annotated post-layout regression item 7 requires (issue #138). Its own disclosure rides with it: the annotation is `partial`, covering the 1,920 net-delay `INTERCONNECT` entries only (1 antenna-diode entry dropped) — every `IOPATH` cell-arc entry is excluded (annotating `IOPATH` on these models under Icarus kills a timing-clean design; isolation evidence in the record), and Icarus implements SDF `IOPATH`/`INTERCONNECT` but not `TIMINGCHECK`, so the `TIMINGCHECK` sections are dropped and `$setup`/`$hold` run against the cell library's placeholder limits. **This is net-delay back-annotation, not timing-check verification** — the setup/hold question is item 5's, and item 5 is `unmet` below. |
+| 5 Corner verification | unmet (`check_failed`) | **Now cited, and failing on its own evidence rather than on an absence of it** (issue #132): `verification/records/sta-corner-sweep/artifacts/20261027-013900-98bf55d/sta-corner-sweep-results.json` (re-run by issue #232 on the regenerated DEF), one `klt sta` envelope covering all 18 ratified corners of the committed layout, pinned by the analysed DEF's `content_hash`. The grader's rule is that every reported corner must be `timing_status: "constrained"` with non-negative setup **and** hold slack; **100 MHz closes at 10 of 18** — binding corner `ss_n40C_1v28` at **24.79 MHz**, setup WNS −30.332 ns. Hold is clean at all 18. This is a disclosed, bounded FAIL carried against an unamended ratified Clock row, ratified as `spec/decision-records/0004-…`; it is deliberately **not** closed by lowering the target, and the decision record prices the measured route to 18/18. **Update (issue #141):** that route was run through committed `klt` requests and reaches **17 of 18** (`ss_n40C_1v28` at −0.574 ns / 94.57 MHz), not eighteen — `spec/decision-records/0005-…` and record `20260924-134500-1a8313b`. This row's cited evidence and verdict are unchanged: no layout, RTL or flow request moved. |
 | 11 Power delivery (structural) | **met** (issue #235) | Compound entry: `layout/erc/modexp-erc-supply-report.json` (`erc_finding_count: 0`, `VPWR`/`VGND` one island each, the `nwell_tap` tie in `erc_coverage.checked`, input pinned to the current GDS) + the item-4 LVS report (`power_connectivity.status: match`) + the item-2 flow run's P&R envelope `20261027-013900-98bf55d/par-run1-output.json` (`power.pdn: true`, `tapcell_master: sky130_fd_sc_hd__tapvpwrvgnd_1`, straps met1/met4/met5 inside the spec's stackup). **Disclosure:** only the n-well tie is computed; the p-substrate tie is not expressible non-degenerately on this klt (see `layout/erc/README.md`). |
 | 1 Design sources | **met** | Tool-produced attestation `evidence/item-1-design-sources.json` (`attestation.producer: klt signoff --attest`), bound to `inventory-item1.json` (RTL + flow recipe + the two netlists derived from it). Re-attested by `klt signoff --attest 1` over `inventory-item1.json` (issue #266): sources present, and both derived netlists pass `check_netlist_freshness.py` (hash-binding, not re-synthesis; see above). |
-| 2 Layout | **met** | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). Issue #232 regenerated `layout/modexp.{def,gds,v}` from the committed flow and **observed** reproduction: two sequential `flow/run-par.sh` runs gave byte-identical GDS, DEF and as-built netlist (record `verification/records/place-and-route/records/20261027-013900-98bf55d.md`). The claim is bounded to one host and OpenROAD build; it is not a cross-host claim. The envelope is the repo's own attestation (`status: pass`), as for items 1/9/10. |
+| 2 Layout | **met** | `evidence/item-2-layout.json`, bound to `layout/modexp.gds` (same hash the DRC citation pins). Issue #232 regenerated `layout/modexp.{def,gds,v}` from the committed flow and **observed** reproduction: two sequential `flow/run-par.sh` runs gave byte-identical GDS, DEF and as-built netlist (record `verification/records/place-and-route/records/20261027-013900-98bf55d.md`). The claim is bounded to one host and OpenROAD build; it is not a cross-host claim. The envelope's `status: pass` is the repo's own hand-written attestation of that audit, unlike items 1/9/10's tool-produced `--attest` envelopes (see "Citation policy" below). |
 | 9 Testbenches shipped | **met** | `evidence/item-9-testbenches.json`, bound to `inventory-item9.json` (testbenches present, a reduced cold-start run of the cross-check that exits 0, PDK and tool pins). `evidence/testbenches.md` remains the human-readable claim-to-testbench map. Tool-run checks (DRC/LVS/STA) are outside the claim. The gate-level simulation is not in the cold start (needs the PDK). |
 | 10 Repo hygiene | **met** | `evidence/item-10-repo-hygiene.json`, bound to `inventory-item10.json` (README, LICENSE, spec, environment doc, CI workflow present; `check_pins.py`, `check_records.py` and `bash -n scripts/setup-env.sh` exit 0). `evidence/repo-hygiene.md` remains the human-readable checklist. CI-run success is not an inventoried check (it needs forge access). |
 | 6 Monte Carlo | `not_applicable` (`t1_not_applicable_count: 1`; not `met`, and `tier` stays `null` while other items are unmet) | This block's ratified spec has **no statistical spec row** (functional correctness, Fmax, timing closure — none statistical), stated explicitly per the tier doc rather than left implicit; there is no Monte-Carlo claim to evidence. The manifest cites the bound spec row index (`evidence/modexp-spec-rows.json`) and statement (`evidence/item-6-na-statement.json`) by content hash, graded by the pinned klt 0.8.0 (klayout-tools#2865, PR #3200). `run-signoff.sh` also refuses to run if `spec/modexp.md` changed without re-deriving the index, or if spec and statement row ids differ. If a statistical spec row is ever ratified, this item must be re-evaluated. |
-| 8 Characterization | **met** | `evidence/item-8-characterization.json`, bound to `evidence/characterization.md` (issue #205): every row of the ratified spec table with a verdict or "reported, no ratified bound" and its record id, Fmax and setup/hold slack at all 18 corners, synthesized and routed area, and one power estimate at `tt_025C_1v80` (record `power-estimate/20261017-192500-8c11c62`; stated default activity, no parasitics, one corner). **The item is met by the report existing and being current, not by the design meeting its bounds**: the report carries the item 5 Clock FAIL (10 of 18 corners) as it is, and states the item 4 LVS `match` read from the committed report with its engine and scope caveats (netgen's gate-level leg, and `power_connectivity` being pin-to-net consistency rather than rail continuity). The envelope is generated and checked by `gen_characterization_envelope.py`. |
+| 8 Characterization | **met** | `evidence/item-8-characterization.json`, bound to `evidence/characterization.md` (issue #205): every row of the ratified spec table with a verdict or "reported, no ratified bound" and its record id, Fmax and setup/hold slack at all 18 corners, synthesized and routed area, and one power estimate at `tt_025C_1v80` (record `power-estimate/20261027-014000-98bf55d`; stated default activity, no parasitics, one corner). **The item is met by the report existing and being current, not by the design meeting its bounds**: the report carries the item 5 Clock FAIL (10 of 18 corners) as it is, and states the item 4 LVS `match` read from the committed report with its engine and scope caveats (netgen's gate-level leg, and `power_connectivity` being pin-to-net consistency rather than rail continuity). The envelope is generated and checked by `gen_characterization_envelope.py`. |
 
 ## Citation policy (what is cited, and why the rest is deliberately not)
 
@@ -131,15 +133,14 @@ fails.
 Freshness pins (`content_hash`) are set on every citation whose envelope
 carries a checkable input hash. Item 3 pins the DRC report's input layout
 hash (`sha256:cc970173…`, the current `layout/modexp.gds` as DRC'd by record
-`20261027-013910-98bf55d`). Item 4's LVS envelope predates klt's provenance
-population for that verb (`provenance.input: null`), so it is cited
-unpinned — a pin there could never match and would render a misleading
-`stale_evidence`; the freshness of that citation is instead carried by the
-DRC twin's hash (both were minted from the same GDS in the issue #81
-record) and by the record's own provenance block. Item 7's
-`functional-verification` envelope has no provenance block by design (that
-verb's verdict depends on no PDK and no deck), so no pin is possible there
-either — pinning it is documented upstream to always render
+`20261027-013910-98bf55d`). Item 4's LVS report is cited by bare path in
+`block-manifest.json`, yet freshness is still machine-checked: the report
+itself populates `provenance.input.content_hash` (the as-built netlist,
+`sha256:c8e432f3…`), which `klt signoff` re-hashes — `tier-report.json`
+reports `input_verified: true` for item 4 (regenerated by issue #233).
+Item 7's `functional-verification` envelope has no provenance block by
+design (that verb's verdict depends on no PDK and no deck), so no pin is
+possible there either — pinning it is documented upstream to always render
 `stale_evidence`.
 
 **Manifest key gotcha:** for a non-`mixed-signal` manifest, per-kind item
@@ -152,20 +153,17 @@ upstream as klayout-tools#2362.
 ## Item 3's DRC coverage disclosure (reported, not graded — read it here)
 
 The grader renders item 3 `met` on `status: clean` alone; the deck-coverage
-caveats travel with the claim, not the verdict. Quoted from the cited
-envelope's own `coverage` block:
-
-- `deck_scope`: `cap2m, capm, ct, difftap, li, licon, m1, m2, m3, m4, m5,
-  nwell, poly, via, via2, via3, via4` — the deck is a **curated starter
-  subset** of the sky130 DRM (17 chapters), not the full design rule
-  manual; "clean" is measured inside that scope (`layout/drc/README.md`).
-- `layers_in_stream_without_rules` (23): `64/5, 64/16, 64/59, 65/44,
-  66/15, 67/5, 67/16, 68/5, 68/16, 69/5, 69/16, 72/5, 72/16, 78/44, 81/4,
-  81/23, 83/44, 93/44, 94/20, 95/20, 122/16, 235/4, 236/0`.
-- `rules_skipped` (10): `capm.enclosing.via3.1, capm.separation.via3.1,
-  capm.space.1, capm.width.1, capm2.enclosing.via4.1,
-  capm2.separation.via4.1, capm2.space.1, capm2.width.1,
-  met3.enclosing.capm.1, met4.enclosing.capm2.1`.
+caveats travel with the claim, not the verdict. The coverage figures are
+**not hand-copied here** — the cited envelope's own `coverage` block is the
+source of truth, read it there: `layout/drc/modexp-drc-report.json`, also
+surfaced verbatim in `verification/signoff/tier-report.json`'s item 3
+`citation.coverage` (kept fresh by `run-signoff.sh --check` in CI). As of
+this report it lists **20 `deck_scope` chapters** — a **curated starter
+subset** of the sky130 DRM, not the full design rule manual; "clean" is
+measured inside that scope (`layout/drc/README.md`) — plus **18
+`layers_in_stream_without_rules`** and **47 `rules_skipped`**. A deck update
+changes those lists in the report without this file noticing, which is the
+point: one source of truth instead of a copy that silently rots.
 
 Item 7's `body_bias` disclosure does not apply to the current citation:
 that field rides a `klt pex` report, and item 7's citation here is a
@@ -181,15 +179,15 @@ citing this row must:
 - The sweep is `klt sta` with `spef` **omitted**, so it times against
   LEF/DEF-derived parasitics rather than an extracted or routing-estimated
   basis. That makes the table **optimistic**: the same DEF reads
-  +4.367 ns / 177.53 MHz at `tt_025C_1v80` here against the
-  +3.736 ns / 159.63 MHz the P&R record reports for it. The gap at the
+  +4.824 ns / 193.22 MHz at `tt_025C_1v80` here against the
+  +4.286 ns / 175.01 MHz the P&R record reports for it. The gap at the
   binding corner is understated, not overstated.
 - Ideal (not propagated) clock, and an extrapolated rather than bisected
   `fmax_mhz` — documented limits of `klt sta` itself.
 - The failure is **purely setup**; hold is clean at all eighteen corners
   (worst +0.21354 ns).
 
-Full record: `verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`.
+Full record: `verification/records/sta-corner-sweep/records/20261027-013950-98bf55d.md`.
 
 ## Running it
 
