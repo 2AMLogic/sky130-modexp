@@ -60,10 +60,12 @@ decision: `spec/decision-records/0012-lvs-item-4-met-on-the-as-built-netlist-and
 - `modexp_lvs_report_netgen.json` — the identical request with `"engine":
   "netgen"`; carries netgen's own side-by-side text in
   `mismatches[].details.raw`.
-- `modexp_reference.spice`, `build_reference_netlist.py` — the hand-built
-  SPICE reference (`plain-element` form) and its builder. **Not used by the
-  current comparison**; kept as the control leg, which still reproduces its
-  17-mismatch result (see history below).
+- `modexp_reference.spice`, `build_reference_netlist.py` — **removed** (#310).
+  They were the hand-built SPICE reference (`plain-element` form) and its
+  builder, serving only the pre-#131 control leg (see history below). Last
+  present at commit `9db5ae4`; append-only records under
+  `verification/records/` that cite them stay replayable from the git
+  revision each record names.
 - `expand_concat_assigns.py`, `modexp_synth_expanded.v` — **removed** (#225).
   They expanded the concatenation `assign`s of the frozen pre-CTS synthesis
   netlist for `klt lvs`'s Verilog reader
@@ -138,9 +140,10 @@ narrative that used to be stacked in this file is in git history
 | #55, 2026-08-16 | First as-built reference, against a fresh (non-identical) P&R rebuild: 1324 mismatches attributed to extraction net-name correlation and deck coverage. | `20260816-174310-5e656e5` | — |
 | #8, 2026-08-15 | First cell-level LVS (`klt extract --abstract-cells`, klayout-tools#620/#622) against the pre-CTS synthesis netlist as hand-built SPICE: 15 `topology` mismatches, fully attributed to 35 CTS/timing inserted instances and 5 resizes. | `20260815-013937-fa169a4` | — |
 
-The **control leg** is the original `plain-element` request (reference
-`layout/lvs/modexp_reference.spice`, form omitted). It was last run against the
-#131-era layout netlist, where it reproduced 17 mismatches; the committed
-`modexp_layout_abstracted.spice` is now regenerated from the current GDS, so
-that count describes the earlier layout, not this one. Its frozen inputs and
-outputs are under `verification/records/drc-lvs/artifacts/20260923-062424-7d0dd52/`.
+The **control leg** was the original `plain-element` request (reference
+`layout/lvs/modexp_reference.spice`, form omitted; the reference file and
+its builder were removed in #310, last present at commit `9db5ae4`). It was
+last run against the #131-era layout netlist, where it reproduced 17
+mismatches — a count that described that earlier layout, not the current
+one. Its frozen inputs and outputs are under
+`verification/records/drc-lvs/artifacts/20260923-062424-7d0dd52/`.

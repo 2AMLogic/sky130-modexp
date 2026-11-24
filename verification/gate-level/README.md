@@ -59,10 +59,10 @@ the `verification/records/gate-level-sim/` records that made it; the upstream
 export gap it rested on is in "Known upstream gaps" below, marked fixed.
 
 `spice_to_verilog.py` is the converse of `layout/lvs/build_reference_netlist.py`
-(gate-level Verilog → SPICE, for `klt lvs`) and follows its conventions: it
-binds each positional `X`-card argument to the pin name from that cell type's
-own `.SUBCKT` declaration, the same per-type pin order the reference side
-reuses.
+(gate-level Verilog → SPICE, for `klt lvs`; removed in #310) and follows its
+conventions: it binds each positional `X`-card argument to the pin name from
+that cell type's own `.SUBCKT` declaration, the same per-type pin order the
+reference side reused.
 
 ### Provenance guards (the instance-count check, and five more)
 

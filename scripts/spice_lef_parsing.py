@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Shared SPICE `.SUBCKT` header and LEF `MACRO`/`PIN` parsing.
 
-`layout/lvs/build_reference_netlist.py` (gate-level Verilog -> SPICE, for
-`klt lvs`) and `verification/gate-level/spice_to_verilog.py` (the converse:
-`klt extract --abstract-cells` SPICE -> Verilog) both need, from the same two
-input formats, "recover each cell type's pin order/direction so positional
-SPICE args or named Verilog ports bind correctly". This module holds that
-shared parsing logic once, so a format quirk fixed on one side (e.g. a SPICE
-net name needing `unescape()`, or a LEF with unusual `PIN`/`END` spacing)
-does not silently go unfixed on the other.
+`verification/gate-level/spice_to_verilog.py` (`klt extract --abstract-cells`
+SPICE -> Verilog) needs, from two input formats, "recover each cell type's
+pin order/direction so positional SPICE args or named Verilog ports bind
+correctly". This module holds that parsing logic once, so a format quirk
+(e.g. a SPICE net name needing `unescape()`, or a LEF with unusual
+`PIN`/`END` spacing) is fixed in one place. (Its other historical caller,
+`layout/lvs/build_reference_netlist.py`, gate-level Verilog -> SPICE for
+`klt lvs`, was removed in #310.)
 
 Two entry points:
 
@@ -18,10 +18,10 @@ Two entry points:
 * `parse_lef_macros()` -- `{cell_type: {pin: direction}}` for a requested set
   of cell types, from a LEF's `MACRO ... PIN ... DIRECTION ... END` blocks.
   Cell types requested but not found in the LEF are simply absent from the
-  returned dict; whether that is fatal is a caller decision (the two callers
-  need different behavior here: `spice_to_verilog.py` treats any missing
-  requested type as fatal, `build_reference_netlist.py` only reaches the LEF
-  as a per-type fallback and reports its own error message).
+  returned dict; whether that is fatal is a caller decision
+  (`spice_to_verilog.py` treats any missing requested type as fatal; the
+  retired `build_reference_netlist.py` only reached the LEF as a per-type
+  fallback and reported its own error message).
 """
 
 from __future__ import annotations
