@@ -52,7 +52,7 @@
         "role": "testbench",
         "path": "verification/test_check_records.py",
         "passed": true,
-        "content_hash": "sha256:b21eb4a6ea7ccc5d6786a2ac5a293603729fa0e779b12948f46783fccc57e54f"
+        "content_hash": "sha256:40b0fb09b3c7d438dbaf568c892a286d9aff22e8c461ce6b1fb9245cc5fdebdc"
       },
       {
         "check": "present",

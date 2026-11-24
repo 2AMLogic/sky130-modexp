@@ -393,6 +393,10 @@ def case_supersedes_bullet_matches_meta(repo: Path) -> None:
         "20260116-000000-abc1234",
         ["20260101-000000-abc1234", "20260115-000000-abc1234"],
         "fixture: bullet names both meta ids",
+        supersedes_bullet=(
+            "`20260101-000000-abc1234`, `20260115-000000-abc1234` "
+            "(freshness rerun)"
+        ),
     )
 
 
@@ -436,6 +440,21 @@ def case_supersedes_bullet_negation_exempt(repo: Path) -> None:
         supersedes_bullet=(
             "20260101-000000-abc1234 -- deliberately does **not** supersede "
             "`20260115-000000-abc1234`"
+        ),
+    )
+
+
+def case_supersedes_bullet_negates_meta_id(repo: Path) -> None:
+    """An id after a `does **not** supersede` cue is commentary, not a
+    claim, so it cannot satisfy a metadata `supersedes` entry."""
+    _add_record(
+        repo,
+        "20260118-000000-abc1234",
+        "20260101-000000-abc1234",
+        "fixture: bullet negates the id the meta claims to supersede",
+        supersedes_bullet=(
+            "none -- deliberately does **not** supersede "
+            "`20260101-000000-abc1234`"
         ),
     )
 
@@ -582,6 +601,12 @@ CASES = [
         case_supersedes_bullet_negation_exempt,
         0,
         "PASS: all records valid",
+    ),
+    (
+        "supersedes bullet negating a meta id fails",
+        case_supersedes_bullet_negates_meta_id,
+        1,
+        "does not name meta supersedes id(s) 20260101-000000-abc1234",
     ),
     (
         "adding a new record is allowed",

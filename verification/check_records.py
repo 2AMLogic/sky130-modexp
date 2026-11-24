@@ -193,22 +193,22 @@ def check_supersedes_bullet(path: Path, bullet: str | None, meta_ids: list[str])
     """
     if bullet is None or bullet.strip().lower() in _PLACEHOLDER_VALUES:
         return []  # presence/placeholder already reported by the required-field check
-    mentions = {m.group(0) for m in _SUPERSEDES_BULLET_ID_RE.finditer(bullet)}
     cue = _NEGATED_SUPERSEDE_RE.search(bullet)
-    claimed = (
-        {m.group(0) for m in _SUPERSEDES_BULLET_ID_RE.finditer(bullet) if m.start() < cue.start()}
-        if cue
-        else mentions
-    )
+    claimed = {
+        m.group(0)
+        for m in _SUPERSEDES_BULLET_ID_RE.finditer(bullet)
+        if cue is None or m.start() < cue.start()
+    }
+    meta_set = set(meta_ids)
     errors = []
-    missing = sorted(set(meta_ids) - mentions)
+    missing = sorted(meta_set - claimed)
     if missing:
         errors.append(
             f"{path}: **Supersedes** bullet does not name meta supersedes "
             f"id(s) {', '.join(missing)} -- bullet and record-meta must "
             f"list the same records"
         )
-    extra = sorted(claimed - set(meta_ids))
+    extra = sorted(claimed - meta_set)
     if extra:
         errors.append(
             f"{path}: **Supersedes** bullet names {', '.join(extra)}, which "
