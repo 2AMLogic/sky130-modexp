@@ -10,6 +10,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-24
 
+- **PR #429**: docs(signoff): replace seven stale pre-#232/#246 README passages with the live manifest facts
+- **Issue #427** (closed): Remove seven stale, self-contradictory pre-#232/#246 passages from verification/signoff/README.md
 - **PR #414**: chore: remove the retired plain-element LVS control leg (modexp_reference.spice, build_reference_netlist.py)
 - **Issue #310** (closed): Remove the unused LVS plain-element control leg: layout/lvs/modexp_reference.spice and build_reference_netlist.py
 
