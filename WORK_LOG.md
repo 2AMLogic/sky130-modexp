@@ -10,6 +10,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-24
 
+- **PR #426**: feat: cross-check Supersedes prose bullet ids against record-meta
+- **Issue #421** (closed): Evidence-record linter never cross-checks the **Supersedes** prose bullet against the meta value
 - **PR #429**: docs(signoff): replace seven stale pre-#232/#246 README passages with the live manifest facts
 - **Issue #427** (closed): Remove seven stale, self-contradictory pre-#232/#246 passages from verification/signoff/README.md
 - **PR #414**: chore: remove the retired plain-element LVS control leg (modexp_reference.spice, build_reference_netlist.py)
@@ -306,31 +308,4 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 - **Issue #156** (closed): CI: 'Loom merge-pr.sh regression suites' job red on main since resync 31aa731 (daemon-backed suites have no loom-daemon)
 - **PR #157**: ci: skip daemon-backed merge-pr suites listed in ci-excluded.txt
-
-### 2026-09-24
-
-- **Issue #151** (closed): Auditor guard-telemetry: rm-scope-unresolved-var denies 3 same-session rm -rf calls — 1 refinable, 2 correctly flagged
-- **PR #153**: fix(guard): resolve one-hop literal variable chains in rm-scope (#151)
-- **PR #152**: test(guard): add rm-scope-unresolved-var regression evidence for issue #151
-- **Issue #146** (closed): Auditor guard-telemetry: worktree-write-confinement denies sweep's own main-clean baseline snapshot
-- **PR #150**: fix(guard): exempt .loom/sweep-checkpoint/ from worktree-write-confinement (#146)
-- **Issue #148** (closed): Nothing checks that scripts/setup-env.sh's pin constants match docs/environment.md's pinned-versions table
-- **PR #149**: feat(lint): check setup-env.sh pin constants against docs/environment.md's pinned-versions table
-- **Issue #143** (closed): Pin the Yosys/ABC build: unpinned mapper moved slow-corner setup slack by 1.06 ns across the closure threshold
-- **PR #147**: feat(env): pin the Yosys/ABC mapper by content, and record what it maps to
-- **Issue #141** (closed): Land the measured 18/18 slow-corner closure (DR-0004 Decision 2's priced exit) — blocked on klayout-tools#2382
-- **PR #145**: evidence(sta): run DR-0004 Decision 2's priced exit — 17/18, not 18/18
-
-### 2026-09-23
-
-- **Issue #132** (closed): T1 item 5: 100 MHz closes at only 10/18 corners — binding corner ss_n40C_1v28 at 22.80 MHz
-- **PR #142**: feat(signoff): cite T1 item 5's failing 18-corner sweep, and ratify the disclosed exception with its measured exit
-- **Issue #131** (closed): T1 item 4: LVS reports mismatch (17, all physical-only/fixup cells) — attribution is complete but item 4 needs status: match
-- **PR #140**: feat(lvs): gate-level-verilog reference — power connectivity match, filler/tap pruned with disclosure, second engine cross-checked
-- **Issue #133** (closed): T1 item 7: no SDF-annotated post-layout regression exists (a zero-delay run renders not_post_layout)
-- **PR #138**: feat(verification): pass the SDF-annotated post-route regression as net-delay back-annotation
-- **Issue #129** (closed): T1 item 11 (power delivery, structural): no klt erc supply spec or report in this repo
-- **PR #137**: feat(layout): add klt erc supply evidence for T1 item 11
-- **Issue #130** (closed): Commit a klt signoff block manifest so this block's T1 state is graded, not hand-read
-- **PR #136**: feat(signoff): commit klt signoff block manifest as the graded T1 verdict of record
 

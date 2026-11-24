@@ -2,6 +2,33 @@
 
 Sections moved byte-for-byte from [WORK_LOG.md](../WORK_LOG.md) by `loom-daemon work-docs archive`.
 
+### 2026-09-24
+
+- **Issue #151** (closed): Auditor guard-telemetry: rm-scope-unresolved-var denies 3 same-session rm -rf calls — 1 refinable, 2 correctly flagged
+- **PR #153**: fix(guard): resolve one-hop literal variable chains in rm-scope (#151)
+- **PR #152**: test(guard): add rm-scope-unresolved-var regression evidence for issue #151
+- **Issue #146** (closed): Auditor guard-telemetry: worktree-write-confinement denies sweep's own main-clean baseline snapshot
+- **PR #150**: fix(guard): exempt .loom/sweep-checkpoint/ from worktree-write-confinement (#146)
+- **Issue #148** (closed): Nothing checks that scripts/setup-env.sh's pin constants match docs/environment.md's pinned-versions table
+- **PR #149**: feat(lint): check setup-env.sh pin constants against docs/environment.md's pinned-versions table
+- **Issue #143** (closed): Pin the Yosys/ABC build: unpinned mapper moved slow-corner setup slack by 1.06 ns across the closure threshold
+- **PR #147**: feat(env): pin the Yosys/ABC mapper by content, and record what it maps to
+- **Issue #141** (closed): Land the measured 18/18 slow-corner closure (DR-0004 Decision 2's priced exit) — blocked on klayout-tools#2382
+- **PR #145**: evidence(sta): run DR-0004 Decision 2's priced exit — 17/18, not 18/18
+
+### 2026-09-23
+
+- **Issue #132** (closed): T1 item 5: 100 MHz closes at only 10/18 corners — binding corner ss_n40C_1v28 at 22.80 MHz
+- **PR #142**: feat(signoff): cite T1 item 5's failing 18-corner sweep, and ratify the disclosed exception with its measured exit
+- **Issue #131** (closed): T1 item 4: LVS reports mismatch (17, all physical-only/fixup cells) — attribution is complete but item 4 needs status: match
+- **PR #140**: feat(lvs): gate-level-verilog reference — power connectivity match, filler/tap pruned with disclosure, second engine cross-checked
+- **Issue #133** (closed): T1 item 7: no SDF-annotated post-layout regression exists (a zero-delay run renders not_post_layout)
+- **PR #138**: feat(verification): pass the SDF-annotated post-route regression as net-delay back-annotation
+- **Issue #129** (closed): T1 item 11 (power delivery, structural): no klt erc supply spec or report in this repo
+- **PR #137**: feat(layout): add klt erc supply evidence for T1 item 11
+- **Issue #130** (closed): Commit a klt signoff block manifest so this block's T1 state is graded, not hand-read
+- **PR #136**: feat(signoff): commit klt signoff block manifest as the graded T1 verdict of record
+
 ### 2026-09-16
 
 - **Issue #96** (closed): test-guard-destructive-generic-resolve-var.sh: cases (i)/(j) ($(mktemp -d) chain) unexpectedly ALLOW under macOS's bwk-awk
