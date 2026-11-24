@@ -94,6 +94,8 @@ RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
 # such a cue instead of failing on them.
 _SUPERSEDES_BULLET_ID_RE = re.compile(r"\b\d{8}-\d{6}-[0-9a-f]{7,40}\b")
 _NEGATED_SUPERSEDE_RE = re.compile(r"not\*{0,2}\s*supersede", re.IGNORECASE)
+_LIST_WRAP_RE = re.compile(r"(?:[,;&]|\b(?:and|or))\s*$", re.IGNORECASE)
+_SENTENCE_BREAK_RE = re.compile(r"[.;]\s|[.;]$")
 
 REQUIRED_META_KEYS = (
     "record_id",
@@ -172,6 +174,18 @@ def _extract_prose_fields(text: str) -> dict:
             break
         if not value and sub_content:
             value = " ".join(sub_content)
+        elif value and sub_content:
+            # The bullet line has text: continuation lines still belong to
+            # the value while a list is visibly wrapping (the previous line
+            # ends in a list separator, e.g. a wrapped `Supersedes` id
+            # list). Once a line ends without one, what follows is
+            # explanatory prose and stays out of the value.
+            parts = [value]
+            for line in sub_content:
+                if not _LIST_WRAP_RE.search(parts[-1]):
+                    break
+                parts.append(line)
+            value = " ".join(parts)
         fields[name] = value
         i = j if j > i + 1 else i + 1
     return fields
@@ -186,19 +200,28 @@ def check_supersedes_bullet(path: Path, bullet: str | None, meta_ids: list[str])
     *set*: the minter writes `A, B` but hand-written bullets may carry free
     prose around the ids (`` `A` (freshness -- rerun) ...``), and the ids
     may sit on the indented continuation lines `_extract_prose_fields`
-    joins. An id mentioned *after* a negation cue ("... does **not**
+    joins. An id mentioned *after* a negation cue in the same sentence ("... does **not**
     supersede `<id>`") names a record this record explicitly does not
     retire and is exempt from the comparison. Returns a list of lint
     errors, empty when the halves agree.
     """
     if bullet is None or bullet.strip().lower() in _PLACEHOLDER_VALUES:
         return []  # presence/placeholder already reported by the required-field check
-    cue = _NEGATED_SUPERSEDE_RE.search(bullet)
-    claimed = {
-        m.group(0)
-        for m in _SUPERSEDES_BULLET_ID_RE.finditer(bullet)
-        if cue is None or m.start() < cue.start()
-    }
+    cues = list(_NEGATED_SUPERSEDE_RE.finditer(bullet))
+
+    def negated(id_start: int) -> bool:
+        # An id is negated only if a cue precedes it within the same
+        # sentence; a sentence break re-opens affirmative claims.
+        prior = [c for c in cues if c.end() <= id_start]
+        if not prior:
+            return False
+        return _SENTENCE_BREAK_RE.search(bullet, prior[-1].end(), id_start) is None
+
+    ids = list(_SUPERSEDES_BULLET_ID_RE.finditer(bullet))
+    negated_ids = {m.group(0) for m in ids if negated(m.start())}
+    # An id negated anywhere stays exempt when prose names it again later
+    # (`... does not supersede X ... X's own evidence`).
+    claimed = {m.group(0) for m in ids if m.group(0) not in negated_ids}
     meta_set = set(meta_ids)
     errors = []
     missing = sorted(meta_set - claimed)

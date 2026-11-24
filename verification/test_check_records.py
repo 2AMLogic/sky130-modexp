@@ -459,6 +459,46 @@ def case_supersedes_bullet_negates_meta_id(repo: Path) -> None:
     )
 
 
+def case_supersedes_bullet_wrapped_continuation(repo: Path) -> None:
+    """A bullet whose first line has ids and whose ids continue on an
+    indented line must be read whole: metadata naming both passes."""
+    _add_record(repo, "20260115-000000-abc1234", None, "fixture: second ancestor")
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        ["20260101-000000-abc1234", "20260115-000000-abc1234"],
+        "fixture: wrapped bullet names both",
+        supersedes_bullet="20260101-000000-abc1234,\n  20260115-000000-abc1234",
+    )
+
+
+def case_supersedes_bullet_wrapped_understates(repo: Path) -> None:
+    """Metadata lists only the first id of a wrapped two-id bullet."""
+    _add_record(repo, "20260115-000000-abc1234", None, "fixture: second ancestor")
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        "20260101-000000-abc1234",
+        "fixture: wrapped bullet continuation id missing from meta",
+        supersedes_bullet="20260101-000000-abc1234,\n  20260115-000000-abc1234",
+    )
+
+
+def case_supersedes_bullet_affirms_after_negation(repo: Path) -> None:
+    """`Does not supersede A. Supersedes B.` claims B; null metadata fails."""
+    _add_record(repo, "20260115-000000-abc1234", None, "fixture: second ancestor")
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        None,
+        "fixture: affirmative claim after a negated sentence",
+        supersedes_bullet=(
+            "Does not supersede `20260101-000000-abc1234`. "
+            "Supersedes `20260115-000000-abc1234`."
+        ),
+    )
+
+
 def case_new_record_is_a_pure_addition(repo: Path) -> None:
     """Adding a record must NOT trip the append-only check -- otherwise the
     convention would forbid the very thing it exists to allow."""
@@ -607,6 +647,24 @@ CASES = [
         case_supersedes_bullet_negates_meta_id,
         1,
         "does not name meta supersedes id(s) 20260101-000000-abc1234",
+    ),
+    (
+        "wrapped supersedes bullet naming both meta ids passes",
+        case_supersedes_bullet_wrapped_continuation,
+        0,
+        "PASS: all records valid",
+    ),
+    (
+        "wrapped supersedes bullet continuation id missing from meta fails",
+        case_supersedes_bullet_wrapped_understates,
+        1,
+        "names 20260115-000000-abc1234, which the record-meta `supersedes` does not",
+    ),
+    (
+        "supersedes bullet affirming an id after a negated sentence fails",
+        case_supersedes_bullet_affirms_after_negation,
+        1,
+        "names 20260115-000000-abc1234, which the record-meta `supersedes` does not",
     ),
     (
         "adding a new record is allowed",
