@@ -88,6 +88,13 @@ doc["entries"].append({"sha256": sha, "size": len(data), "kind": "evidence",
 json.dump(doc, open(manifest, "w"))
 """
 
+# Minimal `iverilog` stub for the offline CLI test: `cross_check.py` checks
+# `shutil.which("iverilog")` and calls `iverilog -V` before running `klt`,
+# and the `evidence records` CI runner does not install Icarus.
+IVERILOG_STUB = """#!/usr/bin/env python3
+print("Icarus Verilog version 0.0-stub")
+"""
+
 TOOL_VERSIONS = {"klt": "0.0-stub", "cocotb": "2.0.1", "iverilog": "stub"}
 
 failures: list[str] = []
@@ -338,6 +345,7 @@ def test_cli_mints_repeated_supersedes() -> None:
         klt_dir = root / "stub-bin"
         klt_dir.mkdir()
         klt = _write_exec(klt_dir / "klt", SIM_KLT_STUB)
+        _write_exec(klt_dir / "iverilog", IVERILOG_STUB)
         env = {
             **os.environ,
             "PATH": f"{klt_dir}{os.pathsep}{os.environ['PATH']}",
