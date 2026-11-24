@@ -10,6 +10,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-23
 
+- **PR #419**: fix: require complete current-run transcript in RTL and gate-level cross-checks
+- **PR #417**: feat: accept list-valued supersedes in evidence-record linter and minter
+- **Issue #418** (closed): Share transcript counting so incomplete RTL cross-checks fail
+- **Issue #336** (closed): Make evidence-record `supersedes` a list: the twin-record workaround now needs five records per re-run
 - **PR #413**: docs(flow): dedupe gate-level gap list and drop superseded update layers
 - **Issue #412** (closed): Remove duplicated gate-level gap list and superseded Update layers from flow/README.md
 - **PR #408**: docs: drop stale Leg 2 block from run-gate-level-sim.sh, slice --help by sentinel
