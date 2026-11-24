@@ -22,7 +22,10 @@ Checks, per record `verification/records/<experiment>/records/<record-id>.md`:
    record id (legacy scalar spelling), or a list of record ids (one fresh
    record clearing several live ancestors). Every id must name a record
    that exists in the same experiment directory, must not repeat within
-   the list, and must not be the record itself.
+   the list, and must not be the record itself. The **Supersedes** prose
+   bullet must name the same set of ids as the metadata (free prose around
+   the ids is fine; an id the bullet explicitly says it does *not*
+   supersede is commentary, not a claim).
 4. **Provenance hash freshness** -- for every record that is *not*
    superseded by another record (a "live" record), every
    `provenance.inputs[].content_hash` is recomputed from the working tree
@@ -82,6 +85,15 @@ def normalize_supersedes(value) -> list[str]:
 
 
 RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
+
+# Record ids mentioned anywhere in a **Supersedes** bullet's value, and the
+# phrasing ("does **not** supersede", "not superseded by", ...) that marks a
+# mention as commentary about a record this record explicitly does NOT
+# retire. Committed records do name non-targets this way (frozen history,
+# append-only), so the bullet-vs-meta check exempts ids that appear after
+# such a cue instead of failing on them.
+_SUPERSEDES_BULLET_ID_RE = re.compile(r"\b\d{8}-\d{6}-[0-9a-f]{7,40}\b")
+_NEGATED_SUPERSEDE_RE = re.compile(r"not\*{0,2}\s*supersede", re.IGNORECASE)
 
 REQUIRED_META_KEYS = (
     "record_id",
@@ -165,6 +177,47 @@ def _extract_prose_fields(text: str) -> dict:
     return fields
 
 
+def check_supersedes_bullet(path: Path, bullet: str | None, meta_ids: list[str]) -> list[str]:
+    """The **Supersedes** bullet vs the record-meta `supersedes`.
+
+    The bullet is the human-readable half of the supersedes chain and the
+    meta is the machine-readable half (and the half the freshness exemption
+    reads), so the two must name the same records. Ids are compared as a
+    *set*: the minter writes `A, B` but hand-written bullets may carry free
+    prose around the ids (`` `A` (freshness -- rerun) ...``), and the ids
+    may sit on the indented continuation lines `_extract_prose_fields`
+    joins. An id mentioned *after* a negation cue ("... does **not**
+    supersede `<id>`") names a record this record explicitly does not
+    retire and is exempt from the comparison. Returns a list of lint
+    errors, empty when the halves agree.
+    """
+    if bullet is None or bullet.strip().lower() in _PLACEHOLDER_VALUES:
+        return []  # presence/placeholder already reported by the required-field check
+    mentions = {m.group(0) for m in _SUPERSEDES_BULLET_ID_RE.finditer(bullet)}
+    cue = _NEGATED_SUPERSEDE_RE.search(bullet)
+    claimed = (
+        {m.group(0) for m in _SUPERSEDES_BULLET_ID_RE.finditer(bullet) if m.start() < cue.start()}
+        if cue
+        else mentions
+    )
+    errors = []
+    missing = sorted(set(meta_ids) - mentions)
+    if missing:
+        errors.append(
+            f"{path}: **Supersedes** bullet does not name meta supersedes "
+            f"id(s) {', '.join(missing)} -- bullet and record-meta must "
+            f"list the same records"
+        )
+    extra = sorted(claimed - set(meta_ids))
+    if extra:
+        errors.append(
+            f"{path}: **Supersedes** bullet names {', '.join(extra)}, which "
+            f"the record-meta `supersedes` does not -- bullet and "
+            f"record-meta must list the same records"
+        )
+    return errors
+
+
 def lint_record(path: Path, all_record_ids_by_experiment: dict) -> list[str]:
     errors = []
     text = path.read_text(encoding="utf-8")
@@ -221,19 +274,21 @@ def lint_record(path: Path, all_record_ids_by_experiment: dict) -> list[str]:
     except ValueError as exc:
         errors.append(f"{path}: invalid `supersedes`: {exc}")
         supersedes = []
-    known_ids = all_record_ids_by_experiment.get(experiment, set())
-    seen: set[str] = set()
-    for target in supersedes:
-        if target in seen:
-            errors.append(f"{path}: supersedes lists `{target}` more than once")
-        seen.add(target)
-        if target == path.stem:
-            errors.append(f"{path}: supersedes itself (`{target}`)")
-        elif target not in known_ids:
-            errors.append(
-                f"{path}: supersedes `{target}`, which has no record "
-                f"in `{experiment}/records/`"
-            )
+    else:
+        known_ids = all_record_ids_by_experiment.get(experiment, set())
+        seen: set[str] = set()
+        for target in supersedes:
+            if target in seen:
+                errors.append(f"{path}: supersedes lists `{target}` more than once")
+            seen.add(target)
+            if target == path.stem:
+                errors.append(f"{path}: supersedes itself (`{target}`)")
+            elif target not in known_ids:
+                errors.append(
+                    f"{path}: supersedes `{target}`, which has no record "
+                    f"in `{experiment}/records/`"
+                )
+        errors.extend(check_supersedes_bullet(path, prose.get("Supersedes"), supersedes))
 
     return errors
 

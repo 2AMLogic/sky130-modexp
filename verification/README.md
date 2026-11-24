@@ -372,7 +372,11 @@ tree and name every live ancestor it clears in `supersedes` as a list
 (`cross_check.py --mint-record --supersedes A --supersedes B`, or by hand:
 `"supersedes": ["A", "B"]` and `- **Supersedes**: A, B`). Records already
 committed keep their scalar spelling; the linter accepts both, and the
-append-only rule means no existing record is rewritten.
+append-only rule means no existing record is rewritten. The linter also
+cross-checks the two spellings against each other: the **Supersedes**
+bullet must name the same set of ids as the metadata (free prose around
+the ids is fine, and a record the bullet explicitly says it does *not*
+supersede doesn't count).
 
 *Legacy workaround (history, issue #336).* Before `supersedes` accepted a
 list, the fix was a **pair of twin records** minted together, each naming one

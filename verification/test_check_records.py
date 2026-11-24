@@ -82,12 +82,16 @@ def make_record(
     *,
     inputs: list[tuple[str, str]],
     supersedes: object = None,
+    supersedes_bullet: str | None = None,
     omit_field: str | None = None,
     omit_provenance_key: str | None = None,
 ) -> str:
     """Render a record that satisfies the convention in
     `verification/README.md`, optionally omitting one required prose field
-    so a negative case can be built from it."""
+    so a negative case can be built from it. `supersedes_bullet` overrides
+    the **Supersedes** bullet's text so the bullet-vs-meta cross-check can
+    be driven with divergent halves (by default the bullet is rendered from
+    `supersedes` and agrees with it)."""
     meta = {
         "record_id": record_id,
         "experiment": experiment,
@@ -117,9 +121,13 @@ def make_record(
         ("Timestamp / author", "2026-01-01T00:00:00Z, selftest"),
         (
             "Supersedes",
-            ", ".join(str(x) for x in supersedes)
-            if isinstance(supersedes, list) and supersedes
-            else (supersedes or "none"),
+            supersedes_bullet
+            if supersedes_bullet is not None
+            else (
+                ", ".join(str(x) for x in supersedes)
+                if isinstance(supersedes, list) and supersedes
+                else (supersedes or "none")
+            ),
         ),
     ]
     bullets = "\n".join(
@@ -309,10 +317,11 @@ def case_dangling_supersedes(repo: Path) -> None:
     _git(repo, "commit", "--quiet", "-m", "fixture: supersedes a nonexistent record")
 
 
-def _add_record(repo: Path, rid: str, supersedes, msg: str, rtl: str = DUMMY_RTL) -> None:
+def _add_record(repo: Path, rid: str, supersedes, msg: str, rtl: str = DUMMY_RTL, **kwargs) -> None:
     record_path(repo, "demo", rid).write_text(
         make_record(
-            rid, "demo", inputs=[("rtl/dut.v", _sha256_text(rtl))], supersedes=supersedes
+            rid, "demo", inputs=[("rtl/dut.v", _sha256_text(rtl))], supersedes=supersedes,
+            **kwargs,
         ),
         encoding="utf-8",
     )
@@ -371,6 +380,63 @@ def case_list_supersedes_exempts_freshness(repo: Path) -> None:
     _add_record(
         repo, "20260114-000000-abc1234", ["20260101-000000-abc1234"],
         "fixture: list supersedes with changed source", rtl=new_rtl,
+    )
+
+
+def case_supersedes_bullet_matches_meta(repo: Path) -> None:
+    """Control for the bullet-vs-meta cross-check: a two-id list in the
+    metadata with a bullet that names both (plus free trailing prose, the
+    shape committed records actually carry) must pass."""
+    _add_record(repo, "20260115-000000-abc1234", None, "fixture: second ancestor")
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        ["20260101-000000-abc1234", "20260115-000000-abc1234"],
+        "fixture: bullet names both meta ids",
+    )
+
+
+def case_supersedes_bullet_understates(repo: Path) -> None:
+    """The bullet names only one of the two ids the metadata lists -- the
+    prose understates what the record retires, which nothing else catches."""
+    _add_record(repo, "20260115-000000-abc1234", None, "fixture: second ancestor")
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        ["20260101-000000-abc1234", "20260115-000000-abc1234"],
+        "fixture: bullet names only one meta id",
+        supersedes_bullet="20260101-000000-abc1234 (freshness rerun)",
+    )
+
+
+def case_supersedes_bullet_overstates(repo: Path) -> None:
+    """The metadata says the record supersedes nothing, but the bullet names
+    an id -- the prose claims a retirement the machine-readable half does
+    not make (and the freshness exemption therefore does not see)."""
+    _add_record(
+        repo,
+        "20260117-000000-abc1234",
+        None,
+        "fixture: bullet names an id the meta does not",
+        supersedes_bullet="20260101-000000-abc1234",
+    )
+
+
+def case_supersedes_bullet_negation_exempt(repo: Path) -> None:
+    """Committed records legitimately name records they explicitly do NOT
+    retire (frozen history; see sta-corner-sweep/20260923-093000-28a7c96).
+    An id after a `does **not** supersede` cue is commentary, not a claim,
+    and must not fail the cross-check."""
+    _add_record(repo, "20260115-000000-abc1234", None, "fixture: second ancestor")
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        ["20260101-000000-abc1234"],
+        "fixture: bullet negates a non-target id",
+        supersedes_bullet=(
+            "20260101-000000-abc1234 -- deliberately does **not** supersede "
+            "`20260115-000000-abc1234`"
+        ),
     )
 
 
@@ -490,6 +556,30 @@ CASES = [
     (
         "record named only inside a list is exempt from freshness",
         case_list_supersedes_exempts_freshness,
+        0,
+        "PASS: all records valid",
+    ),
+    (
+        "supersedes bullet naming both meta ids with trailing prose passes",
+        case_supersedes_bullet_matches_meta,
+        0,
+        "PASS: all records valid",
+    ),
+    (
+        "supersedes bullet missing a meta id fails",
+        case_supersedes_bullet_understates,
+        1,
+        "does not name meta supersedes id(s) 20260115-000000-abc1234",
+    ),
+    (
+        "supersedes bullet naming an id the meta does not fails",
+        case_supersedes_bullet_overstates,
+        1,
+        "which the record-meta `supersedes` does not",
+    ),
+    (
+        "supersedes bullet id after a negation cue is exempt",
+        case_supersedes_bullet_negation_exempt,
         0,
         "PASS: all records valid",
     ),
