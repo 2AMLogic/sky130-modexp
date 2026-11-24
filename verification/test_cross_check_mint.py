@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Self-test for `cross_check.py`'s record minting (`--supersedes`/`--author`).
 
-Two halves:
-
 1. `mint_record()` driven directly against a throwaway git repo and the same
    stubbed `klt artifact put` `test_artifact_store.py` uses, so no real
    simulation runs and nothing is stored in the fleet artifact store. Asserts
@@ -11,11 +9,19 @@ Two halves:
    author line, and that omitting `supersedes` still yields `null` / `none`.
 
 2. The real CLI, invoked as a subprocess, rejecting bad record arguments
-   *before* it runs anything: an unknown `--supersedes` id and a
-   `--mint-record` without `--author` must exit nonzero having invoked no
-   `klt` (a recording stub is first on `$PATH`) and having written no record
-   or manifest. `klt artifact put` stores objects permanently, so this
-   ordering is the whole point -- validation must not happen after a run.
+   *before* it runs anything: an unknown `--supersedes` id, a repeated
+   `--supersedes` id, and a `--mint-record` without `--author` must exit
+   nonzero having invoked no `klt` (a recording stub is first on `$PATH`)
+   and having written no record or manifest. `klt artifact put` stores
+   objects permanently, so this ordering is the whole point -- validation
+   must not happen after a run.
+
+3. The same CLI carrying a *repeated* `--supersedes` (two valid ids) all
+   the way to a minted record (issue #421): a `klt` stub that simulates a
+   passing `functional-verification` WIDTH and stores artifacts lets the
+   subprocess run to completion against a throwaway repo, proving the
+   argparse append wiring end to end -- the minted metadata is a two-id
+   list and the bullet names both.
 
 Usage: python3 verification/test_cross_check_mint.py
 Exit codes: 0 all pass, 1 otherwise.
@@ -45,6 +51,48 @@ RECORDING_STUB = """#!/usr/bin/env python3
 import os, sys
 open(os.environ["KLT_CALL_LOG"], "a").write(" ".join(sys.argv[1:]) + "\\n")
 sys.exit(0)
+"""
+
+# A `klt` that *simulates*: a passing `functional-verification` (writes
+# exactly $CROSS_CHECK_CASES matching vectors to $CROSS_CHECK_TRANSCRIPT and
+# prints a pass envelope) plus the same `artifact put` the plain STUB serves,
+# so the real CLI can run to completion -- and to `--mint-record` -- against
+# a throwaway repo without a simulator (issue #421).
+SIM_KLT_STUB = """#!/usr/bin/env python3
+import hashlib, json, os, sys
+a = sys.argv[1:]
+if a[:1] == ["--version"]:
+    print("klt 0.0-simstub")
+    sys.exit(0)
+if a[:1] == ["functional-verification"]:
+    cases = int(os.environ["CROSS_CHECK_CASES"])
+    with open(os.environ["CROSS_CHECK_TRANSCRIPT"], "w") as f:
+        for i in range(cases):
+            f.write(json.dumps({"width": 0, "got": i, "want": i}) + "\\n")
+    print(json.dumps({"status": "pass", "test_count": 1}))
+    sys.exit(0)
+if a[:2] != ["artifact", "put"]:
+    sys.exit(2)
+if a[2] == "--help":
+    sys.exit(0)
+manifest, name, path = a[a.index("--manifest") + 1], a[a.index("--name") + 1], a[-1]
+data = open(path, "rb").read()
+sha = hashlib.sha256(data).hexdigest()
+try:
+    doc = json.load(open(manifest))
+except FileNotFoundError:
+    doc = {"schema_version": 1, "entries": []}
+doc["entries"].append({"sha256": sha, "size": len(data), "kind": "evidence",
+    "producer": {"tool": "klt", "version": "0", "loom.repo": "o/r", "commit": None},
+    "uri": "artifact:evidence/o__r/" + sha[:2] + "/" + sha, "name": name})
+json.dump(doc, open(manifest, "w"))
+"""
+
+# Minimal `iverilog` stub for the offline CLI test: `cross_check.py` checks
+# `shutil.which("iverilog")` and calls `iverilog -V` before running `klt`,
+# and the `evidence records` CI runner does not install Icarus.
+IVERILOG_STUB = """#!/usr/bin/env python3
+print("Icarus Verilog version 0.0-stub")
 """
 
 TOOL_VERSIONS = {"klt": "0.0-stub", "cocotb": "2.0.1", "iverilog": "stub"}
@@ -254,6 +302,22 @@ def test_cli_rejects_bad_record_args() -> None:
         check("--supersedes without --mint-record exits nonzero", orphan.returncode != 0,
               f"rc={orphan.returncode}")
 
+        dup = _cli(
+            [
+                "--mint-record", "--author", "x",
+                "--supersedes", "20991231-235959-0000000",
+                "--supersedes", "20991231-235959-0000000",
+            ],
+            klt_dir, log,
+        )
+        check("repeated --supersedes id exits nonzero", dup.returncode != 0,
+              f"rc={dup.returncode}")
+        check(
+            "repeated --supersedes FATAL names the rule",
+            "FATAL: --supersedes given the same record id twice" in dup.stderr,
+            dup.stderr[-200:],
+        )
+
         check("no klt invocation", not log.exists(),
               log.read_text() if log.exists() else "")
         after_records = {p.name for p in real_records.glob("*.md")} if real_records.exists() else set()
@@ -262,9 +326,72 @@ def test_cli_rejects_bad_record_args() -> None:
         check("no manifest written", after_manifests == before_manifests)
 
 
+def test_cli_mints_repeated_supersedes() -> None:
+    """`--supersedes` twice, end to end through the real CLI (issue #421):
+    the argparse `append` wiring must reach `mint_record` as a two-element
+    list, landing in the metadata as a list and naming both ids in the
+    **Supersedes** bullet."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp) / "repo"
+        root.mkdir()
+        _init_repo(root)
+        prior_a = "20260101-000000-aaa1111"
+        prior_b = "20260101-000000-bbb2222"
+        recs = root / "verification" / "records" / cross_check.EXPERIMENT_SLUG / "records"
+        recs.mkdir(parents=True)
+        for rid in (prior_a, prior_b):
+            (recs / f"{rid}.md").write_text(f"<!-- record-meta -->\n# {rid}\n")
+
+        klt_dir = root / "stub-bin"
+        klt_dir.mkdir()
+        klt = _write_exec(klt_dir / "klt", SIM_KLT_STUB)
+        _write_exec(klt_dir / "iverilog", IVERILOG_STUB)
+        env = {
+            **os.environ,
+            "PATH": f"{klt_dir}{os.pathsep}{os.environ['PATH']}",
+            "KLT": str(klt),
+            "REPO_ROOT": str(root),
+            "KLT_ARTIFACT_BROKER": "stub-broker",
+            "CROSS_CHECK_NO_REEXEC": "1",
+        }
+        proc = subprocess.run(
+            [
+                sys.executable, str(SCRIPT_DIR / "cross_check.py"),
+                "--widths", "4", "--cases", "2",
+                "--mint-record", "--author", "cli-test (issue #421)",
+                "--supersedes", prior_a, "--supersedes", prior_b,
+            ],
+            capture_output=True, text=True, env=env,
+        )
+        out = proc.stdout + proc.stderr
+        check("repeated --supersedes CLI run passes", proc.returncode == 0, out[-400:])
+        check("repeated --supersedes CLI mints a record", "Minted record:" in out, out[-200:])
+
+        minted = [p for p in recs.glob("*.md") if p.stem not in (prior_a, prior_b)]
+        check("exactly one new record file", len(minted) == 1,
+              ", ".join(p.name for p in minted))
+        if len(minted) == 1:
+            meta = _meta(minted[0])
+            text = minted[0].read_text(encoding="utf-8")
+            check(
+                "minted meta supersedes is the two-id list",
+                meta["supersedes"] == [prior_a, prior_b],
+                repr(meta["supersedes"]),
+            )
+            check(
+                "minted bullet names both ids",
+                f"- **Supersedes**: {prior_a}, {prior_b}" in text,
+            )
+        check(
+            "manifest written for the minted record",
+            len(list((root / "manifests" / "artifacts").glob("*.manifest.json"))) == 1,
+        )
+
+
 def main() -> int:
     test_mint_with_supersedes()
     test_cli_rejects_bad_record_args()
+    test_cli_mints_repeated_supersedes()
     return 1 if failures else 0
 
 
