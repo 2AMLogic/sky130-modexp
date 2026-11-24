@@ -20,7 +20,7 @@ travels with them.
 
 > **Reproducibility note (2026-10-15, issue #195).** The 682 figure above was
 > measured with klt 0.2.0 and is reproduced by that klt version. The pinned
-> toolchain (`scripts/setup-env.sh`, klt `0.6.0+gdac2b5daceb6`) gives **717**
+> toolchain (`scripts/setup-env.sh`, `klayout-tools==0.8.0`) gives **717**
 > instances / 7144.352 µm² for the same `rtl/modexp.v`, request and
 > `sky130_fd_sc_hd` liberty. The cause is the Yosys script klt generates, not
 > the PDK revision and not the Yosys build: klt 0.6.0 adds `abc -constr`
@@ -46,18 +46,12 @@ functional-verification` request per `WIDTH`
 ## Reproducing it
 
 ```bash
-# 682 cells for modexp under klt 0.2.0 (717 under the pinned klt), 384 for gcd
-for src in gcd modexp; do
-  tmp=$(mktemp -d); cp rtl/$src.v "$tmp/"
-  cat > "$tmp/req.json" <<JSON
-{ "schema": "klt.synthesize.request/1", "engine": "yosys",
-  "sources": ["$src.v"], "hdl_toplevel": "$src",
-  "pdk": { "cell_library": "sky130_fd_sc_hd", "corner": "tt_025C_1v80" },
-  "constraints": { "clock_period_ns": null } }
-JSON
-  ( cd "$tmp" && PDK=sky130A klt synthesize req.json --format json ) \
-    | python3 -c 'import sys,json;print(json.load(sys.stdin)["instance_count"])'
-done
+# 682 cells for modexp under klt 0.2.0 (717 under the pinned klt). The
+# 384-cell gcd control row in the table above was measured in
+# 2AMLogic/klayout-tools PR #488 and was not migrated to rtl/, so it has
+# no reproduction command here.
+PDK=sky130A klt synthesize flow/synthesize-modexp.json --format json \
+  | python3 -c 'import sys,json;print(json.load(sys.stdin)["instance_count"])'
 
 # bit-exact functional verification
 klt functional-verification verification/request-modexp.json --format json
@@ -318,346 +312,84 @@ an RTL restructuring of that chain — explicitly out of scope for the issue
 that produced this update (its own decision record, latency-formula
 re-derivation, and full bit-exact re-verification required first).
 
-### Nominal-corner re-measurement with tapcell/PDN/filler-cell insertion (issue #81)
-
-**Status: measured, 2026-09-11.** Same reasoning as the "mapping-only
-re-run" section above — this is an *addition*, not a correction; the
-682/718-cell figures above remain exactly as measured for the
-configuration they describe. `flow/par-modexp.json` (the single-corner
-nominal recipe backing the *committed* `layout/modexp.gds`/`layout/
-modexp.def`, unlike the 55%-utilization sweep above which uses its own
-separate `flow/run-corner-sweep.sh` floorplan) gained a `power` block
-(`request.power`: tapcell + PDN + filler-cell insertion, per
-[klayout-tools#1120](https://github.com/2AMLogic/klayout-tools/pull/1120)),
-with the `floorplan`/`io`/`constraints`/`seed` blocks left byte-identical
-to the original issue #7 recipe — only the new `power` block differs.
-
-| Quantity | Issue #7 (original, `power` absent) | Issue #81 (this update, `power` added) |
-| --- | --- | --- |
-| sky130 cell count (`WIDTH=16`) | 718 | 718 logic-bearing + **2356 new physical-only** (265 tapcells + 2087 fillers + 4 antenna-fixup diodes) = **3074** |
-| Die area | 21969.2 µm² | 21969.2 µm² (unchanged — same floorplan) |
-| Core area | 19398.6 µm² | 19398.6 µm² (unchanged) |
-| Utilization | 37.08% | 39.31% (more of the same core area is now occupied, by tapcells/fillers) |
-| Achieved Fmax at `tt_025C_1v80` | 149.66 MHz | 159.63 MHz |
-| Setup / hold / antenna / route-DRC violations | 0/0/—/— | 0/0/0/0 |
-| Estimated power at `tt_025C_1v80` | 0.876 mW | 0.983 mW |
-| Routed wirelength | 17805 µm | 19060 µm |
-
-**100 MHz still closes at the nominal corner, with more margin than
-before.** The Fmax/wirelength/power deltas are incidental — the floorplan
-is unchanged; they are OpenROAD's own legalization/CTS/optimization
-responding to tapcell rows now occupying fixed placement sites and antenna
-fix-ups now running, **not a claim of anything beyond what they are** (see
-`CLAUDE.md`'s overclaim-trap note — this is not a PPA comparison against
-any external work). The 718 logic-bearing instances are otherwise the same
-concept as issue #7's own 718: 680 present under an identical instance
-name and cell type against the unchanged synthesis netlist, 3 resized, 35
-new CTS/timing/antenna-fixup insertions, 0 missing.
-
-**This closes DRC for real** (`docs/signoff-claim.md`): all 234
-`nwell.space.1`/`nwell.width.1` violations issue #79 classified against
-the pre-#81 GDS are gone. Current LVS status is tracked in
-[`docs/signoff-claim.md`](signoff-claim.md). Full record:
-[`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`](../verification/records/place-and-route/records/20260911-052542-d5e43d3.md).
-
-**The 18-corner sweep above (both the original and the mapping-only
-re-run) is unaffected** — neither used the committed `flow/par-modexp.json`
-recipe this section's original table measures, and issue #81 did not
-re-run either sweep with `power` enabled. **That left the committed layout
-itself without corner evidence of its own until issue #86; see the next
-section.**
-
 ### STA corner characterization of the committed layout (issue #86)
 
-**Status: measured, 2026-09-15.** This is the first per-corner timing
-evidence about `layout/modexp.def`/`layout/modexp.gds` **themselves** — the
-post-#81, tapcell/PDN/filler-cell-bearing artifacts this repo signs off DRC
-and LVS against. Both 18-corner sweeps above characterize
-`flow/run-corner-sweep.sh`'s *separate* 55%-utilization floorplan and
-predate issue #81, so neither could answer "how does the shipped layout
-time across the ratified corner set?"
+**Status: condensed to a pointer (issue #432).** The pre-#232 milestone
+sections this heading once carried — issue #81's tapcell/PDN/filler
+re-measurement, issue #86's 18-corner table, issue #132's liberty derate
+analysis, issue #141's 18/18 re-spin — measured the layout that issue
+#232's regeneration replaced. Their append-only records remain under
+`verification/records/place-and-route/` (notably `20260911-052542-d5e43d3`)
+and `verification/records/sta-corner-sweep/` (`20260915-111931-2c125f8`,
+`20260923-093000-28a7c96`, `20260924-134500-1a8313b`); none of their
+figures describe the committed artifacts. The current state:
 
-`klt sta` ([klayout-tools#1099](https://github.com/2AMLogic/klayout-tools/issues/1099),
-`docs/cli/sta.md`) makes that question answerable: it runs a standalone
-OpenSTA session against an already-routed DEF and never places, routes, or
-runs CTS. `flow/run-sta-corner-sweep.sh` drives it once per corner against
-the **byte-identical** committed DEF — verified, not assumed: all eighteen
-responses report the same `provenance.input.content_hash`.
+- **The committed layout** (issue #232; record
+  [`verification/records/place-and-route/records/20261027-013900-98bf55d.md`](../verification/records/place-and-route/records/20261027-013900-98bf55d.md),
+  described in [`layout/README.md`](../layout/README.md)):
+  `layout/modexp.def`, `layout/modexp.gds`, and the as-built
+  `layout/modexp.v` (721 netlist instances), regenerated together from the
+  committed flow and shown reproducible — two sequential `flow/run-par.sh`
+  runs gave byte-identical DEF, GDS, and netlist. 3,064 components = 721
+  netlist instances + 265 tapcells + 2,078 fillers; die 22,761.8 µm²,
+  core 19,781.5 µm² (utilization 38.59%), routed wirelength 20,024 µm,
+  estimated power 0.8797 mW, Fmax 175.014 MHz (+4.28617 ns WNS) at
+  `tt_025C_1v80`. Tapcell insertion, PDN, and standard-cell row fillers
+  are present; CMP metal density fill, `DONT_USE_CELLS` exclusion, and an
+  IO ring remain absent. The DRC/LVS signoff verdict is stated once in
+  [`docs/signoff-claim.md`](signoff-claim.md).
+- **18-corner `klt sta` on that layout** (record
+  [`verification/records/sta-corner-sweep/records/20261027-013950-98bf55d.md`](../verification/records/sta-corner-sweep/records/20261027-013950-98bf55d.md);
+  full table in
+  [`verification/signoff/evidence/characterization.md`](../verification/signoff/evidence/characterization.md)):
+  100 MHz closes at **10 of 18** corners; binding corner `ss_n40C_1v28`
+  at setup WNS **-30.332 ns** / Fmax **24.7942 MHz**; hold slack
+  non-negative at all 18 (worst +0.21354 ns). At `tt_025C_1v80` the sweep
+  reads +4.82441 ns / 193.215 MHz against the P&R run's +4.28617 ns /
+  175.014 MHz for the same DEF — a methodology difference (`klt sta` with
+  `spef` omitted times LEF/DEF-derived parasitics), not an improvement.
+- **Why the slow corner binds, and what was decided about it** — carried
+  in full by the decision records:
+  [`0004`](../spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md)
+  (closure is cell-selection-bound; the disclosed T1 item 5 exception),
+  [`0005`](../spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md)
+  (the priced exit was run and does not reproduce),
+  [`0007`](../spec/decision-records/0007-the-17-of-18-bit-serial-re-spin-is-declined-not-planned.md)
+  (the 17/18 bit-serial re-spin is declined), and the `0011`-`0018`
+  carry-save Montgomery series under
+  [`spec/decision-records/`](../spec/decision-records/).
 
-| Corner | WNS (ns) | TNS (ns) | Fmax (MHz) | Setup viol. | Hold viol. | Clock skew (ns) | Power (mW) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `ff_100C_1v65` | 5.7193 | 0.000 | 233.61 | 0 | 0 | 0.00174 | 0.7969 |
-| `ff_100C_1v95` | 6.6880 | 0.000 | 301.93 | 0 | 0 | 0.00161 | 1.1370 |
-| `ff_n40C_1v56` | 4.4079 | 0.000 | 178.82 | 0 | 0 | 0.00282 | 0.6778 |
-| `ff_n40C_1v65` | 5.1717 | 0.000 | 207.11 | 0 | 0 | 0.00249 | 0.7604 |
-| `ff_n40C_1v76` | 5.8483 | 0.000 | 240.87 | 0 | 0 | 0.00221 | 0.8713 |
-| `ff_n40C_1v95` | 6.6144 | 0.000 | 295.37 | 0 | 0 | 0.00185 | 1.0774 |
-| `ff_n40C_1v95_ccsnoise` | 6.6144 | 0.000 | 295.37 | 0 | 0 | 0.00185 | 1.0774 |
-| `tt_025C_1v80` | 4.3673 | 0.000 | 177.53 | 0 | 0 | 0.00244 | 0.9307 |
-| `tt_100C_1v80` | 4.5229 | 0.000 | 182.58 | 0 | 0 | 0.00241 | 0.9517 |
-| `ss_100C_1v40` | **-6.2324** | -94.513 | 61.61 | 16 | 0 | 0.00746 | 0.5515 |
-| `ss_100C_1v60` | **-1.0831** | -13.736 | 90.23 | 16 | 0 | 0.00575 | 0.7563 |
-| `ss_n40C_1v28` | **-33.8669** | -671.109 | 22.80 | 105 | 0 | 0.02170 | 0.3169 |
-| `ss_n40C_1v35` | **-20.2293** | -310.917 | 33.08 | 19 | 0 | 0.01051 | 0.4042 |
-| `ss_n40C_1v40` | **-14.4282** | -219.811 | 40.94 | 16 | 0 | 0.01154 | 0.4789 |
-| `ss_n40C_1v44` | **-11.0545** | -167.670 | 47.50 | 16 | 0 | 0.01233 | 0.5401 |
-| `ss_n40C_1v60` | **-3.2067** | -45.830 | 75.72 | 16 | 0 | 0.00722 | 0.7192 |
-| `ss_n40C_1v60_ccsnoise` | **-3.2067** | -45.830 | 75.72 | 16 | 0 | 0.00722 | 0.7192 |
-| `ss_n40C_1v76` | 0.5433 | 0.000 | 105.75 | 0 | 0 | 0.00490 | 0.8792 |
+## Post-route gate-level simulation
 
-- **Setup: 100 MHz closes at 10 of 18 corners** (both `tt`, all seven `ff`,
-  and `ss_n40C_1v76`) and **does not close at the other eight `ss`
-  corners**. Binding corner `ss_n40C_1v28`: WNS **-33.867 ns**, Fmax
-  **22.80 MHz**, ~4.4x short of the target. Stated plainly, per
-  `spec/decision-records/0002-...` Decision 1: **this layout does not close
-  100 MHz across the ratified corner set.**
-- **Hold: 0 violations at all eighteen corners** — the hold half of the T1
-  checklist's "setup *and* hold across the PVT corner set", measured against
-  the committed layout for the first time. Bounded: this `klt` pin reports a
-  hold violation *count*, not hold-side WNS/TNS
-  ([klayout-tools#1634](https://github.com/2AMLogic/klayout-tools/pull/1634)
-  landed later than the pin), so corners cannot be ranked by hold margin.
-
-**Do not read a delta between this table and the two above.** They differ in
-both the artifact and the method: those measure a different floorplan with
-no `power` block, and rebuild (and re-optimize) *per corner*, so each corner
-carries its own `repair_timing` buffering; this one re-times a single fixed
-geometry optimized only at the nominal corner, which reads *worse* at a slow
-corner by construction. Separately, `klt sta` with `spef` omitted times
-against LEF/DEF-derived parasitics rather than the
-`estimate_parasitics -global_routing` basis `klt place-and-route`'s in-flow
-STA uses — which is why the nominal corner reads +4.367 ns / 177.53 MHz here
-against the +3.736 ns / 159.63 MHz the P&R record reports for the same DEF.
-**That is a methodology difference, not an improvement**, and it makes this
-table optimistic, not conservative. Full record, limitations, and raw
-per-corner envelopes:
-[`verification/records/sta-corner-sweep/records/20260915-111931-2c125f8.md`](../verification/records/sta-corner-sweep/records/20260915-111931-2c125f8.md).
-
-### Why the slow corner binds: a standard-cell family derate (issue #132)
-
-**Status: measured, 2026-09-23.** The sweep above was re-run in
-`klt sta`'s single-envelope form (`pdk.corners`, a list —
-[klayout-tools#1871](https://github.com/2AMLogic/klayout-tools/issues/1871))
-against the same byte-identical DEF. **Every figure in the table above
-reproduces bit-identically** across a `klt` pin bump (0.4.0 → 0.6.0), a
-change of request shape, and two different OpenROAD builds. The verdict is
-unchanged — 10/18, binding corner `ss_n40C_1v28` at **22.80 MHz** — and
-the newer pin adds the hold-side slack figures the 2026-09-15 run could not
-report (worst hold slack **+0.21354 ns**, at `ff_n40C_1v95`; +2.06884 ns at
-the binding corner). Record:
-[`verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`](../verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md)
-(supersedes the 2026-09-15 one).
-
-What is new is *why*. The critical path at `ss_n40C_1v28` — startpoint
-`_1205_` (DEF net `mm_a[15]`) → endpoint `_1175_` (DEF net `mm_p[6]`), 20
-gates, arrival **42.17 ns** against 8.31 ns required — spends **21.07 ns of
-its 42.17 ns in eight non-inverting compound cells** — and it propagates a
-*falling* edge through every one of them. Extracting every combinational
-cell's **per-polarity delay floor** from the installed liberty (the
-smallest value in any `cell_fall`, resp. `cell_rise`, table of any arc —
-what no path through the cell can beat on that edge, whichever pin
-switches, regardless of load or slew) shows where that matters:
-
-| Cell | fall floor @ `ss_n40C_1v28` | fall floor @ `tt_025C_1v80` | derate | rise floor @ ss |
-| --- | --- | --- | --- | --- |
-| `or4_1` | **4.4591 ns** | 0.3558 ns | 12.53x | 0.2394 ns |
-| `or3_1` | **3.0074 ns** | 0.2678 ns | 11.23x | 0.2331 ns |
-| `maj3_1` | **2.8753 ns** | 0.2916 ns | 9.86x | 0.4729 ns |
-| `mux2_1` | **2.6321 ns** | 0.2430 ns | 10.83x | 0.3607 ns |
-| `a311o_1` | 2.2119 ns | 0.2227 ns | 9.93x | 0.2727 ns |
-| `nand4_1` | 0.1553 ns | 0.0376 ns | 4.13x | 0.1933 ns |
-| `o41ai_1` | 0.0745 ns | 0.0298 ns | 2.50x | 0.1409 ns |
-| `nand2_1` | 0.0674 ns | 0.0206 ns | 3.27x | 0.1240 ns |
-| `nor2_1` | 0.0365 ns | 0.0076 ns | 4.80x | 0.2957 ns |
-| `inv_1` | 0.0357 ns | 0.0144 ns | 2.48x | 0.0911 ns |
-
-**The ratio is not the finding** — inverting cells derate 2.5–5x too, and
-more than that on their rising edge. **The absolute magnitude on the
-falling edge is**: at `ss_n40C_1v28`, non-inverting compound cells' falling
-floors run one to two orders of magnitude above the inverting family's for
-comparable fan-in (`or4_1` 4.4591 ns vs `nand4_1` 0.1553 ns), and a single
-`or4_1` falling arc is **45% of the whole 10.0 ns period** before any load
-or wire. At `tt_025C_1v80` the same pair is 0.3558 vs 0.0376 ns — the same
-ratio, both negligible. That is precisely why a mapping that is clean at
-the nominal corner does not survive the corner move. **209 of the 351
-combinational cells** have at least one pin that, on at least one edge,
-cannot switch in under 1.0 ns at `ss_n40C_1v28`.
-
-A seven-build lever matrix (frozen under that record's
-`artifacts/…/candidates/`) separates the levers. The numbers below are
-`klt sta` setup slack / Fmax at `ss_n40C_1v28`, and the corner count is how
-many of the eighteen close 100 MHz on setup **and** hold:
-
-| RTL | Synthesis | P&R corner | Cells | `ss_n40C_1v28` | Closed |
-| --- | --- | --- | --- | --- | --- |
-| single-cycle (**committed**) | unconstrained, `tt` | `tt` | 682 | −33.867 ns / 22.80 MHz | 10/18 |
-| single-cycle | 10 ns @ ss | `tt` | 717 | −31.855 ns / 23.89 MHz | 10/18 |
-| single-cycle | 10 ns @ ss + cell exclusion | `tt` | 865 | −18.307 ns / 35.33 MHz | 13/18 |
-| bit-serial | 10 ns @ ss | `tt` | 932 | −10.224 ns / 49.45 MHz | 15/18 |
-| bit-serial | 10 ns @ ss | `ss_n40C_1v28` | 932 | −8.039 ns / 55.44 MHz | 16/18 |
-| bit-serial | 10 ns @ ss + cell exclusion | `tt` | 1204 | −5.845 ns / 63.11 MHz | 16/18 |
-| bit-serial | 10 ns @ ss + cell exclusion | `ss_n40C_1v28` | 1204 | **+0.489 ns / 105.14 MHz** | **18/18** |
-
-Three readings, all of them load-bearing:
-
-- **The cheap experiment is a dead end, and now has a number.**
-  `spec/decision-records/0002-…` Decision 3 named a timing-constrained
-  synthesis pass as the first thing to try and left it untried. It is worth
-  **≈1.1 MHz of a ≈77 MHz gap** and closes no additional corner.
-- ~~**100 MHz is reachable at all eighteen corners**~~ — **withdrawn,
-  2026-09-24, see the subsection below.** The 18/18 row did not reproduce.
-  The ratified target is still *not* lowered, but that is now a decision
-  about the target rather than a claim backed by a reproducible 18/18.
-- **The 18/18 row is not landed**, for two disclosed reasons: the cell
-  exclusion has no `klt synthesize` request field (it was produced by
-  invoking Yosys directly, so it is not re-runnable from a committed
-  request), and that row's own in-flow place-and-route STA —
-  routing-estimated parasitics rather than LEF/DEF-derived — reports
-  **−1.105 ns / 90.05 MHz** at the same corner on the same database. Both
-  numbers are real and they disagree about closure. Its cost is also not
-  small: **+522 cells** and ≈**33x** the cycle count — against a 4.6x
-  clock gain, a **net throughput loss of roughly 7x**. It is a *closure*
-  result, not a throughput result, and must never be quoted as one.
-
-The full decision, with the exception it ratifies and the priced exit from
-it, is
-[`spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`](../spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md).
-
-### The 18/18 row did not reproduce (issue #141, 2026-09-24)
-
-The blocking dependency the row above names —
-[klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382),
-a request-level cell exclusion in `klt synthesize` — **landed upstream**
-([#2429](https://github.com/2AMLogic/klayout-tools/pull/2429),
-`constraints.dont_use`). Issue #141 ran the exit end-to-end through
-committed `klt` requests for the first time. Result, frozen as
-[`verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md`](../verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md):
-
-| | row 6 (frozen, 2026-09-23) | re-spin (2026-09-24) |
-| --- | --- | --- |
-| mapped instances | 1204 | **1105** |
-| `klt sta` @ `ss_n40C_1v28` | +0.489 ns / 105.14 MHz | **−0.574 ns / 94.57 MHz** |
-| in-flow P&R STA @ same corner | −1.105 ns / 90.05 MHz | **−1.160 ns / 89.60 MHz** |
-| corners closed | **18/18** | **17/18** |
-
-- **The reproducibility objection is discharged.** `klt synthesize` driven
-  by a committed `constraints.dont_use` request produces a netlist
-  **byte-identical** to the frozen hand-rolled Yosys script's, on the same
-  host, with a flag-for-flag identical `abc` line.
-- **Row 6's netlist is not reproducible across hosts by *any* route.** Both
-  the committed request and row 6's own frozen script give 1105 instances
-  here, identically under Yosys 0.67 and 0.68 — so the 1204 figure traces
-  to the **ABC build embedded in the Yosys binary**, not to the request
-  field and not to a Yosys version. That 8.2% mapping difference is worth
-  **1.06 ns** at the binding corner: the difference between closing and not.
-- **The two STA methodologies now agree, against closure.** The in-flow
-  number reproduced to within 0.06 ns; the optimistic `klt sta` number is
-  the one that moved.
-- **Nothing was landed.** `layout/`, `rtl/` and `flow/`'s requests are
-  unchanged; T1 item 5 remains the disclosed 10/18 at 22.80 MHz against the
-  committed layout. The re-spun (uncommitted) GDS is `klt drc` **clean, 0
-  violations**, which is recorded so the next attempt knows item 3 is not
-  automatically at risk.
-
-Re-priced bill, superseding record `0004` Decision 2's:
-[`spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`](../spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md).
-
-### What this run does not claim
-
-Per `klt place-and-route`'s documented v1 scope, the GDS this section's
-figures were originally measured against had **no tapcell insertion, no
-power-grid (PDN) generation, no metal fill, no filler-cell insertion, and
-no `DONT_USE_CELLS` exclusion** — core-only floorplanning, no IO ring.
-**Updated, issue #81 (2026-09-11)**: `flow/par-modexp.json` (the
-committed, single-corner nominal recipe backing `layout/modexp.gds`) has
-since gained a `power` block, and the regenerated GDS now has tapcell
-insertion, PDN generation, and filler-cell insertion — see
-[`layout/README.md`](../layout/README.md) and
-[`verification/records/place-and-route/records/20260911-052542-d5e43d3.md`](../verification/records/place-and-route/records/20260911-052542-d5e43d3.md)
-for the current state; DRC is now clean against it
-([`docs/signoff-claim.md`](signoff-claim.md)). Metal (density) fill and
-`DONT_USE_CELLS` exclusion remain absent. **The 18-corner sweep figures in
-this section are unaffected** — they were always measured via
-`flow/run-corner-sweep.sh`'s separate, revised (55% utilization) floorplan,
-never against the committed `layout/modexp.gds`/`flow/par-modexp.json`
-this note describes, and issue #81 did not re-run that sweep. See
-[`docs/signoff-claim.md`](signoff-claim.md) for the current signoff verdict; the full record,
-including provenance and the reproduction recipe, is at
-[`verification/records/place-and-route/`](../verification/records/place-and-route/).
-
-## Post-route gate-level simulation — appended, issue #9; Leg 2 updated, issues #55, #78
-
-**Status: Leg 1 achieved (PASS). Leg 2 — PASS with a disclosed
-annotation-class exclusion** (issue #236, 2026-10-27; see the Leg 2 bullet
-below). Until Leg 1, every correctness claim on this page
-rested on *behavioural* simulation of `rtl/modexp.v`. Synthesis mapping,
-tie-cell insertion, CTS, and OpenROAD's placement/timing optimizations were
-unverified by simulation.
-
-### What was simulated, and why it is not the P&R input netlist
-
-`klt place-and-route` exports no post-route gate-level netlist (its response
-contract is `def_path` + `gds_path`). The netlist simulated here is therefore
-**derived from the routed layout itself** —
-`layout/modexp.gds` → `klt extract --abstract-cells` (issue #8's
-`layout/lvs/modexp_layout_abstracted.spice`) →
+The committed bit-exact suite run against a gate-level netlist of the
+**routed layout** rather than the RTL; until this leg existed, every
+correctness claim on this page rested on behavioural simulation. `klt
+place-and-route` does export an as-built post-route netlist —
+`layout/modexp.v`, 721 instances, reproduced byte-for-byte by the #232
+re-run — but Leg 1 deliberately simulates a netlist **derived from the
+routed GDS itself** (`klt extract --abstract-cells` →
 `verification/gate-level/spice_to_verilog.py` →
-`verification/gate-level/modexp_post_route.v`, **718 instances / 59 cell
-types / 68 pins / 1214 nets**, all cross-checked against
-`layout/lvs/modexp_layout_extract_report.json` before the run is allowed to
-proceed.
+`verification/gate-level/modexp_post_route.v`: 3,064 instances / 69 cell
+types / 70 pins / 777 nets; zero-delay, corner-free, `VDD`/`VSS` entering
+as `supply1`/`supply0` constants, `WIDTH=16` only), so the run checks
+`klt extract`'s own reading of the geometry that was DRC'd and LVS'd
+rather than a second reading of the P&R database.
 
-That 718 matters: the netlist P&R was *given* has 683 instances (+1 tie
-cell). Simulating that one and calling the result "post-route" would omit all
-35 CTS/timing-fixup insertions and all 5 drive-strength resizes the routed
-GDS actually contains — an overclaim that would have *passed*.
+- **Leg 1 (zero-delay): PASS.** `test_modexp.py` unmodified, reached via
+  `testbench.search_path` — 2/2 tests, simulated times identical to the
+  RTL run's (cycle-for-cycle identical, not merely functionally
+  equivalent); the 500-case deep run matches the RTL cross-check 500/500
+  with a per-vector transcript byte-identical to
+  `verification/records/width-cross-check/artifacts/20260808-031948-5488082/width-16.jsonl`.
+- **Leg 2 (net-delay SDF): PASS with a disclosed annotation-class
+  exclusion.** On the committed layout, all 1,920 net-delay `INTERCONNECT`
+  entries are back-annotated (`environment.sdf.annotated: true`); every
+  `IOPATH` cell-arc entry is excluded — record
+  [`verification/records/gate-level-sim/records/20261027-050100-163f791.md`](../verification/records/gate-level-sim/records/20261027-050100-163f791.md).
 
-### The measurement
-
-| Leg | Driver | Result |
-| --- | --- | --- |
-| `test_modexp.py`, unmodified, via `klt functional-verification` | `verification/gate-level/run-gate-level-sim.sh` | `status: "pass"`, 2/2 tests, 0 failed |
-| 500-case randomized run, `cross_check_tb.py` unmodified, same pinned seed as the RTL cross-check | `verification/gate-level/gate_level_cross_check.py` | 500/500 match, 0 mismatches |
-
-The second leg's per-vector transcript is **byte-identical** to the RTL
-cross-check's committed `WIDTH=16` transcript
-(`verification/records/width-cross-check/artifacts/20260808-031948-5488082/width-16.jsonl`) —
-the routed netlist returned exactly the same 500 results, in the same order.
-The klt leg's simulated time also matches the RTL run's to the nanosecond
-(23750.0 ns / 180480.0 ns), i.e. the routed design is cycle-for-cycle
-identical to the RTL, not merely functionally equivalent.
-
-`test_modexp.py` was not edited, and was not copied: the gate-level request
-reaches `verification/test_modexp.py` itself through
-`testbench.search_path` (`jq -r '.testbench.search_path'
-verification/gate-level/request-modexp-gate-level.json` → `..`, resolved
-against the request's own directory).
-
-### What this run does not claim
-
-- **No parasitics** (no `--parasitics` extraction, no SPEF), **no timing**,
-  **no corner**. It is zero-delay logic; the only delay in it is a 1 ns
-  `UNIT_DELAY` on flop outputs, a race-avoidance device rather than a
-  characterized delay. sky130A ships 18 liberty corners but one
-  corner-independent set of Verilog cell models, so this run has no corner
-  attribute at all. Timing evidence remains the OpenSTA corner sweep above.
-- **No power pins in the netlist** — the extraction drops power pins by construction (`spice_to_verilog.py`), so the gate-level model has no power/ground network.
-- **`WIDTH` = 16 only.** The netlist is an extraction of one fixed physical
-  layout of one elaboration; `WIDTH` is an RTL parameter that does not
-  survive synthesis. The case count is *not* reduced (500, matching the RTL
-  claim).
-- **Leg 2 (delay-annotated SDF simulation): PASS with a disclosed
-  annotation-class exclusion** (issue #236, 2026-10-27). The committed suite
-  passes against the committed layout's netlist with all 1,920 net-delay
-  `INTERCONNECT` entries back-annotated; every `IOPATH` cell-arc entry is
-  excluded, so cell-arc delays are not covered. Current result and the
-  exclusion's isolation evidence:
-  [`verification/gate-level/README.md`](../verification/gate-level/README.md),
-  record `verification/records/gate-level-sim/records/20261027-050100-163f791.md`.
-  Earlier FAIL attempts are retained as append-only records, e.g.
-  `verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`.
-
-Full method, scope, and the friction filed upstream:
-[`verification/gate-level/README.md`](../verification/gate-level/README.md).
-Records are at
+Full method, scope, provenance guards, and the upstream friction filed
+along the way:
+[`verification/gate-level/README.md`](../verification/gate-level/README.md)
+— the single description of that experiment. Records are append-only
+under
 [`verification/records/gate-level-sim/`](../verification/records/gate-level-sim/).
