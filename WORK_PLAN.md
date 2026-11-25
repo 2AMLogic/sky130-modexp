@@ -36,14 +36,12 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#423**: Condense superseded Update layers and duplicate gate-level/STA narratives in docs/signoff-claim.md
-- **#432**: Condense superseded pre-#232 layout, STA, and gate-level layers and fix broken gcd loop in docs/baseline.md
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
 - **#425**: docs: condense superseded DRC/gate-level/timing layers in signoff-claim.md
-- **#434**: docs(baseline): fix broken synthesis repro loop and condense superseded pre-#232 layout, STA, and gate-level layers
 
 ## Approved (Awaiting Merge)
 
@@ -75,8 +73,8 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 2 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 3 |
 | Architect / Hermit proposals | 0 |
