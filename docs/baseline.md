@@ -142,7 +142,7 @@ The load-bearing argument was never the external number. It is that a
 mixed-signal design system requires a digital flow underneath it, which makes
 this block a prerequisite rather than a detour.
 
-## Place-and-route baseline (constrained, 100 MHz) — appended, issue #7
+## Place-and-route baseline (constrained, 100 MHz)
 
 **Status: measured, 2026-08-14.** This section is an *addition* to this
 document, not a correction — the 682-cell figure above is the **unconstrained
