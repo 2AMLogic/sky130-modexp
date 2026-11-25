@@ -499,6 +499,36 @@ def case_supersedes_bullet_affirms_after_negation(repo: Path) -> None:
     )
 
 
+def case_supersedes_bullet_affirm_then_later_negated(repo: Path) -> None:
+    """The negation exemption is per occurrence: an id affirmed first and
+    mentioned after a negation cue later still counts as claimed."""
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        "20260101-000000-abc1234",
+        "fixture: affirmed id also appears in a later negated mention",
+        supersedes_bullet=(
+            "`20260101-000000-abc1234` -- though it does not supersede "
+            "`20260101-000000-abc1234`'s sibling"
+        ),
+    )
+
+
+def case_supersedes_bullet_affirm_and_negate_null_meta(repo: Path) -> None:
+    """`Supersedes A. This does not supersede A.` with null meta must fail:
+    the prose affirmatively retires A and the metadata does not."""
+    _add_record(
+        repo,
+        "20260116-000000-abc1234",
+        None,
+        "fixture: affirmed and negated same id, meta null",
+        supersedes_bullet=(
+            "Supersedes `20260101-000000-abc1234`. "
+            "This does not supersede `20260101-000000-abc1234`."
+        ),
+    )
+
+
 def case_new_record_is_a_pure_addition(repo: Path) -> None:
     """Adding a record must NOT trip the append-only check -- otherwise the
     convention would forbid the very thing it exists to allow."""
@@ -665,6 +695,18 @@ CASES = [
         case_supersedes_bullet_affirms_after_negation,
         1,
         "names 20260115-000000-abc1234, which the record-meta `supersedes` does not",
+    ),
+    (
+        "supersedes bullet affirming an id then negating it later still claims it",
+        case_supersedes_bullet_affirm_then_later_negated,
+        0,
+        "PASS: all records valid",
+    ),
+    (
+        "supersedes bullet affirming and negating an id with null meta fails",
+        case_supersedes_bullet_affirm_and_negate_null_meta,
+        1,
+        "names 20260101-000000-abc1234, which the record-meta `supersedes` does not",
     ),
     (
         "adding a new record is allowed",

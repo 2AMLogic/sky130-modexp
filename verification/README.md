@@ -376,7 +376,15 @@ append-only rule means no existing record is rewritten. The linter also
 cross-checks the two spellings against each other: the **Supersedes**
 bullet must name the same set of ids as the metadata (free prose around
 the ids is fine, and a record the bullet explicitly says it does *not*
-supersede doesn't count).
+supersede doesn't count; the exemption is per occurrence, so an id the bullet
+also affirms elsewhere is still claimed). Bullet ids are read from the first
+line plus continuation lines only while the list visibly wraps (the previous
+line ends in `,` `;` `&` `and` or `or`); ids on an unseparated continuation
+line are treated as explanatory prose and are **not** cross-checked. The
+append-only rule requires this limit: the frozen records
+`drc-lvs/20260817-002327-4dd3bfa` and `drc-lvs/20260817-002415-4dd3bfa` name
+other record ids in continuation prose, so reading continuations
+unconditionally would fail them.
 
 *Legacy workaround (history, issue #336).* Before `supersedes` accepted a
 list, the fix was a **pair of twin records** minted together, each naming one

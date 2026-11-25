@@ -25,7 +25,13 @@ Checks, per record `verification/records/<experiment>/records/<record-id>.md`:
    the list, and must not be the record itself. The **Supersedes** prose
    bullet must name the same set of ids as the metadata (free prose around
    the ids is fine; an id the bullet explicitly says it does *not*
-   supersede is commentary, not a claim).
+   supersede is commentary, not a claim). Bullet ids are read from the
+   first line plus continuation lines only while the list visibly wraps
+   (previous line ends in `,` `;` `&` `and` `or`); ids on an unseparated
+   continuation line are treated as explanatory prose and are not
+   cross-checked. The append-only rule requires this: the frozen records
+   `drc-lvs/20260817-002327-4dd3bfa` and `drc-lvs/20260817-002415-4dd3bfa`
+   name other record ids in continuation prose.
 4. **Provenance hash freshness** -- for every record that is *not*
    superseded by another record (a "live" record), every
    `provenance.inputs[].content_hash` is recomputed from the working tree
@@ -202,7 +208,8 @@ def check_supersedes_bullet(path: Path, bullet: str | None, meta_ids: list[str])
     may sit on the indented continuation lines `_extract_prose_fields`
     joins. An id mentioned *after* a negation cue in the same sentence ("... does **not**
     supersede `<id>`") names a record this record explicitly does not
-    retire and is exempt from the comparison. Returns a list of lint
+    retire and is exempt from the comparison; the exemption is scoped per occurrence, so
+    an id affirmed elsewhere in the bullet is still claimed. Returns a list of lint
     errors, empty when the halves agree.
     """
     if bullet is None or bullet.strip().lower() in _PLACEHOLDER_VALUES:
@@ -218,10 +225,10 @@ def check_supersedes_bullet(path: Path, bullet: str | None, meta_ids: list[str])
         return _SENTENCE_BREAK_RE.search(bullet, prior[-1].end(), id_start) is None
 
     ids = list(_SUPERSEDES_BULLET_ID_RE.finditer(bullet))
-    negated_ids = {m.group(0) for m in ids if negated(m.start())}
-    # An id negated anywhere stays exempt when prose names it again later
-    # (`... does not supersede X ... X's own evidence`).
-    claimed = {m.group(0) for m in ids if m.group(0) not in negated_ids}
+    # Exemption is per occurrence: an id affirmed in one sentence stays
+    # claimed even if a later sentence negates (or merely mentions) it, and
+    # an affirmed id is not retracted by a separate negated mention.
+    claimed = {m.group(0) for m in ids if not negated(m.start())}
     meta_set = set(meta_ids)
     errors = []
     missing = sorted(meta_set - claimed)
