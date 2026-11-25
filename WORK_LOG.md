@@ -10,6 +10,10 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-25
 
+- **PR #440**: chore: ignore daemon account-ranking caches outside the managed gitignore block
+- **PR #439**: fix(records-lint): per-occurrence supersedes negation exemption and wrap-limit docs
+- **Issue #438** (closed): gitignore: cover daemon runtime state file .loom/account-ranking.codex (trips check-main-clean.sh)
+- **Issue #433** (closed): Supersedes bullet cross-check: negation exemption is id-keyed rather than occurrence-keyed, and the wrap limit is undocumented
 - **PR #437**: docs(baseline): drop issue suffix from P&R baseline heading to restore record anchor
 - **Issue #435** (closed): docs/baseline.md: the P&R baseline heading's issue suffix breaks an inbound anchor cited by a place-and-route record
 
