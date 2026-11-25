@@ -8,8 +8,15 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-25
+
+- **PR #437**: docs(baseline): drop issue suffix from P&R baseline heading to restore record anchor
+- **Issue #435** (closed): docs/baseline.md: the P&R baseline heading's issue suffix breaks an inbound anchor cited by a place-and-route record
+
 ### 2026-11-24
 
+- **PR #434**: docs(baseline): fix broken synthesis repro loop and condense superseded pre-#232 layout, STA, and gate-level layers
+- **Issue #432** (closed): Condense superseded pre-#232 layout, STA, and gate-level layers and fix broken gcd loop in docs/baseline.md
 - **PR #426**: feat: cross-check Supersedes prose bullet ids against record-meta
 - **Issue #421** (closed): Evidence-record linter never cross-checks the **Supersedes** prose bullet against the meta value
 - **PR #429**: docs(signoff): replace seven stale pre-#232/#246 README passages with the live manifest facts
