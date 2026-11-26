@@ -34,8 +34,9 @@ on the OpenROAD-produced GDS"* — against `layout/modexp.gds` (from #7).
 > **Also on this page, since it is about the same artifact and must not be
 > discoverable only elsewhere**: "Post-route gate-level simulation" (issue
 > #9) and **"Multi-corner timing (T1 item 5) — FAIL, disclosed, with its
-> number"** (issue #132: 100 MHz closes at 10 of 18 ratified corners,
-> binding corner `ss_n40C_1v28` at **22.80 MHz**). Neither changes the
+> number"** (100 MHz closes at 10 of 18 ratified corners; on the committed
+> #232 layout the binding corner `ss_n40C_1v28` is at **24.79 MHz**).
+> Neither changes the
 > Signoff row's DRC + LVS verdict; both are carried here so a reader asking
 > "what does this block's evidence establish?" gets the whole answer in one
 > place.
@@ -63,138 +64,48 @@ the current verdict. Recover them with
 by name ("LVS", "Second-engine cross-check ... not run") refer to that
 revision.
 
-## DRC — **CLEAN: 0 violations** (was: 234, individually classified, issue
-#79; before that, clean at the issue #55 pin; before that, 10 violations)
+## DRC — **CLEAN: 0 violations**
 
 `klt drc layout/modexp.gds --deck sky130 --format json` → **`status:
-"clean"`, `violation_count: 0`**, against the regenerated
-`layout/modexp.gds` (issue #81 — `flow/par-modexp.json`'s new `power`
-block adds tapcell + PDN + filler-cell insertion; content hash changed from
-every prior run). Full report and provenance:
-`verification/records/drc-lvs/records/20260911-053500-d5e43d3.md` (and its
-twin, `20260911-053520-d5e43d3.md`), superseding
-`20260911-012604-6e5ac66`/`20260911-012620-6e5ac66`.
+"clean"`, `violation_count: 0`** on the committed `layout/modexp.gds`
+(`sha256:cc970173…`, the #232 regeneration). The committed report is
+`layout/drc/modexp-drc-report.json` (deck `content_hash`
+`sha256:776cd39e5f70e2c6c28de92e8351a2bf2c0ecb1f4e34e362310d156a63b6ffc1`);
+the record is
+`verification/records/drc-lvs/records/20261027-013910-98bf55d.md`.
 
-**This closes the 161 documented-gap violations (121 `nwell.space.1` + 40
-`nwell.width.1`) issue #81 targeted, and the 73 check-engine-limitation
-violations as an incidental consequence — not a claim that
-[klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)
-itself was fixed** (it was not touched and remains open upstream; a
-different design, or a future change to this one, could still trigger the
-same `Region.space_check` approximation gap on a different same-polygon
-notch).
+### Deck coverage gaps
 
-### Deck coverage gaps (enumerated, per this issue's acceptance criteria)
+The run's own `coverage` block in `layout/drc/modexp-drc-report.json` is
+the rule inventory for this verdict — 95 rules checked (including the
+`met1`–`met5` minimum-area and holes-area rules) and 47 skipped as
+`no_applicable_geometry`, across 20 `deck_scope` chapters — and is read
+from the report rather than restated here (`klt deck info --format json`
+reports the installed build's own current coverage). Only the structural
+bounds the JSON does not carry are stated here:
 
-`klt drc --deck sky130` runs a **curated starter subset of 17 rules**, not
-the full sky130 design rule manual (`docs/cli/drc.md`, "Coverage"), over
-`poly`, `diff`, `li1`, `met1`, `licon1`, `mcon`, `met2`, and `via`
-(met1↔met2 via1). Specifically, as of this evidence's `deck.content_hash`
-(`sha256:cc62ce576bd65c127270fda943443493529f6e0a9f7ff85c7e9595938698e73e`):
+- **A curated subset, not the full sky130 design rule manual.** A `clean`
+  verdict means clean against the checked rules above, not "DRC-clean
+  against the sky130 DRM".
+- **Density and antenna rules remain outside `klt drc`** (antenna checking
+  is a separate verb, `klt erc`, not part of this deck and not run in this
+  repo's evidence), so this verdict carries no CMP-density or antenna
+  evidence.
+- **Some transcriptions approximate their source rule** because the
+  single/two-layer check primitives cannot express the official form;
+  every approximation is documented in its rule's own docstring in
+  `klayout-tools`. The two that matter for this design:
+  `li1.enclosing.licon1.1` transcribes `li.5`'s unconditional floor (0.0 µm
+  — "`li1` must actually cover the `licon1` cut it lands on") rather than
+  its 0.08 µm two-adjacent-edges condition, and `nwell.space.1`
+  approximates an `isolated`-semantics rule with a `space` check that can
+  false-positive on a same-polygon notch
+  ([klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654)).
 
-- **Six of the seventeen rules approximate an official rule** the check
-  primitives cannot express exactly: two approximate a compound-layer
-  expression (a boolean union of two mask layers, e.g. `diff.or(tap)`) as a
-  single-drawn-layer check; four more (`met2.width.1`, `via.width.1`,
-  `met1.enclosing.via.1`, `met2.enclosing.via.1`) approximate an official
-  rule that additionally bounds a max size/length or a
-  periphery-scoped/corner-relaxed refinement the single/two-layer check
-  primitives don't support. Every approximation is named in its rule's own
-  docstring in `src/klayout_tools/decks/sky130.py`.
-- **`m2.6` (minimum met2 area, 0.0676 µm²) is not transcribed at all** —
-  tracked upstream as a candidate follow-on (area/density/antenna rule
-  authoring was out of scope for the check-primitive work that added those
-  kinds), not silently dropped.
-- **`li1.enclosing.licon1.1` is the one rule whose threshold is
-  deliberately not its source value** — the official rule (`li.5`) requires
-  its 0.08 µm margin only on two adjacent edges of each cut, a conditional
-  form the check primitives can't express; this deck instead transcribes
-  `li.5`'s *unconditional floor* (0.0 µm — "`li1` must actually cover the
-  `licon1` cut it lands on"), which catches the real defect class (a
-  conductor missing part of its cut) with no false positives on correct
-  geometry, at the cost of leaving the 0.08 µm two-adjacent-edges half
-  uncovered.
-
-None of the 10 reported violations are on `li1.enclosing.licon1.1` or any of
-the six approximated rules — the one rule that fired (`diff.enclosing.licon.1`,
-official rule `licon.5`) is transcribed at its real, unmodified threshold.
-The DRC claim above is bounded by this coverage: a `"clean"` verdict from
-this deck would still not mean "DRC-clean against the full sky130 design
-rule manual," and this run is not even that clean a verdict.
-
-**Update (issue #78, 2026-09-09)**: this enumeration describes the deck as
-it stood at issue #8's original pin. The deck has since grown — most
-recently, `klayout-tools#1433` added `nwell.width.1`/`nwell.space.1` (see
-"DRC" above, whose 234 violations are on exactly these two new rules) —
-so both the rule count and the coverage gaps enumerated above are now
-stale as a complete list; they remain accurate as a description of what
-they cover, not as an exhaustive current inventory. Re-enumerating the
-deck's full current rule set is not attempted here (out of this issue's
-scope); `klt deck info --format json` reports the installed build's own
-current coverage directly.
-
-**Update (issue #86, 2026-09-15): the current rule set, re-enumerated.**
-The note above left the deck's coverage disclosed-as-incomplete rather than
-enumerated, which is not what T1 checklist item 3 asks for (a clean verdict
-must come with its coverage gaps *enumerated*, not merely flagged as
-unlisted). Re-derived directly from the deck this repo's pinned `klt`
-(`f77036bf…`) actually runs — `deck.content_hash`
-`sha256:5afac7ab8561545859f5e2e74f4621c6ffc052756dc8fe344ea263398e96b240`,
-the same hash `layout/drc/modexp-drc-report.json` carries, so this describes
-the exact deck the committed clean verdict came from:
-
-- **47 rules, not 17.** The deck has grown by 30 rules since the
-  enumeration above was written. Note that
-  `klt deck info --format json` — which the issue #78 note above points at —
-  reports the *extraction* deck's structural device-class coverage and the
-  deck content hash, **not** the DRC rule inventory; the inventory below was
-  read from the deck definition the pinned build ships.
-- **Coverage by check kind**: 15 `width`, 14 `space`, 16 `enclosing`, 2
-  `separation`.
-- **Coverage by layer scope**: `nwell`, `poly`, `difftap`, `licon`, `ct`
-  (mcon), `li`, `m1`, `via`, `m2`, `via2`, `m3`, `via3`, `m4`, `via4`, `m5`,
-  `capm`, `cap2m`.
-- **Full rule list**: `poly.width.1`, `diff.width.1`, `li1.width.1`,
-  `li1.space.1`, `met1.width.1`, `met1.space.1`, `met1.enclosing.mcon.1`,
-  `diff.enclosing.licon.1`, `poly.enclosing.licon.1`,
-  `li1.enclosing.licon1.1`, `mcon.space.1`, `met2.width.1`, `met2.space.1`,
-  `via.width.1`, `via.space.1`, `met1.enclosing.via.1`,
-  `met2.enclosing.via.1`, `met3.width.1`, `met3.space.1`, `via2.width.1`,
-  `via2.space.1`, `met2.enclosing.via2.1`, `met3.enclosing.via2.1`,
-  `met4.width.1`, `met4.space.1`, `via3.width.1`, `via3.space.1`,
-  `met3.enclosing.via3.1`, `met4.enclosing.via3.1`, `met5.width.1`,
-  `met5.space.1`, `via4.width.1`, `via4.space.1`, `met4.enclosing.via4.1`,
-  `met5.enclosing.via4.1`, `capm.width.1`, `capm.space.1`,
-  `met3.enclosing.capm.1`, `capm.enclosing.via3.1`,
-  `capm.separation.via3.1`, `capm2.width.1`, `capm2.space.1`,
-  `met4.enclosing.capm2.1`, `capm2.enclosing.via4.1`,
-  `capm2.separation.via4.1`, `nwell.width.1`, `nwell.space.1`.
-
-**What is still not covered, stated as a gap rather than implied:**
-
-- **No area, density, or antenna rule is transcribed at all** — zero of the
-  47 rules carry an area/density/antenna bound, so `m2.6` (minimum met2
-  area) and its whole rule class remain untranscribed, exactly as the
-  original enumeration said. Antenna checking is a separate verb
-  (`klt erc`), not part of this deck, and is not run in this repo's evidence.
-- **The approximation caveats above still apply**, and there are more of
-  them than the original six: every rule whose transcription approximates
-  its source rule carries that warning in its own docstring in the deck
-  definition (31 such notes across the current deck). The two named
-  approximations this design actually tripped are already documented above
-  (`nwell.space.1`'s `space`-vs-`isolated` semantics,
-  [klayout-tools#1654](https://github.com/2AMLogic/klayout-tools/issues/1654);
-  and `li1.enclosing.licon1.1`'s deliberate unconditional-floor threshold).
-- **18 of the 47 rules carry no `source_repo`/`rule_id` provenance** (all of
-  them `enclosing`/`separation` rules derived from a layer pair rather than
-  transcribed one-for-one from a named `sky130.lydrc` rule), so they cannot
-  be traced back to a single official DRM rule id from the deck alone.
-- **This is still a curated subset, not the full sky130 design rule
-  manual.** A `clean` verdict from this deck does not mean "DRC-clean
-  against the sky130 DRM"; it means clean against these 47 rules, with the
-  bounds above. That framing is unchanged by the re-enumeration — the point
-  of the re-enumeration is that the list is now current and complete *as a
-  description of what ran*, which is what item 3 requires.
+Earlier DRC states — the 10-violation run of issue #8, the 234 `nwell`
+violations of issue #79, and their closure by issue #81's PDN regeneration
+— are preserved in `verification/records/drc-lvs/` and in git, per this
+page's rule above.
 
 ## What this GDS has not been through (missing flow stages)
 
@@ -220,8 +131,10 @@ match`) against the as-built netlist `layout/modexp.v`, T1 item 4 `met`
 (issue #233, decision record 0012). The ratified row was not relaxed to get
 there. What this evidence establishes, precisely bounded:
 
-- **DRC** is clean against a curated 47-rule subset of the sky130 rules, not
-  the full design rule manual (see "DRC").
+- **DRC** is clean against a curated subset of the sky130 rules — the
+  committed report's own `coverage` block (95 rules checked, 47 skipped as
+  inapplicable) is the inventory — not the full design rule manual (see
+  "DRC").
 - **LVS** is a connectivity / pin-to-net verdict on the as-built netlist, not
   rail continuity or IR drop; the netgen gate-level caveat is in the
   amendment at the top of this page.
@@ -294,73 +207,28 @@ design-specific detail beyond PDK standard-cell names) at
 
 ## Post-route gate-level simulation (appended, issue #9)
 
-**Note (issue #81, 2026-09-11): this section's evidence is against the
-*pre*-#81 layout, not the current `layout/modexp.gds`.** `layout/lvs/
-modexp_layout_abstracted.spice` (the extraction artifact this section's
-netlist derives from) was deliberately left unchanged when issue #81
-regenerated `layout/modexp.gds` — re-deriving it hits a validation gap in
-`verification/gate-level/spice_to_verilog.py` when the layout has a real
-PDN (genuine `VDD`/`VSS` top-level pins the script doesn't yet model as
-power ports). Tracked as
-[sky130-modexp#83](https://github.com/2AMLogic/sky130-modexp/issues/83);
-the findings below remain correct history against the layout they were
-measured against, not a current claim about the regenerated GDS.
+Running the committed bit-exact suite against a netlist derived from the
+routed layout itself (`layout/lvs/modexp_layout_abstracted.spice`, by
+`verification/gate-level/spice_to_verilog.py`), not against `rtl/modexp.v`.
+A separate claim from the DRC/LVS verdict above; it does not change it.
 
-Issue #9 re-ran the committed bit-exact suite against a gate-level netlist of
-this same GDS, using the very extraction artifact this page's LVS history
-(issue #131 revision, see "Current verdict") describes (`layout/lvs/modexp_layout_abstracted.spice`). That is a separate
-claim from the DRC/LVS verdict above and does not change it, but it is worth
-recording here because it uses the same layout and inherits the same scope
-caveats:
-
-- **What it establishes**: the 718-instance netlist implied by this routed
-  layout — including all 35 CTS/timing-fixup insertions and all 5 resizes
-  that the issue #131 LVS statement (superseded; see "Current verdict") attributed — is functionally bit-exact against
-  `pow(base, exp, mod)`, and returns byte-identical results to the RTL on the
-  same 500 pinned vectors. That is a positive, simulation-based answer to
-  part of what the LVS run could not itself confirm (the LVS comparator
-  stopped short of net-by-net correspondence, per the comparison-level
-  statement in the issue #131 revision of this page).
-- **What it does NOT model**, carried forward verbatim from this page's LVS
-  scope plus what is specific to simulation: **no parasitic extraction** (no
-  R/C, no SPEF — `klt extract` was run without `--parasitics`), **no
-  timing and no corner** (zero-delay logic; sky130A ships 18 liberty corners
-  but one corner-independent Verilog cell-model set), **no power/ground
-  network** (power pins dropped — this GDS has no PDN), and **cell-instance
-  granularity, not transistor level**.
-- **Leg 2 (delay-annotated SDF simulation), updated 2026-10-27, issue #236:
-  PASS with a disclosed `IOPATH` annotation-class exclusion.** The replay was
-  re-done on the committed layout, and all 1,920 net-delay `INTERCONNECT`
-  entries are back-annotated (`environment.sdf.annotated: true`). Every
-  `IOPATH` cell-arc entry is excluded: `IOPATH` back-annotation on these
-  models under Icarus 13 mechanically kills a timing-clean design. Current
-  record:
+- **Leg 1 (zero-delay gate-level equivalence): PASS.** The
+  3,064-instantiation netlist — whose 721 signal instances match the
+  as-built `layout/modexp.v` type for type and count for count — is
+  functionally bit-exact against `pow(base, exp, mod)` and byte-identical
+  to the RTL across the same 500 vectors per `WIDTH`. Scope: `VDD`/`VSS`
+  come through as genuine top-level power pins and are declared
+  `supply1`/`supply0` (issue #83); no parasitics, no timing, no corner,
+  cell-instance granularity.
+- **Leg 2 (net-delay SDF-annotated regression): PASS with a disclosed
+  `IOPATH` annotation-class exclusion** (issue #236, on the committed
+  layout): all 1,920 net-delay `INTERCONNECT` entries back-annotated;
+  record
   `verification/records/gate-level-sim/records/20261027-050100-163f791.md`.
-  Status, counts and isolation evidence are kept in
-  `verification/gate-level/README.md`. The earlier FAIL attempts are kept
-  below as superseded history.
-- **Leg 2, superseded history (updated 2026-09-09, issue #78): RE-ATTEMPTED —
-  was still FAIL, narrower failure class; superseded by the PASS above.** Issue #55 first
-  exercised Leg 2 end to end after `klayout-tools#1007` (SDF export/option)
-  landed: `klt`'s SDF diagnostic gate reported 200 of ~753 `INTERCONNECT`
-  entries (every one top-level-port-attached) unresolved, filed generically
-  as [klayout-tools#1056](https://github.com/2AMLogic/klayout-tools/issues/1056).
-  Issue #78 bumped the pin past
-  [klayout-tools#1069](https://github.com/2AMLogic/klayout-tools/pull/1069)
-  (`#1056`'s fix — a generated pass-through wrapper for top-level-port
-  `INTERCONNECT` entries) and re-ran Leg 2 against a fresh post-route
-  build's own `write_verilog` netlist and `write_sdf` output. Result: the
-  fix resolves the great majority of the prior 200 (including `done`), but
-  `klt`'s own SDF diagnostic gate still reports the run failed — a new,
-  narrower residual class of 49 unresolved `INTERCONNECT` entries (3 tied to
-  antenna-diode filler cells, 46 tied to a specific block of flip-flop
-  driver nets), and the regression itself still reports a uniform,
-  constant-zero result on every test case even though `done` now resolves.
-  Full evidence:
-  `verification/records/gate-level-sim/records/20260909-230216-92e00f2.md`
-  (supersedes `20260816-174310-5e656e5.md`).
 
-Full method and scope: `verification/gate-level/README.md`. Records:
+`verification/gate-level/README.md` is the single description of the
+experiment — method, provenance guards, scope, and the earlier attempts
+(superseded history, per this page's rule above). Records:
 `verification/records/gate-level-sim/`.
 
 ## Multi-corner timing (T1 item 5) — **FAIL, disclosed, with its number** (appended, issue #132)
@@ -370,85 +238,42 @@ It is recorded on this page because anything reading this page for "what
 does this block's evidence establish" must not have to discover the timing
 gap somewhere else.
 
-Against the same `layout/modexp.def`/`layout/modexp.gds` the DRC and LVS
-sections above concern (content_hash `sha256:a35b9567…` /
-`sha256:9fa0dbe1…`), an eighteen-corner `klt sta` characterization at the
-ratified 100 MHz Clock row reports:
+Against the committed `layout/modexp.def` / `layout/modexp.gds`
+(`sha256:9cfbe9ee…` / `sha256:cc970173…`, the #232 regeneration), the
+eighteen-corner `klt sta` sweep at the ratified 100 MHz Clock row (record
+`verification/records/sta-corner-sweep/records/20261027-013950-98bf55d.md`)
+reports:
 
 - **Setup: 100 MHz closes at 10 of 18 ratified corners.** The binding
-  corner is **`ss_n40C_1v28`**, achieved Fmax **22.80 MHz** — setup WNS
-  **−33.867 ns**, TNS −671.109 ns, 105 setup violations. That is roughly
-  **4.4x short** of the target. Per
+  corner is **`ss_n40C_1v28`**, achieved Fmax **24.79 MHz** — setup WNS
+  **−30.332 ns**, TNS −531.386 ns, 103 setup violations. Per
   `spec/decision-records/0002-…` Decision 1, no claim here may say this
   block "closes 100 MHz" without naming the corner set: **it does not close
   100 MHz across its own ratified operating conditions.**
 - **Hold: clean at all eighteen corners**, worst hold slack **+0.21354 ns**
-  (`ff_n40C_1v95`), +2.06884 ns at the binding corner, 0 violations
-  everywhere. The failure is purely setup.
-- **The critical path is named, not inferred.** Startpoint `_1205_` (DEF
-  net `mm_a[15]`) → endpoint `_1175_` (DEF net `mm_p[6]`), 20 combinational
-  gates, arrival **42.17 ns** against an 8.31 ns required time — the whole
-  single-cycle `S_MM_RUN` body of `rtl/modexp.v`.
+  (`ff_n40C_1v95`), 0 violations everywhere. The failure is purely setup.
+- **The critical path is named, not inferred.** Worst setup path
+  `_1271_/Q` → `_1241_/D`, −30.332 ns — the single-cycle `S_MM_RUN`
+  datapath of `rtl/modexp.v` (decision record 0004).
 
-**What the exception is bounded by.** Issue #132 measured a seven-build
-lever matrix and found a configuration that **did** close all eighteen
-corners (+0.489 ns setup / 105.14 MHz at the binding corner). It was
-deliberately **not landed**, for two reasons stated here rather than
-buried: the standard-cell exclusion it depends on had no `klt synthesize`
-request field, so it was not re-runnable from a committed request; and that
-same build's in-flow, routing-estimated place-and-route STA reports
-**−1.105 ns / 90.05 MHz** at the same corner on the same database — two
-real numbers that disagree about closure. Its cost is **+522 cells** and
-≈**33x** the cycle count — against a 4.6x clock gain, a **net throughput
-loss of roughly 7x**.
-
-> **Update (issue #141, 2026-09-24): that bound no longer holds, and the
-> exception is now *less* bounded than this section originally said.** The
-> missing request field landed upstream
-> ([klayout-tools#2429](https://github.com/2AMLogic/klayout-tools/pull/2429)
-> closing
-> [klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382)),
-> the re-spin was run end-to-end through committed `klt` requests, and it
-> closes at **17 of 18** corners, not eighteen: `ss_n40C_1v28` at
-> **−0.574 ns / 94.57 MHz**. The reproducibility objection is discharged
-> (the committed request reproduces the frozen script's netlist byte for
-> byte), but the 18/18 itself did not reproduce — the mapped netlist is
-> 1105 instances here against the frozen 1204, a difference that traces to
-> the ABC build embedded in the Yosys binary and is worth 1.06 ns at the
-> binding corner. **Both STA methodologies now agree the binding corner
-> does not close** (−0.574 ns and −1.160 ns). Nothing in this document's
-> verdicts changes — no layout, RTL, or flow request was modified — but the
-> "measured route out" this section pointed at is no longer demonstrated.
-> See
-> `spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`
-> and
-> `verification/records/sta-corner-sweep/records/20260924-134500-1a8313b.md`.
+Issue #132's lever matrix measured a configuration that closed all
+eighteen corners and priced it (+522 cells, ≈33x the cycle count against a
+4.6x clock gain); issue #141 re-ran that exit end-to-end through committed
+`klt` requests once `constraints.dont_use` landed upstream
+(klayout-tools#2429, closing klayout-tools#2382) and it closes at 17 of
+18, not eighteen — the 18/18 reachability claim is withdrawn by decision
+record 0005, and both STA methodologies agree the binding corner does not
+close. The ratified exception, the lever matrix, and the priced exit are
+in
+`spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`;
+the non-reproducing re-spin is in
+`spec/decision-records/0005-the-priced-exit-was-run-and-does-not-reproduce.md`.
 
 Consequently `spec/modexp.md`'s Clock row is **not** amended, the corner
 matrix of `spec/decision-records/0001-…` Decision 4 is **not** narrowed,
 and `verification/signoff/block-manifest.json` **cites the failing sweep**
 so `klt signoff` renders item 5 `unmet` from the evidence itself rather
-than from an absence of evidence. The ratified decision, the lever matrix,
-and the priced exit are in
-`spec/decision-records/0004-slow-corner-closure-is-cell-selection-bound-and-the-disclosed-t1-item-5-exception.md`;
-the evidence is
-`verification/records/sta-corner-sweep/records/20260923-093000-28a7c96.md`.
-
-### Friction filed upstream (issue #132)
-
-- **`klt synthesize` has no request-level standard-cell exclusion.** Its
-  `abc -dont_use` list is a hardcoded per-cell-library table, so a caller
-  cannot express a corner-driven exclusion (e.g. "exclude every cell whose
-  delay floor at the target corner exceeds a fraction of the clock period")
-  without bypassing `klt` and invoking Yosys directly — which makes the
-  resulting netlist non-reproducible from a committed request. Filed as
-  [klayout-tools#2382](https://github.com/2AMLogic/klayout-tools/issues/2382)
-  per `CLAUDE.md`'s friction protocol; the downstream re-spin it unblocks is
-  [sky130-modexp#141](https://github.com/2AMLogic/sky130-modexp/issues/141).
-  **Fixed upstream** by
-  [klayout-tools#2429](https://github.com/2AMLogic/klayout-tools/pull/2429)
-  (`constraints.dont_use`), verified working by issue #141 — see the update
-  block above for what the re-spin then measured.
+than from an absence of evidence.
 
 ## Evidence record
 
