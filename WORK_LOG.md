@@ -10,6 +10,8 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 
 ### 2026-11-26
 
+- **Issue #446** (closed): T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
+- **PR #450**: verification: DR-0017 pipelined column halves probe misses 100 MHz at ss_n40C_1v28
 - **Issue #445** (closed): Shorten cross-check CLI help and link to one working record-minting recipe
 - **PR #447**: docs: shorten cross-check help and link to the minting recipe
 - **Issue #444** (closed): Verify the remaining T1 corner-timing evidence before closing epic #12

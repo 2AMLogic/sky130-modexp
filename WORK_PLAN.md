@@ -17,14 +17,13 @@ _None._
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
+_None._
 
 ## Important
 
 `loom:important`; taken before unlabelled work.
 
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191)
-- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
 
 ## Ready
 
@@ -37,7 +36,6 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#423**: Condense superseded Update layers and duplicate gate-level/STA narratives in docs/signoff-claim.md
-- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
 
 ## PRs Awaiting Review
 
@@ -58,7 +56,6 @@ Issues carrying `loom:curated`.
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
 - **#374**: cross_check_tb.py docstring still says it is driven by cocotb's Runner API, not klt *(curated)*
-- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -73,13 +70,13 @@ _None._
 | Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Very important | 1 |
-| Important | 2 |
+| Very important | 0 |
+| Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 4 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
