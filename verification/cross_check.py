@@ -1,72 +1,9 @@
 #!/usr/bin/env python3
-"""Deterministic multi-`WIDTH` Icarus cross-check for `rtl/modexp.v`.
+"""Run a deterministic multi-width cross-check of rtl/modexp.v.
 
-Reproduces the claim `docs/baseline.md` makes: `modexp.v` is bit-exact
-against Python `pow(base, exp, mod)` across `WIDTH` = 4, 6, 8, 16 at 500
-random cases each, 0 mismatches.
-
-Every simulator run here goes through `klt functional-verification` -- one
-request per `WIDTH`, each carrying a `request.parameters` object
-(`{"WIDTH": <n>}`) that klt forwards to both `Runner.build(parameters=...)`
-and `Runner.test(parameters=...)`. This script never imports
-`cocotb_tools.runner` itself.
-
-That was not always true. Until the pin in `docs/environment.md` reached
-`klayout-tools==0.8.0`, the `klt.functional_verification.request/1` schema
-had no field to override a Verilog `parameter`, so a checked-in request
-(`verification/request-modexp.json`) could only elaborate the design's
-default `WIDTH=16` and this script drove Icarus directly via cocotb's own
-`Runner` API. That gap was filed under the friction protocol against
-`2AMLogic/klayout-tools` (generic, no design detail), `verification/README.md`
-recorded the stopgap with an explicit exit condition -- retire the bypass
-once `klt` gains a parameter override -- and the pinned klt now has it. The
-bypass is gone; what this script still owns is everything klt's request
-contract has no field for:
-
-- deriving a distinct, deterministic per-`WIDTH` seed from `--seed`;
-- passing the case count and transcript path to the testbench, which travel
-  as `CROSS_CHECK_*` environment variables the klt subprocess inherits;
-- reading the per-vector transcripts back and comparing `got` against
-  `want`;
-- `--mint-record` and the artifact manifests.
-
-Nothing here reimplements Yosys/synthesis; `klt synthesize` is still used
-unmodified for the cell-count baseline.
-
-Reproducibility: every `WIDTH` draws its vectors from a `random.Random`
-seeded with a value derived from `--seed` (default: a pinned constant, never
-the current time or OS entropy) and that `WIDTH`. Re-running with the same
-seed reproduces byte-identical per-vector transcripts -- see
-`test_cross_check` in `cross_check_tb.py`, which writes the transcript and
-contains no non-deterministic fields (no timestamps, no wall-clock timing).
-
-Usage:
-    python3 verification/cross_check.py
-        Run the full WIDTH=4,6,8,16 x 500-case cross-check and report a
-        transcript summary. Exit 0 iff every case at every WIDTH matches.
-        This is what `npm run test` invokes.
-
-    python3 verification/cross_check.py --mint-record --author "NAME (issue #N)"
-        Also write a new append-only evidence record under
-        `verification/records/width-cross-check/` (see
-        `verification/README.md` for the record convention). The per-WIDTH
-        transcripts go to the artifact store (`klt artifact put`) and only
-        a manifest under `manifests/artifacts/` is committed; fails closed
-        (nonzero, nothing written) if the store is unavailable. Only do this
-        deliberately -- do not wire --mint-record into CI, which would mint
-        a new record on every PR. `--author` is required: the record's
-        author line is evidence provenance, not a constant.
-
-    python3 verification/cross_check.py --mint-record --author ... \
-        --supersedes RECORD_ID [--supersedes RECORD_ID_2 ...]
-        As above, but the new record retires `RECORD_ID` -- it is written
-        into the metadata block's `supersedes` and the **Supersedes** prose
-        bullet, which is what exempts the retired record from
-        `check_records.py`'s hash-freshness check. This is the only way to
-        replace a live record after a hashed input (`rtl/modexp.v`,
-        `verification/cross_check_tb.py`) changes. `RECORD_ID` must name an
-        existing record in this experiment; an unknown id exits nonzero
-        before the simulation runs and before anything is stored or written.
+At every requested WIDTH, klt must report a pass and the transcript must
+show a bit-exact match with Python's pow(base, exp, mod) for every requested
+case. See verification/README.md for the procedure and evidence record format.
 """
 
 from __future__ import annotations
