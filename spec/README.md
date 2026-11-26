@@ -48,3 +48,5 @@ Ratified specification and decision records.
     — issue #280, status `ratified`.
   - [`0018-derive-the-montgomery-entry-constant-by-split-modular-doubling.md`](decision-records/0018-derive-the-montgomery-entry-constant-by-split-modular-doubling.md)
     — issue #401, status `proposed`.
+  - [`0019-pipelined-column-halves-do-not-meet-100-mhz-at-the-binding-corner-dr-0017-contingency-lapses.md`](decision-records/0019-pipelined-column-halves-do-not-meet-100-mhz-at-the-binding-corner-dr-0017-contingency-lapses.md)
+    — issue #446, status `proposed`.
