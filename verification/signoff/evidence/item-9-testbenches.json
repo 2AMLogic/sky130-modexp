@@ -24,7 +24,7 @@
         "role": "testbench",
         "path": "verification/cross_check.py",
         "passed": true,
-        "content_hash": "sha256:07265510d309efc475729246e092de1f30e5c03c8dd082eeeb099660d6227095"
+        "content_hash": "sha256:b6571ae3d56813fb2d4f747b9c8c11b729e8de3fed6a31014af9209177700088"
       },
       {
         "check": "present",

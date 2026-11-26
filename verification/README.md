@@ -83,13 +83,14 @@ each, pinned seed) with:
 
 ```bash
 python3 verification/cross_check.py          # report only (what `npm run test` runs)
-python3 verification/cross_check.py --mint-record   # also write a new evidence record
 
 # prove the seed is pinned rather than defaulted: two runs, identical bytes
 python3 verification/cross_check.py --widths 4 6 --cases 40 --transcript-dir /tmp/a
 python3 verification/cross_check.py --widths 4 6 --cases 40 --transcript-dir /tmp/b
 cmp /tmp/a/width-4.jsonl /tmp/b/width-4.jsonl
 ```
+
+To mint an evidence record, follow the [artifact store recipe](#artifact-store-manifest-forward-evidence).
 
 `cross_check.py` re-executes itself under `.venv/bin/python3` when the
 invoking interpreter cannot import cocotb but the venv provisioned by
@@ -238,7 +239,8 @@ private and manifests are public, so a manifest is safe to commit.
   only then writes the record. It fails closed -- if `$KLT_ARTIFACT_BROKER` is
   unset, `klt` lacks `artifact put`, or the broker is unreachable, it exits
   nonzero and writes no manifest and no record. There is no fallback to
-  committing bytes.
+  committing bytes. Mint records deliberately, outside routine CI, since each
+  invocation that succeeds creates a new record.
   - `--author` is required with `--mint-record`: the record's
     **Timestamp / author** line is evidence provenance, not a constant.
   - `--supersedes RECORD_ID` retires an existing record of the same
