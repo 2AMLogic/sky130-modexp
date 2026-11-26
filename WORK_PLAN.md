@@ -17,7 +17,7 @@ _None._
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-_None._
+- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
 
 ## Important
 
@@ -30,13 +30,14 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
+_None._
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
 - **#423**: Condense superseded Update layers and duplicate gate-level/STA narratives in docs/signoff-claim.md
+- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
 
 ## PRs Awaiting Review
 
@@ -72,10 +73,10 @@ _None._
 | Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Very important | 0 |
+| Very important | 1 |
 | Important | 2 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 1 |
+| Ready (`loom:issue`) | 0 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 4 |
