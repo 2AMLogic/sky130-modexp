@@ -24,12 +24,13 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191)
+- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz
 
 ## In Progress
 
@@ -56,6 +57,7 @@ Issues carrying `loom:curated`.
 - **#201**: Re-qualify the 18-corner P&R rebuild sweep under open_pdks f6eeac7 (split from #191) *(curated)*
 - **#211**: Make flow/verification tooling reusable as vendored common/ copies: parametrize design name, resolve repo root without path depth *(curated)*
 - **#374**: cross_check_tb.py docstring still says it is driven by cocotb's Runner API, not klt *(curated)*
+- **#446**: T1 item 5: single-corner probe of DR-0017's pipelined column halves at ss_n40C_1v28 vs the ratified 100 MHz *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -71,12 +73,12 @@ _None._
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
-| Important | 1 |
-| Ready (`loom:issue`) | 0 |
+| Important | 2 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 3 |
+| Curated | 4 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->

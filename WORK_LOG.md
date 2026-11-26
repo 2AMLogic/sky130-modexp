@@ -8,6 +8,12 @@ by the Guide triage agent. Entries are grouped by date (UTC), newest first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-26
+
+- **Issue #445** (closed): Shorten cross-check CLI help and link to one working record-minting recipe
+- **PR #447**: docs: shorten cross-check help and link to the minting recipe
+- **Issue #444** (closed): Verify the remaining T1 corner-timing evidence before closing epic #12
+
 ### 2026-11-25
 
 - **PR #440**: chore: ignore daemon account-ranking caches outside the managed gitignore block
