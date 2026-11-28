@@ -104,6 +104,7 @@ verification/gate-level/pdk-*.v
 .loom/api-keys-*/
 .loom/account-health.json
 .loom/account-health.lock
+.loom/account-ranking.codex
 .loom/CANARY
 .loom/*.log
 .loom/*.sock
@@ -119,6 +120,8 @@ verification/gate-level/pdk-*.v
 .loom/gh-config-by-owner.*/
 .loom/gh-config-by-owner-*/
 /.loom-local/
+/node_modules/
+/pnpm-lock.yaml
 # <<< loom-managed <<<
 
 # Repo Skills machine-local install metadata (absolute source path + timestamp)
